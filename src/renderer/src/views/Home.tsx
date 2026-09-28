@@ -20,7 +20,14 @@ export function Home({
             `última sincronización ${edition.last_synced_at ? fmtDateTime(edition.last_synced_at) : 'nunca'}`
           : 'Todavía no hay datos. Sincroniza la ACB para empezar.'}
       </div>
-      <SyncPanel onSynced={onSynced} />
+      {window.d3.platform === 'desktop' ? (
+        <SyncPanel onSynced={onSynced} />
+      ) : (
+        <div className="panel web-note">
+          Versión web: los datos de acb.com se actualizan automáticamente cada día en el servidor. Tus informes de
+          scouting se guardan en este navegador (puedes exportarlos desde Scouting).
+        </div>
+      )}
       {edition && (
         <div className="grid-2">
           <Standings csId={edition.id} navigate={navigate} />

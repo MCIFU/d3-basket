@@ -15,5 +15,5 @@
     "isolatedModules": true,
     "outDir": "out/.tsc-node"
   },
-  "include": ["src/main/**/*", "src/preload/**/*", "src/db/**/*", "src/scraper/**/*", "src/cli/**/*", "src/shared/**/*", "tests/**/*", "electron.vite.config.ts", "vitest.config.ts"]
+  "include": ["netlify/functions/**/*", "vite.web.config.ts", "src/main/**/*", "src/preload/**/*", "src/db/**/*", "src/scraper/**/*", "src/cli/**/*", "src/shared/**/*", "tests/**/*", "electron.vite.config.ts", "vitest.config.ts"]
 }

@@ -6,11 +6,15 @@
  *   npm run scrape -- sync acb --no-players --max-boxscores 5
  *   npm run scrape -- editions acb                  temporadas disponibles en acb.com
  *   npm run scrape -- info                          resumen de la base de datos
+ *   npm run scrape -- export-web [salida.db.gz]     publica los datos para la versión web
  *
  * Opciones comunes: --db <ruta>  --cache  --delay <ms>
  */
+import fs from 'node:fs'
 import path from 'node:path'
+import zlib from 'node:zlib'
 import { parseArgs } from 'node:util'
+import Database from 'better-sqlite3'
 import { defaultDbPath, openDatabase } from '../db/database'
 import { HttpClient } from '../scraper/core/http'
 import { AcbScraper } from '../scraper/acb/sync'
@@ -41,6 +45,7 @@ function usage(code = 0): never {
                              [--max-boxscores N] [--force] [--player-max-age DÍAS]
   npm run scrape -- editions acb
   npm run scrape -- info
+  npm run scrape -- export-web [data/web/data/d3basket.db.gz]
 
 Opciones: --db <ruta.db> (por defecto ${defaultDbPath()})
           --cache  guarda el HTML crudo en ./data/cache (depuración)
@@ -52,7 +57,28 @@ async function main() {
   if (values.help || !command) usage()
   const dbPath = values.db ? path.resolve(values.db) : defaultDbPath()
   const db = openDatabase(dbPath)
+  process.on('exit', () => db.open && db.close()) // cierra y vuelca el WAL al fichero principal
   console.log(`Base de datos: ${dbPath}`)
+
+  if (command === 'export-web') {
+    // Copia compacta y comprimida para la web, sin datos privados (informes de scouting).
+    const out = path.resolve(positionals[1] ?? path.join('data', 'web', 'data', 'd3basket.db.gz'))
+    const tmp = `${out}.tmp.db`
+    fs.mkdirSync(path.dirname(out), { recursive: true })
+    fs.rmSync(tmp, { force: true })
+    db.prepare('VACUUM INTO ?').run(tmp)
+    const copy = new Database(tmp)
+    copy.exec('DELETE FROM scouting_ratings; DELETE FROM scouting_reports; DELETE FROM scrape_runs;')
+    copy.pragma('journal_mode = DELETE')
+    copy.exec('VACUUM')
+    copy.close()
+    const raw = fs.readFileSync(tmp)
+    fs.writeFileSync(out, zlib.gzipSync(raw, { level: 9 }))
+    fs.rmSync(tmp, { force: true })
+    const kb = (n: number) => `${Math.round(n / 1024)} KB`
+    console.log(`✔ Datos web exportados: ${out} (${kb(raw.length)} → ${kb(fs.statSync(out).size)} gzip)`)
+    return
+  }
 
   if (command === 'info') {
     const count = (t: string) => (db.prepare(`SELECT COUNT(*) AS n FROM ${t}`).get() as { n: number }).n

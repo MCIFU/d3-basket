@@ -4,14 +4,52 @@ import { ReportCard } from './Player'
 import { Loading, useLoad, type Navigate } from '../ui'
 
 export function Scouting({ navigate }: { navigate: Navigate }) {
-  const [reports, , error] = useLoad(() => window.d3.reports(), [])
+  const [reports, reload, error] = useLoad(() => window.d3.reports(), [])
+  const [notice, setNotice] = useState<string>()
   if (!reports) return <Loading error={error} />
+
+  const exportReports = async () => {
+    const json = await window.d3.exportReports!()
+    const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }))
+    const a = Object.assign(document.createElement('a'), {
+      href: url,
+      download: `d3basket-informes-${new Date().toISOString().slice(0, 10)}.json`
+    })
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+  const importReports = async (file?: File) => {
+    if (!file) return
+    try {
+      const added = await window.d3.importReports!(await file.text())
+      setNotice(`${added} informes importados.`)
+      reload()
+    } catch {
+      setNotice('El archivo no es una copia válida de informes de D3 Basket.')
+    }
+  }
+
   return (
     <>
       <h1>Scouting</h1>
       <div className="sub">
         {reports.length} informes. Para crear uno nuevo, abre la ficha de un jugador (búscalo arriba) y pulsa “+ Informe de scouting”.
       </div>
+      {window.d3.exportReports && (
+        <div className="panel row">
+          <span className="web-note" style={{ flex: 1 }}>
+            Los informes se guardan en este navegador. Exporta una copia para no perderlos o para pasarlos a otro dispositivo.
+          </span>
+          <button className="btn ghost" onClick={exportReports}>
+            Exportar informes
+          </button>
+          <label className="btn ghost">
+            Importar…
+            <input type="file" accept="application/json,.json" hidden onChange={(e) => importReports(e.target.files?.[0])} />
+          </label>
+          {notice && <span className="chip accent">{notice}</span>}
+        </div>
+      )}
       {reports.length === 0 ? (
         <div className="panel empty">Todavía no hay informes.</div>
       ) : (

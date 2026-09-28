@@ -1,5 +1,8 @@
-/** Consultas de lectura para la interfaz (y la gestión de informes de scouting). */
-import type { DB } from './database'
+/**
+ * Consultas de lectura para la interfaz (y la gestión de informes de scouting).
+ * Solo dependen de `SqlDb`, así funcionan igual con better-sqlite3 (escritorio)
+ * que con sql.js en el navegador (versión web).
+ */
 import {
   LEADER_STATS,
   type EditionRow,
@@ -14,6 +17,17 @@ import {
   type StandingRow,
   type TeamRow
 } from '../shared/api'
+
+/** Subconjunto de la API de better-sqlite3 que usan las consultas. */
+export interface SqlStatement {
+  all(...params: unknown[]): unknown[]
+  get(...params: unknown[]): unknown
+  run(...params: unknown[]): { lastInsertRowid: number | bigint; changes: number }
+}
+export interface SqlDb {
+  prepare(sql: string): SqlStatement
+  transaction<T>(fn: () => T): () => T
+}
 
 const DISPLAY_NAME = 'COALESCE(p.known_as, p.full_name)'
 
@@ -31,7 +45,7 @@ const STAT_COLS = `s.seconds, s.points, s.fg2m, s.fg2a, s.fg3m, s.fg3a, s.ftm, s
   s.ast, s.stl, s.tov, s.blk, s.pf, s.plus_minus, s.pir`
 
 export class Queries {
-  constructor(private readonly db: DB) {}
+  constructor(private readonly db: SqlDb) {}
 
   counts(): Record<string, number> {
     const out: Record<string, number> = {}

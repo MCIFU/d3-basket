@@ -223,7 +223,12 @@ export interface SyncProgressEvent {
 }
 
 export interface D3Api {
+  /** 'desktop' = Electron (SQLite local + scraper); 'web' = navegador (datos publicados, solo lectura). */
+  platform: 'desktop' | 'web'
   dbInfo(): Promise<{ path: string; counts: Record<string, number> }>
+  /** Solo web: copia de seguridad de los informes guardados en el navegador. */
+  exportReports?(): Promise<string>
+  importReports?(json: string): Promise<number>
   editions(): Promise<EditionRow[]>
   standings(csId: number): Promise<StandingRow[]>
   teams(csId: number): Promise<TeamRow[]>

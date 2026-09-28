@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron'
 import type { D3Api, SyncProgressEvent } from '../shared/api'
 
 const api: D3Api = {
+  platform: 'desktop',
   dbInfo: () => ipcRenderer.invoke('db:info'),
   editions: () => ipcRenderer.invoke('db:editions'),
   standings: (csId) => ipcRenderer.invoke('db:standings', csId),
