@@ -5,14 +5,17 @@ Funciona como **app de escritorio** (Windows/macOS/Linux) y como **web** en cual
 
 **Stack:** Electron · React · TypeScript · SQLite (better-sqlite3) · Vite (electron-vite) · Vitest
 
-## Estado — fase 1
+## Qué incluye
 
 | | |
 |---|---|
-| ✅ Esquema SQLite | temporadas, competiciones, clubes/equipos, jugadores, plantillas, cuerpo técnico, calendario, boxscores por cuarto, informes de scouting, registro de sincronizaciones |
-| ✅ Scraper ACB | calendario completo, resultados, plantillas (con licencias y bajas), cuerpo técnico, fichas biográficas y boxscores de **acb.com** |
-| ✅ Histórico ACB | temporadas pasadas (experimental): `--season 2025` |
-| ✅ App de escritorio | clasificación, líderes, calendario por jornada, fichas de equipo y jugador (medias, TS%, eFG%, partido a partido), boxscores e informes de scouting con valoración por atributos |
+| ✅ Portada | campeones vigentes con sus trofeos, últimos resultados y próxima jornada, líderes con foto, clasificación con forma |
+| ✅ Ligas | por temporada: clasificación, calendario y resultados, estadísticas de equipos (incluidos espectadores) y de jugadores (medias y totales, TS%, eFG%…), palmarés de Liga/Copa/Supercopa desde 1956 y clasificación histórica |
+| ✅ Equipos | escudo, pabellón (foto, aforo, ocupación), fundación, web y redes, historia, vitrina de trofeos con años de campeonatos y subcampeonatos, plantilla con fotos, estadísticas y partidos |
+| ✅ Jugadores | foto sin fondo, fecha y lugar de nacimiento, posición, altura, licencia, equipo; estadísticas de la temporada, carrera ACB (medias y totales), récords personales, trayectoria temporada a temporada y partido a partido |
+| ✅ Scouting | informes de ojeador con valoración por atributos (en la web, guardados en el navegador con exportación/importación) |
+| ✅ Enlaces reales | cada página tiene su URL (`#/jugador/sergio-llull-20201774`): se puede compartir y abrir en otra pestaña con el botón central o Ctrl+clic |
+| ✅ Scraper ACB | calendario, resultados, plantillas, fichas, boxscores, datos de club, trayectorias y clasificación histórica de **acb.com**; palmarés e historia de **Wikipedia** |
 | ⏳ LEB Oro / LEB Plata | esquema listo; falta el adaptador de `baloncestoenvivo.feb.es` (ver [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md)) |
 
 La temporada 2026-27 de la ACB arrancó el 26-27 de septiembre de 2026: la primera sincronización ya trae los 9 resultados y boxscores de la jornada 1 y los 297 partidos restantes del calendario.
@@ -57,13 +60,16 @@ npm run build:web      # web estática en dist-web/
 npm run scrape -- sync acb                         # temporada actual (incremental)
 npm run scrape -- sync acb --no-players            # sin fichas biográficas (rápido, ~30 s)
 npm run scrape -- sync acb --season 2025           # histórico 2025-26 (experimental)
-npm run scrape -- sync acb --force                 # vuelve a descargar todos los boxscores
+npm run scrape -- sync acb --force                 # vuelve a descargar boxscores y refresca la historia
+npm run scrape -- sync acb --career-budget 1000    # descarga más trayectorias de jugadores de una vez
 npm run scrape -- editions acb                     # temporadas disponibles en acb.com
 npm run scrape -- info                             # resumen de la base de datos
 npm run scrape -- export-web                       # publica los datos para la versión web
 ```
 
-Opciones: `--db <ruta>` · `--delay <ms>` (pausa entre peticiones, 1000 por defecto) · `--cache` (guarda el HTML en `data/cache/` para depurar) · `--max-boxscores N` · `--player-max-age <días>`.
+Opciones: `--db <ruta>` · `--delay <ms>` (pausa entre peticiones, 1000 por defecto) · `--cache` (guarda el HTML en `data/cache/` para depurar) · `--max-boxscores N` · `--player-max-age <días>` · `--no-history` · `--no-careers` · `--career-budget N` (páginas de trayectoria por ejecución, 250 por defecto).
+
+La **historia** (clasificación histórica, cuadro de honor, palmarés e historia de los clubes) se refresca como mucho una vez por semana. Las **trayectorias** de los jugadores (una página por jugador y temporada pasada, ~900 en total) se completan poco a poco: 250 por ejecución, empezando por las temporadas más recientes; las temporadas cerradas no se vuelven a pedir.
 
 Base de datos por defecto: `%APPDATA%\D3Basket\d3basket.db` (Windows), `~/Library/Application Support/D3Basket/` (macOS) o `~/.config/D3Basket/` (Linux). Cámbiala con la variable `D3_DB_PATH`. La app y la CLI comparten la misma.
 

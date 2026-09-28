@@ -30,6 +30,9 @@ const { values, positionals } = parseArgs({
     'no-rosters': { type: 'boolean', default: false },
     'no-players': { type: 'boolean', default: false },
     'no-boxscores': { type: 'boolean', default: false },
+    'no-history': { type: 'boolean', default: false },
+    'no-careers': { type: 'boolean', default: false },
+    'career-budget': { type: 'string', default: '250' },
     'max-boxscores': { type: 'string' },
     'player-max-age': { type: 'string', default: '30' },
     help: { type: 'boolean', short: 'h', default: false }
@@ -43,6 +46,7 @@ function usage(code = 0): never {
   console.log(`Uso:
   npm run scrape -- sync acb [--season 2025] [--no-rosters] [--no-players] [--no-boxscores]
                              [--max-boxscores N] [--force] [--player-max-age DÍAS]
+                             [--no-history] [--no-careers] [--career-budget N]
   npm run scrape -- editions acb
   npm run scrape -- info
   npm run scrape -- export-web [data/web/data/d3basket.db.gz]
@@ -116,6 +120,9 @@ async function main() {
       rosters: !values['no-rosters'],
       players: !values['no-players'],
       boxscores: !values['no-boxscores'],
+      history: !values['no-history'],
+      careers: !values['no-careers'],
+      careerBudget: Number(values['career-budget']),
       force: values.force,
       maxBoxscores: values['max-boxscores'] ? Number(values['max-boxscores']) : undefined,
       playerMaxAgeDays: Number(values['player-max-age']),
@@ -129,7 +136,8 @@ async function main() {
     console.log(`\n✔ ${summary.edition} sincronizada en ${secs}s (${summary.requests} peticiones)`)
     console.log(
       `  equipos ${summary.teams} · partidos ${summary.games} · plantillas ${summary.rosters} · ` +
-        `jugadores ${summary.players} · fichas ${summary.playerBios} · boxscores ${summary.boxscores}`
+        `jugadores ${summary.players} · fichas ${summary.playerBios} · boxscores ${summary.boxscores} · ` +
+        `temporadas de trayectoria ${summary.careerSeasons}${summary.history ? ' · historia actualizada' : ''}`
     )
     if (summary.errors.length) {
       console.log(`  ⚠ ${summary.errors.length} errores no fatales:`)

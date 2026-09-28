@@ -50,6 +50,106 @@ export interface NPlayer {
   position?: string
   positionCode?: PositionCode
   photoUrl?: string
+  /** Cara con fondo transparente. */
+  photoNobgUrl?: string
+  /** Cuerpo entero con fondo transparente. */
+  bodyPhotoUrl?: string
+}
+
+/** Datos del club publicados junto a la plantilla. */
+export interface NClubInfo {
+  clubRef: SourceRef
+  foundedYear?: number
+  arena?: string
+  arenaAddress?: string
+  arenaCapacity?: number
+  arenaPhotoUrl?: string
+  website?: string
+  president?: string
+  logoUrl?: string
+  primaryColor?: string
+  socials: Record<string, string>
+}
+
+/** Línea de estadística de carrera (totales o medias) tal como la publica la fuente. */
+export interface NCareerLine {
+  games: number
+  starts?: number
+  seconds: number
+  points: number
+  fg2m: number
+  fg2a: number
+  fg3m: number
+  fg3a: number
+  ftm: number
+  fta: number
+  oreb: number
+  dreb: number
+  reb: number
+  ast: number
+  stl: number
+  tov: number
+  blk: number
+  dunks: number
+  pf: number
+  foulsDrawn: number
+  pir: number
+  plusMinus: number
+}
+
+export interface NCareerRecord {
+  value: number
+  date?: string
+  home?: string
+  away?: string
+  gameRef?: string
+}
+
+export interface NPlayerCareer {
+  acbTotals?: NCareerLine
+  acbAverages?: NCareerLine
+  allTotals?: NCareerLine
+  allAverages?: NCareerLine
+  records: Record<string, NCareerRecord>
+}
+
+export interface NPlayerProfile extends NPlayer {
+  editions: string[] // ids de edición de la Liga Endesa en las que ha jugado
+  career: NPlayerCareer
+  socials: Record<string, string>
+}
+
+/** Partido de la página "partidos" de un jugador en una temporada. */
+export interface NPlayerGameRow extends NStatLine {
+  gameRef: string
+  date?: string
+  roundType?: string // 'LR' liga regular, 'PO' playoff...
+  team: { clubId: string; teamId: string; name: string; abbreviation?: string }
+  opponent: { clubId: string; name: string }
+  isHome: boolean
+  won: boolean
+}
+
+/** Fila de la clasificación histórica / cuadro de honor. */
+export interface NClubRecord {
+  clubRef: SourceRef
+  name: string
+  abbreviation?: string
+  logoUrl?: string
+  position?: number
+  seasons?: number
+  games?: number
+  wins?: number
+  losses?: number
+  ties?: number
+  pointsFor?: number
+  pointsAgainst?: number
+  bestMargin?: number
+  worstMargin?: number
+  firstPlaces?: number
+  secondPlaces?: number
+  thirdPlaces?: number
+  fourthPlaces?: number
 }
 
 export interface NRosterEntry {

@@ -4,7 +4,7 @@ import { defaultDbPath, openDatabase, type DB } from '../db/database'
 import { Queries } from '../db/queries'
 import { HttpClient } from '../scraper/core/http'
 import { AcbScraper } from '../scraper/acb/sync'
-import type { LeaderStat, ScoutingReport, SyncProgressEvent } from '../shared/api'
+import type { ScoutingReport, SyncProgressEvent } from '../shared/api'
 
 let db: DB
 let queries: Queries
@@ -18,7 +18,7 @@ function createWindow() {
     minWidth: 1000,
     minHeight: 640,
     title: 'D3 Basket',
-    backgroundColor: '#0f1115',
+    backgroundColor: '#f4f6f9',
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
@@ -27,8 +27,21 @@ function createWindow() {
     }
   })
 
-  // Los enlaces externos (acb.com...) se abren en el navegador del sistema.
+  // Enlaces internos (clic central / Ctrl+clic) → nueva ventana de la app; externos → navegador.
   win.webContents.setWindowOpenHandler(({ url }) => {
+    const internal = url.startsWith('file:') || (!!process.env.ELECTRON_RENDERER_URL && url.startsWith(process.env.ELECTRON_RENDERER_URL))
+    if (internal) {
+      return {
+        action: 'allow',
+        overrideBrowserWindowOptions: {
+          width: 1400,
+          height: 900,
+          autoHideMenuBar: true,
+          backgroundColor: '#f4f6f9',
+          webPreferences: { preload: path.join(__dirname, '../preload/index.js'), contextIsolation: true, sandbox: true }
+        }
+      }
+    }
     if (/^https?:\/\//.test(url)) void shell.openExternal(url)
     return { action: 'deny' }
   })
@@ -39,23 +52,22 @@ function createWindow() {
 
 function registerIpc() {
   const dbPath = defaultDbPath()
-  ipcMain.handle('db:info', () => ({ path: dbPath, counts: queries.counts() }))
-  ipcMain.handle('db:editions', () => queries.editions())
-  ipcMain.handle('db:standings', (_e, csId: number) => queries.standings(csId))
-  ipcMain.handle('db:teams', (_e, csId: number) => queries.teams(csId))
-  ipcMain.handle('db:team', (_e, teamId: number) => queries.team(teamId))
-  ipcMain.handle('db:games', (_e, csId: number) => queries.games(csId))
-  ipcMain.handle('db:game', (_e, gameId: number) => queries.game(gameId))
-  ipcMain.handle('db:player', (_e, playerId: number) => queries.player(playerId))
-  ipcMain.handle('db:leaders', (_e, csId: number, stat: LeaderStat) => queries.leaders(csId, stat))
-  ipcMain.handle('db:search', (_e, q: string) => queries.search(q))
-  ipcMain.handle('db:reports', () => queries.reports())
-  ipcMain.handle('db:saveReport', (_e, r: ScoutingReport) => queries.saveReport(r))
-  ipcMain.handle('db:deleteReport', (_e, id: number) => queries.deleteReport(id))
-  ipcMain.handle('app:openExternal', (_e, url: string) => {
-    if (/^https?:\/\//.test(url)) return shell.openExternal(url)
-    return undefined
-  })
+  const handle = <A extends unknown[], R>(channel: string, fn: (...args: A) => R) =>
+    ipcMain.handle(channel, (_e, ...args) => fn(...(args as A)))
+  handle('db:info', () => ({ path: dbPath, counts: queries.counts(), updated_at: queries.lastUpdate() }))
+  handle('db:home', () => queries.home())
+  handle('db:competitions', () => queries.competitions())
+  handle('db:league', (code: string, year?: number) => queries.league(code, year))
+  handle('db:clubs', () => queries.clubs())
+  handle('db:club', (ref: string, year?: number) => queries.club(ref, year))
+  handle('db:players', () => queries.players())
+  handle('db:player', (ref: string) => queries.player(ref))
+  handle('db:game', (ref: string) => queries.game(ref))
+  handle('db:search', (q: string) => queries.search(q))
+  handle('db:reports', () => queries.reports())
+  handle('db:saveReport', (r: ScoutingReport) => queries.saveReport(r))
+  handle('db:deleteReport', (id: number) => queries.deleteReport(id))
+  handle('app:openExternal', (url: string) => (/^https?:\/\//.test(url) ? shell.openExternal(url) : undefined))
 
   ipcMain.handle('sync:acb', async (_e, opts: { season?: number; players?: boolean }) => {
     if (syncing) return { ok: false, message: 'Ya hay una sincronización en marcha' }

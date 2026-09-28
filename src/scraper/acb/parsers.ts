@@ -11,6 +11,12 @@ import type {
   GameStatus,
   NBoxscore,
   NCalendar,
+  NCareerLine,
+  NCareerRecord,
+  NClubInfo,
+  NClubRecord,
+  NPlayerGameRow,
+  NPlayerProfile,
   NCoach,
   NEdition,
   NPlayer,
@@ -142,7 +148,9 @@ export function mapPlayer(p: Obj): NPlayer {
     knownAs: nick && nick.toLowerCase() !== fullName.toLowerCase() ? nick : undefined,
     position,
     positionCode: positionCode(position),
-    photoUrl: str(p.headshotImageUrl)
+    photoUrl: str(p.headshotImageUrl),
+    photoNobgUrl: str(p.headshotImageNoBackgroundUrl),
+    bodyPhotoUrl: str(p.fullBodyImageNoBackgroundUrl)
   }
 }
 
@@ -244,7 +252,7 @@ export function parseCalendar(html: string): NCalendar {
 
 // ───────────────────────── Plantilla ─────────────────────────
 
-export function parseRoster(html: string): NRoster & { editions: NEdition[] } {
+export function parseRoster(html: string): NRoster & { editions: NEdition[]; club?: NClubInfo } {
   const doc = RscDocument.fromHtml(html)
   const holder = findAllInDoc<Obj>(doc, (o) => o.currentRoster && Array.isArray(o.currentRoster.players))[0]
   if (!holder) throw new ParseError('plantilla', 'no se encontró currentRoster')
@@ -284,24 +292,201 @@ export function parseRoster(html: string): NRoster & { editions: NEdition[] } {
       }
     })
 
-  return { players, staff, editions: parseEditions(doc) }
+  return { players, staff, editions: parseEditions(doc), club: parseClubInfo(doc) }
+}
+
+/** Datos del club (pabellón, fundación, web, redes) que acompañan a la plantilla. */
+export function parseClubInfo(doc: RscDocument): NClubInfo | undefined {
+  const c = findAllInDoc<Obj>(doc, (o) => o.team && typeof o.team === 'object' && 'stadiumName' in o)[0]
+  if (!c?.team?.clubId) return undefined
+  const social = (handle: unknown, base: string) => {
+    const h = str(handle)
+    return h ? (/^https?:/.test(h) ? h : `${base}${h.replace(/^@/, '')}`) : undefined
+  }
+  const socials = Object.fromEntries(
+    Object.entries({
+      instagram: social(c.instagramUrl, 'https://www.instagram.com/'),
+      twitter: social(c.twitterUrl, 'https://x.com/'),
+      facebook: social(c.facebookUrl, 'https://www.facebook.com/'),
+      youtube: social(c.youtubeUrl, 'https://www.youtube.com/@'),
+      tiktok: social(c.tikTokUrl, 'https://www.tiktok.com/@'),
+      tickets: str(c.ticketingUrl),
+      shop: str(c.merchanUrl)
+    }).filter(([, v]) => v)
+  ) as Record<string, string>
+  return {
+    clubRef: { source: 'acb', id: String(c.team.clubId) },
+    foundedYear: optNum(c.foundationYear),
+    arena: str(c.stadiumName),
+    arenaAddress: str(c.stadiumAddress),
+    arenaCapacity: optNum(c.stadiumCapacity),
+    arenaPhotoUrl: str(c.stadiumPhotoUrl),
+    website: str(c.webUrl),
+    president: str(c.presidentName),
+    logoUrl: str(c.team.logo),
+    primaryColor: str(c.team.primaryColorHex) ?? str(c.team.displayColor),
+    socials
+  }
 }
 
 // ───────────────────────── Ficha de jugador ─────────────────────────
 
-export function parsePlayerProfile(html: string): NPlayer {
+export function parsePlayerProfile(html: string): NPlayerProfile {
   const doc = RscDocument.fromHtml(html)
   const data = findAllInDoc<Obj>(doc, (o) => o.player && typeof o.player === 'object' && 'birthDate' in o)[0]
   if (!data) throw new ParseError('jugador', 'no se encontró playerData')
   const player = mapPlayer(data.player)
+  const stats = findAllInDoc<Obj>(doc, (o) => 'playerCompetitionCareerStats' in o)[0] ?? {}
+  const records: Record<string, NCareerRecord> = {}
+  for (const [key, rec] of Object.entries((stats.playerCompetitionRecords ?? {}) as Obj)) {
+    if (!rec || typeof rec !== 'object' || rec.value == null) continue
+    records[key] = {
+      value: num(rec.value),
+      date: str(rec.gameDate),
+      home: str(rec.localTeam?.fullName),
+      away: str(rec.visitorTeam?.fullName),
+      gameRef: rec.gameId != null ? String(rec.gameId) : undefined
+    }
+  }
+  const handle = (v: unknown, base: string) => (str(v) ? `${base}${str(v)!.replace(/^@/, '')}` : undefined)
+  const socials = Object.fromEntries(
+    Object.entries({
+      instagram: handle(data.instagram, 'https://www.instagram.com/'),
+      twitter: handle(data.twitter, 'https://x.com/'),
+      tiktok: handle(data.tiktok, 'https://www.tiktok.com/@')
+    }).filter(([, v]) => v)
+  ) as Record<string, string>
   return {
     ...player,
     birthDate: parseDmy(data.birthDate),
     birthPlace: str(data.birthPlace),
     birthCountry: str(data.birthCountry),
     nationality: str(data.nationality),
-    heightCm: parseHeightCm(data.height)
+    heightCm: parseHeightCm(data.height),
+    editions: parseEditions(doc).map((e) => e.ref.id),
+    career: {
+      acbTotals: careerLine(stats.playerCompetitionCareerStats?.totals),
+      acbAverages: careerLine(stats.playerCompetitionCareerStats?.averages),
+      allTotals: careerLine(stats.playerTotalCareerStats?.totals),
+      allAverages: careerLine(stats.playerTotalCareerStats?.averages),
+      records
+    },
+    socials
   }
+}
+
+function careerLine(s: Obj | undefined): NCareerLine | undefined {
+  if (!s || s.numGames == null) return undefined
+  return {
+    games: num(s.numGames),
+    starts: optNum(s.starter),
+    seconds: num(s.timePlayed),
+    points: num(s.points),
+    fg2m: num(s.twoPointersMade),
+    fg2a: num(s.twoPointersAttempted),
+    fg3m: num(s.threePointersMade),
+    fg3a: num(s.threePointersAttempted),
+    ftm: num(s.freeThrowsMade),
+    fta: num(s.freeThrowsAttempted),
+    oreb: num(s.offensiveRebounds),
+    dreb: num(s.defensiveRebounds),
+    reb: num(s.rebounds),
+    ast: num(s.assists),
+    stl: num(s.steals),
+    tov: num(s.turnovers),
+    blk: num(s.blocks),
+    dunks: num(s.dunks),
+    pf: num(s.personalFouls),
+    foulsDrawn: num(s.foulsReceived),
+    pir: num(s.rating),
+    plusMinus: num(s.plusMinus)
+  }
+}
+
+// ───────────────────────── Partidos de un jugador en una temporada ─────────────────────────
+
+/** Página /es/liga/jugadores/<slug>/partidos?editionId=N: todos sus partidos con estadísticas. */
+export function parsePlayerSeasonGames(html: string): NPlayerGameRow[] {
+  const doc = RscDocument.fromHtml(html)
+  if (doc.size === 0) throw new ParseError('partidos-jugador', 'no se encontró payload RSC')
+  const rows = findAllInDoc<Obj>(doc, (o) => 'roundType' in o && o.homeTeam && o.awayTeam && o.stats)
+  return rows.map((r) => {
+    const mine = r.isSelectedLocal ? r.homeTeam : r.awayTeam
+    const opp = r.isSelectedLocal ? r.awayTeam : r.homeTeam
+    const s = r.stats as Obj
+    return {
+      ...mapStatLine({
+        ...s,
+        playTime: s.timePlayed,
+        offRebounds: s.offensiveRebounds,
+        defRebounds: s.defensiveRebounds,
+        totalRebounds: s.rebounds,
+        receivedBlocks: s.shotsRejected,
+        foulsDrawn: s.foulsReceived
+      }),
+      gameRef: String(r.id),
+      date: str(r.date),
+      roundType: str(r.roundType),
+      team: {
+        clubId: String(mine.clubId),
+        teamId: String(mine.id),
+        name: str(mine.fullName) ?? '',
+        abbreviation: str(mine.abbreviatedName)
+      },
+      opponent: { clubId: String(opp.clubId), name: str(opp.fullName) ?? '' },
+      isHome: !!r.isSelectedLocal,
+      won: !!r.hasWon
+    }
+  })
+}
+
+// ───────────────────────── Historia de los clubes ─────────────────────────
+
+const recordBase = (team: Obj) => ({
+  clubRef: { source: 'acb' as const, id: String(team.clubId) },
+  name: str(team.fullName) ?? `Club ${team.clubId}`,
+  abbreviation: str(team.abbreviatedName),
+  logoUrl: str(team.logo)
+})
+
+/** Ranking histórico de clubes (/es/liga/estadisticas/ranking-de-clubes[?onlyACB=true]). */
+export function parseClubRanking(html: string): NClubRecord[] {
+  const doc = RscDocument.fromHtml(html)
+  const holder = findAllInDoc<Obj>(
+    doc,
+    (o) => Array.isArray(o.data) && o.data.length > 0 && o.data[0]?.team && 'playedMatches' in o.data[0]
+  )[0]
+  if (!holder) throw new ParseError('ranking-de-clubes', 'no se encontró la tabla')
+  return (holder.data as Obj[]).map((r) => ({
+    ...recordBase(r.team),
+    position: optNum(r.position),
+    games: optNum(r.playedMatches),
+    wins: optNum(r.wins),
+    losses: optNum(r.loses),
+    ties: optNum(r.tied),
+    pointsFor: optNum(r.pointsFor),
+    pointsAgainst: optNum(r.pointsAgainst),
+    bestMargin: optNum(r.maxDifferenceFor),
+    worstMargin: optNum(r.maxDifferenceAgainst)
+  }))
+}
+
+/** Cuadro de honor (/es/liga/estadisticas/cuadro-de-honor): temporadas y puestos 1º-4º por club. */
+export function parseHonoursBoard(html: string): { total: NClubRecord[]; acb: NClubRecord[] } {
+  const doc = RscDocument.fromHtml(html)
+  const holder = findAllInDoc<Obj>(doc, (o) => Array.isArray(o.total) && Array.isArray(o.acb))[0]
+  if (!holder) throw new ParseError('cuadro-de-honor', 'no se encontró el cuadro de honor')
+  const map = (rows: Obj[]): NClubRecord[] =>
+    rows.map((r) => ({
+      ...recordBase(r.team),
+      position: optNum(r.position),
+      seasons: optNum(r.numEditions),
+      firstPlaces: optNum(r.endedFirst),
+      secondPlaces: optNum(r.endedSecond),
+      thirdPlaces: optNum(r.endedThird),
+      fourthPlaces: optNum(r.endedFourth)
+    }))
+  return { total: map(holder.total), acb: map(holder.acb) }
 }
 
 // ───────────────────────── Boxscore ─────────────────────────

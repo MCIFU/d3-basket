@@ -4,6 +4,7 @@
  * volver a ejecutar el scraper actualiza en lugar de duplicar.
  */
 import type { DB } from './database'
+import type { NHonour } from '../scraper/wiki/honours'
 import type {
   NBoxscore,
   NCoach,
@@ -14,7 +15,11 @@ import type {
   NRound,
   NStatLine,
   NTeam,
-  SourceRef
+  SourceRef,
+  NClubInfo,
+  NClubRecord,
+  NPlayerGameRow,
+  NPlayerProfile
 } from '../scraper/types'
 
 type EntityType = 'competition_season' | 'club' | 'team' | 'player' | 'coach' | 'game' | 'round'
@@ -94,14 +99,14 @@ export class Writer {
     if (clubId == null) {
       clubId = Number(
         this.db
-          .prepare('INSERT INTO clubs (name, short_name, abbreviation) VALUES (?, ?, ?)')
-          .run(t.name, t.shortName ?? null, t.abbreviation ?? null).lastInsertRowid
+          .prepare('INSERT INTO clubs (name, short_name, abbreviation, logo_url, primary_color) VALUES (?, ?, ?, ?, ?)')
+          .run(t.name, t.shortName ?? null, t.abbreviation ?? null, t.logoUrl ?? null, t.primaryColor ?? null).lastInsertRowid
       )
       this.link('club', clubId, t.clubRef)
     } else if (opts.updateClubName) {
       this.db
-        .prepare('UPDATE clubs SET name = ?, short_name = ?, abbreviation = ?, updated_at = ? WHERE id = ?')
-        .run(t.name, t.shortName ?? null, t.abbreviation ?? null, nowIso(), clubId)
+        .prepare('UPDATE clubs SET name = ?, short_name = ?, abbreviation = ?, logo_url = COALESCE(?, logo_url), primary_color = COALESCE(?, primary_color), updated_at = ? WHERE id = ?')
+        .run(t.name, t.shortName ?? null, t.abbreviation ?? null, t.logoUrl ?? null, t.primaryColor ?? null, nowIso(), clubId)
     }
     if (t.clubRef.url) this.link('club', clubId, t.clubRef)
 
@@ -151,6 +156,8 @@ export class Writer {
       pos: p.position ?? null,
       poscode: p.positionCode ?? null,
       photo: p.photoUrl ?? null,
+      nobg: p.photoNobgUrl ?? null,
+      body: p.bodyPhotoUrl ?? null,
       bio: opts.bio ? nowIso() : null,
       now: nowIso()
     }
@@ -160,8 +167,8 @@ export class Writer {
         this.db
           .prepare(
             `INSERT INTO players (first_name, last_name, full_name, known_as, birth_date, birth_place, birth_country,
-               nationality, height_cm, position, position_code, photo_url, bio_synced_at)
-             VALUES (@first, @last, @full, @known, @bdate, @bplace, @bcountry, @nat, @height, @pos, @poscode, @photo, @bio)`
+               nationality, height_cm, position, position_code, photo_url, photo_nobg_url, body_photo_url, bio_synced_at)
+             VALUES (@first, @last, @full, @known, @bdate, @bplace, @bcountry, @nat, @height, @pos, @poscode, @photo, @nobg, @body, @bio)`
           )
           .run(values).lastInsertRowid
       )
@@ -178,6 +185,7 @@ export class Writer {
            birth_country = COALESCE(@bcountry, birth_country), nationality = COALESCE(@nat, nationality),
            height_cm = COALESCE(@height, height_cm), position = COALESCE(@pos, position),
            position_code = COALESCE(@poscode, position_code), photo_url = COALESCE(@photo, photo_url),
+           photo_nobg_url = COALESCE(@nobg, photo_nobg_url), body_photo_url = COALESCE(@body, body_photo_url),
            bio_synced_at = COALESCE(@bio, bio_synced_at), updated_at = @now
          WHERE id = @id`
       )
@@ -424,6 +432,213 @@ export class Writer {
       }
       return gameId
     })
+  }
+
+  // ───────── ficha de club ─────────
+  /** Club por id externo; lo crea si no existe (clubes históricos que ya no están en la liga). */
+  ensureClub(ref: SourceRef, name: string, extra: { abbreviation?: string; logoUrl?: string } = {}): number {
+    let id = this.findId('club', ref)
+    if (id == null) {
+      id = Number(
+        this.db
+          .prepare('INSERT INTO clubs (name, abbreviation, logo_url) VALUES (?, ?, ?)')
+          .run(name, extra.abbreviation ?? null, extra.logoUrl ?? null).lastInsertRowid
+      )
+      this.link('club', id, ref)
+    } else if (extra.logoUrl) {
+      this.db.prepare('UPDATE clubs SET logo_url = COALESCE(logo_url, ?) WHERE id = ?').run(extra.logoUrl, id)
+    }
+    return id
+  }
+
+  updateClubInfo(info: NClubInfo) {
+    const id = this.findId('club', info.clubRef)
+    if (id == null) return
+    this.db
+      .prepare(
+        `UPDATE clubs SET founded_year = COALESCE(@founded, founded_year), arena = COALESCE(@arena, arena),
+           arena_address = COALESCE(@address, arena_address), arena_capacity = COALESCE(@capacity, arena_capacity),
+           arena_photo_url = COALESCE(@photo, arena_photo_url), website = COALESCE(@web, website),
+           president = COALESCE(@president, president), logo_url = COALESCE(@logo, logo_url),
+           primary_color = COALESCE(@color, primary_color), socials = @socials, updated_at = @now
+         WHERE id = @id`
+      )
+      .run({
+        id,
+        founded: info.foundedYear ?? null,
+        arena: info.arena ?? null,
+        address: info.arenaAddress ?? null,
+        capacity: info.arenaCapacity ?? null,
+        photo: info.arenaPhotoUrl ?? null,
+        web: info.website ?? null,
+        president: info.president ?? null,
+        logo: info.logoUrl ?? null,
+        color: info.primaryColor ?? null,
+        socials: Object.keys(info.socials).length ? JSON.stringify(info.socials) : null,
+        now: nowIso()
+      })
+  }
+
+  setClubHistory(clubId: number, text: string, url?: string) {
+    this.db.prepare('UPDATE clubs SET history = ?, history_url = ? WHERE id = ?').run(text, url ?? null, clubId)
+  }
+
+  // ───────── carrera del jugador ─────────
+  savePlayerProfileExtras(playerId: number, profile: NPlayerProfile) {
+    this.db
+      .prepare('UPDATE players SET career = ?, source_editions = ?, socials = ? WHERE id = ?')
+      .run(
+        JSON.stringify(profile.career),
+        JSON.stringify(profile.editions),
+        Object.keys(profile.socials).length ? JSON.stringify(profile.socials) : null,
+        playerId
+      )
+  }
+
+  /** Agrega los partidos de una temporada por club y guarda la línea de trayectoria. */
+  savePlayerSeason(playerId: number, seasonStartYear: number, editionId: string, rows: NPlayerGameRow[]) {
+    this.transaction(() => {
+      this.db
+        .prepare('DELETE FROM player_season_lines WHERE player_id = ? AND competition_code = ? AND season_start_year = ?')
+        .run(playerId, 'ACB', seasonStartYear)
+      const byClub = new Map<string, NPlayerGameRow[]>()
+      for (const r of rows) byClub.set(r.team.clubId, [...(byClub.get(r.team.clubId) ?? []), r])
+      const ins = this.db.prepare(
+        `INSERT INTO player_season_lines (player_id, competition_code, season_start_year, club_source_id, club_id,
+           team_name, team_abbr, games, playoff_games, wins, seconds, points, fg2m, fg2a, fg3m, fg3a, ftm, fta,
+           oreb, dreb, reb, ast, stl, tov, blk, dunks, pf, fouls_drawn, pir, plus_minus)
+         VALUES (@player, 'ACB', @season, @club, @clubId, @name, @abbr, @games, @po, @wins, @seconds, @points,
+           @fg2m, @fg2a, @fg3m, @fg3a, @ftm, @fta, @oreb, @dreb, @reb, @ast, @stl, @tov, @blk, @dunks, @pf, @fd, @pir, @pm)`
+      )
+      for (const [club, games] of byClub) {
+        const sum = (k: keyof NPlayerGameRow) => games.reduce((a, g) => a + (Number(g[k]) || 0), 0)
+        const first = games[0].team
+        ins.run({
+          player: playerId,
+          season: seasonStartYear,
+          club,
+          clubId: this.ensureClub({ source: 'acb', id: club }, first.name, { abbreviation: first.abbreviation }),
+          name: first.name,
+          abbr: first.abbreviation ?? null,
+          games: games.length,
+          po: games.filter((g) => g.roundType && g.roundType !== 'LR').length,
+          wins: games.filter((g) => g.won).length,
+          seconds: sum('seconds'),
+          points: sum('points'),
+          fg2m: sum('fg2m'),
+          fg2a: sum('fg2a'),
+          fg3m: sum('fg3m'),
+          fg3a: sum('fg3a'),
+          ftm: sum('ftm'),
+          fta: sum('fta'),
+          oreb: sum('oreb'),
+          dreb: sum('dreb'),
+          reb: sum('reb'),
+          ast: sum('ast'),
+          stl: sum('stl'),
+          tov: sum('tov'),
+          blk: sum('blk'),
+          dunks: sum('dunks'),
+          pf: sum('pf'),
+          fd: sum('foulsDrawn'),
+          pir: sum('pir'),
+          pm: sum('plusMinus')
+        })
+      }
+      this.db
+        .prepare(
+          `INSERT INTO player_season_fetches (player_id, edition_source_id, fetched_at) VALUES (?, ?, ?)
+           ON CONFLICT (player_id, edition_source_id) DO UPDATE SET fetched_at = excluded.fetched_at`
+        )
+        .run(playerId, editionId, nowIso())
+    })
+  }
+
+  // ───────── historia ─────────
+  saveClubRecords(scope: 'acb' | 'total', records: NClubRecord[]) {
+    this.transaction(() => {
+      for (const r of records) {
+        const clubId = this.ensureClub(r.clubRef, r.name, { abbreviation: r.abbreviation, logoUrl: r.logoUrl })
+        this.db
+          .prepare(
+            `INSERT INTO club_records (club_id, scope, position, seasons, games, wins, losses, ties, points_for,
+               points_against, best_margin, worst_margin, first_places, second_places, third_places, fourth_places, updated_at)
+             VALUES (@club, @scope, @position, @seasons, @games, @wins, @losses, @ties, @pf, @pa, @best, @worst,
+               @p1, @p2, @p3, @p4, @now)
+             ON CONFLICT (club_id, scope) DO UPDATE SET
+               position = COALESCE(excluded.position, position), seasons = COALESCE(excluded.seasons, seasons),
+               games = COALESCE(excluded.games, games), wins = COALESCE(excluded.wins, wins),
+               losses = COALESCE(excluded.losses, losses), ties = COALESCE(excluded.ties, ties),
+               points_for = COALESCE(excluded.points_for, points_for),
+               points_against = COALESCE(excluded.points_against, points_against),
+               best_margin = COALESCE(excluded.best_margin, best_margin),
+               worst_margin = COALESCE(excluded.worst_margin, worst_margin),
+               first_places = COALESCE(excluded.first_places, first_places),
+               second_places = COALESCE(excluded.second_places, second_places),
+               third_places = COALESCE(excluded.third_places, third_places),
+               fourth_places = COALESCE(excluded.fourth_places, fourth_places),
+               updated_at = excluded.updated_at`
+          )
+          .run({
+            club: clubId,
+            scope,
+            position: r.position ?? null,
+            seasons: r.seasons ?? null,
+            games: r.games ?? null,
+            wins: r.wins ?? null,
+            losses: r.losses ?? null,
+            ties: r.ties ?? null,
+            pf: r.pointsFor ?? null,
+            pa: r.pointsAgainst ?? null,
+            best: r.bestMargin ?? null,
+            worst: r.worstMargin ?? null,
+            p1: r.firstPlaces ?? null,
+            p2: r.secondPlaces ?? null,
+            p3: r.thirdPlaces ?? null,
+            p4: r.fourthPlaces ?? null,
+            now: nowIso()
+          })
+      }
+    })
+  }
+
+  /** Sustituye el palmarés de una competición. `clubFor` traduce el artículo de Wikipedia a id acb. */
+  saveHonours(competition: NHonour['competition'], honours: NHonour[], clubFor: (article?: string) => string | undefined) {
+    const clubId = (article?: string) => {
+      const ext = clubFor(article)
+      return ext ? (this.findId('club', { source: 'acb', id: ext }) ?? null) : null
+    }
+    this.transaction(() => {
+      this.db.prepare('DELETE FROM honours WHERE competition = ?').run(competition)
+      const ins = this.db.prepare(
+        `INSERT INTO honours (competition, season_start_year, label, champion_name, champion_club_id,
+           runner_up_name, runner_up_club_id, result, note, source)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'wikipedia')`
+      )
+      for (const h of honours) {
+        ins.run(
+          competition,
+          h.seasonStartYear,
+          h.label,
+          h.championName,
+          clubId(h.championArticle),
+          h.runnerUpName ?? null,
+          clubId(h.runnerUpArticle),
+          h.result ?? null,
+          h.note ?? null
+        )
+      }
+    })
+  }
+
+  getMeta(key: string): string | undefined {
+    return (this.db.prepare('SELECT value FROM app_meta WHERE key = ?').get(key) as { value: string } | undefined)?.value
+  }
+
+  setMeta(key: string, value: string) {
+    this.db
+      .prepare('INSERT INTO app_meta (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value')
+      .run(key, value)
   }
 
   // ───────── registro de ejecuciones ─────────

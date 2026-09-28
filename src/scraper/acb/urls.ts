@@ -21,3 +21,10 @@ export const acbUrls = {
 export function slugFromTeamUrl(url: string): string | undefined {
   return /\/es\/liga\/equipos\/([a-z0-9-]+-\d+)/.exec(url)?.[1]
 }
+
+export const acbHistoryUrls = {
+  clubRanking: (onlyAcb = false) => `${ACB_BASE}/es/liga/estadisticas/ranking-de-clubes${onlyAcb ? '?onlyACB=true' : ''}`,
+  honoursBoard: () => `${ACB_BASE}/es/liga/estadisticas/cuadro-de-honor`,
+  playerSeasonGames: (playerId: string, editionId: string) =>
+    `${ACB_BASE}/es/liga/jugadores/jugador-${playerId}/partidos?editionId=${editionId}`
+}

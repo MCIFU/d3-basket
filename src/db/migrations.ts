@@ -351,5 +351,121 @@ SELECT r.competition_season_id, r.team_id, t.name AS team_name, t.logo_url,
 FROM results r JOIN teams t ON t.id = r.team_id
 GROUP BY r.competition_season_id, r.team_id;
 `
+  },
+  {
+    version: 2,
+    name: 'club_details_honours_careers',
+    sql: /* sql */ `
+-- ───────── Ficha de club (acb.com: datos del club en la página de plantilla) ─────────
+ALTER TABLE clubs ADD COLUMN founded_year INTEGER;
+ALTER TABLE clubs ADD COLUMN arena_address TEXT;
+ALTER TABLE clubs ADD COLUMN arena_capacity INTEGER;
+ALTER TABLE clubs ADD COLUMN arena_photo_url TEXT;
+ALTER TABLE clubs ADD COLUMN logo_url TEXT;
+ALTER TABLE clubs ADD COLUMN primary_color TEXT;
+ALTER TABLE clubs ADD COLUMN president TEXT;
+ALTER TABLE clubs ADD COLUMN socials TEXT;               -- JSON: { instagram, twitter, facebook, youtube, tiktok, tickets, shop }
+ALTER TABLE clubs ADD COLUMN history TEXT;               -- resumen de su historia (Wikipedia, CC BY-SA)
+ALTER TABLE clubs ADD COLUMN history_url TEXT;
+
+-- ───────── Jugador: fotos sin fondo y carrera oficial ─────────
+ALTER TABLE players ADD COLUMN photo_nobg_url TEXT;      -- cara con fondo transparente
+ALTER TABLE players ADD COLUMN body_photo_url TEXT;      -- cuerpo entero sin fondo
+ALTER TABLE players ADD COLUMN career TEXT;              -- JSON: totales/medias ACB, todas las competiciones y récords
+ALTER TABLE players ADD COLUMN source_editions TEXT;     -- JSON: ids de edición (acb) en los que ha jugado
+ALTER TABLE players ADD COLUMN socials TEXT;             -- JSON
+
+-- Trayectoria temporada a temporada (agregada de los partidos oficiales de cada temporada).
+-- Permite mostrar toda la carrera sin guardar cada partido histórico.
+CREATE TABLE player_season_lines (
+  player_id          INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+  competition_code   TEXT NOT NULL,                       -- 'ACB'
+  season_start_year  INTEGER NOT NULL,
+  club_source_id     TEXT NOT NULL,                       -- id del club en la fuente (acb)
+  club_id            INTEGER REFERENCES clubs(id),
+  team_name          TEXT NOT NULL,
+  team_abbr          TEXT,
+  games              INTEGER NOT NULL DEFAULT 0,
+  playoff_games      INTEGER NOT NULL DEFAULT 0,
+  wins               INTEGER NOT NULL DEFAULT 0,
+  seconds            INTEGER NOT NULL DEFAULT 0,
+  points INTEGER NOT NULL DEFAULT 0,
+  fg2m INTEGER NOT NULL DEFAULT 0, fg2a INTEGER NOT NULL DEFAULT 0,
+  fg3m INTEGER NOT NULL DEFAULT 0, fg3a INTEGER NOT NULL DEFAULT 0,
+  ftm  INTEGER NOT NULL DEFAULT 0, fta  INTEGER NOT NULL DEFAULT 0,
+  oreb INTEGER NOT NULL DEFAULT 0, dreb INTEGER NOT NULL DEFAULT 0, reb INTEGER NOT NULL DEFAULT 0,
+  ast  INTEGER NOT NULL DEFAULT 0, stl  INTEGER NOT NULL DEFAULT 0, tov INTEGER NOT NULL DEFAULT 0,
+  blk  INTEGER NOT NULL DEFAULT 0, dunks INTEGER NOT NULL DEFAULT 0,
+  pf   INTEGER NOT NULL DEFAULT 0, fouls_drawn INTEGER NOT NULL DEFAULT 0,
+  pir  INTEGER NOT NULL DEFAULT 0, plus_minus INTEGER NOT NULL DEFAULT 0,
+  fetched_at         TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')),
+  PRIMARY KEY (player_id, competition_code, season_start_year, club_source_id)
+);
+
+-- Temporadas ya consultadas por jugador (aunque no jugase ningún partido).
+CREATE TABLE player_season_fetches (
+  player_id          INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+  edition_source_id  TEXT NOT NULL,
+  fetched_at         TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')),
+  PRIMARY KEY (player_id, edition_source_id)
+);
+
+-- ───────── Historia: palmarés y clasificación histórica ─────────
+CREATE TABLE honours (
+  id                 INTEGER PRIMARY KEY,
+  competition        TEXT NOT NULL CHECK (competition IN ('liga','copa','supercopa')),
+  season_start_year  INTEGER NOT NULL,
+  label              TEXT NOT NULL,                       -- '2025-26' o '2026'
+  champion_name      TEXT NOT NULL,
+  champion_club_id   INTEGER REFERENCES clubs(id),
+  runner_up_name     TEXT,
+  runner_up_club_id  INTEGER REFERENCES clubs(id),
+  result             TEXT,
+  note               TEXT,
+  source             TEXT NOT NULL DEFAULT 'wikipedia',
+  UNIQUE (competition, season_start_year)
+);
+CREATE INDEX ix_honours_champion ON honours(champion_club_id);
+CREATE INDEX ix_honours_runner ON honours(runner_up_club_id);
+
+-- Clasificación histórica oficial (acb.com: ranking de clubes + cuadro de honor).
+CREATE TABLE club_records (
+  club_id          INTEGER NOT NULL REFERENCES clubs(id) ON DELETE CASCADE,
+  scope            TEXT NOT NULL CHECK (scope IN ('acb','total')),   -- 'acb' = desde 1983-84; 'total' = desde 1956-57
+  position         INTEGER,
+  seasons          INTEGER,
+  games            INTEGER,
+  wins             INTEGER,
+  losses           INTEGER,
+  ties             INTEGER,
+  points_for       INTEGER,
+  points_against   INTEGER,
+  best_margin      INTEGER,
+  worst_margin     INTEGER,
+  first_places     INTEGER,
+  second_places    INTEGER,
+  third_places     INTEGER,
+  fourth_places    INTEGER,
+  updated_at       TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')),
+  PRIMARY KEY (club_id, scope)
+);
+
+-- Metadatos varios (p.ej. última actualización del histórico).
+CREATE TABLE app_meta (
+  key    TEXT PRIMARY KEY,
+  value  TEXT
+);
+
+-- Referencias estables para las URLs de la interfaz: id de acb.com o, si no existe, 'i<id interno>'.
+CREATE VIEW v_club_ref AS
+  SELECT c.id AS club_id, COALESCE(x.external_id, 'i' || c.id) AS ref
+  FROM clubs c LEFT JOIN external_ids x ON x.entity_type = 'club' AND x.entity_id = c.id AND x.source = 'acb';
+CREATE VIEW v_player_ref AS
+  SELECT p.id AS player_id, COALESCE(x.external_id, 'i' || p.id) AS ref
+  FROM players p LEFT JOIN external_ids x ON x.entity_type = 'player' AND x.entity_id = p.id AND x.source = 'acb';
+CREATE VIEW v_game_ref AS
+  SELECT g.id AS game_id, COALESCE(x.external_id, 'i' || g.id) AS ref
+  FROM games g LEFT JOIN external_ids x ON x.entity_type = 'game' AND x.entity_id = g.id AND x.source = 'acb';
+`
   }
 ]

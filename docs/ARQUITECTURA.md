@@ -69,6 +69,12 @@ erDiagram
 | `team_game_stats` | Totales de equipo + acciones de equipo (rebotes/pérdidas de equipo) y entrenador. |
 | `scouting_reports`, `scouting_ratings` | Informe de ojeador: rol, arquetipo, fortalezas, debilidades, ataque, defensa, físico, intangibles, comparables, proyección, nivel/potencial (1-10), recomendación, notas por atributo. |
 | `scrape_runs` | Registro de cada sincronización: alcance, peticiones, resumen y errores. |
+| `player_season_lines` | Trayectoria: una línea por jugador, temporada y club, agregada de sus partidos de esa temporada en acb.com. |
+| `player_season_fetches` | Temporadas de cada jugador ya descargadas (para no repetir peticiones). |
+| `honours` | Campeón, subcampeón y resultado de la final por temporada: Liga (desde 1956-57), Copa del Rey y Supercopa (Wikipedia). |
+| `club_records` | Clasificación histórica oficial (partidos, victorias, puntos, puestos 1º-4º) en la era ACB y desde 1956-57. |
+| `clubs.*` (migración 2) | Fundación, pabellón (nombre, dirección, aforo, foto), web, redes, logo, color e historia (Wikipedia). |
+| `players.*` (migración 2) | Foto de la cara y de cuerpo entero sin fondo, carrera oficial (totales, medias, récords) y redes. |
 | `v_player_season_stats` | Vista: medias por jugador y equipo-temporada, %T2/%T3/%TL, **TS%** y **eFG%**. |
 | `v_standings` | Vista: clasificación de liga regular calculada desde los resultados. |
 
@@ -87,6 +93,10 @@ La web actual de la ACB (Next.js App Router) no pinta los datos en tablas HTML e
 | Ficha de jugador | `acb.com/es/liga/jugadores/{slug}-{id}` | Fecha/lugar de nacimiento, nacionalidad, altura. |
 | Boxscore | `live.acb.com/es/partidos/{id}/estadisticas` | Cabecera, parciales, pabellón, público, árbitros y estadísticas por jugador y cuarto. |
 | Partidos de un equipo (histórico) | `acb.com/es/liga/equipos/{slug}/partidos?editionId=N` | Única vista pública del calendario que respeta `editionId`. |
+| Partidos de un jugador en una temporada | `acb.com/es/liga/jugadores/{slug}-{id}/partidos?editionId=N` | Base de la trayectoria temporada a temporada. |
+| Clasificación histórica | `acb.com/es/liga/estadisticas/ranking-de-clubes[?onlyACB=true]` | Partidos, victorias y puntos por club desde 1956-57 o en la era ACB. |
+| Cuadro de honor | `acb.com/es/liga/estadisticas/cuadro-de-honor` | Temporadas disputadas y puestos 1º-4º por club. |
+| Palmarés por años e historia | `es.wikipedia.org` (API) | acb.com solo publica recuentos, no los años. CC BY-SA 4.0, citado en la interfaz. |
 
 > La web consume internamente una API (`api2.acb.com`). **No la usamos**: no está documentada para terceros y puede cambiar de condiciones. Todo sale de páginas públicas.
 

@@ -3,19 +3,32 @@
  * Solo dependen de `SqlDb`, así funcionan igual con better-sqlite3 (escritorio)
  * que con sql.js en el navegador (versión web).
  */
-import {
-  LEADER_STATS,
-  type EditionRow,
-  type GameDetail,
-  type GameRow,
-  type LeaderRow,
-  type LeaderStat,
-  type PlayerDetail,
-  type RosterRow,
-  type ScoutingReport,
-  type SearchResult,
-  type StandingRow,
-  type TeamRow
+import type {
+  ClubData,
+  ClubHonour,
+  ClubInfo,
+  ClubRecordRow,
+  CompetitionInfo,
+  EditionRow,
+  GameDetail,
+  GameRow,
+  HomeData,
+  HonourRow,
+  LeaderRow,
+  LeagueData,
+  PlayerCareer,
+  PlayerData,
+  PlayerGameLog,
+  PlayerIndexRow,
+  PlayerStatRow,
+  RosterRow,
+  ScoutingReport,
+  SearchResult,
+  StandingRow,
+  StatBlock,
+  TeamLite,
+  TeamStatRow,
+  TrajectoryRow
 } from '../shared/api'
 
 /** Subconjunto de la API de better-sqlite3 que usan las consultas. */
@@ -29,235 +42,695 @@ export interface SqlDb {
   transaction<T>(fn: () => T): () => T
 }
 
+type Row = Record<string, any>
+
 const DISPLAY_NAME = 'COALESCE(p.known_as, p.full_name)'
 
+/** Columnas de un equipo con prefijo, para reconstruir un TeamLite. */
+const teamCols = (alias: string, prefix: string) => `
+  ${alias}.id AS ${prefix}team_id, ${prefix}cr.ref AS ${prefix}club_ref, ${alias}.name AS ${prefix}name,
+  ${alias}.short_name AS ${prefix}short_name, ${alias}.abbreviation AS ${prefix}abbr,
+  COALESCE(${alias}.logo_url, ${prefix}c.logo_url) AS ${prefix}logo, COALESCE(${alias}.primary_color, ${prefix}c.primary_color) AS ${prefix}color`
+const teamJoins = (alias: string, prefix: string) => `
+  LEFT JOIN clubs ${prefix}c ON ${prefix}c.id = ${alias}.club_id
+  LEFT JOIN v_club_ref ${prefix}cr ON ${prefix}cr.club_id = ${alias}.club_id`
+
+const team = (r: Row, prefix = ''): TeamLite => ({
+  team_id: r[`${prefix}team_id`],
+  club_ref: r[`${prefix}club_ref`],
+  name: r[`${prefix}name`],
+  short_name: r[`${prefix}short_name`] ?? null,
+  abbr: r[`${prefix}abbr`] ?? null,
+  logo: r[`${prefix}logo`] ?? null,
+  color: r[`${prefix}color`] ?? null
+})
+
 const GAME_SELECT = `
-  SELECT g.id, rd.name AS round_name, rd.number AS round_number, rd.phase, g.scheduled_at, g.status,
-         g.home_team_id, ht.name AS home_name, ht.abbreviation AS home_abbr, ht.logo_url AS home_logo,
-         g.away_team_id, at.name AS away_name, at.abbreviation AS away_abbr, at.logo_url AS away_logo,
-         g.home_score, g.away_score, (g.boxscore_synced_at IS NOT NULL) AS has_boxscore
+  SELECT g.id, gr.ref, rd.name AS round_name, rd.number AS round_number, rd.phase, g.scheduled_at, g.status,
+         g.home_score, g.away_score, (g.boxscore_synced_at IS NOT NULL) AS has_boxscore, g.attendance, g.arena,
+         g.competition_season_id,
+         ${teamCols('ht', 'h_')}, ${teamCols('at', 'a_')}
   FROM games g
   JOIN teams ht ON ht.id = g.home_team_id
   JOIN teams at ON at.id = g.away_team_id
+  ${teamJoins('ht', 'h_')} ${teamJoins('at', 'a_')}
+  LEFT JOIN v_game_ref gr ON gr.game_id = g.id
   LEFT JOIN rounds rd ON rd.id = g.round_id`
 
-const STAT_COLS = `s.seconds, s.points, s.fg2m, s.fg2a, s.fg3m, s.fg3a, s.ftm, s.fta, s.oreb, s.dreb, s.reb,
-  s.ast, s.stl, s.tov, s.blk, s.pf, s.plus_minus, s.pir`
+const toGame = (r: Row): GameRow => ({
+  id: r.id,
+  ref: r.ref,
+  round_name: r.round_name,
+  round_number: r.round_number,
+  phase: r.phase,
+  scheduled_at: r.scheduled_at,
+  status: r.status,
+  home: team(r, 'h_'),
+  away: team(r, 'a_'),
+  home_score: r.home_score,
+  away_score: r.away_score,
+  has_boxscore: r.has_boxscore,
+  attendance: r.attendance,
+  arena: r.arena
+})
+
+const SUM_COLS = `COUNT(*) AS games, SUM(s.seconds) AS seconds, SUM(s.points) AS pts, SUM(s.reb) AS reb,
+  SUM(s.oreb) AS oreb, SUM(s.dreb) AS dreb, SUM(s.ast) AS ast, SUM(s.stl) AS stl, SUM(s.blk) AS blk,
+  SUM(s.tov) AS tov, SUM(s.pf) AS pf, SUM(s.fouls_drawn) AS fd, SUM(COALESCE(s.pir, 0)) AS pir,
+  SUM(COALESCE(s.plus_minus, 0)) AS pm, SUM(s.dunks) AS dunks, SUM(s.fg2m) AS fg2m, SUM(s.fg2a) AS fg2a,
+  SUM(s.fg3m) AS fg3m, SUM(s.fg3a) AS fg3a, SUM(s.ftm) AS ftm, SUM(s.fta) AS fta`
+
+/** Igual que SUM_COLS para team_game_stats (no guarda minutos ni +/-). */
+const TEAM_SUM_COLS = SUM_COLS.replace('SUM(s.seconds)', '0').replace('SUM(COALESCE(s.plus_minus, 0))', '0')
+
+const round1 = (v: number) => Math.round(v * 10) / 10
+const pct = (m: number, a: number) => (a > 0 ? round1((100 * m) / a) : null)
+
+/** Añade medias por partido y porcentajes a una fila de totales. */
+export function withRates<T extends Row>(r: T): T & StatBlock {
+  const g = Number(r.games) || 0
+  const per = (v: number) => (g ? round1((Number(v) || 0) / g) : 0)
+  const fga = (r.fg2a ?? 0) + (r.fg3a ?? 0)
+  const fgm = (r.fg2m ?? 0) + (r.fg3m ?? 0)
+  return {
+    ...r,
+    mpg: g ? round1((Number(r.seconds) || 0) / 60 / g) : 0,
+    ppg: per(r.pts),
+    rpg: per(r.reb),
+    orpg: per(r.oreb),
+    drpg: per(r.dreb),
+    apg: per(r.ast),
+    spg: per(r.stl),
+    bpg: per(r.blk),
+    tpg: per(r.tov),
+    pfpg: per(r.pf),
+    pirpg: per(r.pir),
+    pmpg: per(r.pm),
+    fg_pct: pct(fgm, fga),
+    fg2_pct: pct(r.fg2m ?? 0, r.fg2a ?? 0),
+    fg3_pct: pct(r.fg3m ?? 0, r.fg3a ?? 0),
+    ft_pct: pct(r.ftm ?? 0, r.fta ?? 0),
+    ts_pct: fga + (r.fta ?? 0) > 0 ? round1((100 * (r.pts ?? 0)) / (2 * (fga + 0.44 * (r.fta ?? 0)))) : null,
+    efg_pct: fga > 0 ? round1((100 * (fgm + 0.5 * (r.fg3m ?? 0))) / fga) : null
+  } as T & StatBlock
+}
+
+const json = <T>(v: unknown, fallback: T): T => {
+  if (typeof v !== 'string' || !v) return fallback
+  try {
+    return JSON.parse(v) as T
+  } catch {
+    return fallback
+  }
+}
 
 export class Queries {
   constructor(private readonly db: SqlDb) {}
 
+  private all<T = Row>(sql: string, ...params: unknown[]): T[] {
+    return this.db.prepare(sql).all(...params) as T[]
+  }
+  private get<T = Row>(sql: string, ...params: unknown[]): T | undefined {
+    return this.db.prepare(sql).get(...params) as T | undefined
+  }
+
+  // ───────────────────────── General ─────────────────────────
   counts(): Record<string, number> {
     const out: Record<string, number> = {}
-    for (const t of ['competition_seasons', 'teams', 'players', 'games', 'player_game_stats', 'scouting_reports']) {
-      out[t] = (this.db.prepare(`SELECT COUNT(*) AS n FROM ${t}`).get() as { n: number }).n
+    for (const t of ['competition_seasons', 'clubs', 'teams', 'players', 'games', 'player_game_stats', 'honours', 'scouting_reports']) {
+      out[t] = this.get<{ n: number }>(`SELECT COUNT(*) AS n FROM ${t}`)!.n
     }
     return out
   }
 
-  editions(): EditionRow[] {
-    return this.db
-      .prepare(
-        `SELECT cs.id, c.code AS competition_code, c.name AS competition_name, s.label AS season_label, s.start_year,
-                cs.is_current, cs.last_synced_at,
-                (SELECT COUNT(*) FROM teams t WHERE t.competition_season_id = cs.id) AS teams,
-                (SELECT COUNT(*) FROM games g WHERE g.competition_season_id = cs.id) AS games,
-                (SELECT COUNT(*) FROM games g WHERE g.competition_season_id = cs.id AND g.status = 'finished') AS finished
-         FROM competition_seasons cs
-         JOIN competitions c ON c.id = cs.competition_id
-         JOIN seasons s ON s.id = cs.season_id
-         ORDER BY c.tier, s.start_year DESC`
-      )
-      .all() as EditionRow[]
+  lastUpdate(): string | null {
+    return this.get<{ t: string | null }>('SELECT MAX(last_synced_at) AS t FROM competition_seasons')?.t ?? null
+  }
+
+  competitions(): CompetitionInfo[] {
+    return this.all<CompetitionInfo>(
+      `SELECT c.code, c.name, c.short_name, c.organizer, c.tier,
+              (SELECT COUNT(*) FROM competition_seasons cs WHERE cs.competition_id = c.id) AS editions,
+              (SELECT s.label FROM competition_seasons cs JOIN seasons s ON s.id = cs.season_id
+               WHERE cs.competition_id = c.id ORDER BY cs.is_current DESC, s.start_year DESC LIMIT 1) AS current_label
+       FROM competitions c ORDER BY c.tier`
+    )
+  }
+
+  editions(code?: string): EditionRow[] {
+    return this.all<EditionRow>(
+      `SELECT cs.id, c.code AS competition_code, c.name AS competition_name, s.label AS season_label, s.start_year,
+              cs.is_current, cs.last_synced_at,
+              (SELECT COUNT(*) FROM teams t WHERE t.competition_season_id = cs.id) AS teams,
+              (SELECT COUNT(*) FROM games g WHERE g.competition_season_id = cs.id) AS games,
+              (SELECT COUNT(*) FROM games g WHERE g.competition_season_id = cs.id AND g.status = 'finished') AS finished
+       FROM competition_seasons cs
+       JOIN competitions c ON c.id = cs.competition_id
+       JOIN seasons s ON s.id = cs.season_id
+       ${code ? 'WHERE c.code = ?' : ''}
+       ORDER BY c.tier, s.start_year DESC`,
+      ...(code ? [code] : [])
+    )
+  }
+
+  private currentEdition(code = 'ACB'): EditionRow | undefined {
+    const eds = this.editions(code)
+    return eds.find((e) => e.is_current) ?? eds[0]
+  }
+
+  // ───────────────────────── Bloques reutilizables ─────────────────────────
+  games(csId: number): GameRow[] {
+    return this.all(
+      `${GAME_SELECT} WHERE g.competition_season_id = ?
+       ORDER BY rd.phase DESC, rd.number, g.scheduled_at IS NULL, g.scheduled_at`,
+      csId
+    ).map(toGame)
   }
 
   standings(csId: number): StandingRow[] {
-    return this.db
-      .prepare(
-        `SELECT team_id, team_name, logo_url, played, won, lost, points_for, points_against, diff
-         FROM v_standings WHERE competition_season_id = ?
-         ORDER BY won DESC, diff DESC, points_for DESC`
-      )
-      .all(csId) as StandingRow[]
+    const rows = this.all(
+      `SELECT v.played, v.won, v.lost, v.points_for, v.points_against, v.diff, ${teamCols('t', '')}
+       FROM v_standings v JOIN teams t ON t.id = v.team_id ${teamJoins('t', '')}
+       WHERE v.competition_season_id = ?
+       ORDER BY v.won DESC, v.diff DESC, v.points_for DESC`,
+      csId
+    )
+    const results = this.all<{ home_team_id: number; away_team_id: number; home_score: number; away_score: number }>(
+      `SELECT home_team_id, away_team_id, home_score, away_score FROM games
+       WHERE competition_season_id = ? AND status = 'finished' ORDER BY scheduled_at`,
+      csId
+    )
+    const form = new Map<number, ('W' | 'L')[]>()
+    for (const g of results) {
+      const push = (id: number, won: boolean) => form.set(id, [...(form.get(id) ?? []), won ? 'W' : 'L'])
+      push(g.home_team_id, g.home_score > g.away_score)
+      push(g.away_team_id, g.away_score > g.home_score)
+    }
+    return rows.map((r, i) => ({
+      ...team(r),
+      position: i + 1,
+      played: r.played,
+      won: r.won,
+      lost: r.lost,
+      points_for: r.points_for,
+      points_against: r.points_against,
+      diff: r.diff,
+      form: (form.get(r.team_id) ?? []).slice(-5)
+    }))
   }
 
-  teams(csId: number): TeamRow[] {
-    return this.db
-      .prepare(
-        `SELECT t.*, s.label AS season_label FROM teams t
-         JOIN competition_seasons cs ON cs.id = t.competition_season_id
-         JOIN seasons s ON s.id = cs.season_id
-         WHERE t.competition_season_id = ? ORDER BY t.name`
-      )
-      .all(csId) as TeamRow[]
+  playerStats(csId: number, teamId?: number): PlayerStatRow[] {
+    return this.all(
+      `SELECT p.id AS player_id, pr.ref AS player_ref, ${DISPLAY_NAME} AS display_name, p.photo_url AS photo,
+              p.photo_nobg_url AS photo_nobg, p.position, p.nationality, SUM(s.is_starter) AS starts,
+              ${SUM_COLS}, ${teamCols('t', '')}
+       FROM player_game_stats s
+       JOIN players p ON p.id = s.player_id
+       JOIN teams t ON t.id = s.team_id ${teamJoins('t', '')}
+       LEFT JOIN v_player_ref pr ON pr.player_id = p.id
+       WHERE s.period = 0 AND s.seconds > 0 AND t.competition_season_id = ? ${teamId ? 'AND t.id = ?' : ''}
+       GROUP BY s.player_id, s.team_id`,
+      ...(teamId ? [csId, teamId] : [csId])
+    ).map((r) => withRates({ ...r, team: team(r) }) as unknown as PlayerStatRow)
   }
 
-  team(teamId: number) {
-    const team = this.db
-      .prepare(
-        `SELECT t.*, s.label AS season_label FROM teams t
-         JOIN competition_seasons cs ON cs.id = t.competition_season_id
-         JOIN seasons s ON s.id = cs.season_id WHERE t.id = ?`
-      )
-      .get(teamId) as TeamRow
-    const roster = this.db
-      .prepare(
-        `SELECT p.id AS player_id, ${DISPLAY_NAME} AS display_name, r.jersey_number, r.position, r.position_code,
-                r.license_type, p.nationality, p.height_cm, p.birth_date, p.photo_url, r.is_active,
-                v.games, v.ppg, v.rpg, v.apg, v.pir
-         FROM roster_entries r
-         JOIN players p ON p.id = r.player_id
-         LEFT JOIN v_player_season_stats v ON v.player_id = p.id AND v.team_id = r.team_id
-         WHERE r.team_id = ?
-         ORDER BY r.is_active DESC, CAST(r.jersey_number AS INTEGER)`
-      )
-      .all(teamId) as RosterRow[]
-    const staff = this.db
-      .prepare(
-        `SELECT c.full_name AS name, s.role FROM team_staff s JOIN coaches c ON c.id = s.coach_id
-         WHERE s.team_id = ? ORDER BY s.role DESC, c.full_name`
-      )
-      .all(teamId) as { name: string; role: string }[]
-    const games = this.db
-      .prepare(`${GAME_SELECT} WHERE g.home_team_id = ? OR g.away_team_id = ? ORDER BY g.scheduled_at IS NULL, g.scheduled_at`)
-      .all(teamId, teamId) as GameRow[]
-    return { team, roster, staff, games }
-  }
-
-  games(csId: number): GameRow[] {
-    return this.db
-      .prepare(`${GAME_SELECT} WHERE g.competition_season_id = ? ORDER BY rd.phase DESC, rd.number, g.scheduled_at`)
-      .all(csId) as GameRow[]
-  }
-
-  game(gameId: number): GameDetail {
-    const g = this.db
-      .prepare(
-        `${GAME_SELECT.replace('SELECT g.id,', 'SELECT g.id, g.arena, g.attendance, g.referees, s.label AS season_label,')}
-         JOIN competition_seasons cs ON cs.id = g.competition_season_id
-         JOIN seasons s ON s.id = cs.season_id
-         WHERE g.id = ?`
-      )
-      .get(gameId) as GameDetail['game'] & { referees: string | null }
-    const periods = this.db
-      .prepare('SELECT period, home_points, away_points FROM game_period_scores WHERE game_id = ? ORDER BY period')
-      .all(gameId) as GameDetail['periods']
-    const teams = [g.home_team_id, g.away_team_id].map((teamId) => {
-      const lines = this.db
-        .prepare(
-          `SELECT p.id AS player_id, ${DISPLAY_NAME} AS display_name, s.jersey_number, s.is_starter, ${STAT_COLS}
-           FROM player_game_stats s JOIN players p ON p.id = s.player_id
-           WHERE s.game_id = ? AND s.team_id = ? AND s.period = 0
-           ORDER BY s.is_starter DESC, s.seconds DESC`
-        )
-        .all(gameId, teamId) as GameDetail['teams'][number]['lines']
-      const total = this.db
-        .prepare(
-          `SELECT points, fg2m, fg2a, fg3m, fg3a, ftm, fta, oreb, dreb, reb, ast, stl, tov, blk, pf, pir, head_coach
-           FROM team_game_stats WHERE game_id = ? AND team_id = ? AND period = 0`
-        )
-        .get(gameId, teamId) as (GameDetail['teams'][number]['total'] & { head_coach: string | null }) | undefined
+  teamStats(csId: number): TeamStatRow[] {
+    const rows = this.all(
+      `SELECT ${TEAM_SUM_COLS}, ${teamCols('t', '')},
+              SUM(CASE WHEN (g.home_team_id = t.id AND g.home_score > g.away_score)
+                         OR (g.away_team_id = t.id AND g.away_score > g.home_score) THEN 1 ELSE 0 END) AS wins,
+              SUM(CASE WHEN g.home_team_id = t.id THEN g.away_score ELSE g.home_score END) AS opp_pts
+       FROM team_game_stats s
+       JOIN games g ON g.id = s.game_id AND g.status = 'finished'
+       JOIN teams t ON t.id = s.team_id ${teamJoins('t', '')}
+       WHERE s.period = 0 AND t.competition_season_id = ?
+       GROUP BY t.id`,
+      csId
+    )
+    const att = new Map(
+      this.all<{ team_id: number; n: number; total: number; max: number }>(
+        `SELECT home_team_id AS team_id, COUNT(attendance) AS n, SUM(attendance) AS total, MAX(attendance) AS max
+         FROM games WHERE competition_season_id = ? AND attendance IS NOT NULL GROUP BY home_team_id`,
+        csId
+      ).map((a) => [a.team_id, a])
+    )
+    return rows.map((r) => {
+      const base = withRates(r)
+      const a = att.get(r.team_id)
       return {
-        team_id: teamId,
-        is_home: teamId === g.home_team_id ? 1 : 0,
-        name: teamId === g.home_team_id ? g.home_name : g.away_name,
-        head_coach: total?.head_coach ?? null,
-        lines,
-        total: total ?? ({} as GameDetail['teams'][number]['total'])
+        ...base,
+        team: team(r),
+        wins: r.wins,
+        losses: r.games - r.wins,
+        opp_pts: r.opp_pts,
+        opp_ppg: round1(r.opp_pts / (r.games || 1)),
+        diff_pg: round1((r.pts - r.opp_pts) / (r.games || 1)),
+        home_games: a?.n ?? 0,
+        attendance_total: a?.total ?? 0,
+        attendance_avg: a?.n ? Math.round(a.total / a.n) : null,
+        attendance_max: a?.max ?? null
+      } as TeamStatRow
+    })
+  }
+
+  private leadersFrom(stats: PlayerStatRow[], key: 'ppg' | 'rpg' | 'apg' | 'pirpg', n = 5): LeaderRow[] {
+    const maxGames = Math.max(0, ...stats.map((s) => s.games))
+    return stats
+      .filter((s) => s.games >= maxGames / 2 && s.mpg >= 10)
+      .sort((a, b) => b[key] - a[key])
+      .slice(0, n)
+      .map((s) => ({
+        player_ref: s.player_ref,
+        display_name: s.display_name,
+        photo_nobg: s.photo_nobg,
+        photo: s.photo,
+        team: s.team,
+        games: s.games,
+        value: s[key]
+      }))
+  }
+
+  honours(): HonourRow[] {
+    return this.all<HonourRow>(
+      `SELECT h.competition, h.season_start_year, h.label, h.champion_name, cr.ref AS champion_ref,
+              c.logo_url AS champion_logo, h.runner_up_name, rr.ref AS runner_up_ref, r.logo_url AS runner_up_logo, h.result
+       FROM honours h
+       LEFT JOIN clubs c ON c.id = h.champion_club_id LEFT JOIN v_club_ref cr ON cr.club_id = h.champion_club_id
+       LEFT JOIN clubs r ON r.id = h.runner_up_club_id LEFT JOIN v_club_ref rr ON rr.club_id = h.runner_up_club_id
+       ORDER BY h.season_start_year DESC, h.competition`
+    )
+  }
+
+  alltime(): ClubRecordRow[] {
+    return this.all<ClubRecordRow>(
+      `SELECT cr.ref AS club_ref, c.name, c.logo_url AS logo, r.scope, r.position, r.seasons, r.games, r.wins,
+              r.losses, r.points_for, r.points_against, r.best_margin, r.worst_margin,
+              r.first_places, r.second_places, r.third_places, r.fourth_places,
+              (SELECT COUNT(*) FROM honours h WHERE h.champion_club_id = c.id AND h.competition = 'liga'
+                 AND (r.scope = 'total' OR h.season_start_year >= 1983)) AS titles_liga,
+              (SELECT COUNT(*) FROM honours h WHERE h.champion_club_id = c.id AND h.competition = 'copa') AS titles_copa,
+              (SELECT COUNT(*) FROM honours h WHERE h.champion_club_id = c.id AND h.competition = 'supercopa') AS titles_supercopa
+       FROM club_records r JOIN clubs c ON c.id = r.club_id JOIN v_club_ref cr ON cr.club_id = c.id
+       ORDER BY r.scope, r.position IS NULL, r.position`
+    )
+  }
+
+  // ───────────────────────── Páginas ─────────────────────────
+  home(): HomeData {
+    const edition = this.currentEdition()
+    const competition = this.competitions().find((c) => c.code === 'ACB')
+    const counts = this.counts()
+    const empty = { ppg: [], rpg: [], apg: [], pirpg: [] }
+    const allHonours = this.honours()
+    const champions = (['liga', 'copa', 'supercopa'] as const)
+      .map((c) => allHonours.find((h) => h.competition === c))
+      .filter(Boolean) as HonourRow[]
+    if (!edition) {
+      return {
+        competition,
+        edition,
+        lastRound: undefined,
+        nextRound: undefined,
+        standings: [],
+        leaders: empty,
+        champions,
+        counts: { players: counts.players, clubs: counts.clubs, games: counts.games, honours: counts.honours }
+      }
+    }
+    const games = this.games(edition.id)
+    const byRound = new Map<string, GameRow[]>()
+    for (const g of games) {
+      const k = g.round_name ?? 'Otros'
+      byRound.set(k, [...(byRound.get(k) ?? []), g])
+    }
+    const rounds = [...byRound.entries()]
+    const last = [...rounds].reverse().find(([, gs]) => gs.some((g) => g.status === 'finished'))
+    const next = rounds.find(([, gs]) => gs.some((g) => g.status !== 'finished'))
+    const stats = this.playerStats(edition.id)
+    return {
+      competition,
+      edition,
+      lastRound: last && { name: last[0], games: last[1] },
+      nextRound: next && { name: next[0], games: next[1] },
+      standings: this.standings(edition.id),
+      leaders: {
+        ppg: this.leadersFrom(stats, 'ppg'),
+        rpg: this.leadersFrom(stats, 'rpg'),
+        apg: this.leadersFrom(stats, 'apg'),
+        pirpg: this.leadersFrom(stats, 'pirpg')
+      },
+      champions,
+      counts: { players: counts.players, clubs: counts.clubs, games: counts.games, honours: counts.honours }
+    }
+  }
+
+  league(code: string, year?: number): LeagueData | null {
+    const competition = this.competitions().find((c) => c.code === code)
+    if (!competition) return null
+    const editions = this.editions(code)
+    const edition = year ? editions.find((e) => e.start_year === year) : (editions.find((e) => e.is_current) ?? editions[0])
+    return {
+      competition,
+      editions,
+      edition,
+      standings: edition ? this.standings(edition.id) : [],
+      games: edition ? this.games(edition.id) : [],
+      teamStats: edition ? this.teamStats(edition.id) : [],
+      playerStats: edition ? this.playerStats(edition.id) : [],
+      honours: code === 'ACB' ? this.honours() : [],
+      alltime: code === 'ACB' ? this.alltime() : []
+    }
+  }
+
+  clubs() {
+    const ed = this.currentEdition()
+    if (!ed) return []
+    return this.all(
+      `SELECT ${teamCols('t', '')}, c.arena, c.founded_year FROM teams t ${teamJoins('t', '')}
+       WHERE t.competition_season_id = ? ORDER BY t.name`,
+      ed.id
+    ).map((r) => ({ ...team(r), arena: r.arena as string | null, founded_year: r.founded_year as number | null }))
+  }
+
+  private clubIdByRef(ref: string): number | undefined {
+    return this.get<{ club_id: number }>('SELECT club_id FROM v_club_ref WHERE ref = ?', ref)?.club_id
+  }
+
+  club(ref: string, year?: number): ClubData | null {
+    const clubId = this.clubIdByRef(ref)
+    if (clubId == null) return null
+    const c = this.get(`SELECT c.*, cr.ref FROM clubs c JOIN v_club_ref cr ON cr.club_id = c.id WHERE c.id = ?`, clubId)!
+    const seasons = this.all<ClubData['seasons'][number]>(
+      `SELECT s.start_year, s.label, co.code AS competition_code, t.id AS team_id, t.name AS team_name
+       FROM teams t JOIN competition_seasons cs ON cs.id = t.competition_season_id
+       JOIN seasons s ON s.id = cs.season_id JOIN competitions co ON co.id = cs.competition_id
+       WHERE t.club_id = ? ORDER BY s.start_year DESC`,
+      clubId
+    )
+    const season = (year ? seasons.find((s) => s.start_year === year) : undefined) ?? seasons[0]
+    const teamRow = season
+      ? this.get(`SELECT ${teamCols('t', '')}, t.competition_season_id FROM teams t ${teamJoins('t', '')} WHERE t.id = ?`, season.team_id)
+      : undefined
+    const csId = teamRow?.competition_season_id as number | undefined
+    const stats = csId ? this.playerStats(csId, season!.team_id) : []
+
+    const roster = season
+      ? this.all<RosterRow>(
+          `SELECT p.id AS player_id, pr.ref AS player_ref, ${DISPLAY_NAME} AS display_name, p.photo_url AS photo,
+                  p.photo_nobg_url AS photo_nobg, r.jersey_number, r.position, r.position_code, r.license_type,
+                  p.nationality, p.height_cm, p.birth_date, r.is_active
+           FROM roster_entries r JOIN players p ON p.id = r.player_id
+           JOIN v_player_ref pr ON pr.player_id = p.id
+           WHERE r.team_id = ?
+           ORDER BY r.is_active DESC, CAST(r.jersey_number AS INTEGER)`,
+          season.team_id
+        ).map((r) => {
+          const s = stats.find((x) => x.player_id === r.player_id)
+          return { ...r, games: s?.games ?? 0, mpg: s?.mpg ?? null, ppg: s?.ppg ?? null, rpg: s?.rpg ?? null, apg: s?.apg ?? null, pirpg: s?.pirpg ?? null }
+        })
+      : []
+
+    const honours: ClubHonour[] = this.all<ClubHonour>(
+      `SELECT competition, season_start_year, label,
+              CASE WHEN champion_club_id = ? THEN 'champion' ELSE 'runner_up' END AS role,
+              CASE WHEN champion_club_id = ? THEN runner_up_name ELSE champion_name END AS opponent, result
+       FROM honours WHERE champion_club_id = ? OR runner_up_club_id = ?
+       ORDER BY season_start_year DESC`,
+      clubId,
+      clubId,
+      clubId,
+      clubId
+    )
+    const records = Object.fromEntries(
+      this.alltime()
+        .filter((r) => r.club_ref === ref)
+        .map((r) => [r.scope, r])
+    ) as ClubData['records']
+
+    const info: ClubInfo = {
+      club_id: clubId,
+      ref,
+      name: c.name,
+      short_name: c.short_name,
+      abbr: c.abbreviation,
+      logo: c.logo_url ?? teamRow?.logo ?? null,
+      color: c.primary_color ?? teamRow?.color ?? null,
+      founded_year: c.founded_year,
+      arena: c.arena,
+      arena_address: c.arena_address,
+      arena_capacity: c.arena_capacity,
+      arena_photo_url: c.arena_photo_url,
+      website: c.website,
+      president: c.president,
+      socials: json(c.socials, {}),
+      history: c.history,
+      history_url: c.history_url
+    }
+    const standing = csId ? this.standings(csId).find((s) => s.team_id === season!.team_id) : undefined
+    const pick = (k: 'ppg' | 'rpg' | 'apg' | 'pirpg') => this.leadersFrom(stats, k, 1)[0]
+    return {
+      club: info,
+      seasons,
+      season: season && { start_year: season.start_year, label: season.label },
+      team: teamRow ? team(teamRow) : undefined,
+      roster,
+      staff: season
+        ? this.all<{ name: string; role: string }>(
+            `SELECT c.full_name AS name, s.role FROM team_staff s JOIN coaches c ON c.id = s.coach_id
+             WHERE s.team_id = ? ORDER BY s.role DESC, c.full_name`,
+            season.team_id
+          )
+        : [],
+      games: season
+        ? this.all(
+            `${GAME_SELECT} WHERE g.home_team_id = ? OR g.away_team_id = ? ORDER BY g.scheduled_at IS NULL, g.scheduled_at`,
+            season.team_id,
+            season.team_id
+          ).map(toGame)
+        : [],
+      stats: csId ? this.teamStats(csId).find((t) => t.team.team_id === season!.team_id) : undefined,
+      playerStats: stats,
+      standing,
+      leaders: { ppg: pick('ppg'), rpg: pick('rpg'), apg: pick('apg'), pirpg: pick('pirpg') },
+      honours,
+      records
+    }
+  }
+
+  players(): PlayerIndexRow[] {
+    const ed = this.currentEdition()
+    if (!ed) return []
+    const stats = new Map(this.playerStats(ed.id).map((s) => [`${s.player_id}:${s.team.team_id}`, s]))
+    return this.all(
+      `SELECT p.id AS player_id, pr.ref AS player_ref, ${DISPLAY_NAME} AS display_name, p.photo_url AS photo,
+              p.photo_nobg_url AS photo_nobg, COALESCE(r.position, p.position) AS position,
+              COALESCE(r.position_code, p.position_code) AS position_code, p.nationality, p.height_cm, p.birth_date,
+              r.jersey_number, ${teamCols('t', '')}
+       FROM roster_entries r JOIN players p ON p.id = r.player_id JOIN v_player_ref pr ON pr.player_id = p.id
+       JOIN teams t ON t.id = r.team_id ${teamJoins('t', '')}
+       WHERE t.competition_season_id = ? AND r.is_active = 1
+       ORDER BY display_name`,
+      ed.id
+    ).map((r) => {
+      const s = stats.get(`${r.player_id}:${r.team_id}`)
+      return {
+        player_ref: r.player_ref,
+        display_name: r.display_name,
+        photo: r.photo,
+        photo_nobg: r.photo_nobg,
+        position: r.position,
+        position_code: r.position_code,
+        nationality: r.nationality,
+        height_cm: r.height_cm,
+        birth_date: r.birth_date,
+        jersey_number: r.jersey_number,
+        team: team(r),
+        games: s?.games ?? 0,
+        ppg: s?.ppg ?? null,
+        rpg: s?.rpg ?? null,
+        apg: s?.apg ?? null,
+        pirpg: s?.pirpg ?? null
       }
     })
-    return { game: { ...g, referees: g.referees ? (JSON.parse(g.referees) as string[]) : [] }, periods, teams }
   }
 
-  player(playerId: number): PlayerDetail {
-    const player = this.db
-      .prepare(
-        `SELECT p.id, ${DISPLAY_NAME} AS display_name, p.full_name, p.first_name, p.last_name, p.birth_date,
-                p.birth_place, p.birth_country, p.nationality, p.height_cm, p.position, p.position_code, p.photo_url,
-                (SELECT 'https://acb.com/es/liga/jugadores/jugador-' || external_id FROM external_ids
-                 WHERE entity_type = 'player' AND entity_id = p.id AND source = 'acb') AS acb_url
-         FROM players p WHERE p.id = ?`
-      )
-      .get(playerId) as PlayerDetail['player']
-    const seasons = this.db
-      .prepare(
-        `SELECT t.id AS team_id, t.name AS team_name, s.label AS season_label, c.code AS competition_code,
-                r.jersey_number, r.is_active, v.games, v.mpg, v.ppg, v.rpg, v.apg, v.spg, v.bpg, v.pir,
-                v.fg2_pct, v.fg3_pct, v.ft_pct, v.ts_pct, v.efg_pct
-         FROM roster_entries r
-         JOIN teams t ON t.id = r.team_id
-         JOIN competition_seasons cs ON cs.id = t.competition_season_id
-         JOIN seasons s ON s.id = cs.season_id
-         JOIN competitions c ON c.id = cs.competition_id
-         LEFT JOIN v_player_season_stats v ON v.player_id = r.player_id AND v.team_id = r.team_id
-         WHERE r.player_id = ?
-         ORDER BY s.start_year DESC, c.tier`
-      )
-      .all(playerId) as PlayerDetail['seasons']
-    const gameLog = this.db
-      .prepare(
-        `SELECT g.id AS game_id, g.scheduled_at, (g.home_team_id = s.team_id) AS is_home,
-                CASE WHEN g.home_team_id = s.team_id THEN at.name ELSE ht.name END AS opponent,
-                CASE WHEN g.home_team_id = s.team_id THEN g.home_score ELSE g.away_score END AS team_score,
-                CASE WHEN g.home_team_id = s.team_id THEN g.away_score ELSE g.home_score END AS opp_score,
-                p.id AS player_id, ${DISPLAY_NAME} AS display_name, s.jersey_number, s.is_starter, ${STAT_COLS}
-         FROM player_game_stats s
-         JOIN games g ON g.id = s.game_id
-         JOIN teams ht ON ht.id = g.home_team_id
-         JOIN teams at ON at.id = g.away_team_id
-         JOIN players p ON p.id = s.player_id
-         WHERE s.player_id = ? AND s.period = 0
-         ORDER BY g.scheduled_at DESC LIMIT 100`
-      )
-      .all(playerId) as PlayerDetail['gameLog']
-    return { player, seasons, gameLog, reports: this.reports(playerId) }
+  private playerIdByRef(ref: string): number | undefined {
+    return this.get<{ player_id: number }>('SELECT player_id FROM v_player_ref WHERE ref = ?', ref)?.player_id
   }
 
-  leaders(csId: number, stat: LeaderStat): LeaderRow[] {
-    if (!(stat in LEADER_STATS)) throw new Error(`Estadística no válida: ${stat}`)
-    // Mínimos para entrar en el ranking: la mitad de los partidos del que más ha jugado,
-    // 10 min por partido y, en porcentajes, 5 tiros "reales" (FGA + 0.44·FTA) por partido.
-    const volume = stat === 'ts_pct' ? 'AND (b.fga + 0.44 * b.fta) >= 5 * b.games' : ''
-    return this.db
-      .prepare(
-        `WITH base AS (
-           SELECT v.* FROM v_player_season_stats v WHERE v.competition_season_id = ?
-         )
-         SELECT b.player_id, COALESCE(p.known_as, p.full_name) AS display_name, b.team_name, b.games, b.${stat} AS value
-         FROM base b JOIN players p ON p.id = b.player_id
-         WHERE b.${stat} IS NOT NULL AND b.games >= (SELECT MAX(games) FROM base) / 2.0
-           AND b.mpg >= 10 ${volume}
-         ORDER BY value DESC LIMIT 15`
+  player(ref: string): PlayerData | null {
+    const id = this.playerIdByRef(ref)
+    if (id == null) return null
+    const p = this.get(`SELECT p.*, ${DISPLAY_NAME} AS display_name FROM players p WHERE p.id = ?`, id)!
+
+    const current = this.get(
+      `SELECT ${teamCols('t', '')}, r.jersey_number, r.license_type, r.is_active, s.label AS season_label, t.competition_season_id
+       FROM roster_entries r JOIN teams t ON t.id = r.team_id ${teamJoins('t', '')}
+       JOIN competition_seasons cs ON cs.id = t.competition_season_id JOIN seasons s ON s.id = cs.season_id
+       WHERE r.player_id = ? ORDER BY s.start_year DESC, r.is_active DESC LIMIT 1`,
+      id
+    )
+    const season = current
+      ? this.playerStats(current.competition_season_id, current.team_id).find((s) => s.player_id === id)
+      : undefined
+
+    // Trayectoria: temporadas con boxscores propios + temporadas pasadas agregadas desde acb.com.
+    const fromBox = this.all(
+      `SELECT se.start_year, se.label, co.code AS competition_code, t.name AS team_name, cr.ref AS club_ref,
+              COALESCE(t.logo_url, c.logo_url) AS logo, ${SUM_COLS},
+              SUM(CASE WHEN rd.phase = 'playoff' THEN 1 ELSE 0 END) AS playoff_games,
+              SUM(CASE WHEN (g.home_team_id = t.id AND g.home_score > g.away_score)
+                         OR (g.away_team_id = t.id AND g.away_score > g.home_score) THEN 1 ELSE 0 END) AS wins
+       FROM player_game_stats s JOIN games g ON g.id = s.game_id LEFT JOIN rounds rd ON rd.id = g.round_id
+       JOIN teams t ON t.id = s.team_id JOIN clubs c ON c.id = t.club_id JOIN v_club_ref cr ON cr.club_id = c.id
+       JOIN competition_seasons cs ON cs.id = t.competition_season_id JOIN seasons se ON se.id = cs.season_id
+       JOIN competitions co ON co.id = cs.competition_id
+       WHERE s.player_id = ? AND s.period = 0 AND s.seconds > 0
+       GROUP BY t.id`,
+      id
+    ).map((r) => ({ ...withRates(r), source: 'boxscores' }) as TrajectoryRow)
+    const covered = new Set(fromBox.map((r) => `${r.competition_code}:${r.start_year}`))
+    const fromLines = this.all(
+      `SELECT l.season_start_year AS start_year, l.competition_code, l.team_name, cr.ref AS club_ref, c.logo_url AS logo,
+              l.games, l.playoff_games, l.wins, l.seconds, l.points AS pts, l.reb, l.oreb, l.dreb, l.ast, l.stl, l.blk,
+              l.tov, l.pf, l.fouls_drawn AS fd, l.pir, l.plus_minus AS pm, l.dunks, l.fg2m, l.fg2a, l.fg3m, l.fg3a, l.ftm, l.fta
+       FROM player_season_lines l LEFT JOIN clubs c ON c.id = l.club_id LEFT JOIN v_club_ref cr ON cr.club_id = l.club_id
+       WHERE l.player_id = ?`,
+      id
+    )
+      .filter((r) => !covered.has(`${r.competition_code}:${r.start_year}`))
+      .map(
+        (r) =>
+          ({
+            ...withRates(r),
+            label: `${r.start_year}-${String(r.start_year + 1).slice(-2)}`,
+            source: 'acb'
+          }) as TrajectoryRow
       )
-      .all(csId) as LeaderRow[]
+    const trajectory = [...fromBox, ...fromLines].sort((a, b) => b.start_year - a.start_year)
+
+    const gameLog = this.all(
+      `SELECT g.id AS game_id, gr.ref AS game_ref, g.scheduled_at, (g.home_team_id = s.team_id) AS is_home,
+              CASE WHEN g.home_team_id = s.team_id THEN g.home_score ELSE g.away_score END AS team_score,
+              CASE WHEN g.home_team_id = s.team_id THEN g.away_score ELSE g.home_score END AS opp_score,
+              s.is_starter, s.seconds, s.points, s.fg2m, s.fg2a, s.fg3m, s.fg3a, s.ftm, s.fta, s.reb, s.ast, s.stl,
+              s.blk, s.tov, s.pf, s.plus_minus, s.pir, ${teamCols('o', '')}
+       FROM player_game_stats s JOIN games g ON g.id = s.game_id
+       JOIN teams o ON o.id = CASE WHEN g.home_team_id = s.team_id THEN g.away_team_id ELSE g.home_team_id END
+       ${teamJoins('o', '')}
+       LEFT JOIN v_game_ref gr ON gr.game_id = g.id
+       WHERE s.player_id = ? AND s.period = 0
+       ORDER BY g.scheduled_at DESC LIMIT 60`,
+      id
+    ).map((r) => ({ ...r, opponent: team(r) }) as unknown as PlayerGameLog)
+
+    const acbRef = this.get<{ external_id: string }>(
+      `SELECT external_id FROM external_ids WHERE entity_type = 'player' AND entity_id = ? AND source = 'acb'`,
+      id
+    )?.external_id
+    return {
+      player: {
+        id,
+        ref,
+        display_name: p.display_name,
+        full_name: p.full_name,
+        first_name: p.first_name,
+        last_name: p.last_name,
+        birth_date: p.birth_date,
+        birth_place: p.birth_place,
+        birth_country: p.birth_country,
+        nationality: p.nationality,
+        height_cm: p.height_cm,
+        position: p.position,
+        position_code: p.position_code,
+        photo: p.photo_url,
+        photo_nobg: p.photo_nobg_url,
+        body_photo: p.body_photo_url,
+        socials: json(p.socials, {}),
+        acb_url: acbRef ? `https://acb.com/es/liga/jugadores/jugador-${acbRef}` : null
+      },
+      current: current
+        ? {
+            ...team(current),
+            jersey_number: current.jersey_number,
+            season_label: current.season_label,
+            license_type: current.license_type,
+            is_active: current.is_active
+          }
+        : undefined,
+      season,
+      career: json<PlayerCareer | undefined>(p.career, undefined),
+      trajectory,
+      gameLog,
+      reports: this.reports(id)
+    }
+  }
+
+  game(ref: string): GameDetail | null {
+    const row = this.get(`${GAME_SELECT.replace('SELECT g.id,', 'SELECT g.id, g.referees, s.label AS season_label,')}
+       JOIN competition_seasons cs ON cs.id = g.competition_season_id JOIN seasons s ON s.id = cs.season_id
+       WHERE gr.ref = ?`, ref)
+    if (!row) return null
+    const g = toGame(row)
+    const periods = this.all<GameDetail['periods'][number]>(
+      'SELECT period, home_points, away_points FROM game_period_scores WHERE game_id = ? ORDER BY period',
+      g.id
+    )
+    const teams = [g.home, g.away].map((t) => {
+      const lines = this.all<GameDetail['teams'][number]['lines'][number]>(
+        `SELECT p.id AS player_id, pr.ref AS player_ref, ${DISPLAY_NAME} AS display_name, s.jersey_number, s.is_starter,
+                s.seconds, s.points, s.fg2m, s.fg2a, s.fg3m, s.fg3a, s.ftm, s.fta, s.oreb, s.dreb, s.reb, s.ast, s.stl,
+                s.tov, s.blk, s.pf, s.plus_minus, s.pir
+         FROM player_game_stats s JOIN players p ON p.id = s.player_id JOIN v_player_ref pr ON pr.player_id = p.id
+         WHERE s.game_id = ? AND s.team_id = ? AND s.period = 0
+         ORDER BY s.is_starter DESC, s.seconds DESC`,
+        g.id,
+        t.team_id
+      )
+      const total = this.get(
+        `SELECT points, fg2m, fg2a, fg3m, fg3a, ftm, fta, oreb, dreb, reb, ast, stl, tov, blk, pf, pir, head_coach
+         FROM team_game_stats WHERE game_id = ? AND team_id = ? AND period = 0`,
+        g.id,
+        t.team_id
+      )
+      return { team: t, is_home: t.team_id === g.home.team_id ? 1 : 0, head_coach: total?.head_coach ?? null, lines, total: total ?? {} }
+    })
+    return { game: { ...g, referees: json(row.referees, []), season_label: row.season_label }, periods, teams }
   }
 
   search(q: string): SearchResult[] {
-    const term = `%${q.trim().normalize('NFC')}%`
-    if (q.trim().length < 2) return []
-    return this.db
-      .prepare(
-        `SELECT p.id AS player_id, ${DISPLAY_NAME} AS display_name, p.position,
-                (SELECT t.name FROM roster_entries r JOIN teams t ON t.id = r.team_id
-                 WHERE r.player_id = p.id ORDER BY t.competition_season_id DESC, r.is_active DESC LIMIT 1) AS team_name,
-                (SELECT s.label FROM roster_entries r JOIN teams t ON t.id = r.team_id
-                 JOIN competition_seasons cs ON cs.id = t.competition_season_id JOIN seasons s ON s.id = cs.season_id
-                 WHERE r.player_id = p.id ORDER BY s.start_year DESC LIMIT 1) AS season_label
-         FROM players p
-         WHERE p.full_name LIKE ? OR p.known_as LIKE ?
-         ORDER BY display_name LIMIT 30`
-      )
-      .all(term, term) as SearchResult[]
+    const text = q.trim()
+    if (text.length < 2) return []
+    const term = `%${text}%`
+    const clubs = this.all<SearchResult>(
+      `SELECT 'club' AS kind, cr.ref, c.name, c.arena AS detail, c.logo_url AS image
+       FROM clubs c JOIN v_club_ref cr ON cr.club_id = c.id
+       WHERE (c.name LIKE ? OR c.short_name LIKE ?) AND EXISTS (SELECT 1 FROM teams t WHERE t.club_id = c.id)
+       ORDER BY c.name LIMIT 6`,
+      term,
+      term
+    )
+    const players = this.all<SearchResult>(
+      `SELECT 'player' AS kind, pr.ref, ${DISPLAY_NAME} AS name, COALESCE(p.photo_nobg_url, p.photo_url) AS image,
+              (SELECT t.name FROM roster_entries r JOIN teams t ON t.id = r.team_id
+               WHERE r.player_id = p.id ORDER BY t.competition_season_id DESC, r.is_active DESC LIMIT 1) AS detail
+       FROM players p JOIN v_player_ref pr ON pr.player_id = p.id
+       WHERE p.full_name LIKE ? OR p.known_as LIKE ?
+       ORDER BY name LIMIT 12`,
+      term,
+      term
+    )
+    return [...clubs, ...players]
   }
 
-  // ───────── scouting ─────────
+  // ───────────────────────── Scouting ─────────────────────────
   reports(playerId?: number): ScoutingReport[] {
-    const rows = this.db
-      .prepare(
-        `SELECT r.*, ${DISPLAY_NAME} AS player_name FROM scouting_reports r JOIN players p ON p.id = r.player_id
-         ${playerId ? 'WHERE r.player_id = ?' : ''} ORDER BY r.updated_at DESC`
-      )
-      .all(...(playerId ? [playerId] : [])) as ScoutingReport[]
+    const rows = this.all<ScoutingReport>(
+      `SELECT r.*, ${DISPLAY_NAME} AS player_name, pr.ref AS player_ref, COALESCE(p.photo_nobg_url, p.photo_url) AS player_photo
+       FROM scouting_reports r JOIN players p ON p.id = r.player_id JOIN v_player_ref pr ON pr.player_id = p.id
+       ${playerId ? 'WHERE r.player_id = ?' : ''} ORDER BY r.updated_at DESC`,
+      ...(playerId ? [playerId] : [])
+    )
     const ratings = this.db.prepare('SELECT attribute, score, note FROM scouting_ratings WHERE report_id = ? ORDER BY rowid')
     return rows.map((r) => ({ ...r, ratings: ratings.all(r.id) as ScoutingReport['ratings'] }))
   }
