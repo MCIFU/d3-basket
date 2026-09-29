@@ -71,6 +71,7 @@ pip install pillow numpy opencv-python-headless "rembg[cpu]"
 python tools/media/logos.py                  # escudos y colores nuevos
 python tools/media/faces.py --shard 0/3 &    # fotos nuevas (en paralelo: 0/3, 1/3, 2/3)
 python tools/media/faces.py --recheck        # rehace las dudosas (restos de fondo, huecos)
+# tools/media/players-skip.txt: jugadores sin foto en la FEB o sin cara; no se reintentan (salvo --force)
 ```
 
 Solo procesa lo que falta; después hay que hacer commit de `public/media`. Los jugadores que lleguen después en el build diario usan la foto original de la FEB hasta la siguiente pasada.
