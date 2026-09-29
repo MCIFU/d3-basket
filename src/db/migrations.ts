@@ -532,5 +532,20 @@ INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier) VAL
 -- Segundo color del club (sacado de su escudo, ver src/db/media.ts).
 ALTER TABLE clubs ADD COLUMN secondary_color TEXT;
 `
+  },
+  {
+    version: 7,
+    name: 'club_ref_one_feb_id',
+    sql: /* sql */ `
+-- La FEB cambia el id de equipo cada temporada: un club con varias temporadas tiene varios
+-- ids FEB. La referencia estable es la del más reciente (un único valor por club).
+DROP VIEW v_club_ref;
+CREATE VIEW v_club_ref AS
+  SELECT c.id AS club_id, COALESCE(
+    (SELECT external_id FROM external_ids WHERE entity_type = 'club' AND entity_id = c.id AND source = 'acb' LIMIT 1),
+    'f' || (SELECT MAX(CAST(external_id AS INTEGER)) FROM external_ids WHERE entity_type = 'club' AND entity_id = c.id AND source = 'feb'),
+    'i' || c.id) AS ref
+  FROM clubs c;
+`
   }
 ]

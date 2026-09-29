@@ -44,6 +44,10 @@
   "primary": "#000000",
   "secondary": "#333332"
  },
+ "5": {
+  "primary": "#fab428",
+  "secondary": "#182d4d"
+ },
  "549": {
   "primary": "#00669e",
   "secondary": "#f17819"
@@ -55,6 +59,10 @@
  "591": {
   "primary": "#b32836",
   "secondary": "#002d54"
+ },
+ "592": {
+  "primary": "#e21b3a",
+  "secondary": "#000a12"
  },
  "657": {
   "primary": "#e85204",
@@ -204,10 +212,6 @@
   "primary": "#f68e2b",
   "secondary": "#e3c08f"
  },
- "f1008797": {
-  "primary": "#fab428",
-  "secondary": "#182d4d"
- },
  "f1008800": {
   "primary": "#2c2767",
   "secondary": "#f12d1d"
@@ -324,10 +328,6 @@
  "f1009106": {
   "primary": "#ab881a",
   "secondary": "#020101"
- },
- "f1009109": {
-  "primary": "#e21b3a",
-  "secondary": "#000a12"
  },
  "f1009110": {
   "primary": "#166938",

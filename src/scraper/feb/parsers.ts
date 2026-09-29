@@ -120,8 +120,11 @@ function teamFrom(cell: cheerio.Cheerio<never>): NTeam | undefined {
 }
 
 export interface FebGroups {
-  /** Grupos de la fase (Segunda FEB: 'A' y 'B'); uno solo si la liga no se divide. */
-  groups: { value: string; name: string }[]
+  /**
+   * Opciones del selector: grupos de liga regular (Segunda FEB: 'A' y 'B') y, en temporadas
+   * cerradas, fases finales ('FASE FINAL-A FFA1'...), que no son grupos de la clasificación.
+   */
+  groups: { value: string; name: string; label: string; regular: boolean }[]
   selected?: string
   /** Campos del formulario ASP.NET para pedir otro grupo por postback. */
   postback: (groupValue: string) => Record<string, string>
@@ -136,7 +139,7 @@ export function parseFebGroups(html: string): FebGroups {
     .toArray()
     .map((o) => {
       const label = clean($(o).text())
-      return { value: $(o).attr('value') ?? '', name: /"([^"]+)"/.exec(label)?.[1] ?? label }
+      return { value: $(o).attr('value') ?? '', name: /"([^"]+)"/.exec(label)?.[1] ?? label, label, regular: /liga regular/i.test(label) }
     })
     .filter((g) => g.value)
   const hidden: Record<string, string> = {}
@@ -160,7 +163,15 @@ export function parseFebGroups(html: string): FebGroups {
   }
 }
 
-export function parseFebCalendar(html: string, competition: CompetitionCode, startYear: number, name: string, group?: string): NCalendar {
+export function parseFebCalendar(
+  html: string,
+  competition: CompetitionCode,
+  startYear: number,
+  name: string,
+  group?: string,
+  /** Fase distinta de la liga regular (fases finales): sus jornadas no cuentan para la clasificación. */
+  phase?: { id: string; name: string }
+): NCalendar {
   const $ = cheerio.load(html)
   const rounds = $('div.columna').toArray()
   if (!rounds.length) throw new FebParseError('calendario', 'no se encontraron jornadas')
@@ -188,7 +199,7 @@ export function parseFebCalendar(html: string, competition: CompetitionCode, sta
       const status: GameStatus = score ? 'finished' : when || roundDate ? 'scheduled' : 'unscheduled'
       games.push({
         ref: { source: 'feb', id: gameId, url: febUrls.game(gameId) },
-        round: { phase: 'regular', number, name: `Jornada ${number}` },
+        round: phase ? { phase: phase.id, number, name: `${phase.name} · Jornada ${number}` } : { phase: 'regular', number, name: `Jornada ${number}` },
         homeTeam: home,
         awayTeam: away,
         scheduledAt: when ? madridToUtc(when[1], when[2]) : roundDate ? madridToUtc(roundDate) : undefined,

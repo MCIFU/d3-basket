@@ -87,6 +87,9 @@ export class FebScraper {
         }
       }
 
+      const linked = linkFebClubs(this.db, csId)
+      if (linked) log(`  ${linked} clubes enlazados con sus otras temporadas`)
+
       if (opts.players !== false) {
         const maxAge = opts.playerMaxAgeDays ?? 30
         const pending = this.db
@@ -179,17 +182,91 @@ export class FebScraper {
   /**
    * Calendario completo. Si la liga se divide en grupos (Segunda FEB: A y B), la web
    * muestra uno por defecto y el resto se pide por postback; se unen todos y cada
-   * equipo queda marcado con su grupo.
+   * equipo queda marcado con su grupo. Las fases finales (temporadas cerradas de la
+   * Tercera FEB) se guardan como fase aparte, sin grupo.
    */
   private async calendar(g: number, competition: FebCompetition, startYear: number, label: string): Promise<NCalendar> {
     const first = await this.http.get(febUrls.calendar(g, startYear))
     const info = parseFebGroups(first.body)
     if (info.groups.length <= 1) return parseFebCalendar(first.body, competition, startYear, label)
+    const grouped = info.groups.filter((x) => x.regular).length > 1
     const parts: NCalendar[] = []
     for (const group of info.groups) {
       const html = group.value === info.selected ? first.body : (await this.http.post(first.finalUrl, info.postback(group.value))).body
-      parts.push(parseFebCalendar(html, competition, startYear, label, group.name))
+      parts.push(
+        group.regular
+          ? parseFebCalendar(html, competition, startYear, label, grouped ? group.name : undefined)
+          : parseFebCalendar(html, competition, startYear, label, undefined, { id: 'final', name: 'Fase final' })
+      )
     }
     return { ...parts[0], teams: parts.flatMap((c) => c.teams), games: parts.flatMap((c) => c.games) }
   }
+
+}
+
+const norm = (s: string) =>
+  s
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+
+/** Palabras que identifican a un club (sin genéricas como "club" o "baloncesto"). */
+const GENERIC = new Set(['club', 'baloncesto', 'basket', 'basquet', 'basketball', 'fundacion', 'deportivo', 'deportiva', 'escola', 'escuela', 'asociacion', 'grupo', 'sociedad', 'union', 'ciudad'])
+const tokens = (s: string) => new Set(norm(s).split(' ').filter((w) => w.length >= 4 && !GENERIC.has(w)))
+
+/**
+ * La FEB da a cada equipo un id nuevo cada temporada, así que cada edición crea clubes nuevos.
+ * Se une cada club que solo existe en esta edición con el mismo club de otras temporadas (FEB o
+ * ACB, para ascensos y descensos): mismo pabellón y alguna palabra significativa del nombre en
+ * común, o el mismo nombre. Los filiales (el club ya juega otra liga esa temporada) no se unen.
+ * Si hay dos candidatos igual de buenos no se une ninguno.
+ */
+export function linkFebClubs(db: DB, csId: number): number {
+  const w = new Writer(db)
+  const fresh = db
+    .prepare(
+      `SELECT c.id, c.arena, t.name FROM teams t JOIN clubs c ON c.id = t.club_id
+       WHERE t.competition_season_id = ? AND NOT EXISTS (SELECT 1 FROM teams o WHERE o.club_id = c.id AND o.competition_season_id <> ?)`
+    )
+    .all(csId, csId) as { id: number; arena: string | null; name: string }[]
+  if (!fresh.length) return 0
+  const candidates = db
+    .prepare(
+      `SELECT c.id, c.arena, group_concat(t.name, '|') AS names FROM clubs c
+       JOIN teams t ON t.club_id = c.id
+       -- Sin equipo esa misma temporada en ninguna liga: si lo tiene, este es su filial (Baskonia en Tercera FEB).
+       WHERE NOT EXISTS (
+         SELECT 1 FROM teams o JOIN competition_seasons ocs ON ocs.id = o.competition_season_id
+         WHERE o.club_id = c.id AND ocs.season_id = (SELECT season_id FROM competition_seasons WHERE id = ?))
+       GROUP BY c.id`
+    )
+    .all(csId) as { id: number; arena: string | null; names: string }[]
+  let linked = 0
+  w.transaction(() => {
+    for (const club of fresh) {
+      const words = tokens(club.name)
+      let best: { id: number; score: number } | undefined
+      let tie = false
+      for (const c of candidates) {
+        const names = c.names.split('|')
+        const shared = Math.max(...names.map((n) => [...tokens(n)].filter((w) => words.has(w)).length))
+        const sameName = names.some((n) => norm(n) === norm(club.name))
+        const sameArena = !!club.arena && !!c.arena && norm(club.arena) === norm(c.arena)
+        if (!(sameName || (sameArena && shared >= 1))) continue
+        const score = (sameName ? 10 : 0) + shared + (sameArena ? 1 : 0)
+        if (!best || score > best.score) {
+          best = { id: c.id, score }
+          tie = false
+        } else if (score === best.score) tie = true
+      }
+      if (best && !tie) {
+        w.mergeClub(club.id, best.id)
+        candidates.splice(candidates.findIndex((c) => c.id === best!.id), 1)
+        linked++
+      }
+    }
+  })
+  return linked
 }

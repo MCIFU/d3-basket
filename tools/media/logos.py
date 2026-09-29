@@ -192,6 +192,14 @@ def main():
             fail += 1
             print(f'  ✗ {ref} {url}: {e}', file=sys.stderr)
         time.sleep(args.delay)
+    # Refs que ya no existen (p. ej. un club FEB unido a su ficha ACB): fuera escudo y colores.
+    con = sqlite3.connect(args.db)
+    refs = {r[0] for r in con.execute('SELECT ref FROM v_club_ref')}
+    con.close()
+    for f in OUT.glob('*.png'):
+        if f.stem not in refs:
+            f.unlink()
+    colors = {k: v for k, v in colors.items() if k in refs}
     COLORS.write_text(json.dumps(dict(sorted(colors.items())), indent=1, ensure_ascii=False) + '\n')
     print(f'✔ {done} escudos procesados · {fail} errores · {len(colors)} clubes con colores')
 

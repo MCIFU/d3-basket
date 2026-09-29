@@ -75,6 +75,8 @@ python tools/media/faces.py --recheck        # rehace las dudosas (restos de fon
 
 Solo procesa lo que falta; después hay que hacer commit de `public/media`. Los jugadores que lleguen después en el build diario usan la foto original de la FEB hasta la siguiente pasada.
 
+- **`club_wiki.py`**: fundación e historia de los clubes FEB desde Wikipedia/Wikidata (solo acepta artículos cuyo elemento de Wikidata es un club de baloncesto español). Genera `tools/media/club-wiki.json` para revisarlo a mano (`"ok": false` descarta un emparejamiento) y se importa con `npm run scrape -- import-club-wiki tools/media/club-wiki.json`.
+
 Los colores y logos de cada liga están en `src/renderer/src/leagues.ts` y `public/media/leagues` (paleta de acb.com y logos oficiales de la FEB).
 
 ## Scraper (CLI)

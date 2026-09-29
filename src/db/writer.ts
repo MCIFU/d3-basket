@@ -95,6 +95,33 @@ export class Writer {
   }
 
   // ───────── clubes / equipos ─────────
+  /**
+   * Une dos registros del mismo club (p. ej. la misma entidad FEB en dos temporadas, que la
+   * FEB publica con ids distintos). Los equipos, ids externos y datos pasan a `into`.
+   */
+  mergeClub(from: number, into: number) {
+    if (from === into) return
+    const db = this.db
+    db.prepare('UPDATE teams SET club_id = ? WHERE club_id = ?').run(into, from)
+    db.prepare("UPDATE external_ids SET entity_id = ? WHERE entity_type = 'club' AND entity_id = ?").run(into, from)
+    db.prepare('UPDATE player_season_lines SET club_id = ? WHERE club_id = ?').run(into, from)
+    db.prepare('UPDATE honours SET champion_club_id = ? WHERE champion_club_id = ?').run(into, from)
+    db.prepare('UPDATE honours SET runner_up_club_id = ? WHERE runner_up_club_id = ?').run(into, from)
+    db.prepare('UPDATE OR IGNORE club_records SET club_id = ? WHERE club_id = ?').run(into, from)
+    // Datos que solo tuviera el registro antiguo.
+    db.prepare(
+      `UPDATE clubs SET
+         founded_year = COALESCE(founded_year, (SELECT founded_year FROM clubs WHERE id = @from)),
+         arena = COALESCE(arena, (SELECT arena FROM clubs WHERE id = @from)),
+         arena_address = COALESCE(arena_address, (SELECT arena_address FROM clubs WHERE id = @from)),
+         website = COALESCE(website, (SELECT website FROM clubs WHERE id = @from)),
+         president = COALESCE(president, (SELECT president FROM clubs WHERE id = @from))
+       WHERE id = @into`
+    ).run({ from, into })
+    db.prepare('DELETE FROM club_records WHERE club_id = ?').run(from)
+    db.prepare('DELETE FROM clubs WHERE id = ?').run(from)
+  }
+
   upsertTeam(csId: number, t: NTeam, opts: { updateClubName?: boolean } = {}): number {
     let clubId = this.findId('club', t.clubRef)
     if (clubId == null) {

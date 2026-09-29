@@ -6,6 +6,7 @@ import { openDatabase } from '../src/db/database'
 import { Queries } from '../src/db/queries'
 import { Writer } from '../src/db/writer'
 import { madridToUtc } from '../src/scraper/core/time'
+import { linkFebClubs } from '../src/scraper/feb/sync'
 import { parseFebBoxscore, parseFebCalendar, parseFebGroups, parseFebPlayer, parseFebTeam, splitName, titleCase } from '../src/scraper/feb/parsers'
 
 // Copias reales de baloncestoenvivo.feb.es (Primera FEB 2026-27, jornada 1).
@@ -92,9 +93,9 @@ describe('Segunda FEB (liga por grupos)', () => {
   it('detecta los grupos y prepara el postback del grupo B', () => {
     const html = feb('cal-plata')
     const info = parseFebGroups(html)
-    expect(info.groups).toEqual([
-      { value: '89999', name: 'A' },
-      { value: '90000', name: 'B' }
+    expect(info.groups).toMatchObject([
+      { value: '89999', name: 'A', regular: true },
+      { value: '90000', name: 'B', regular: true }
     ])
     expect(info.selected).toBe('89999')
     const form = info.postback('90000')
@@ -110,5 +111,59 @@ describe('Segunda FEB (liga por grupos)', () => {
 
   it('Primera FEB no tiene grupos', () => {
     expect(parseFebGroups(feb('cal')).groups.length).toBeLessThanOrEqual(1)
+  })
+})
+
+describe('Tercera FEB 2025-26 (temporada cerrada)', () => {
+  it('distingue los 10 grupos de liga regular de las fases finales', () => {
+    const html = feb('cal-tercera-2025')
+    const info = parseFebGroups(html)
+    expect(info.groups.filter((g) => g.regular).map((g) => g.name)).toEqual(['C-B', 'A-A', 'A-B', 'B-A', 'B-B', 'C-A', 'D-A', 'D-B', 'E-A', 'E-B'])
+    expect(info.groups.filter((g) => !g.regular)).toHaveLength(6)
+    // La página por defecto es una fase final: sus partidos van a la fase 'final', no a la liga regular.
+    const final = parseFebCalendar(html, 'TERCERA_FEB', 2025, 'Tercera FEB 2025-26', undefined, { id: 'final', name: 'Fase final' })
+    expect(final.games.length).toBeGreaterThan(0)
+    expect(final.games.every((g) => g.round?.phase === 'final' && !!g.round.name?.startsWith('Fase final'))).toBe(true)
+    expect(final.teams.every((t) => t.group === undefined)).toBe(true)
+  })
+})
+
+describe('un mismo club FEB en varias temporadas', () => {
+  const team = (id: string, name: string) => ({ ref: { source: 'feb' as const, id }, clubRef: { source: 'feb' as const, id }, name })
+  function setup() {
+    const db = openDatabase(':memory:')
+    const w = new Writer(db)
+    const edition = (competition: 'LEB_ORO' | 'TERCERA_FEB', startYear: number) =>
+      w.upsertEdition({ ref: { source: 'feb', id: `${competition}-${startYear}` }, competition, startYear })
+    const add = (cs: number, id: string, name: string, arena: string) => {
+      w.upsertTeam(cs, team(id, name))
+      w.updateClubInfo({ clubRef: { source: 'feb', id }, arena, socials: {} })
+    }
+    return { db, edition, add }
+  }
+  const clubOf = (db: ReturnType<typeof openDatabase>, id: string) =>
+    (db.prepare(`SELECT entity_id FROM external_ids WHERE entity_type = 'club' AND source = 'feb' AND external_id = ?`).get(id) as { entity_id: number }).entity_id
+
+  it('une el club por pabellón y nombre, y no une los filiales', () => {
+    const { db, edition, add } = setup()
+    const oro26 = edition('LEB_ORO', 2026)
+    add(oro26, '100', 'Grupo Alega Cantabria', 'Pabellón Vicente Trueba')
+    add(oro26, '101', 'Hla Alicante', 'Centro de Tecnificación')
+    const oro25 = edition('LEB_ORO', 2025)
+    add(oro25, '50', 'Alega Cantabria CBT', 'Pabellon Vicente Trueba')
+    add(oro25, '51', 'Hla Alicante', 'Centro de Tecnificación')
+    add(oro25, '52', 'Otro Club Distinto', 'Pabellón Vicente Trueba')
+    expect(linkFebClubs(db, oro25)).toBe(2)
+    expect(clubOf(db, '50')).toBe(clubOf(db, '100'))
+    expect(clubOf(db, '51')).toBe(clubOf(db, '101'))
+    expect(clubOf(db, '52')).not.toBe(clubOf(db, '100')) // mismo pabellón pero nombre sin nada en común
+
+    // El filial del HLA Alicante en Tercera esa misma temporada no se une al primer equipo.
+    const tercera25 = edition('TERCERA_FEB', 2025)
+    add(tercera25, '60', 'Hla Alicante', 'Centro de Tecnificación')
+    expect(linkFebClubs(db, tercera25)).toBe(0)
+    expect(clubOf(db, '60')).not.toBe(clubOf(db, '101'))
+    // La referencia estable del club es la de su id FEB más reciente.
+    expect((db.prepare('SELECT ref FROM v_club_ref WHERE club_id = ?').get(clubOf(db, '100')) as { ref: string }).ref).toBe('f100')
   })
 })
