@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import type { ClubRecordRow, GameRow, HonourRow, LeagueData, StandingRow } from '../../../shared/api'
+import type { ReactNode } from 'react'
 import {
-  CompetitionBadge,
   DataTable,
   Empty,
   Form,
@@ -18,7 +18,8 @@ import {
   useLoad,
   type Column
 } from '../components'
-import { int, num, pct, signed } from '../format'
+import { int, mix, num, pct, signed } from '../format'
+import { brandVars, leagueTheme, zoneOf } from '../leagues'
 import { href, navigate } from '../router'
 import { LeadersBox } from './Home'
 import { PlayerStatsTable, TeamStatsTable } from './StatTables'
@@ -26,11 +27,6 @@ import { PlayerStatsTable, TeamStatsTable } from './StatTables'
 export function LeaguesPage() {
   const [comps, error] = useLoad(() => window.d3.competitions(), [])
   if (!comps) return <Loading error={error} />
-  const meta: Record<string, { tier: string; sub: string }> = {
-    ACB: { tier: 'Primera división · ACB', sub: 'Liga Endesa' },
-    LEB_ORO: { tier: 'Segunda división · FEB', sub: 'Primera FEB' },
-    LEB_PLATA: { tier: 'Tercera división · FEB', sub: 'Segunda FEB' }
-  }
   return (
     <>
       <div className="page-title">
@@ -38,33 +34,43 @@ export function LeaguesPage() {
         <h1>Ligas</h1>
         <p>Baloncesto profesional y semiprofesional español.</p>
       </div>
-      <div className="grid grid-3">
-        {comps.map((c) =>
-          c.editions > 0 ? (
-            <a key={c.code} className="league-card" href={href.league(c.code)}>
-              <div className="tier">{meta[c.code]?.tier}</div>
-              <h3>{c.name}</h3>
-              <div className="muted">Temporada {c.current_label}</div>
-              <div className="row" style={{ marginTop: 12 }}>
-                <span className="chip brand">
-                  {c.editions} temporada{c.editions === 1 ? '' : 's'} con datos
-                </span>
-              </div>
-              {c.code === 'ACB' && <Trophy competition="liga" size={92} />}
-            </a>
-          ) : (
-            <div key={c.code} className="league-card soon">
-              <div className="tier">{meta[c.code]?.tier}</div>
-              <h3>{c.short_name ?? c.name}</h3>
-              <div className="muted">{c.name}</div>
-              <div className="row" style={{ marginTop: 12 }}>
-                <span className="chip">Próximamente</span>
-              </div>
+      <div className="grid grid-4">
+        {comps.map((c) => (
+          <LeagueCard key={c.code} code={c.code} name={c.name} soon={c.editions === 0}>
+            <div className="muted">Temporada {c.current_label}</div>
+            <div className="row" style={{ marginTop: 12 }}>
+              <span className="chip brand">
+                {c.editions === 0 ? 'Próximamente' : `${c.editions} temporada${c.editions === 1 ? '' : 's'} con datos`}
+              </span>
             </div>
-          )
-        )}
+          </LeagueCard>
+        ))}
       </div>
     </>
+  )
+}
+
+/** Tarjeta de liga con su color y logo oficiales. */
+export function LeagueCard({ code, name, soon, children }: { code: string; name: string; soon?: boolean; children?: ReactNode }) {
+  const t = leagueTheme(code)
+  const body = (
+    <>
+      <span className="league-card-stripe" />
+      <div className="tier">{t?.division}</div>
+      <h3>{name}</h3>
+      {children}
+      {t && <img className="league-card-logo" src={t.logo} alt="" loading="lazy" />}
+    </>
+  )
+  const style = t ? brandVars(t.color, t.color2) : undefined
+  return soon ? (
+    <div className="league-card soon" style={style}>
+      {body}
+    </div>
+  ) : (
+    <a className="league-card" href={href.league(code)} style={style}>
+      {body}
+    </a>
   )
 }
 
@@ -86,18 +92,19 @@ export function LeaguePage({ code, tab = 'resumen', year }: { code: string; tab?
   const { edition, competition } = data
   const selectedYear = year ?? edition?.start_year
   const attendance = data.teamStats.reduce((a, t) => a + t.attendance_total, 0)
+  const theme = leagueTheme(code)
+  // Cabecera con la paleta oficial: del color complementario (oscurecido) al color de la liga.
+  const heroBg = theme
+    ? `linear-gradient(115deg, ${mix(theme.color2, '#000000', 0.7)} 0%, ${mix(theme.color2, '#000000', 0.5)} 52%, ${theme.color} 145%)`
+    : undefined
 
   return (
-    <>
-      <section className="hero">
+    <div style={theme ? brandVars(theme.color, theme.color2) : undefined}>
+      <section className="hero league-hero" style={{ background: heroBg }}>
         <div className="hero-grid">
-          <div className="hero-logo" style={{ background: 'linear-gradient(160deg, #fff, #f1f5f9)' }}>
-            {code === 'ACB' ? <Trophy competition="liga" size={96} /> : <CompetitionBadge name={code} />}
-          </div>
+          <div className="hero-logo">{theme ? <img className="league-logo" src={theme.logo} alt={competition.name} /> : <Trophy competition="liga" size={96} />}</div>
           <div>
-            <div className="eyebrow">
-              {competition.organizer} · {code === 'ACB' ? 'Primera división' : code === 'LEB_ORO' ? 'Segunda división (LEB Oro)' : 'Tercera división (LEB Plata)'}
-            </div>
+            <div className="eyebrow">{theme?.division ?? competition.organizer}</div>
             <h1>{competition.name}</h1>
             <div className="row" style={{ marginTop: 12 }}>
               {data.editions.length > 0 && (
@@ -141,7 +148,7 @@ export function LeaguePage({ code, tab = 'resumen', year }: { code: string; tab?
       {tab === 'resumen' && <Summary data={data} />}
       {tab === 'clasificacion' && (
         <Section eyebrow={edition?.season_label} title="Clasificación · liga regular">
-          <StandingsTable rows={data.standings} year={selectedYear} />
+          <StandingsTable rows={data.standings} year={selectedYear} code={code} />
         </Section>
       )}
       {tab === 'resultados' && <Results games={data.games} />}
@@ -157,7 +164,7 @@ export function LeaguePage({ code, tab = 'resumen', year }: { code: string; tab?
       )}
       {tab === 'palmares' && <Honours honours={data.honours} />}
       {tab === 'historico' && <AllTime rows={data.alltime} />}
-    </>
+    </div>
   )
 }
 
@@ -179,7 +186,7 @@ function Summary({ data }: { data: LeagueData }) {
     <div className="stack">
       <div className="grid grid-main">
         <Section title="Clasificación" actions={<a className="link" href={href.league(data.competition.code, 'clasificacion', data.edition?.start_year)}>Completa →</a>}>
-          <StandingsTable rows={data.standings} compact year={data.edition?.start_year} />
+          <StandingsTable rows={data.standings} compact year={data.edition?.start_year} code={data.competition.code} />
         </Section>
         <div className="stack">
           <LeadersBox leaders={leaders} />
@@ -214,56 +221,117 @@ function Summary({ data }: { data: LeagueData }) {
   )
 }
 
-export function StandingsTable({ rows, compact, year }: { rows: StandingRow[]; compact?: boolean; year?: number }) {
-  if (!rows.length) return <Empty>Aún no se ha disputado ningún partido.</Empty>
-  // Ligas por grupos (Segunda FEB): una tabla por grupo.
-  const groups = [...new Set(rows.map((r) => r.group))]
-  if (groups.length > 1)
-    return (
-      <div className="stack">
-        {groups.map((g) => (
-          <div key={g ?? '-'}>
-            <div className="eyebrow">Grupo {g}</div>
-            <StandingsTable rows={rows.filter((r) => r.group === g)} compact={compact} year={year} />
-          </div>
-        ))}
+/** Selector de grupo para ligas divididas (Segunda FEB: A y B; Tercera FEB: A-A ... E-B). */
+function GroupPills({ groups, value, onChange }: { groups: string[]; value: string; onChange: (g: string) => void }) {
+  return (
+    <div className="group-pills" role="group" aria-label="Grupo">
+      {groups.map((g) => (
+        <button key={g} className={g === value ? 'active' : ''} onClick={() => onChange(g)}>
+          Grupo {g}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+export function StandingsTable({ rows, compact, year, code }: { rows: StandingRow[]; compact?: boolean; year?: number; code?: string }) {
+  const groups = useMemo(() => [...new Set(rows.map((r) => r.group ?? ''))].filter(Boolean), [rows])
+  const [group, setGroup] = useState<string>()
+  if (!rows.length) return <Empty>Todavía no hay equipos en esta edición.</Empty>
+  const current = groups.length > 1 ? (group ?? groups[0]) : undefined
+  const list = current ? rows.filter((r) => r.group === current) : rows
+  // Zonas solo en ligas de grupo único con formato conocido.
+  const zones = groups.length > 1 ? [] : (leagueTheme(code)?.zones ?? [])
+  const started = list.some((r) => r.played > 0)
+  return (
+    <div className="standings-wrap">
+      {current && <GroupPills groups={groups} value={current} onChange={setGroup} />}
+      <div className="table-wrap">
+        <table className={`table standings${compact ? ' compact' : ''}${started ? ' started' : ''}`}>
+          <thead>
+            <tr>
+              <th className="pos">#</th>
+              <th>Equipo</th>
+              <th className="num" title="Partidos jugados">PJ</th>
+              <th className="num" title="Victorias">V</th>
+              <th className="num" title="Derrotas">D</th>
+              {!compact && (
+                <>
+                  <th className="num hide-sm" title="Porcentaje de victorias">%V</th>
+                  <th className="num hide-sm" title="Puntos a favor">PF</th>
+                  <th className="num hide-sm" title="Puntos en contra">PC</th>
+                </>
+              )}
+              <th className="num" title="Diferencia de puntos">+/−</th>
+              <th className="hide-sm">Últimos 5</th>
+            </tr>
+          </thead>
+          <tbody>
+            {list.map((r) => {
+              const zone = started ? zoneOf(zones, r.position, list.length) : undefined
+              return (
+                <tr key={r.team_id} className={zone ? `zone-${zone.kind}` : undefined} title={zone?.label}>
+                  <td className="pos">
+                    <span className="pos-badge">{r.position}</span>
+                  </td>
+                  <td className="team-cell">
+                    <TeamLink team={r} year={year} size={compact ? 26 : 30} />
+                  </td>
+                  <td className="num">{r.played}</td>
+                  <td className="num strong">{r.won}</td>
+                  <td className="num">{r.lost}</td>
+                  {!compact && (
+                    <>
+                      <td className="num hide-sm">{r.played ? pct((100 * r.won) / r.played) : '–'}</td>
+                      <td className="num hide-sm">{r.points_for}</td>
+                      <td className="num hide-sm">{r.points_against}</td>
+                    </>
+                  )}
+                  <td className={`num diff ${r.diff > 0 ? 'diff-up' : r.diff < 0 ? 'diff-down' : ''}`}>{signed(r.diff)}</td>
+                  <td className="hide-sm">
+                    <Form results={r.form} />
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
       </div>
-    )
-  const columns: Column<StandingRow>[] = [
-    { key: 'position', label: '#', num: true, className: 'pos' },
-    { key: 'team', label: 'Equipo', value: (r) => r.name, render: (r) => <TeamLink team={r} year={year} /> },
-    { key: 'played', label: 'PJ', num: true },
-    { key: 'won', label: 'V', num: true },
-    { key: 'lost', label: 'D', num: true },
-    ...(compact
-      ? []
-      : [
-          { key: 'win_pct', label: '%V', num: true, value: (r: StandingRow) => r.won / (r.played || 1), render: (r: StandingRow) => pct((100 * r.won) / (r.played || 1)) },
-          { key: 'points_for', label: 'PF', num: true, title: 'Puntos a favor' },
-          { key: 'points_against', label: 'PC', num: true, title: 'Puntos en contra' }
-        ]),
-    { key: 'diff', label: '+/−', num: true, render: (r) => signed(r.diff) },
-    { key: 'form', label: 'Últimos 5', value: (r) => r.form.filter((f) => f === 'W').length, render: (r) => <Form results={r.form} /> }
-  ]
-  return <DataTable rows={rows} columns={columns} rowKey={(r) => r.team_id} initialSort={{ key: 'position', dir: 'asc' }} compact={compact} />
+      {started && zones.length > 0 && (
+        <div className="zone-legend">
+          {zones.map((z) => (
+            <span key={z.label} className={`zone-key zone-${z.kind}`}>
+              {z.label}
+            </span>
+          ))}
+        </div>
+      )}
+      {!started && <p className="note">La temporada aún no ha empezado: equipos por orden alfabético.</p>}
+    </div>
+  )
 }
 
 function Results({ games }: { games: GameRow[] }) {
+  const groups = useMemo(() => [...new Set(games.map((g) => g.group ?? ''))].filter(Boolean).sort(), [games])
+  const [group, setGroup] = useState<string>()
+  const currentGroup = groups.length > 1 ? (group ?? groups[0]) : undefined
   const rounds = useMemo(() => {
     const map = new Map<string, { key: string; label: string; games: GameRow[] }>()
     for (const g of games) {
+      if (currentGroup && g.group !== currentGroup) continue
       const key = `${g.phase ?? 'x'}-${g.round_number ?? 0}`
       if (!map.has(key)) map.set(key, { key, label: g.phase === 'regular' ? String(g.round_number) : (g.round_name ?? '?'), games: [] })
       map.get(key)!.games.push(g)
     }
     return [...map.values()]
-  }, [games])
+  }, [games, currentGroup])
   const initial = rounds.find((r) => r.games.some((g) => g.status !== 'finished')) ?? rounds[rounds.length - 1]
   const [selected, setSelected] = useState<string>()
   const current = rounds.find((r) => r.key === (selected ?? initial?.key))
   if (!rounds.length) return <Empty>Sin calendario.</Empty>
   return (
-    <Section title={current?.games[0]?.round_name ?? 'Jornada'} eyebrow="Calendario">
+    <Section title={current?.games[0]?.round_name ?? 'Jornada'} eyebrow={currentGroup ? `Calendario · Grupo ${currentGroup}` : 'Calendario'}>
+      {currentGroup && <GroupPills groups={groups} value={currentGroup} onChange={setGroup} />}
       <div className="rounds">
         {rounds.map((r) => (
           <button

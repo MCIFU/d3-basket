@@ -57,6 +57,8 @@ export interface GameRow {
   has_boxscore: number
   attendance: number | null
   arena: string | null
+  /** Grupo del equipo local en ligas divididas (Segunda y Tercera FEB). */
+  group: string | null
 }
 
 /** Totales + medias + porcentajes (jugadores y equipos). */
@@ -218,6 +220,8 @@ export interface ClubInfo {
   abbr: string | null
   logo: string | null
   color: string | null
+  /** Segundo color del club (del escudo). */
+  color2: string | null
   founded_year: number | null
   arena: string | null
   arena_address: string | null
@@ -514,7 +518,7 @@ export interface D3Api {
   home(): Promise<HomeData>
   league(code: string, year?: number): Promise<LeagueData | null>
   competitions(): Promise<CompetitionInfo[]>
-  clubs(): Promise<(TeamLite & { arena: string | null; founded_year: number | null; competition_code: string; competition_name: string })[]>
+  clubs(): Promise<(TeamLite & { arena: string | null; founded_year: number | null; competition_code: string; competition_name: string; group: string | null })[]>
   club(ref: string, year?: number): Promise<ClubData | null>
   players(): Promise<PlayerIndexRow[]>
   player(ref: string): Promise<PlayerData | null>

@@ -17,6 +17,7 @@ import zlib from 'node:zlib'
 import { parseArgs } from 'node:util'
 import Database from 'better-sqlite3'
 import { defaultDbPath, openDatabase } from '../db/database'
+import { applyMedia } from '../db/media'
 import { HttpClient } from '../scraper/core/http'
 import { AcbScraper } from '../scraper/acb/sync'
 import { FebScraper } from '../scraper/feb/sync'
@@ -38,6 +39,7 @@ const { values, positionals } = parseArgs({
     'career-budget': { type: 'string', default: '250' },
     'max-boxscores': { type: 'string' },
     'player-max-age': { type: 'string', default: '30' },
+    'max-bios': { type: 'string' },
     help: { type: 'boolean', short: 'h', default: false }
   }
 })
@@ -50,11 +52,11 @@ function usage(code = 0): never {
   npm run scrape -- sync acb [--season 2025] [--no-rosters] [--no-players] [--no-boxscores]
                              [--max-boxscores N] [--force] [--player-max-age DÍAS]
                              [--no-history] [--no-careers] [--career-budget N]
-  npm run scrape -- sync primera-feb [--season 2026]   (LEB Oro; también segunda-feb)
+  npm run scrape -- sync primera-feb [--season 2026]   (LEB Oro; también segunda-feb y tercera-feb)
   npm run scrape -- editions acb
   npm run scrape -- info
   npm run scrape -- restore-db [seed/d3basket.db.gz]   (build: semilla → caché → web)
-  npm run scrape -- export-web [data/web/data/d3basket.db.gz]
+  npm run scrape -- export-web [public/data/d3basket.db.gz]
 
 Opciones: --db <ruta.db> (por defecto ${defaultDbPath()})
           --cache  guarda el HTML crudo en ./data/cache (depuración)
@@ -75,13 +77,16 @@ async function main() {
 
   if (command === 'export-web') {
     // Copia compacta y comprimida para la web, sin datos privados (informes de scouting).
-    const out = path.resolve(positionals[1] ?? path.join('data', 'web', 'data', 'd3basket.db.gz'))
+    const out = path.resolve(positionals[1] ?? path.join('public', 'data', 'd3basket.db.gz'))
     const tmp = `${out}.tmp.db`
     fs.mkdirSync(path.dirname(out), { recursive: true })
     fs.rmSync(tmp, { force: true })
     db.prepare('VACUUM INTO ?').run(tmp)
     const copy = new Database(tmp)
     copy.exec('DELETE FROM scouting_ratings; DELETE FROM scouting_reports; DELETE FROM scrape_runs;')
+    // Fotos, escudos y colores procesados (public/media) en lugar de los originales.
+    const media = applyMedia(copy, path.resolve('public', 'media'))
+    console.log(`  media: ${media.players} fotos, ${media.logos} escudos, ${media.colors} paletas de club`)
     // Marca de la exportación: permite saber si una base de datos en caché procede de esta semilla.
     copy.prepare("INSERT INTO app_meta (key, value) VALUES ('export_id', ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value").run(
       new Date().toISOString()
@@ -113,11 +118,12 @@ async function main() {
     'primera-feb': 'LEB_ORO',
     'leb-oro': 'LEB_ORO',
     'segunda-feb': 'LEB_PLATA',
-    'leb-plata': 'LEB_PLATA'
+    'leb-plata': 'LEB_PLATA',
+    'tercera-feb': 'TERCERA_FEB'
   }
   const febCompetition = league ? FEB_ALIASES[league.toLowerCase()] : undefined
   if (league !== 'acb' && !febCompetition) {
-    console.error(`Liga no soportada: ${league ?? '(ninguna)'} — usa "acb", "primera-feb" o "segunda-feb".`)
+    console.error(`Liga no soportada: ${league ?? '(ninguna)'} — usa "acb", "primera-feb", "segunda-feb" o "tercera-feb".`)
     usage(1)
   }
 
@@ -146,6 +152,7 @@ async function main() {
       force: values.force,
       maxBoxscores: values['max-boxscores'] ? Number(values['max-boxscores']) : undefined,
       playerMaxAgeDays: Number(values['player-max-age']),
+      maxPlayerBios: values['max-bios'] ? Number(values['max-bios']) : undefined,
       log
     }
     const t0 = Date.now()

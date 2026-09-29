@@ -107,6 +107,7 @@ function SyncPanel({ onDone }: { onDone: () => void }) {
           <option value="ACB">Liga Endesa (acb.com)</option>
           <option value="LEB_ORO">Primera FEB (feb.es)</option>
           <option value="LEB_PLATA">Segunda FEB (feb.es)</option>
+          <option value="TERCERA_FEB">Tercera FEB (feb.es)</option>
         </select>
         <select className="select" value={season} onChange={(e) => setSeason(e.target.value)} disabled={busy}>
           <option value="">Temporada en curso</option>

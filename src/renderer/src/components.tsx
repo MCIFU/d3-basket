@@ -56,25 +56,27 @@ export function TeamLogo({ src, name, size = 28 }: { src?: string | null; name?:
   )
 }
 
-export function TeamLink({ team, year, logo = true, short }: { team: TeamLite; year?: number; logo?: boolean; short?: boolean }) {
+export function TeamLink({ team, year, logo = true, short, size = 24 }: { team: TeamLite; year?: number; logo?: boolean; short?: boolean; size?: number }) {
   return (
     <a className="team-link" href={href.club(team.club_ref, team.name, undefined, year)}>
-      {logo && <TeamLogo src={team.logo} name={team.name} size={24} />}
+      {logo && <TeamLogo src={team.logo} name={team.name} size={size} />}
       <span>{short ? (team.short_name ?? team.name) : team.name}</span>
     </a>
   )
 }
 
-/** Las fotos de la FEB son de medio cuerpo (PNG transparente): en avatares se amplía la cara. */
+/** Fotos originales de la FEB (de medio cuerpo) aún sin procesar en public/media: en avatares se amplía la cara. */
 export const isHalfBody = (src?: string | null) => !!src && src.includes('imagenes.feb.es')
 
 // ───────────────────────── Competiciones ─────────────────────────
 
 const COMPETITION_STYLE: { match: RegExp; label?: string; bg: string; fg: string }[] = [
-  { match: /^(ACB|LIGA ENDESA)/i, label: 'Liga Endesa', bg: '#ff6b00', fg: '#fff' },
-  { match: /^(LEB_ORO|PRIMERA FEB|LEB ORO)/i, label: 'Primera FEB', bg: '#b8860b', fg: '#fff' },
-  { match: /^(LEB_PLATA|SEGUNDA FEB|LEB PLATA)/i, label: 'Segunda FEB', bg: '#64748b', fg: '#fff' },
-  { match: /^(TERCERA FEB|LEB BRONCE)/i, bg: '#9a6b3f', fg: '#fff' },
+  // Colores oficiales de cada liga (ver leagues.ts).
+  { match: /^(ACB|LIGA ENDESA)/i, label: 'Liga Endesa', bg: '#da3b00', fg: '#fff' },
+  { match: /^(LEB_ORO|PRIMERA FEB|LEB ORO)/i, label: 'Primera FEB', bg: '#fe6b00', fg: '#fff' },
+  { match: /^(LEB_PLATA|SEGUNDA FEB|LEB PLATA)/i, label: 'Segunda FEB', bg: '#f03039', fg: '#fff' },
+  { match: /^(TERCERA_FEB|TERCERA FEB)/i, label: 'Tercera FEB', bg: '#ff9f00', fg: '#241600' },
+  { match: /^LEB BRONCE/i, label: 'LEB Bronce', bg: '#9a6b3f', fg: '#fff' },
   { match: /EBA/i, label: 'Liga EBA', bg: '#0e7490', fg: '#fff' },
   { match: /^LIGA U/i, label: 'Liga U', bg: '#7c3aed', fg: '#fff' }
 ]

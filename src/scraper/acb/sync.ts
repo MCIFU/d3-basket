@@ -59,6 +59,8 @@ export interface AcbSyncOptions {
   force?: boolean
   /** Días tras los que se vuelve a leer la ficha de un jugador. */
   playerMaxAgeDays?: number
+  /** Máximo de fichas FEB a refrescar por ejecución (las nuevas primero): reparte la carga entre días. */
+  maxPlayerBios?: number
   /** Máximo de boxscores a descargar en esta ejecución (útil para pruebas). */
   maxBoxscores?: number
   log?: (msg: string) => void

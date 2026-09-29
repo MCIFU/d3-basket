@@ -18,6 +18,7 @@ import {
   type Column
 } from '../components'
 import { LICENSE_LABEL, age, fmtBirth, fmtDate, fmtDay, initials, int, num, pct, shot, signed, teamColor } from '../format'
+import { leagueTheme } from '../leagues'
 import { href } from '../router'
 import { ModeToggle, type StatMode } from './StatTables'
 import { ReportCard } from './Scouting'
@@ -76,7 +77,7 @@ export function PlayersPage() {
       <div className="page-title">
         <div className="eyebrow">Temporada en curso</div>
         <h1>Jugadores</h1>
-        <p>{players.length} jugadores con licencia en la Liga Endesa y la Primera FEB.</p>
+        <p>{players.length} jugadores con licencia en la Liga Endesa, la Primera, la Segunda y la Tercera FEB.</p>
       </div>
       <div className="card">
         <div className="row" style={{ marginBottom: 16 }}>
@@ -85,7 +86,7 @@ export function PlayersPage() {
             <option value="">Todas las ligas</option>
             {[...new Set(players.map((p) => p.competition_code))].map((c) => (
               <option key={c} value={c}>
-                {c === 'ACB' ? 'Liga Endesa' : c === 'LEB_ORO' ? 'Primera FEB' : 'Segunda FEB'}
+                {leagueTheme(c)?.name ?? c}
               </option>
             ))}
           </select>

@@ -2,20 +2,19 @@ import { useState } from 'react'
 import type { HomeData, LeaderRow } from '../../../shared/api'
 import {
   Empty,
-  Form,
   GameCard,
   Loading,
   PlayerPhoto,
   Section,
   Segmented,
   TROPHIES,
-  TeamLink,
   TeamLogo,
   Trophy,
   useLoad
 } from '../components'
 import { num, teamColor } from '../format'
 import { href } from '../router'
+import { LeagueCard, StandingsTable } from './Leagues'
 
 export function HomePage() {
   const [data, error] = useLoad(() => window.d3.home(), [])
@@ -30,7 +29,7 @@ export function HomePage() {
           <div className="eyebrow">Scouting y estadística</div>
           <h1>El baloncesto español, en datos.</h1>
           <p className="lead">
-            Clasificaciones, estadísticas avanzadas, trayectorias y palmarés de la Liga Endesa, con fichas de equipo y jugador
+            Clasificaciones, estadísticas avanzadas, trayectorias y palmarés de la Liga Endesa y la Primera, Segunda y Tercera FEB, con fichas de equipo y jugador
             e informes de scouting propios.
           </p>
           <div className="hero-actions">
@@ -133,7 +132,7 @@ export function HomePage() {
                 </a>
               }
             >
-              <StandingsMini data={data} />
+              <StandingsTable rows={data.standings} compact code="ACB" />
             </Section>
             <LeadersBox leaders={data.leaders} />
           </div>
@@ -143,40 +142,28 @@ export function HomePage() {
   )
 }
 
-const TIER: Record<string, string> = {
-  ACB: 'Primera división · ACB',
-  LEB_ORO: 'Segunda división · FEB',
-  LEB_PLATA: 'Tercera división · FEB'
-}
-
 function LeagueCards({ data }: { data: HomeData }) {
   return (
-    <div className="grid grid-3">
-      {data.leagues.map((l) =>
-        l.edition ? (
-          <a key={l.code} className="league-card" href={href.league(l.code)}>
-            <div className="tier">{TIER[l.code] ?? ''}</div>
-            <h3>{l.code === 'ACB' ? l.name : `${l.name} (${l.short_name})`}</h3>
-            <div className="muted">
-              {l.edition.season_label} · {l.edition.finished} de {l.edition.games} partidos jugados
-            </div>
-            <div className="row" style={{ marginTop: 12 }}>
-              <span className="chip brand">{l.edition.teams} equipos</span>
-              {l.code === 'ACB' && <span className="chip">{data.counts.honours} finales históricas</span>}
-            </div>
-            {l.code === 'ACB' && <Trophy competition="liga" size={92} />}
-          </a>
-        ) : (
-          <div key={l.code} className="league-card soon">
-            <div className="tier">{TIER[l.code] ?? ''}</div>
-            <h3>{l.short_name ?? l.name}</h3>
-            <div className="muted">{l.name}</div>
+    <div className="grid grid-4">
+      {data.leagues.map((l) => (
+        <LeagueCard key={l.code} code={l.code} name={l.name} soon={!l.edition}>
+          {l.edition ? (
+            <>
+              <div className="muted">
+                {l.edition.season_label} · {l.edition.finished} de {l.edition.games} partidos jugados
+              </div>
+              <div className="row" style={{ marginTop: 12 }}>
+                <span className="chip brand">{l.edition.teams} equipos</span>
+                {l.code === 'ACB' && <span className="chip">{data.counts.honours} finales históricas</span>}
+              </div>
+            </>
+          ) : (
             <div className="row" style={{ marginTop: 12 }}>
               <span className="chip">Próximamente</span>
             </div>
-          </div>
-        )
-      )}
+          )}
+        </LeagueCard>
+      ))}
     </div>
   )
 }
@@ -263,40 +250,3 @@ export function LeadersBox({ leaders }: { leaders: Record<LeaderKey, LeaderRow[]
   )
 }
 
-function StandingsMini({ data }: { data: HomeData }) {
-  if (!data.standings.length) return <Empty>Aún no se ha disputado ningún partido.</Empty>
-  return (
-    <div className="table-wrap">
-      <table className="table compact">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Equipo</th>
-            <th className="num">PJ</th>
-            <th className="num">V</th>
-            <th className="num">D</th>
-            <th className="num">+/−</th>
-            <th>Forma</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.standings.map((s) => (
-            <tr key={s.team_id}>
-              <td className="pos">{s.position}</td>
-              <td>
-                <TeamLink team={s} />
-              </td>
-              <td className="num">{s.played}</td>
-              <td className="num">{s.won}</td>
-              <td className="num">{s.lost}</td>
-              <td className="num">{s.diff > 0 ? `+${s.diff}` : s.diff}</td>
-              <td>
-                <Form results={s.form} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )
-}

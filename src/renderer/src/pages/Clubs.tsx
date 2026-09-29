@@ -17,7 +17,8 @@ import {
   useLoad,
   type Column
 } from '../components'
-import { LICENSE_LABEL, age, initials, int, num, pct, teamColor } from '../format'
+import { LICENSE_LABEL, age, initials, int, luminance, mix, num, pct, teamColor } from '../format'
+import { brandVars, leagueTheme } from '../leagues'
 import { href, navigate } from '../router'
 import { PlayerStatsTable } from './StatTables'
 
@@ -33,24 +34,36 @@ export function ClubsPage() {
         <p>{clubs.length} clubes. Cada ficha incluye plantilla con fotos, estadísticas con su puesto en la liga, partidos, pabellón, historia y palmarés.</p>
       </div>
       <div className="stack">
-        {leagues.map(([code, name]) => (
-          <Section key={code} title={name} eyebrow={`${clubs.filter((c) => c.competition_code === code).length} equipos`} actions={<a className="link" href={href.league(code)}>Ver liga →</a>}>
-            <div className="club-tiles">
-              {clubs
-                .filter((c) => c.competition_code === code)
-                .map((c) => (
-                  <a key={c.team_id} className="club-tile" href={href.club(c.club_ref, c.name)} style={{ ['--c' as string]: teamColor(c.color) }}>
-                    <TeamLogo src={c.logo} name={c.name} size={52} />
-                    <div style={{ minWidth: 0 }}>
-                      <div className="name">{c.name}</div>
-                      <div className="sub">{c.arena ?? ''}</div>
-                      {c.founded_year && <div className="sub">Fundado en {c.founded_year}</div>}
+        {leagues.map(([code, name]) => {
+          const list = clubs.filter((c) => c.competition_code === code)
+          const groups = [...new Set(list.map((c) => c.group ?? ''))]
+          const theme = leagueTheme(code)
+          return (
+            <div key={code} style={theme ? brandVars(theme.color, theme.color2) : undefined}>
+              <Section title={name} eyebrow={`${list.length} equipos${groups.length > 1 ? ` · ${groups.length} grupos` : ''}`} actions={<a className="link" href={href.league(code)}>Ver liga →</a>} className="league-section">
+                {groups.map((g) => (
+                  <div key={g} className="club-group">
+                    {groups.length > 1 && <div className="eyebrow">Grupo {g}</div>}
+                    <div className="club-tiles">
+                      {list
+                        .filter((c) => (c.group ?? '') === g)
+                        .map((c) => (
+                          <a key={c.team_id} className="club-tile" href={href.club(c.club_ref, c.name)} style={{ ['--c' as string]: teamColor(c.color) }}>
+                            <TeamLogo src={c.logo} name={c.name} size={52} />
+                            <div style={{ minWidth: 0 }}>
+                              <div className="name">{c.name}</div>
+                              <div className="sub">{c.arena ?? ''}</div>
+                              {c.founded_year && <div className="sub">Fundado en {c.founded_year}</div>}
+                            </div>
+                          </a>
+                        ))}
                     </div>
-                  </a>
+                  </div>
                 ))}
+              </Section>
             </div>
-          </Section>
-        ))}
+          )
+        })}
       </div>
     </>
   )
@@ -73,10 +86,19 @@ export function ClubPage({ refId, tab = 'resumen', year }: { refId: string; tab?
   const { club, stats, standing, season } = data
   const color = teamColor(club.color, '#13294d')
   const titles = (c: ClubHonour['competition']) => data.honours.filter((h) => h.competition === c && h.role === 'champion').length
+  // Colores del club: el principal tiñe la cabecera y los acentos de la página (oscurecido si es muy
+  // claro para que se lea sobre blanco); el secundario, la franja diagonal de la cabecera.
+  const accent = luminance(color) > 0.62 ? mix(color, '#000000', 0.45) : color
+  const second = club.color2 && /^#[0-9a-f]{6}$/i.test(club.color2) ? club.color2 : '#ffffff'
 
   return (
-    <>
-      <section className="hero" style={{ background: `linear-gradient(120deg, ${color} 0%, #0b1a33 85%)` }}>
+    <div style={brandVars(accent, second)}>
+      <section
+        className="hero team-hero"
+        style={{ background: `linear-gradient(120deg, ${color} 0%, ${mix(color, '#000000', 0.55)} 62%, ${mix(color, '#000000', 0.75)} 100%)` }}
+      >
+        <span className="team-stripe" style={{ background: second }} />
+        <span className="team-stripe thin" style={{ background: second }} />
         <div className="hero-grid">
           <div className="hero-logo">
             <TeamLogo src={club.logo} name={club.name} size={88} />
@@ -175,7 +197,7 @@ export function ClubPage({ refId, tab = 'resumen', year }: { refId: string; tab?
       )}
       {tab === 'palmares' && <Cabinet data={data} />}
       {tab === 'historia' && <History data={data} />}
-    </>
+    </div>
   )
 }
 

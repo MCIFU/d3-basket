@@ -12,4 +12,6 @@ Thumbs.db
 .vscode/
 .idea/
 dist-web/
+public/data/
 .netlify/
+__pycache__/

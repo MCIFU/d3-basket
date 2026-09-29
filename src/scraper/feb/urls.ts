@@ -4,7 +4,8 @@ export const FEB_BASE = 'https://baloncestoenvivo.feb.es'
 /** Competiciones FEB soportadas: código interno → grupo (g) de la web de la FEB. */
 export const FEB_COMPETITIONS = {
   LEB_ORO: { g: 1, name: 'Primera FEB' },
-  LEB_PLATA: { g: 2, name: 'Segunda FEB' }
+  LEB_PLATA: { g: 2, name: 'Segunda FEB' },
+  TERCERA_FEB: { g: 3, name: 'Tercera FEB' }
 } as const
 export type FebCompetition = keyof typeof FEB_COMPETITIONS
 
