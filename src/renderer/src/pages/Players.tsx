@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
-import type { CareerLine, PlayerData, PlayerIndexRow, TrajectoryRow } from '../../../shared/api'
+import type { PlayerData, PlayerIndexRow, TrajectoryRow } from '../../../shared/api'
 import {
+  CompetitionBadge,
   DataTable,
   Empty,
   ExternalLink,
@@ -20,6 +21,7 @@ import { LICENSE_LABEL, age, fmtBirth, fmtDate, fmtDay, initials, int, num, pct,
 import { href } from '../router'
 import { ModeToggle, type StatMode } from './StatTables'
 import { ReportCard } from './Scouting'
+import { CareerChart, CareerTimeline, FullStatsTable, buildCareer, careerLine, careerSummary, seasonLine } from './Career'
 
 // ───────────────────────── Índice ─────────────────────────
 
@@ -28,6 +30,7 @@ export function PlayersPage() {
   const [q, setQ] = useState('')
   const [team, setTeam] = useState('')
   const [pos, setPos] = useState('')
+  const [league, setLeague] = useState('')
   const [view, setView] = useState<'cards' | 'table'>('cards')
   const list = useMemo(
     () =>
@@ -35,9 +38,10 @@ export function PlayersPage() {
         (p) =>
           (!q || p.display_name.toLowerCase().includes(q.toLowerCase()) || (p.nationality ?? '').toLowerCase().includes(q.toLowerCase())) &&
           (!team || p.team.club_ref === team) &&
+          (!league || p.competition_code === league) &&
           (!pos || p.position === pos)
       ),
-    [players, q, team, pos]
+    [players, q, team, pos, league]
   )
   if (!players) return <Loading error={error} />
   const teams = [...new Map(players.map((p) => [p.team.club_ref, p.team])).values()].sort((a, b) => a.name.localeCompare(b.name))
@@ -70,16 +74,24 @@ export function PlayersPage() {
   return (
     <>
       <div className="page-title">
-        <div className="eyebrow">Liga Endesa</div>
+        <div className="eyebrow">Temporada en curso</div>
         <h1>Jugadores</h1>
-        <p>{players.length} jugadores con licencia en la temporada en curso.</p>
+        <p>{players.length} jugadores con licencia en la Liga Endesa y la Primera FEB.</p>
       </div>
       <div className="card">
         <div className="row" style={{ marginBottom: 16 }}>
           <input className="input" placeholder="Nombre o nacionalidad" value={q} onChange={(e) => setQ(e.target.value)} />
+          <select className="select" value={league} onChange={(e) => (setLeague(e.target.value), setTeam(''))}>
+            <option value="">Todas las ligas</option>
+            {[...new Set(players.map((p) => p.competition_code))].map((c) => (
+              <option key={c} value={c}>
+                {c === 'ACB' ? 'Liga Endesa' : c === 'LEB_ORO' ? 'Primera FEB' : 'Segunda FEB'}
+              </option>
+            ))}
+          </select>
           <select className="select" value={team} onChange={(e) => setTeam(e.target.value)}>
             <option value="">Todos los equipos</option>
-            {teams.map((t) => (
+            {teams.filter((t) => !league || players.some((p) => p.team.club_ref === t.club_ref && p.competition_code === league)).map((t) => (
               <option key={t.club_ref} value={t.club_ref}>
                 {t.name}
               </option>
@@ -152,8 +164,8 @@ export function PlayersPage() {
 
 const TABS = [
   { id: 'resumen', label: 'Resumen' },
-  { id: 'estadisticas', label: 'Estadísticas' },
   { id: 'trayectoria', label: 'Trayectoria' },
+  { id: 'estadisticas', label: 'Estadísticas' },
   { id: 'partidos', label: 'Partido a partido' },
   { id: 'scouting', label: 'Scouting' }
 ]
@@ -186,13 +198,16 @@ export function PlayerPage({ refId, tab = 'resumen' }: { refId: string; tab?: st
               {current?.jersey_number && <span className="jersey">{current.jersey_number}</span>}
               <div>
                 {current && (
-                  <a className="row" style={{ gap: 8, fontWeight: 700 }} href={href.club(current.club_ref, current.name)}>
-                    <span style={{ background: '#fff', borderRadius: 8, padding: 3, display: 'inline-flex' }}>
-                      <TeamLogo src={current.logo} name={current.name} size={24} />
-                    </span>
-                    {current.name} · {current.season_label}
+                  <div className="row" style={{ gap: 8 }}>
+                    <a className="row" style={{ gap: 8, fontWeight: 700 }} href={href.club(current.club_ref, current.name)}>
+                      <span style={{ background: '#fff', borderRadius: 8, padding: 3, display: 'inline-flex' }}>
+                        <TeamLogo src={current.logo} name={current.name} size={24} />
+                      </span>
+                      {current.name} · {current.season_label}
+                    </a>
+                    <CompetitionBadge name={current.competition_code} />
                     {!current.is_active && <span className="chip">Baja</span>}
-                  </a>
+                  </div>
                 )}
                 <h1 style={{ marginTop: 6 }}>{p.display_name}</h1>
                 {p.full_name !== p.display_name && <div style={{ opacity: 0.75 }}>{p.full_name}</div>}
@@ -244,61 +259,99 @@ export function PlayerPage({ refId, tab = 'resumen' }: { refId: string; tab?: st
       <Tabs active={tab} items={TABS.map((t) => ({ ...t, href: href.player(p.ref, p.display_name, t.id) }))} />
 
       {tab === 'resumen' && <PlayerSummary data={data} />}
-      {tab === 'estadisticas' && <PlayerStats data={data} />}
       {tab === 'trayectoria' && <Trajectory data={data} />}
+      {tab === 'estadisticas' && <PlayerStats data={data} />}
       {tab === 'partidos' && <GameLog data={data} />}
       {tab === 'scouting' && <PlayerReports data={data} />}
     </>
   )
 }
 
+function CareerHeader({ data }: { data: PlayerData }) {
+  const entries = buildCareer(data)
+  if (!entries.length) return null
+  const s = careerSummary(entries)
+  const acb = data.career?.acbTotals
+  return (
+    <div className="career-summary">
+      <span className="chip brand">
+        {s.seasons} temporadas ({s.from}–{s.to + 1})
+      </span>
+      <span className="chip">{s.clubs} clubes</span>
+      {s.acbDebut && <span className="chip">Debut en la Liga Endesa: {s.acbDebut}-{String(s.acbDebut + 1).slice(-2)}</span>}
+      {acb && <span className="chip">{int(acb.games)} partidos en la ACB</span>}
+      {s.competitions.map((c) => (
+        <CompetitionBadge key={c} name={c} />
+      ))}
+    </div>
+  )
+}
+
 function PlayerSummary({ data }: { data: PlayerData }) {
   const { season, career } = data
   const acb = career?.acbTotals
+  const entries = buildCareer(data)
+  const p = data.player
   return (
-    <div className="grid grid-main">
-      <div className="stack">
-        {season && (
-          <Section title={`Temporada ${data.current?.season_label ?? ''}`} eyebrow="Por partido">
-            <div className="stat-tiles">
-              <StatTile label="Puntos" value={num(season.ppg)} sub={`${int(season.pts)} en total`} />
-              <StatTile label="Rebotes" value={num(season.rpg)} sub={`${num(season.orpg)} of. · ${num(season.drpg)} def.`} />
-              <StatTile label="Asistencias" value={num(season.apg)} />
-              <StatTile label="Robos" value={num(season.spg)} />
-              <StatTile label="Tapones" value={num(season.bpg)} />
-              <StatTile label="Valoración" value={num(season.pirpg)} />
-              <StatTile label="T2%" value={pct(season.fg2_pct)} sub={shot(season.fg2m, season.fg2a)} />
-              <StatTile label="T3%" value={pct(season.fg3_pct)} sub={shot(season.fg3m, season.fg3a)} />
-              <StatTile label="TL%" value={pct(season.ft_pct)} sub={shot(season.ftm, season.fta)} />
-              <StatTile label="TS%" value={pct(season.ts_pct)} />
-            </div>
-          </Section>
-        )}
-        {acb && (
-          <Section title="Carrera en la Liga Endesa" eyebrow="Totales oficiales ACB">
-            <div className="stat-tiles">
-              <StatTile label="Partidos" value={int(acb.games)} sub={acb.starts != null ? `${int(acb.starts)} de titular` : undefined} />
-              <StatTile label="Puntos" value={int(acb.points)} sub={career?.acbAverages ? `${num(career.acbAverages.points)} por partido` : undefined} />
-              <StatTile label="Rebotes" value={int(acb.reb)} sub={career?.acbAverages ? `${num(career.acbAverages.reb)} por partido` : undefined} />
-              <StatTile label="Asistencias" value={int(acb.ast)} sub={career?.acbAverages ? `${num(career.acbAverages.ast)} por partido` : undefined} />
-              <StatTile label="Triples" value={int(acb.fg3m)} sub={`${pct(acb.fg3a ? (100 * acb.fg3m) / acb.fg3a : null)} de acierto`} />
-              <StatTile label="Valoración" value={int(acb.pir)} sub={career?.acbAverages ? `${num(career.acbAverages.pir)} por partido` : undefined} />
-            </div>
-          </Section>
-        )}
-        {data.trajectory.length > 0 && (
-          <Section title="Trayectoria" actions={<a className="link" href={href.player(data.player.ref, data.player.display_name, 'trayectoria')}>Completa →</a>}>
-            <TrajectoryTable rows={data.trajectory.slice(0, 6)} mode="avg" compact />
-          </Section>
-        )}
-      </div>
-      <div className="stack">
+    <div className="stack">
+      {season && (
+        <Section
+          title={`Temporada ${data.current?.season_label ?? ''}`}
+          eyebrow={`Por partido · ${data.current?.competition_name ?? ''}`}
+          actions={<a className="link" href={href.player(p.ref, p.display_name, 'estadisticas')}>Todas las estadísticas →</a>}
+        >
+          <div className="stat-tiles">
+            <StatTile label="Puntos" value={num(season.ppg)} sub={`${int(season.pts)} en total`} />
+            <StatTile label="Rebotes" value={num(season.rpg)} sub={`${num(season.orpg)} of. · ${num(season.drpg)} def.`} />
+            <StatTile label="Asistencias" value={num(season.apg)} sub={`${int(season.ast)} en total`} />
+            <StatTile label="Robos" value={num(season.spg)} />
+            <StatTile label="Tapones" value={num(season.bpg)} />
+            <StatTile label="Pérdidas" value={num(season.tpg)} />
+            <StatTile label="Valoración" value={num(season.pirpg)} sub={`${int(season.pir)} en total`} />
+            <StatTile label="Minutos" value={num(season.mpg)} sub={`${season.starts} de titular`} />
+            <StatTile label="T2%" value={pct(season.fg2_pct)} sub={`${season.fg2m}/${season.fg2a}`} />
+            <StatTile label="T3%" value={pct(season.fg3_pct)} sub={`${season.fg3m}/${season.fg3a}`} />
+            <StatTile label="TL%" value={pct(season.ft_pct)} sub={`${season.ftm}/${season.fta}`} />
+            <StatTile label="TS%" value={pct(season.ts_pct)} sub="True Shooting" />
+          </div>
+        </Section>
+      )}
+
+      {entries.length > 0 && (
+        <Section
+          title="Trayectoria"
+          eyebrow="Carrera temporada a temporada"
+          actions={<a className="link" href={href.player(p.ref, p.display_name, 'trayectoria')}>Trayectoria completa →</a>}
+        >
+          <CareerHeader data={data} />
+          <CareerChart rows={data.trajectory} />
+          <div className="mt">
+            <CareerTimeline entries={entries} limit={6} />
+          </div>
+        </Section>
+      )}
+
+      <div className="grid grid-main">
+        <div className="stack">
+          {acb && (
+            <Section title="Carrera en la Liga Endesa" eyebrow="Totales oficiales ACB">
+              <div className="stat-tiles">
+                <StatTile label="Partidos" value={int(acb.games)} sub={acb.starts != null ? `${int(acb.starts)} de titular` : undefined} />
+                <StatTile label="Puntos" value={int(acb.points)} sub={career?.acbAverages ? `${num(career.acbAverages.points)} por partido` : undefined} />
+                <StatTile label="Rebotes" value={int(acb.reb)} sub={career?.acbAverages ? `${num(career.acbAverages.reb)} por partido` : undefined} />
+                <StatTile label="Asistencias" value={int(acb.ast)} sub={career?.acbAverages ? `${num(career.acbAverages.ast)} por partido` : undefined} />
+                <StatTile label="Triples" value={int(acb.fg3m)} sub={`${pct(acb.fg3a ? (100 * acb.fg3m) / acb.fg3a : null)} de acierto`} />
+                <StatTile label="Valoración" value={int(acb.pir)} sub={career?.acbAverages ? `${num(career.acbAverages.pir)} por partido` : undefined} />
+              </div>
+            </Section>
+          )}
+          {data.gameLog.length > 0 && (
+            <Section title="Últimos partidos" actions={<a className="link" href={href.player(p.ref, p.display_name, 'partidos')}>Todos →</a>}>
+              <GameLogTable rows={data.gameLog.slice(0, 5)} compact />
+            </Section>
+          )}
+        </div>
         <Records data={data} />
-        {data.gameLog.length > 0 && (
-          <Section title="Últimos partidos" actions={<a className="link" href={href.player(data.player.ref, data.player.display_name, 'partidos')}>Todos →</a>}>
-            <GameLogTable rows={data.gameLog.slice(0, 5)} compact />
-          </Section>
-        )}
       </div>
     </div>
   )
@@ -346,102 +399,54 @@ function Records({ data }: { data: PlayerData }) {
   )
 }
 
-function careerRow(label: string, l?: CareerLine, avg?: boolean) {
-  if (!l) return null
-  const f = (v: number) => (avg ? num(v) : int(v))
-  return (
-    <tr key={label}>
-      <td>
-        <b>{label}</b>
-      </td>
-      <td className="num">{int(l.games)}</td>
-      <td className="num">{avg ? num(l.seconds / 60) : int(l.seconds / 60)}</td>
-      <td className="num">{f(l.points)}</td>
-      <td className="num">{f(l.reb)}</td>
-      <td className="num">{f(l.oreb)}</td>
-      <td className="num">{f(l.dreb)}</td>
-      <td className="num">{f(l.ast)}</td>
-      <td className="num">{f(l.stl)}</td>
-      <td className="num">{f(l.blk)}</td>
-      <td className="num">{f(l.tov)}</td>
-      <td className="num">{f(l.pf)}</td>
-      <td className="num">{f(l.pir)}</td>
-      <td className="num">{avg ? `${num(l.fg2m)}/${num(l.fg2a)}` : shot(l.fg2m, l.fg2a)}</td>
-      <td className="num">{avg ? `${num(l.fg3m)}/${num(l.fg3a)}` : shot(l.fg3m, l.fg3a)}</td>
-      <td className="num">{avg ? `${num(l.ftm)}/${num(l.fta)}` : shot(l.ftm, l.fta)}</td>
-    </tr>
-  )
-}
-
 function PlayerStats({ data }: { data: PlayerData }) {
   const s = data.season
   const c = data.career
-  const seasonLine = (avg: boolean): CareerLine | undefined =>
-    s && {
-      games: s.games,
-      seconds: avg ? s.seconds / (s.games || 1) : s.seconds,
-      points: avg ? s.ppg : s.pts,
-      reb: avg ? s.rpg : s.reb,
-      oreb: avg ? s.orpg : s.oreb,
-      dreb: avg ? s.drpg : s.dreb,
-      ast: avg ? s.apg : s.ast,
-      stl: avg ? s.spg : s.stl,
-      blk: avg ? s.bpg : s.blk,
-      tov: avg ? s.tpg : s.tov,
-      pf: avg ? s.pfpg : s.pf,
-      pir: avg ? s.pirpg : s.pir,
-      fg2m: avg ? s.fg2m / (s.games || 1) : s.fg2m,
-      fg2a: avg ? s.fg2a / (s.games || 1) : s.fg2a,
-      fg3m: avg ? s.fg3m / (s.games || 1) : s.fg3m,
-      fg3a: avg ? s.fg3a / (s.games || 1) : s.fg3a,
-      ftm: avg ? s.ftm / (s.games || 1) : s.ftm,
-      fta: avg ? s.fta / (s.games || 1) : s.fta,
-      dunks: s.dunks,
-      foulsDrawn: s.fd,
-      plusMinus: s.pm
-    }
-  const head = (
-    <thead>
-      <tr>
-        <th />
-        {['PJ', 'MIN', 'PTS', 'REB', 'RO', 'RD', 'AST', 'ROB', 'TAP', 'PÉR', 'FP', 'VAL', 'T2', 'T3', 'TL'].map((h) => (
-          <th key={h} className="num">
-            {h}
-          </th>
-        ))}
-      </tr>
-    </thead>
-  )
-  if (!s && !c) return <Empty>Sin estadísticas registradas.</Empty>
+  if (!s && !c && !data.trajectory.length) return <Empty>Sin estadísticas registradas.</Empty>
+  const seasonName = `Temporada ${data.current?.season_label ?? ''}`
   return (
     <div className="stack">
-      <Section title="Promedios por partido">
-        <div className="table-wrap">
-          <table className="table">
-            {head}
-            <tbody>
-              {careerRow(`Temporada ${data.current?.season_label ?? ''}`, seasonLine(true), true)}
-              {careerRow('Carrera Liga Endesa', c?.acbAverages, true)}
-              {careerRow('Todas las competiciones ACB', c?.allAverages, true)}
-            </tbody>
-          </table>
-        </div>
-      </Section>
-      <Section title="Totales">
-        <div className="table-wrap">
-          <table className="table">
-            {head}
-            <tbody>
-              {careerRow(`Temporada ${data.current?.season_label ?? ''}`, seasonLine(false))}
-              {careerRow('Carrera Liga Endesa', c?.acbTotals)}
-              {careerRow('Todas las competiciones ACB', c?.allTotals)}
-            </tbody>
-          </table>
-        </div>
-        <p className="note">“Todas las competiciones ACB” incluye Liga Endesa, Copa del Rey y Supercopa. Fuente: acb.com.</p>
-      </Section>
       {s && (
-        <Section title="Tiro y eficiencia" eyebrow={`Temporada ${data.current?.season_label ?? ''}`}>
+        <Section title={seasonName} eyebrow={data.current?.competition_name}>
+          <FullStatsTable
+            rows={[seasonLine('Por partido', s, 'avg'), seasonLine('Totales', s, 'tot'), seasonLine('Por 40 minutos', s, 'p40')]}
+          />
+        </Section>
+      )}
+      {c && (c.acbAverages || c.acbTotals) && (
+        <Section title="Carrera oficial en la ACB" eyebrow="acb.com">
+          <FullStatsTable
+            rows={[
+              ...(c.acbAverages ? [careerLine('Liga Endesa · por partido', c.acbAverages, true)] : []),
+              ...(c.acbTotals ? [careerLine('Liga Endesa · totales', c.acbTotals, false)] : []),
+              ...(c.allAverages ? [careerLine('Todas las competiciones · por partido', c.allAverages, true)] : []),
+              ...(c.allTotals ? [careerLine('Todas las competiciones · totales', c.allTotals, false)] : [])
+            ]}
+          />
+          <p className="note">“Todas las competiciones” incluye Liga Endesa, Copa del Rey y Supercopa.</p>
+        </Section>
+      )}
+      {data.trajectory.length > 0 && (
+        <Section title="Por temporada" eyebrow="Promedios por partido">
+          <FullStatsTable
+            rows={data.trajectory.map((t) =>
+              seasonLine(
+                <span className="row" style={{ gap: 8, flexWrap: 'nowrap' }}>
+                  {t.label}
+                  <TeamLogo src={t.logo} name={t.team_name} size={18} />
+                  <span className="muted" style={{ fontWeight: 500 }}>
+                    {t.team_name}
+                  </span>
+                </span>,
+                { ...t, starts: 0, player_id: 0, player_ref: '', display_name: '', photo: null, photo_nobg: null, position: null, nationality: null, team: {} as never } as never,
+                'avg'
+              )
+            )}
+          />
+        </Section>
+      )}
+      {s && (
+        <Section title="Tiro y eficiencia" eyebrow={seasonName}>
           <div className="stat-tiles">
             <StatTile label="T2%" value={pct(s.fg2_pct)} sub={shot(s.fg2m, s.fg2a)} />
             <StatTile label="T3%" value={pct(s.fg3_pct)} sub={shot(s.fg3m, s.fg3a)} />
@@ -459,10 +464,10 @@ function PlayerStats({ data }: { data: PlayerData }) {
   )
 }
 
-function TrajectoryTable({ rows, mode, compact }: { rows: TrajectoryRow[]; mode: StatMode; compact?: boolean }) {
+function TrajectoryTable({ rows, mode }: { rows: TrajectoryRow[]; mode: StatMode }) {
   const v = (avg: number, tot: number) => (mode === 'avg' ? num(avg) : int(tot))
   const columns: Column<TrajectoryRow>[] = [
-    { key: 'start_year', label: 'Temporada', num: false, value: (r) => r.start_year, render: (r) => <b>{r.label}</b> },
+    { key: 'start_year', label: 'Temporada', value: (r) => r.start_year, render: (r) => <b>{r.label}</b> },
     {
       key: 'team_name',
       label: 'Equipo',
@@ -476,74 +481,91 @@ function TrajectoryTable({ rows, mode, compact }: { rows: TrajectoryRow[]; mode:
           r.team_name
         )
     },
+    { key: 'competition_code', label: 'Liga', render: (r) => <CompetitionBadge name={r.competition_code} /> },
     { key: 'games', label: 'PJ', num: true, render: (r) => `${r.games}${r.playoff_games ? ` (${r.playoff_games} PO)` : ''}` },
     { key: 'mpg', label: 'MIN', num: true, render: (r) => v(r.mpg, r.seconds / 60) },
-    { key: 'ppg', label: 'PTS', num: true, render: (r) => v(r.ppg, r.pts) },
+    { key: 'ppg', label: 'PTS', num: true, render: (r) => <b>{v(r.ppg, r.pts)}</b> },
     { key: 'rpg', label: 'REB', num: true, render: (r) => v(r.rpg, r.reb) },
+    { key: 'orpg', label: 'RO', num: true, render: (r) => v(r.orpg, r.oreb) },
+    { key: 'drpg', label: 'RD', num: true, render: (r) => v(r.drpg, r.dreb) },
     { key: 'apg', label: 'AST', num: true, render: (r) => v(r.apg, r.ast) },
     { key: 'spg', label: 'ROB', num: true, render: (r) => v(r.spg, r.stl) },
     { key: 'bpg', label: 'TAP', num: true, render: (r) => v(r.bpg, r.blk) },
-    { key: 'pirpg', label: 'VAL', num: true, render: (r) => v(r.pirpg, r.pir) },
-    ...(compact
-      ? []
-      : [
-          { key: 'fg2_pct', label: 'T2%', num: true, render: (r: TrajectoryRow) => pct(r.fg2_pct) },
-          { key: 'fg3_pct', label: 'T3%', num: true, render: (r: TrajectoryRow) => pct(r.fg3_pct) },
-          { key: 'ft_pct', label: 'TL%', num: true, render: (r: TrajectoryRow) => pct(r.ft_pct) },
-          { key: 'ts_pct', label: 'TS%', num: true, render: (r: TrajectoryRow) => pct(r.ts_pct) }
-        ])
+    { key: 'tpg', label: 'PÉR', num: true, render: (r) => v(r.tpg, r.tov) },
+    { key: 'pfpg', label: 'FC', num: true, render: (r) => v(r.pfpg, r.pf) },
+    { key: 'pirpg', label: 'VAL', num: true, render: (r) => <b>{v(r.pirpg, r.pir)}</b> },
+    { key: 'fg2_pct', label: 'T2%', num: true, render: (r) => pct(r.fg2_pct) },
+    { key: 'fg3_pct', label: 'T3%', num: true, render: (r) => pct(r.fg3_pct) },
+    { key: 'ft_pct', label: 'TL%', num: true, render: (r) => pct(r.ft_pct) },
+    { key: 'ts_pct', label: 'TS%', num: true, render: (r) => pct(r.ts_pct) }
   ]
-  return <DataTable rows={rows} columns={columns} rowKey={(r) => `${r.start_year}-${r.club_ref}-${r.team_name}`} initialSort={{ key: 'start_year', dir: 'desc' }} compact={compact} />
+  const tot = rows.reduce(
+    (a, r) => ({
+      games: a.games + r.games,
+      seconds: a.seconds + r.seconds,
+      pts: a.pts + r.pts,
+      reb: a.reb + r.reb,
+      ast: a.ast + r.ast,
+      stl: a.stl + r.stl,
+      blk: a.blk + r.blk,
+      pir: a.pir + r.pir
+    }),
+    { games: 0, seconds: 0, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0, pir: 0 }
+  )
+  const g = tot.games || 1
+  const foot = (
+    <tfoot>
+      <tr>
+        <td>Total</td>
+        <td>{rows.length} temporadas</td>
+        <td />
+        <td className="num">{tot.games}</td>
+        <td className="num">{mode === 'avg' ? num(tot.seconds / 60 / g) : int(tot.seconds / 60)}</td>
+        <td className="num">{v(tot.pts / g, tot.pts)}</td>
+        <td className="num">{v(tot.reb / g, tot.reb)}</td>
+        <td />
+        <td />
+        <td className="num">{v(tot.ast / g, tot.ast)}</td>
+        <td className="num">{v(tot.stl / g, tot.stl)}</td>
+        <td className="num">{v(tot.blk / g, tot.blk)}</td>
+        <td />
+        <td />
+        <td className="num">{v(tot.pir / g, tot.pir)}</td>
+        <td colSpan={4} />
+      </tr>
+    </tfoot>
+  )
+  return (
+    <DataTable
+      rows={rows}
+      columns={columns}
+      rowKey={(r) => `${r.start_year}-${r.club_ref}-${r.team_name}-${r.competition_code}`}
+      initialSort={{ key: 'start_year', dir: 'desc' }}
+      footer={foot}
+    />
+  )
 }
 
 function Trajectory({ data }: { data: PlayerData }) {
   const [mode, setMode] = useState<StatMode>('avg')
-  const clubs = [...new Map(data.trajectory.map((t) => [t.club_ref ?? t.team_name, t])).values()]
-  const seasons = new Set(data.trajectory.map((t) => t.start_year)).size
-  const acbEditions = data.career?.acbTotals?.games
+  const entries = buildCareer(data)
+  if (!entries.length) return <Empty>Sin temporadas registradas todavía.</Empty>
   return (
     <div className="stack">
-      <Section
-        title="Trayectoria temporada a temporada"
-        eyebrow="Liga Endesa"
-        actions={<ModeToggle mode={mode} onChange={setMode} />}
-      >
-        {data.trajectory.length ? <TrajectoryTable rows={data.trajectory} mode={mode} /> : <Empty>Sin temporadas registradas.</Empty>}
+      <Section title="Trayectoria completa" eyebrow="Todas las temporadas y categorías">
+        <CareerHeader data={data} />
+        <CareerChart rows={data.trajectory} />
+        <div className="mt">
+          <CareerTimeline entries={entries} />
+        </div>
         <p className="note">
-          {seasons} temporadas y {clubs.length} clubes registrados
-          {acbEditions ? ` · ${int(acbEditions)} partidos oficiales en su carrera ACB` : ''}. Las temporadas pasadas se completan
-          poco a poco con cada actualización de datos desde acb.com.
+          Estadísticas por temporada de la Liga Endesa (acb.com) y de las competiciones FEB con estadística completa; el resto de etapas
+          (categorías FEB inferiores) proceden del historial de licencias de la FEB.
         </p>
       </Section>
-      {clubs.length > 0 && (
-        <Section title="Clubes">
-          <div className="club-tiles">
-            {clubs.map((c) => {
-              const stints = data.trajectory.filter((t) => (t.club_ref ?? t.team_name) === (c.club_ref ?? c.team_name))
-              const years = stints.map((s) => s.start_year)
-              const games = stints.reduce((a, s) => a + s.games, 0)
-              const body = (
-                <>
-                  <TeamLogo src={c.logo} name={c.team_name} size={44} />
-                  <div style={{ minWidth: 0 }}>
-                    <div className="name">{c.team_name}</div>
-                    <div className="sub">
-                      {Math.min(...years)}–{Math.max(...years) + 1} · {stints.length} temp. · {games} partidos
-                    </div>
-                  </div>
-                </>
-              )
-              return c.club_ref ? (
-                <a key={c.club_ref} className="club-tile" href={href.club(c.club_ref, c.team_name)}>
-                  {body}
-                </a>
-              ) : (
-                <div key={c.team_name} className="club-tile">
-                  {body}
-                </div>
-              )
-            })}
-          </div>
+      {data.trajectory.length > 0 && (
+        <Section title="Estadísticas por temporada" actions={<ModeToggle mode={mode} onChange={setMode} />}>
+          <TrajectoryTable rows={data.trajectory} mode={mode} />
         </Section>
       )}
     </div>

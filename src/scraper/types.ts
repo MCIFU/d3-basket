@@ -119,6 +119,17 @@ export interface NPlayerProfile extends NPlayer {
   socials: Record<string, string>
 }
 
+/** Etapa de la trayectoria de un jugador (una licencia en un club y temporada). */
+export interface NStint {
+  seasonStartYear: number
+  competition: string // 'PRIMERA FEB', 'LIGA EBA', 'LIGA ENDESA'...
+  club: string
+  team?: string
+  license?: string
+  joinedOn?: string
+  leftOn?: string
+}
+
 /** Partido de la página "partidos" de un jugador en una temporada. */
 export interface NPlayerGameRow extends NStatLine {
   gameRef: string

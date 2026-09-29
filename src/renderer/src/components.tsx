@@ -65,6 +65,35 @@ export function TeamLink({ team, year, logo = true, short }: { team: TeamLite; y
   )
 }
 
+/** Las fotos de la FEB son de medio cuerpo (PNG transparente): en avatares se amplía la cara. */
+export const isHalfBody = (src?: string | null) => !!src && src.includes('imagenes.feb.es')
+
+// ───────────────────────── Competiciones ─────────────────────────
+
+const COMPETITION_STYLE: { match: RegExp; label?: string; bg: string; fg: string }[] = [
+  { match: /^(ACB|LIGA ENDESA)/i, label: 'Liga Endesa', bg: '#ff6b00', fg: '#fff' },
+  { match: /^(LEB_ORO|PRIMERA FEB|LEB ORO)/i, label: 'Primera FEB', bg: '#b8860b', fg: '#fff' },
+  { match: /^(LEB_PLATA|SEGUNDA FEB|LEB PLATA)/i, label: 'Segunda FEB', bg: '#64748b', fg: '#fff' },
+  { match: /^(TERCERA FEB|LEB BRONCE)/i, bg: '#9a6b3f', fg: '#fff' },
+  { match: /EBA/i, label: 'Liga EBA', bg: '#0e7490', fg: '#fff' },
+  { match: /^LIGA U/i, label: 'Liga U', bg: '#7c3aed', fg: '#fff' }
+]
+
+export function competitionStyle(name: string) {
+  const s = COMPETITION_STYLE.find((c) => c.match.test(name))
+  const label = s?.label ?? name.charAt(0) + name.slice(1).toLowerCase()
+  return { label, bg: s?.bg ?? '#e2e8f0', fg: s?.fg ?? '#334155' }
+}
+
+export function CompetitionBadge({ name }: { name: string }) {
+  const s = competitionStyle(name)
+  return (
+    <span className="comp-badge" style={{ background: s.bg, color: s.fg }}>
+      {s.label}
+    </span>
+  )
+}
+
 /** Foto del jugador: cara con fondo transparente sobre el color de su equipo. */
 export function PlayerPhoto({
   nobg,
@@ -88,7 +117,13 @@ export function PlayerPhoto({
       style={{ width: size, height: size, background: `radial-gradient(circle at 50% 35%, ${bg}55, ${bg}22 70%)` }}
     >
       {src ? (
-        <img src={src} alt="" loading="lazy" onError={() => setSrc(src === nobg && photo ? photo : null)} />
+        <img
+          src={src}
+          alt=""
+          loading="lazy"
+          className={isHalfBody(src) ? 'crop-face' : undefined}
+          onError={() => setSrc(src === nobg && photo ? photo : null)}
+        />
       ) : (
         <span className="player-initials" style={{ fontSize: size * 0.34 }}>
           {initials(name)}

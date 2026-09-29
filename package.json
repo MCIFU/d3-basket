@@ -18,7 +18,8 @@
     "dev:web": "vite --config vite.web.config.ts",
     "build:web": "vite build --config vite.web.config.ts",
     "export:web": "tsx src/cli/index.ts export-web",
-    "build:netlify": "(tsx src/cli/index.ts sync acb --db data/d3basket.db --delay 700 || echo \"AVISO: el scraping ha fallado; se publican los últimos datos en caché\") && tsx src/cli/index.ts export-web --db data/d3basket.db && vite build --config vite.web.config.ts"
+    "build:netlify": "tsx src/cli/index.ts restore-db --db data/d3basket.db && (tsx src/cli/index.ts sync acb --db data/d3basket.db --delay 700 || echo \"AVISO: fallo al sincronizar la ACB; se publican los últimos datos\") && (tsx src/cli/index.ts sync primera-feb --db data/d3basket.db --delay 700 || echo \"AVISO: fallo al sincronizar la Primera FEB; se publican los últimos datos\") && tsx src/cli/index.ts export-web --db data/d3basket.db && vite build --config vite.web.config.ts",
+    "seed": "tsx src/cli/index.ts export-web seed/d3basket.db.gz"
   },
   "build": {
     "appId": "com.mcifu.d3basket",

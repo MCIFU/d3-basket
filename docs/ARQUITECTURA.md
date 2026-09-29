@@ -125,3 +125,19 @@ Coste aproximado: sincronización completa de la temporada actual ≈ 270 petici
 3. Guardar sus ids en `external_ids` con `source = 'feb'`. El cruce de jugadores ACB↔FEB (nombre + fecha de nacimiento) se hará en una fase posterior.
 
 Fuentes de referencia para enriquecer datos más adelante: Proballers (trayectoria internacional), Basketball-Reference (NBA/NCAA), Hispaligas, Zona de Básquet y BaloncestoTV (contexto y noticias).
+
+## Scraper de la FEB (Primera FEB / Segunda FEB) — implementado
+
+`src/scraper/feb/` lee `baloncestoenvivo.feb.es` (HTML clásico de ASP.NET, con cheerio):
+
+| Dato | URL | Notas |
+|---|---|---|
+| Calendario y resultados | `calendario.aspx?g=1&t=2026` | Las 34 jornadas en una página. `g=1` Primera FEB, `g=2` Segunda FEB; `t` = año de inicio. |
+| Plantilla y club | `Equipo.aspx?i={equipo}` | Nombre, posición, dorsal, fecha y lugar de nacimiento, nacionalidad, formación, altura; pabellón, web, presidente, color de la equipación y entrenador. |
+| Boxscore | `Partido.aspx?p={partido}` | Parciales, fecha/hora (hora de Madrid → UTC), árbitros, pista y estadísticas completas por jugador. |
+| Ficha y trayectoria | `Jugador.aspx?i={equipo}&c={persona}` | **Historial de licencias completo** (EBA, LEB Plata, Segunda/Primera FEB…) → tabla `player_stints` (migración 3). |
+| Fotos | `imagenes.feb.es/Foto.aspx?c={persona}` | PNG de medio cuerpo con fondo transparente; en avatares se amplía la cara. |
+
+- Los ids FEB se guardan en `external_ids` con `source = 'feb'` y las URLs de la interfaz usan `f<id>` (p. ej. `#/jugador/...-f1371559`).
+- **Cruce ACB ↔ FEB**: al crear un jugador FEB se busca uno existente con la misma fecha de nacimiento y un apellido en común; si hay uno solo, se enlaza y su carrera queda unida.
+- Limitación: la web de la FEB no da un id de club estable entre temporadas; de momento cada equipo-temporada es su propio club (la web del club servirá para unirlos cuando haya varias temporadas).

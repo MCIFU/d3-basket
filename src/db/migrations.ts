@@ -467,5 +467,45 @@ CREATE VIEW v_game_ref AS
   SELECT g.id AS game_id, COALESCE(x.external_id, 'i' || g.id) AS ref
   FROM games g LEFT JOIN external_ids x ON x.entity_type = 'game' AND x.entity_id = g.id AND x.source = 'acb';
 `
+  },
+  {
+    version: 3,
+    name: 'feb_and_career_stints',
+    sql: /* sql */ `
+-- Trayectoria completa por etapas (una licencia en un club y temporada), de cualquier
+-- categoría: la FEB publica la carrera entera de cada jugador (EBA, LEB Plata, Primera FEB...).
+CREATE TABLE player_stints (
+  player_id          INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+  source             TEXT NOT NULL,              -- 'feb'
+  season_start_year  INTEGER NOT NULL,
+  competition        TEXT NOT NULL,              -- 'PRIMERA FEB', 'LIGA EBA'...
+  club_name          TEXT NOT NULL,
+  team_name          TEXT,
+  license            TEXT,
+  joined_on          TEXT,
+  left_on            TEXT,
+  PRIMARY KEY (player_id, source, season_start_year, competition, club_name)
+);
+
+-- Referencias estables también para la FEB: 'f<id>' (acb conserva su id tal cual).
+DROP VIEW v_club_ref;
+DROP VIEW v_player_ref;
+DROP VIEW v_game_ref;
+CREATE VIEW v_club_ref AS
+  SELECT c.id AS club_id, COALESCE(a.external_id, 'f' || f.external_id, 'i' || c.id) AS ref
+  FROM clubs c
+  LEFT JOIN external_ids a ON a.entity_type = 'club' AND a.entity_id = c.id AND a.source = 'acb'
+  LEFT JOIN external_ids f ON f.entity_type = 'club' AND f.entity_id = c.id AND f.source = 'feb';
+CREATE VIEW v_player_ref AS
+  SELECT p.id AS player_id, COALESCE(a.external_id, 'f' || f.external_id, 'i' || p.id) AS ref
+  FROM players p
+  LEFT JOIN external_ids a ON a.entity_type = 'player' AND a.entity_id = p.id AND a.source = 'acb'
+  LEFT JOIN external_ids f ON f.entity_type = 'player' AND f.entity_id = p.id AND f.source = 'feb';
+CREATE VIEW v_game_ref AS
+  SELECT g.id AS game_id, COALESCE(a.external_id, 'f' || f.external_id, 'i' || g.id) AS ref
+  FROM games g
+  LEFT JOIN external_ids a ON a.entity_type = 'game' AND a.entity_id = g.id AND a.source = 'acb'
+  LEFT JOIN external_ids f ON f.entity_type = 'game' AND f.entity_id = g.id AND f.source = 'feb';
+`
   }
 ]

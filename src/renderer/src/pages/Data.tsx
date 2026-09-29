@@ -50,6 +50,10 @@ export function DataPage() {
         <Section title="Fuentes">
           <ul className="muted" style={{ margin: 0, paddingLeft: 18, lineHeight: 1.9 }}>
             <li>
+              <b>baloncestoenvivo.feb.es</b> — Primera FEB: calendario, resultados, estadísticas por partido, plantillas,
+              datos de los clubes, fotos y trayectoria completa de cada jugador en todas las categorías FEB.
+            </li>
+            <li>
               <b>acb.com</b> — calendario, resultados, estadísticas por partido y cuarto, plantillas, fichas de jugador, datos de los
               clubes, clasificación histórica y cuadro de honor.
             </li>
@@ -72,6 +76,7 @@ function SyncPanel({ onDone }: { onDone: () => void }) {
   const [lines, setLines] = useState<string[]>([])
   const [progress, setProgress] = useState<{ stage: string; done: number; total: number }>()
   const [season, setSeason] = useState('')
+  const [league, setLeague] = useState('ACB')
   const [bios, setBios] = useState(true)
   const logRef = useRef<HTMLDivElement>(null)
 
@@ -88,7 +93,7 @@ function SyncPanel({ onDone }: { onDone: () => void }) {
   const run = async () => {
     setBusy(true)
     setLines([])
-    const res = await window.d3.syncAcb({ season: season ? Number(season) : undefined, players: bios })
+    const res = await window.d3.syncAcb({ league, season: season ? Number(season) : undefined, players: bios })
     setLines((l) => [...l, res.ok ? `✔ ${res.message}` : `✗ ${res.message}`])
     setBusy(false)
     setProgress(undefined)
@@ -96,8 +101,13 @@ function SyncPanel({ onDone }: { onDone: () => void }) {
   }
 
   return (
-    <Section title="Sincronizar con acb.com" eyebrow="Escritorio">
+    <Section title="Sincronizar datos" eyebrow="Escritorio">
       <div className="row">
+        <select className="select" value={league} onChange={(e) => (setLeague(e.target.value), setSeason(''))} disabled={busy}>
+          <option value="ACB">Liga Endesa (acb.com)</option>
+          <option value="LEB_ORO">Primera FEB (feb.es)</option>
+          <option value="LEB_PLATA">Segunda FEB (feb.es)</option>
+        </select>
         <select className="select" value={season} onChange={(e) => setSeason(e.target.value)} disabled={busy}>
           <option value="">Temporada en curso</option>
           {Array.from({ length: 10 }, (_, i) => 2025 - i).map((y) => (

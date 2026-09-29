@@ -19,7 +19,8 @@ import type {
   NClubInfo,
   NClubRecord,
   NPlayerGameRow,
-  NPlayerProfile
+  NPlayerProfile,
+  NStint
 } from '../scraper/types'
 
 type EntityType = 'competition_season' | 'club' | 'team' | 'player' | 'coach' | 'game' | 'round'
@@ -161,7 +162,8 @@ export class Writer {
       bio: opts.bio ? nowIso() : null,
       now: nowIso()
     }
-    let id = this.findId('player', p.ref)
+    let id = this.findId('player', p.ref) ?? this.matchPlayer(p)
+    if (id != null && this.findId('player', p.ref) == null) this.link('player', id, p.ref)
     if (id == null) {
       id = Number(
         this.db
@@ -192,6 +194,44 @@ export class Writer {
       .run({ ...values, id })
     if (p.ref.url) this.link('player', id, p.ref)
     return id
+  }
+
+  /**
+   * Jugador ya conocido desde otra fuente: misma fecha de nacimiento y al menos un
+   * apellido en común (sin tildes). Así se une la carrera ACB y FEB de una persona.
+   */
+  private matchPlayer(p: NPlayer): number | undefined {
+    if (!p.birthDate) return undefined
+    const norm = (s: string) =>
+      s
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .toLowerCase()
+        .split(/[^a-z]+/)
+        .filter((w) => w.length > 2)
+    const mine = new Set(norm(p.lastName ?? p.fullName))
+    const candidates = this.db
+      .prepare(
+        `SELECT p.id, p.full_name, p.known_as FROM players p
+         WHERE p.birth_date = ? AND NOT EXISTS (
+           SELECT 1 FROM external_ids x WHERE x.entity_type = 'player' AND x.entity_id = p.id AND x.source = ?)`
+      )
+      .all(p.birthDate, p.ref.source) as { id: number; full_name: string; known_as: string | null }[]
+    const hit = candidates.filter((c) => norm(`${c.full_name} ${c.known_as ?? ''}`).some((w) => mine.has(w)))
+    return hit.length === 1 ? hit[0].id : undefined
+  }
+
+  savePlayerStints(playerId: number, source: string, stints: NStint[]) {
+    this.transaction(() => {
+      this.db.prepare('DELETE FROM player_stints WHERE player_id = ? AND source = ?').run(playerId, source)
+      const ins = this.db.prepare(
+        `INSERT OR REPLACE INTO player_stints (player_id, source, season_start_year, competition, club_name, team_name, license, joined_on, left_on)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      )
+      for (const s of stints) {
+        ins.run(playerId, source, s.seasonStartYear, s.competition, s.club, s.team ?? null, s.license ?? null, s.joinedOn ?? null, s.leftOn ?? null)
+      }
+    })
   }
 
   upsertCoach(c: NCoach): number {

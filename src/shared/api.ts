@@ -192,6 +192,7 @@ export interface HomeData {
   standings: StandingRow[]
   leaders: Record<'ppg' | 'rpg' | 'apg' | 'pirpg', LeaderRow[]>
   champions: HonourRow[] // último campeón de cada competición
+  leagues: { code: string; name: string; short_name: string | null; edition: EditionRow | undefined }[]
   counts: { players: number; clubs: number; games: number; honours: number }
 }
 
@@ -260,6 +261,10 @@ export interface ClubHonour {
 
 export interface ClubData {
   club: ClubInfo
+  competition: { code: string; name: string } | undefined
+  /** Puesto del equipo en cada estadística dentro de su liga (1 = mejor). */
+  ranks: Record<string, number>
+  teamsInLeague: number
   seasons: { start_year: number; label: string; competition_code: string; team_id: number; team_name: string }[]
   season: { start_year: number; label: string } | undefined
   team: TeamLite | undefined
@@ -367,11 +372,31 @@ export interface PlayerInfo {
   acb_url: string | null
 }
 
+export interface StintRow {
+  season_start_year: number
+  label: string
+  competition: string
+  club_name: string
+  team_name: string | null
+  license: string | null
+  joined_on: string | null
+  left_on: string | null
+}
+
 export interface PlayerData {
   player: PlayerInfo
   current:
-    | (TeamLite & { jersey_number: string | null; season_label: string; license_type: string | null; is_active: number })
+    | (TeamLite & {
+        jersey_number: string | null
+        season_label: string
+        license_type: string | null
+        is_active: number
+        competition_code: string
+        competition_name: string
+      })
     | undefined
+  /** Trayectoria completa por etapas (fuente FEB: todas las categorías). */
+  stints: StintRow[]
   season: PlayerStatRow | undefined
   career: PlayerCareer | undefined
   trajectory: TrajectoryRow[]
@@ -380,6 +405,7 @@ export interface PlayerData {
 }
 
 export interface PlayerIndexRow {
+  competition_code: string
   player_ref: string
   display_name: string
   photo: string | null
@@ -425,7 +451,7 @@ export interface BoxLine {
 }
 
 export interface GameDetail {
-  game: GameRow & { referees: string[]; season_label: string }
+  game: GameRow & { referees: string[]; season_label: string; competition_code: string; competition_name: string }
   periods: { period: number; home_points: number; away_points: number }[]
   teams: {
     team: TeamLite
@@ -486,7 +512,7 @@ export interface D3Api {
   home(): Promise<HomeData>
   league(code: string, year?: number): Promise<LeagueData | null>
   competitions(): Promise<CompetitionInfo[]>
-  clubs(): Promise<(TeamLite & { arena: string | null; founded_year: number | null })[]>
+  clubs(): Promise<(TeamLite & { arena: string | null; founded_year: number | null; competition_code: string; competition_name: string })[]>
   club(ref: string, year?: number): Promise<ClubData | null>
   players(): Promise<PlayerIndexRow[]>
   player(ref: string): Promise<PlayerData | null>
@@ -498,7 +524,8 @@ export interface D3Api {
   /** Solo web: copia de seguridad de los informes guardados en el navegador. */
   exportReports?(): Promise<string>
   importReports?(json: string): Promise<number>
-  syncAcb(opts: { season?: number; players?: boolean }): Promise<{ ok: boolean; message: string }>
+  /** Sincroniza una liga ('ACB' por defecto, o 'LEB_ORO' / 'LEB_PLATA' de la FEB). */
+  syncAcb(opts: { season?: number; players?: boolean; league?: string }): Promise<{ ok: boolean; message: string }>
   onSyncProgress(cb: (e: SyncProgressEvent) => void): () => void
   openExternal(url: string): Promise<void>
 }

@@ -358,3 +358,58 @@ a.league-card:hover { border-color: var(--brand); }
   .honour-row { grid-template-columns: 70px 1fr; }
   .honour-row .result, .honour-row .runner { grid-column: 2; text-align: left; }
 }
+
+/* ─────────── Fotos FEB (medio cuerpo) y categorías ─────────── */
+.player-photo img.crop-face { object-fit: cover; object-position: 50% 0; transform: scale(2.1); transform-origin: 50% 6%; }
+.comp-badge { display: inline-flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 6px; font-size: 11px; font-weight: 800; letter-spacing: .03em; white-space: nowrap; }
+.rank-badge { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight: 800; background: var(--line-2); color: var(--ink-2); vertical-align: middle; }
+.rank-badge.top { background: #dcfce7; color: #166534; }
+.rank-badge.bottom { background: #fee2e2; color: #991b1b; }
+
+/* ─────────── Trayectoria (línea de tiempo) ─────────── */
+.timeline { position: relative; display: grid; gap: 0; }
+.tl-season { display: grid; grid-template-columns: 92px 28px minmax(0, 1fr); gap: 0 14px; }
+.tl-year { text-align: right; padding-top: 14px; font-weight: 800; font-size: 15px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.tl-rail { position: relative; display: flex; justify-content: center; }
+.tl-rail::before { content: ''; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--line); }
+.tl-season:first-child .tl-rail::before { top: 20px; }
+.tl-season:last-child .tl-rail::before { bottom: calc(100% - 20px); }
+.tl-dot { position: relative; margin-top: 16px; width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 3px solid var(--c, var(--brand)); z-index: 1; }
+.tl-entries { display: grid; gap: 8px; padding: 6px 0 12px; }
+.tl-entry { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.tl-entry:hover { border-color: var(--brand); }
+.tl-entry .club { font-weight: 700; }
+.tl-entry .sub { font-size: 12px; color: var(--muted); }
+.tl-stats { display: flex; gap: 16px; text-align: center; }
+.tl-stats b { display: block; font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.tl-stats span { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.tl-logo { width: 40px; height: 40px; border-radius: 10px; background: var(--surface-2); display: grid; place-items: center; }
+.career-summary { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+
+/* ─────────── Gráfica de carrera ─────────── */
+.career-chart { width: 100%; height: auto; display: block; }
+.career-chart .cbar { fill: var(--brand); opacity: .85; }
+.career-chart .cbar:hover { opacity: 1; }
+.career-chart .line { fill: none; stroke: var(--navy-2); stroke-width: 2.5; }
+.career-chart .pt { fill: #fff; stroke: var(--navy-2); stroke-width: 2.5; }
+.career-chart text { font-size: 11px; fill: var(--muted); font-family: inherit; }
+.career-chart .val-label { font-size: 11px; font-weight: 800; fill: var(--ink); }
+.chart-legend { display: flex; gap: 16px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+.chart-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -2px; }
+
+/* ─────────── Resultados recientes ─────────── */
+.results-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.result-chip { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); }
+.result-chip:hover { border-color: var(--brand); }
+.result-chip .wl { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-weight: 900; color: #fff; flex: none; }
+.result-chip .wl.w { background: var(--win); }
+.result-chip .wl.l { background: var(--loss); }
+.result-chip .score { font-weight: 800; font-variant-numeric: tabular-nums; }
+.result-chip .opp { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.position-group + .position-group { margin-top: 22px; }
+.position-group h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 10px; }
+@media (max-width: 760px) {
+  .tl-season { grid-template-columns: 64px 20px minmax(0, 1fr); gap: 0 8px; }
+  .tl-entry { grid-template-columns: auto minmax(0, 1fr); }
+  .tl-stats { grid-column: 1 / -1; justify-content: space-between; }
+}

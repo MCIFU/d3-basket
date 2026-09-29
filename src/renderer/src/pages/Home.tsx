@@ -143,37 +143,40 @@ export function HomePage() {
   )
 }
 
+const TIER: Record<string, string> = {
+  ACB: 'Primera división · ACB',
+  LEB_ORO: 'Segunda división · FEB',
+  LEB_PLATA: 'Tercera división · FEB'
+}
+
 function LeagueCards({ data }: { data: HomeData }) {
   return (
     <div className="grid grid-3">
-      <a className="league-card" href={href.league('ACB')}>
-        <div className="tier">Primera división · ACB</div>
-        <h3>Liga Endesa</h3>
-        <div className="muted">
-          {data.edition ? `${data.edition.season_label} · ${data.edition.finished} de ${data.edition.games} partidos jugados` : 'Sin datos'}
-        </div>
-        <div className="row" style={{ marginTop: 12 }}>
-          <span className="chip brand">{data.counts.players} jugadores</span>
-          <span className="chip">{data.counts.honours} finales históricas</span>
-        </div>
-        <Trophy competition="liga" size={92} />
-      </a>
-      <div className="league-card soon">
-        <div className="tier">Segunda división · FEB</div>
-        <h3>LEB Oro</h3>
-        <div className="muted">Primera FEB</div>
-        <div className="row" style={{ marginTop: 12 }}>
-          <span className="chip">Próximamente</span>
-        </div>
-      </div>
-      <div className="league-card soon">
-        <div className="tier">Tercera división · FEB</div>
-        <h3>LEB Plata</h3>
-        <div className="muted">Segunda FEB</div>
-        <div className="row" style={{ marginTop: 12 }}>
-          <span className="chip">Próximamente</span>
-        </div>
-      </div>
+      {data.leagues.map((l) =>
+        l.edition ? (
+          <a key={l.code} className="league-card" href={href.league(l.code)}>
+            <div className="tier">{TIER[l.code] ?? ''}</div>
+            <h3>{l.code === 'ACB' ? l.name : `${l.name} (${l.short_name})`}</h3>
+            <div className="muted">
+              {l.edition.season_label} · {l.edition.finished} de {l.edition.games} partidos jugados
+            </div>
+            <div className="row" style={{ marginTop: 12 }}>
+              <span className="chip brand">{l.edition.teams} equipos</span>
+              {l.code === 'ACB' && <span className="chip">{data.counts.honours} finales históricas</span>}
+            </div>
+            {l.code === 'ACB' && <Trophy competition="liga" size={92} />}
+          </a>
+        ) : (
+          <div key={l.code} className="league-card soon">
+            <div className="tier">{TIER[l.code] ?? ''}</div>
+            <h3>{l.short_name ?? l.name}</h3>
+            <div className="muted">{l.name}</div>
+            <div className="row" style={{ marginTop: 12 }}>
+              <span className="chip">Próximamente</span>
+            </div>
+          </div>
+        )
+      )}
     </div>
   )
 }

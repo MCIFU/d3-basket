@@ -11,12 +11,14 @@ Funciona como **app de escritorio** (Windows/macOS/Linux) y como **web** en cual
 |---|---|
 | ✅ Portada | campeones vigentes con sus trofeos, últimos resultados y próxima jornada, líderes con foto, clasificación con forma |
 | ✅ Ligas | por temporada: clasificación, calendario y resultados, estadísticas de equipos (incluidos espectadores) y de jugadores (medias y totales, TS%, eFG%…), palmarés de Liga/Copa/Supercopa desde 1956 y clasificación histórica |
-| ✅ Equipos | escudo, pabellón (foto, aforo, ocupación), fundación, web y redes, historia, vitrina de trofeos con años de campeonatos y subcampeonatos, plantilla con fotos, estadísticas y partidos |
-| ✅ Jugadores | foto sin fondo, fecha y lugar de nacimiento, posición, altura, licencia, equipo; estadísticas de la temporada, carrera ACB (medias y totales), récords personales, trayectoria temporada a temporada y partido a partido |
+| ✅ Equipos | escudo, pabellón (foto, aforo, ocupación), fundación, web y redes, historia, vitrina de trofeos con años de campeonatos y subcampeonatos, **rendimiento con el puesto en la liga de cada estadística**, líderes con foto, últimos resultados, balance en casa y fuera, plantilla con fotos agrupada por posición, estadísticas y partidos |
+| ✅ Jugadores | foto sin fondo, fecha y lugar de nacimiento, posición, altura, licencia, equipo; **trayectoria completa** (línea de tiempo con escudos y categorías + gráfica de puntos y valoración por temporada), estadísticas completas (por partido, totales y por 40 minutos, con TS%, eFG%, mates, faltas recibidas, +/−…), carrera ACB, récords personales y partido a partido |
 | ✅ Scouting | informes de ojeador con valoración por atributos (en la web, guardados en el navegador con exportación/importación) |
 | ✅ Enlaces reales | cada página tiene su URL (`#/jugador/sergio-llull-20201774`): se puede compartir y abrir en otra pestaña con el botón central o Ctrl+clic |
 | ✅ Scraper ACB | calendario, resultados, plantillas, fichas, boxscores, datos de club, trayectorias y clasificación histórica de **acb.com**; palmarés e historia de **Wikipedia** |
-| ⏳ LEB Oro / LEB Plata | esquema listo; falta el adaptador de `baloncestoenvivo.feb.es` (ver [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md)) |
+| ✅ Primera FEB (LEB Oro) | calendario, resultados, estadísticas por partido, plantillas con fotos sin fondo, datos de club y **trayectoria completa de cada jugador en todas las categorías FEB** (`baloncestoenvivo.feb.es`) |
+| ✅ Histórico ACB | temporadas 2025-26 y 2024-25 completas, y trayectoria de todos los jugadores actuales desde su debut |
+| ⏳ Segunda FEB (LEB Plata) | el adaptador FEB ya la soporta (`sync segunda-feb`); falta activarla en el build |
 
 La temporada 2026-27 de la ACB arrancó el 26-27 de septiembre de 2026: la primera sincronización ya trae los 9 resultados y boxscores de la jornada 1 y los 297 partidos restantes del calendario.
 
@@ -50,6 +52,7 @@ npm run build:web      # web estática en dist-web/
 
 ### Configuración en Netlify (una sola vez)
 
+0. **Semilla de datos:** `seed/d3basket.db.gz` es una copia completa (trayectorias e históricos incluidos) generada en local con `npm run seed -- --db <tu.db>`. El build (`restore-db`) la usa si es más nueva que la caché; si no, sigue con la caché o descarga la base de datos publicada en la web. Así Netlify solo tiene que pedir lo nuevo.
 1. **Enlazar el repositorio:** *Project configuration → Build & deploy → Link repository* → GitHub → `MCIFU/d3-basket`. El `netlify.toml` ya define el comando (`npm run build:netlify`) y la carpeta (`dist-web`). Cada `git push` a `main` publica una versión nueva.
 2. **Build hook para la actualización diaria:** *Build & deploy → Build hooks → Add build hook* (rama `main`) y guarda su URL como variable de entorno `BUILD_HOOK_URL` (*Environment variables*).
 3. **Acceso público:** si el proyecto tiene activada la protección de visitantes (*Visitor access / login de equipo*), desactívala para que cualquiera pueda abrir la web.
@@ -59,7 +62,9 @@ npm run build:web      # web estática en dist-web/
 ```bash
 npm run scrape -- sync acb                         # temporada actual (incremental)
 npm run scrape -- sync acb --no-players            # sin fichas biográficas (rápido, ~30 s)
-npm run scrape -- sync acb --season 2025           # histórico 2025-26 (experimental)
+npm run scrape -- sync acb --season 2025           # histórico 2025-26
+npm run scrape -- sync primera-feb                 # Primera FEB (LEB Oro) en curso
+npm run scrape -- sync segunda-feb                 # Segunda FEB (LEB Plata)
 npm run scrape -- sync acb --force                 # vuelve a descargar boxscores y refresca la historia
 npm run scrape -- sync acb --career-budget 1000    # descarga más trayectorias de jugadores de una vez
 npm run scrape -- editions acb                     # temporadas disponibles en acb.com

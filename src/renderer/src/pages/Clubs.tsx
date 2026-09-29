@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { ClubData, ClubHonour, LeaderRow } from '../../../shared/api'
+import type { ClubData, ClubHonour } from '../../../shared/api'
 import {
   DataTable,
   Empty,
@@ -24,28 +24,32 @@ import { PlayerStatsTable } from './StatTables'
 export function ClubsPage() {
   const [clubs, error] = useLoad(() => window.d3.clubs(), [])
   if (!clubs) return <Loading error={error} />
+  const leagues = [...new Map(clubs.map((c) => [c.competition_code, c.competition_name])).entries()]
   return (
     <>
       <div className="page-title">
-        <div className="eyebrow">Liga Endesa</div>
+        <div className="eyebrow">Temporada en curso</div>
         <h1>Equipos</h1>
-        <p>Los {clubs.length} clubes de la temporada en curso. Cada ficha incluye plantilla, estadísticas, pabellón, historia y palmarés.</p>
+        <p>{clubs.length} clubes. Cada ficha incluye plantilla con fotos, estadísticas con su puesto en la liga, partidos, pabellón, historia y palmarés.</p>
       </div>
-      <div className="club-tiles">
-        {clubs.map((c) => (
-          <a
-            key={c.team_id}
-            className="club-tile"
-            href={href.club(c.club_ref, c.name)}
-            style={{ ['--c' as string]: teamColor(c.color) }}
-          >
-            <TeamLogo src={c.logo} name={c.name} size={52} />
-            <div style={{ minWidth: 0 }}>
-              <div className="name">{c.name}</div>
-              <div className="sub">{c.arena ?? ''}</div>
-              {c.founded_year && <div className="sub">Fundado en {c.founded_year}</div>}
+      <div className="stack">
+        {leagues.map(([code, name]) => (
+          <Section key={code} title={name} eyebrow={`${clubs.filter((c) => c.competition_code === code).length} equipos`} actions={<a className="link" href={href.league(code)}>Ver liga →</a>}>
+            <div className="club-tiles">
+              {clubs
+                .filter((c) => c.competition_code === code)
+                .map((c) => (
+                  <a key={c.team_id} className="club-tile" href={href.club(c.club_ref, c.name)} style={{ ['--c' as string]: teamColor(c.color) }}>
+                    <TeamLogo src={c.logo} name={c.name} size={52} />
+                    <div style={{ minWidth: 0 }}>
+                      <div className="name">{c.name}</div>
+                      <div className="sub">{c.arena ?? ''}</div>
+                      {c.founded_year && <div className="sub">Fundado en {c.founded_year}</div>}
+                    </div>
+                  </a>
+                ))}
             </div>
-          </a>
+          </Section>
         ))}
       </div>
     </>
@@ -78,7 +82,7 @@ export function ClubPage({ refId, tab = 'resumen', year }: { refId: string; tab?
             <TeamLogo src={club.logo} name={club.name} size={88} />
           </div>
           <div style={{ minWidth: 0 }}>
-            <div className="eyebrow">{data.team ? `Liga Endesa ${season?.label}` : 'Club histórico'}</div>
+            <div className="eyebrow">{data.team ? `${data.competition?.name ?? ''} ${season?.label ?? ''}` : 'Club histórico'}</div>
             <h1>{data.team?.name ?? club.name}</h1>
             <div className="hero-facts">
               {club.founded_year && (
@@ -175,90 +179,207 @@ export function ClubPage({ refId, tab = 'resumen', year }: { refId: string; tab?
   )
 }
 
-function LeaderMini({ label, l }: { label: string; l?: LeaderRow }) {
-  if (!l) return null
+const LEADER_CATS = [
+  { k: 'pirpg', label: 'Valoración' },
+  { k: 'ppg', label: 'Puntos' },
+  { k: 'rpg', label: 'Rebotes' },
+  { k: 'apg', label: 'Asistencias' }
+] as const
+
+function TeamLeaders({ data }: { data: ClubData }) {
+  const color = teamColor(data.club.color, '#13294d')
+  const cards = LEADER_CATS.flatMap((c) => (data.leaders[c.k] ? [{ ...c, l: data.leaders[c.k]! }] : []))
+  if (!cards.length) return null
   return (
-    <a className="leader" href={href.player(l.player_ref, l.display_name)}>
-      <span />
-      <PlayerPhoto nobg={l.photo_nobg} photo={l.photo} name={l.display_name} color={l.team.color} size={44} />
-      <span style={{ minWidth: 0 }}>
-        <div className="small muted">{label}</div>
-        <div style={{ fontWeight: 700 }}>{l.display_name}</div>
-      </span>
-      <span className="val">{num(l.value)}</span>
-    </a>
+    <div className="leader-cards">
+      {cards.map(({ k, label, l }) => (
+        <a key={k} className="leader-card" href={href.player(l.player_ref, l.display_name)}>
+          <div className="lc-top" style={{ background: `linear-gradient(160deg, ${color}, ${color}bb)` }}>
+            <span className="lc-cat">{label}</span>
+            <span className="lc-val">{num(l.value)}</span>
+            {l.photo_nobg ? <img src={l.photo_nobg} alt="" loading="lazy" /> : <span className="rc-initials">{initials(l.display_name)}</span>}
+          </div>
+          <div className="lc-body">
+            <div style={{ fontWeight: 700 }}>{l.display_name}</div>
+            <div className="small muted">
+              {label} por partido · {l.games} PJ
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  )
+}
+
+export function RankTile({ label, value, rank, of, sub }: { label: string; value: string; rank?: number; of: number; sub?: string }) {
+  const cls = rank == null ? '' : rank <= 3 ? 'top' : rank > of - 3 ? 'bottom' : ''
+  return (
+    <StatTile
+      label={label}
+      value={value}
+      sub={
+        <>
+          {rank != null && (
+            <span className={`rank-badge ${cls}`} style={{ marginLeft: 0 }}>
+              {rank}º de {of}
+            </span>
+          )}{' '}
+          {sub}
+        </>
+      }
+    />
+  )
+}
+
+function Performance({ data }: { data: ClubData }) {
+  const s = data.stats
+  if (!s) return null
+  const r = data.ranks
+  const n = data.teamsInLeague
+  const home = data.games.filter((g) => g.status === 'finished' && g.home.team_id === data.team?.team_id)
+  const away = data.games.filter((g) => g.status === 'finished' && g.away.team_id === data.team?.team_id)
+  const wins = (list: typeof home, isHome: boolean) =>
+    list.filter((g) => (isHome ? g.home_score! > g.away_score! : g.away_score! > g.home_score!)).length
+  return (
+    <Section title="Rendimiento de la temporada" eyebrow={`${data.season?.label} · puesto entre los ${n} equipos de la liga`}>
+      <div className="stat-tiles">
+        <RankTile label="Puntos" value={num(s.ppg)} rank={r.ppg} of={n} />
+        <RankTile label="Recibidos" value={num(s.opp_ppg)} rank={r.opp_ppg} of={n} />
+        <RankTile label="Diferencia" value={num(s.diff_pg)} rank={r.diff_pg} of={n} />
+        <RankTile label="Rebotes" value={num(s.rpg)} rank={r.rpg} of={n} />
+        <RankTile label="Asistencias" value={num(s.apg)} rank={r.apg} of={n} />
+        <RankTile label="Robos" value={num(s.spg)} rank={r.spg} of={n} />
+        <RankTile label="Tapones" value={num(s.bpg)} rank={r.bpg} of={n} />
+        <RankTile label="Pérdidas" value={num(s.tpg)} rank={r.tpg} of={n} />
+        <RankTile label="Valoración" value={num(s.pirpg)} rank={r.pirpg} of={n} />
+        <RankTile label="T3%" value={pct(s.fg3_pct)} rank={r.fg3_pct} of={n} />
+        <RankTile label="TS%" value={pct(s.ts_pct)} rank={r.ts_pct} of={n} />
+        <RankTile label="Público" value={int(s.attendance_avg)} rank={s.attendance_avg != null ? r.attendance_avg : undefined} of={n} />
+      </div>
+      <div className="row mt">
+        <span className="chip win">
+          Balance {s.wins}-{s.losses}
+        </span>
+        <span className="chip">
+          En casa {wins(home, true)}-{home.length - wins(home, true)}
+        </span>
+        <span className="chip">
+          Fuera {wins(away, false)}-{away.length - wins(away, false)}
+        </span>
+        {data.standing && <span className="chip brand">{data.standing.position}º en la clasificación</span>}
+      </div>
+    </Section>
+  )
+}
+
+function RecentResults({ data }: { data: ClubData }) {
+  const tid = data.team?.team_id
+  const played = data.games.filter((g) => g.status === 'finished').slice(-6).reverse()
+  const next = data.games.filter((g) => g.status !== 'finished').slice(0, 3)
+  if (!played.length && !next.length) return null
+  return (
+    <Section title="Resultados y próximos partidos" actions={<a className="link" href={href.club(data.club.ref, data.club.name, 'partidos', data.season?.start_year)}>Calendario →</a>}>
+      {played.length > 0 && (
+        <div className="results-strip">
+          {played.map((g) => {
+            const isHome = g.home.team_id === tid
+            const opp = isHome ? g.away : g.home
+            const mine = isHome ? g.home_score! : g.away_score!
+            const theirs = isHome ? g.away_score! : g.home_score!
+            const won = mine > theirs
+            return (
+              <a key={g.id} className="result-chip" href={g.has_boxscore ? href.game(g.ref) : href.club(opp.club_ref, opp.name)}>
+                <span className={`wl ${won ? 'w' : 'l'}`}>{won ? 'V' : 'D'}</span>
+                <span style={{ minWidth: 0 }}>
+                  <div className="score">
+                    {mine}-{theirs}
+                  </div>
+                  <div className="opp">
+                    {isHome ? 'vs' : '@'} {opp.short_name ?? opp.name}
+                  </div>
+                </span>
+              </a>
+            )
+          })}
+        </div>
+      )}
+      {next.length > 0 && (
+        <div className="games-grid mt">
+          {next.map((g) => (
+            <GameCard key={g.id} g={g} />
+          ))}
+        </div>
+      )}
+    </Section>
   )
 }
 
 function ClubSummary({ data }: { data: ClubData }) {
   const { club } = data
-  const played = data.games.filter((g) => g.status === 'finished')
-  const upcoming = data.games.filter((g) => g.status !== 'finished').slice(0, 3)
   return (
-    <div className="grid grid-main">
-      <div className="stack">
-        {data.stats && (
-          <Section title="Líderes del equipo" eyebrow={data.season?.label}>
-            <div className="leader-list">
-              <LeaderMini label="Valoración por partido" l={data.leaders.pirpg} />
-              <LeaderMini label="Puntos por partido" l={data.leaders.ppg} />
-              <LeaderMini label="Rebotes por partido" l={data.leaders.rpg} />
-              <LeaderMini label="Asistencias por partido" l={data.leaders.apg} />
+    <div className="stack">
+      <Performance data={data} />
+      {data.stats && (
+        <div>
+          <div className="card-head">
+            <div>
+              <div className="eyebrow">Líderes del equipo</div>
+              <h2>Los mejores por partido</h2>
             </div>
-          </Section>
-        )}
-        {(played.length > 0 || upcoming.length > 0) && (
-          <Section title="Partidos" actions={<a className="link" href={href.club(club.ref, club.name, 'partidos', data.season?.start_year)}>Todos →</a>}>
-            <div className="games-grid">
-              {[...played.slice(-3).reverse(), ...upcoming].map((g) => (
-                <GameCard key={g.id} g={g} />
-              ))}
-            </div>
-          </Section>
-        )}
-        {club.history && (
-          <Section title="Historia" eyebrow="El club">
-            <p className="history-text">{club.history}</p>
-            <p className="note">
-              Fuente: {club.history_url ? <ExternalLink url={club.history_url}>Wikipedia</ExternalLink> : 'Wikipedia'} (CC BY-SA 4.0).
-            </p>
-          </Section>
-        )}
-      </div>
-      <div className="stack">
-        <CabinetMini data={data} />
-        <Section title="Pabellón">
-          {club.arena_photo_url && <img className="arena-photo" src={club.arena_photo_url} alt={club.arena ?? ''} loading="lazy" />}
-          <dl className="kv">
-            <dt>Nombre</dt>
-            <dd>{club.arena ?? '—'}</dd>
-            <dt>Aforo</dt>
-            <dd>{club.arena_capacity ? `${int(club.arena_capacity)} espectadores` : '—'}</dd>
-            <dt>Dirección</dt>
-            <dd>{club.arena_address ?? '—'}</dd>
-            {data.stats?.attendance_avg != null && (
-              <>
-                <dt>Asistencia media</dt>
-                <dd>
-                  {int(data.stats.attendance_avg)}
-                  {club.arena_capacity ? ` (${pct((100 * data.stats.attendance_avg) / club.arena_capacity)} de ocupación)` : ''}
-                </dd>
-              </>
-            )}
-          </dl>
-        </Section>
-        {data.staff.length > 0 && (
-          <Section title="Cuerpo técnico">
+            <a className="link" href={href.club(club.ref, club.name, 'plantilla', data.season?.start_year)}>
+              Plantilla completa →
+            </a>
+          </div>
+          <TeamLeaders data={data} />
+        </div>
+      )}
+      <div className="grid grid-main">
+        <div className="stack">
+          <RecentResults data={data} />
+          {club.history && (
+            <Section title="Historia" eyebrow="El club">
+              <p className="history-text">{club.history}</p>
+              <p className="note">
+                Fuente: {club.history_url ? <ExternalLink url={club.history_url}>Wikipedia</ExternalLink> : 'Wikipedia'} (CC BY-SA 4.0).
+              </p>
+            </Section>
+          )}
+        </div>
+        <div className="stack">
+          <CabinetMini data={data} />
+          <Section title="Pabellón">
+            {club.arena_photo_url && <img className="arena-photo" src={club.arena_photo_url} alt={club.arena ?? ''} loading="lazy" />}
             <dl className="kv">
-              {data.staff.map((s) => (
-                <div key={s.name + s.role} style={{ display: 'contents' }}>
-                  <dt>{s.role === 'head_coach' ? 'Entrenador' : 'Ayudante'}</dt>
-                  <dd>{s.name}</dd>
-                </div>
-              ))}
+              <dt>Nombre</dt>
+              <dd>{club.arena ?? '—'}</dd>
+              <dt>Aforo</dt>
+              <dd>{club.arena_capacity ? `${int(club.arena_capacity)} espectadores` : '—'}</dd>
+              <dt>Dirección</dt>
+              <dd>{club.arena_address ?? '—'}</dd>
+              {data.stats?.attendance_avg != null && (
+                <>
+                  <dt>Asistencia media</dt>
+                  <dd>
+                    {int(data.stats.attendance_avg)}
+                    {club.arena_capacity ? ` (${pct((100 * data.stats.attendance_avg) / club.arena_capacity)} de ocupación)` : ''}
+                  </dd>
+                </>
+              )}
             </dl>
           </Section>
-        )}
+          {data.staff.length > 0 && (
+            <Section title="Cuerpo técnico">
+              <dl className="kv">
+                {data.staff.map((st) => (
+                  <div key={st.name + st.role} style={{ display: 'contents' }}>
+                    <dt>{st.role === 'head_coach' ? 'Entrenador' : 'Ayudante'}</dt>
+                    <dd>{st.name}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Section>
+          )}
+        </div>
       </div>
     </div>
   )
@@ -311,8 +432,17 @@ function Roster({ data }: { data: ClubData }) {
       {view === 'table' ? (
         <DataTable rows={data.roster} columns={columns} rowKey={(r) => r.player_id} initialSort={{ key: 'jersey_number', dir: 'asc' }} />
       ) : (
-        <div className="roster-grid">
-          {data.roster.map((r) => (
+        <div>
+          {POSITION_GROUPS.map((grp) => {
+            const list = data.roster.filter((r) => grp.codes.includes(r.position_code ?? '') || (grp.codes.includes('') && !r.position_code))
+            if (!list.length) return null
+            return (
+              <div key={grp.label} className="position-group">
+                <h3>
+                  {grp.label} · {list.length}
+                </h3>
+                <div className="roster-grid">
+          {list.map((r) => (
             <a key={r.player_id} className={`roster-card ${r.is_active ? '' : 'inactive'}`} href={href.player(r.player_ref, r.display_name)}>
               <div className="rc-top" style={{ background: `linear-gradient(160deg, ${color}, ${color}aa)` }}>
                 <span className="rc-num">{r.jersey_number}</span>
@@ -343,11 +473,24 @@ function Roster({ data }: { data: ClubData }) {
               </div>
             </a>
           ))}
+                </div>
+              </div>
+            )
+          })}
         </div>
       )}
     </Section>
   )
 }
+
+const POSITION_GROUPS = [
+  { label: 'Bases', codes: ['PG'] },
+  { label: 'Escoltas', codes: ['SG'] },
+  { label: 'Aleros', codes: ['SF'] },
+  { label: 'Ala-pívots', codes: ['PF'] },
+  { label: 'Pívots', codes: ['C'] },
+  { label: 'Otros', codes: [''] }
+]
 
 function ClubStats({ data }: { data: ClubData }) {
   const s = data.stats

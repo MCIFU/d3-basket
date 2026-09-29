@@ -4,6 +4,7 @@ import { defaultDbPath, openDatabase, type DB } from '../db/database'
 import { Queries } from '../db/queries'
 import { HttpClient } from '../scraper/core/http'
 import { AcbScraper } from '../scraper/acb/sync'
+import { FebScraper } from '../scraper/feb/sync'
 import type { ScoutingReport, SyncProgressEvent } from '../shared/api'
 
 let db: DB
@@ -69,7 +70,7 @@ function registerIpc() {
   handle('db:deleteReport', (id: number) => queries.deleteReport(id))
   handle('app:openExternal', (url: string) => (/^https?:\/\//.test(url) ? shell.openExternal(url) : undefined))
 
-  ipcMain.handle('sync:acb', async (_e, opts: { season?: number; players?: boolean }) => {
+  ipcMain.handle('sync:acb', async (_e, opts: { season?: number; players?: boolean; league?: string }) => {
     if (syncing) return { ok: false, message: 'Ya hay una sincronización en marcha' }
     syncing = true
     const send = (ev: SyncProgressEvent) => win?.webContents.send('sync:progress', ev)
@@ -81,7 +82,12 @@ function registerIpc() {
       onProgress: (p: SyncProgressEvent) => send(p)
     }
     try {
-      const s = opts.season ? await scraper.syncHistoric(opts.season, common) : await scraper.syncCurrent(common)
+      const s =
+        opts.league === 'LEB_ORO' || opts.league === 'LEB_PLATA'
+          ? await new FebScraper(db, http).sync(opts.league, { ...common, season: opts.season })
+          : opts.season
+            ? await scraper.syncHistoric(opts.season, common)
+            : await scraper.syncCurrent(common)
       return {
         ok: true,
         message:

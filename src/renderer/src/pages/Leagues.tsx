@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import type { ClubRecordRow, GameRow, HonourRow, LeagueData, StandingRow } from '../../../shared/api'
 import {
+  CompetitionBadge,
   DataTable,
   Empty,
   Form,
@@ -91,10 +92,12 @@ export function LeaguePage({ code, tab = 'resumen', year }: { code: string; tab?
       <section className="hero">
         <div className="hero-grid">
           <div className="hero-logo" style={{ background: 'linear-gradient(160deg, #fff, #f1f5f9)' }}>
-            <Trophy competition="liga" size={96} />
+            {code === 'ACB' ? <Trophy competition="liga" size={96} /> : <CompetitionBadge name={code} />}
           </div>
           <div>
-            <div className="eyebrow">{competition.organizer} · Primera división</div>
+            <div className="eyebrow">
+              {competition.organizer} · {code === 'ACB' ? 'Primera división' : code === 'LEB_ORO' ? 'Segunda división (LEB Oro)' : 'Tercera división (LEB Plata)'}
+            </div>
             <h1>{competition.name}</h1>
             <div className="row" style={{ marginTop: 12 }}>
               {data.editions.length > 0 && (
@@ -130,7 +133,10 @@ export function LeaguePage({ code, tab = 'resumen', year }: { code: string; tab?
         </div>
       </section>
 
-      <Tabs active={tab} items={TABS.map((t) => ({ ...t, href: href.league(code, t.id, year) }))} />
+      <Tabs
+        active={tab}
+        items={TABS.filter((t) => code === 'ACB' || !['palmares', 'historico'].includes(t.id)).map((t) => ({ ...t, href: href.league(code, t.id, year) }))}
+      />
 
       {tab === 'resumen' && <Summary data={data} />}
       {tab === 'clasificacion' && (

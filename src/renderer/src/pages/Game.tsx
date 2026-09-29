@@ -17,8 +17,8 @@ export function GamePage({ refId }: { refId: string }) {
     <>
       <section className="hero">
         <div className="row small" style={{ justifyContent: 'center', opacity: 0.8, marginBottom: 18 }}>
-          <a className="link" href={href.league('ACB', 'resultados', undefined)}>
-            Liga Endesa {g.season_label}
+          <a className="link" href={href.league(g.competition_code, 'resultados')}>
+            {g.competition_name} {g.season_label}
           </a>
           <span>·</span>
           <span>{g.round_name}</span>
