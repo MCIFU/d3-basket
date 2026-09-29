@@ -182,7 +182,8 @@ def main():
             continue
         try:
             logo = normalize(Image.open(io.BytesIO(fetch(url))))
-            logo.save(file, 'PNG', optimize=True)
+            # PNG de paleta (256 colores con transparencia): igual a la vista y ~5 veces más ligero.
+            logo.quantize(256, method=Image.Quantize.FASTOCTREE).save(file, 'PNG', optimize=True)
             c = club_colors(logo, official)
             if c:
                 colors[ref] = c

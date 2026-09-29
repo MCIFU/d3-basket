@@ -45,14 +45,29 @@ def fetch(url: str) -> bytes:
 
 
 def keep_main_silhouette(im: Image.Image) -> Image.Image:
-    """Quita restos de fondo sueltos que deja rembg: solo se conserva la silueta más grande."""
+    """Quita restos de fondo que deja rembg: solo se conserva la silueta más grande.
+    Se erosiona antes de separar manchas para cortar las uniones finas con los restos."""
     a = np.array(im.getchannel('A'))
-    n, labels, stats, _ = cv2.connectedComponentsWithStats((a > 40).astype(np.uint8), 8)
+    core = cv2.erode((a > 128).astype(np.uint8), np.ones((5, 5), np.uint8), iterations=2)
+    n, labels, stats, _ = cv2.connectedComponentsWithStats(core, 8)
     if n <= 2:
         return im
     main = 1 + int(np.argmax(stats[1:, cv2.CC_STAT_AREA]))
-    keep = cv2.dilate((labels == main).astype(np.uint8), np.ones((5, 5), np.uint8))
-    im.putalpha(Image.fromarray((a * keep).astype(np.uint8)))
+    keep = cv2.dilate((labels == main).astype(np.uint8), np.ones((5, 5), np.uint8), iterations=3)
+    keep = cv2.GaussianBlur(keep.astype(np.float32), (5, 5), 0)
+    im.putalpha(Image.fromarray((a * np.clip(keep, 0, 1)).astype(np.uint8)))
+    return im
+
+
+def fade_sides(im: Image.Image, frac: float = 0.08) -> Image.Image:
+    """Degradado en los bordes izquierdo y derecho: evita cortes rectos al dejar margen."""
+    a = np.array(im.getchannel('A')).astype(np.float32)
+    n = max(2, int(im.width * frac))
+    ramp = np.linspace(0, 1, n, dtype=np.float32)
+    a[:, :n] *= ramp
+    a[:, -n:] *= ramp[::-1]
+    im = im.copy()
+    im.putalpha(Image.fromarray(a.astype(np.uint8)))
     return im
 
 
@@ -94,7 +109,20 @@ class Pipeline:
         return self._rembg(im.convert('RGB')).convert('RGBA')
 
     def face(self, im: Image.Image):
-        """Cara más grande: (x, y, w, h, ojos_x, ojos_y) o None."""
+        """Cara más grande: (x, y, w, h, ojos_x, ojos_y) o None.
+        Si la cara llena la foto el detector falla: se reintenta con márgenes alrededor."""
+        f = self._detect(im)
+        if f is None:
+            pad = int(max(im.size) * 0.5)
+            padded = Image.new('RGBA', (im.width + 2 * pad, im.height + 2 * pad), (0, 0, 0, 0))
+            padded.alpha_composite(im, (pad, pad))
+            f = self._detect(padded)
+            if f is not None:
+                x, y, w, h, ex, ey = f
+                f = (x - pad, y - pad, w, h, ex - pad, ey - pad)
+        return f
+
+    def _detect(self, im: Image.Image):
         bg = Image.new('RGBA', im.size, (255, 255, 255, 255))
         bg.alpha_composite(im)
         arr = cv2.cvtColor(np.array(bg.convert('RGB')), cv2.COLOR_RGB2BGR)
@@ -120,9 +148,11 @@ class Pipeline:
             return None
         x, y, w, h, ex, ey = f
         cw = w / FACE_WIDTH
-        # Foto original muy ajustada a la cara: se amplía el encuadre hasta sus bordes
-        # (cara algo más grande) en lugar de dejar márgenes vacíos a los lados.
-        cw = min(cw, max(w * 1.25, im.width))
+        # Foto original muy ajustada a la cara: el encuadre se limita a 1,3 veces su ancho
+        # (cara algo más grande que en la ACB) y los bordes laterales se difuminan.
+        cw = min(cw, max(w * 1.25, im.width * 1.3))
+        if cw > im.width:
+            im = fade_sides(im)
         ch = cw * SIZE[1] / SIZE[0]
         cx = x + w / 2
         left, top = cx - cw / 2, ey - EYES_Y * ch
@@ -153,14 +183,15 @@ def targets(db: str):
     con = sqlite3.connect(db)
     rows = con.execute(
         """
-        SELECT DISTINCT pr.ref, COALESCE(p.photo_url, p.photo_nobg_url)
+        SELECT DISTINCT 'f' || x.external_id, COALESCE(p.photo_url, p.photo_nobg_url)
         FROM players p
-        JOIN v_player_ref pr ON pr.player_id = p.id
+        -- Por id de la FEB aunque el jugador también tenga ficha en acb.com.
+        JOIN external_ids x ON x.entity_type = 'player' AND x.entity_id = p.id AND x.source = 'feb'
         JOIN roster_entries r ON r.player_id = p.id
         JOIN teams t ON t.id = r.team_id
         JOIN competition_seasons cs ON cs.id = t.competition_season_id
         JOIN competitions c ON c.id = cs.competition_id
-        WHERE c.code <> 'ACB' AND pr.ref LIKE 'f%'
+        WHERE c.code <> 'ACB'
           AND COALESCE(p.photo_url, p.photo_nobg_url) LIKE '%feb.es%'
         """
     ).fetchall()
@@ -173,14 +204,31 @@ def main():
     ap.add_argument('--db', default=str(ROOT / 'data' / 'd3basket.db'))
     ap.add_argument('--force', action='store_true')
     ap.add_argument('--recheck', action='store_true', help='rehace solo los resultados dudosos (restos de fondo, huecos)')
+    ap.add_argument('--clean', action='store_true', help='solo limpia restos de fondo en las fotos ya generadas')
+    ap.add_argument('--refs', help='fichero con referencias (una por línea) que se rehacen')
     ap.add_argument('--limit', type=int, default=0)
     ap.add_argument('--delay', type=float, default=0.3)
     ap.add_argument('--shard', default='0/1', help='k/n: procesa solo una de n partes (para lanzar varios en paralelo)')
     args = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
+    if args.clean:
+        changed = 0
+        for file in sorted(OUT.glob('*.webp')):
+            im = Image.open(file).convert('RGBA')
+            before = np.array(im.getchannel('A')).sum()
+            im = keep_main_silhouette(im)
+            if np.array(im.getchannel('A')).sum() < before * 0.995:
+                im.save(file, 'WEBP', quality=84, method=6)
+                changed += 1
+        print(f'✔ {changed} fotos limpiadas')
+        return
     pipe = Pipeline()
+    only = set(Path(args.refs).read_text().split()) if args.refs else None
+
     def pending(ref: str) -> bool:
         file = OUT / f'{ref}.webp'
+        if only is not None:
+            return ref in only
         return args.force or not file.exists() or (args.recheck and needs_recheck(file))
 
     todo = [(ref, url) for ref, url in targets(args.db) if pending(ref)]
