@@ -6,8 +6,9 @@
 import type { DB } from '../../db/database'
 import { Writer } from '../../db/writer'
 import type { HttpClient } from '../core/http'
+import type { NCalendar } from '../types'
 import type { AcbSyncOptions, SyncSummary } from '../acb/sync'
-import { parseFebBoxscore, parseFebCalendar, parseFebPlayer, parseFebTeam } from './parsers'
+import { parseFebBoxscore, parseFebCalendar, parseFebGroups, parseFebPlayer, parseFebTeam } from './parsers'
 import { FEB_COMPETITIONS, febUrls, type FebCompetition } from './urls'
 
 /** Temporada en curso: desde agosto se considera la nueva. */
@@ -46,7 +47,7 @@ export class FebScraper {
     try {
       log(`▶ ${label}: calendario`)
       opts.onProgress?.({ stage: 'calendar', done: 0, total: 1 })
-      const cal = parseFebCalendar((await this.http.get(febUrls.calendar(g, startYear))).body, competition, startYear, label)
+      const cal = await this.calendar(g, competition, startYear, label)
       cal.edition.isCurrent = startYear === currentSeasonStart()
       const csId = this.w.transaction(() => {
         const csId = this.w.upsertEdition(cal.edition)
@@ -171,5 +172,22 @@ export class FebScraper {
       })
       throw err
     }
+  }
+
+  /**
+   * Calendario completo. Si la liga se divide en grupos (Segunda FEB: A y B), la web
+   * muestra uno por defecto y el resto se pide por postback; se unen todos y cada
+   * equipo queda marcado con su grupo.
+   */
+  private async calendar(g: number, competition: FebCompetition, startYear: number, label: string): Promise<NCalendar> {
+    const first = await this.http.get(febUrls.calendar(g, startYear))
+    const info = parseFebGroups(first.body)
+    if (info.groups.length <= 1) return parseFebCalendar(first.body, competition, startYear, label)
+    const parts: NCalendar[] = []
+    for (const group of info.groups) {
+      const html = group.value === info.selected ? first.body : (await this.http.post(first.finalUrl, info.postback(group.value))).body
+      parts.push(parseFebCalendar(html, competition, startYear, label, group.name))
+    }
+    return { ...parts[0], teams: parts.flatMap((c) => c.teams), games: parts.flatMap((c) => c.games) }
   }
 }

@@ -30,6 +30,8 @@ export interface EditionRow {
 }
 
 export interface StandingRow extends TeamLite {
+  /** Grupo en ligas divididas (Segunda FEB: 'A' / 'B'); null si hay grupo único. */
+  group: string | null
   position: number
   played: number
   won: number

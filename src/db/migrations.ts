@@ -507,5 +507,13 @@ CREATE VIEW v_game_ref AS
   LEFT JOIN external_ids a ON a.entity_type = 'game' AND a.entity_id = g.id AND a.source = 'acb'
   LEFT JOIN external_ids f ON f.entity_type = 'game' AND f.entity_id = g.id AND f.source = 'feb';
 `
+  },
+  {
+    version: 4,
+    name: 'team_groups',
+    sql: /* sql */ `
+-- Ligas divididas en grupos (Segunda FEB: grupos A y B). NULL = liga de grupo único.
+ALTER TABLE teams ADD COLUMN group_name TEXT;
+`
   }
 ]

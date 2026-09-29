@@ -216,6 +216,19 @@ function Summary({ data }: { data: LeagueData }) {
 
 export function StandingsTable({ rows, compact, year }: { rows: StandingRow[]; compact?: boolean; year?: number }) {
   if (!rows.length) return <Empty>Aún no se ha disputado ningún partido.</Empty>
+  // Ligas por grupos (Segunda FEB): una tabla por grupo.
+  const groups = [...new Set(rows.map((r) => r.group))]
+  if (groups.length > 1)
+    return (
+      <div className="stack">
+        {groups.map((g) => (
+          <div key={g ?? '-'}>
+            <div className="eyebrow">Grupo {g}</div>
+            <StandingsTable rows={rows.filter((r) => r.group === g)} compact={compact} year={year} />
+          </div>
+        ))}
+      </div>
+    )
   const columns: Column<StandingRow>[] = [
     { key: 'position', label: '#', num: true, className: 'pos' },
     { key: 'team', label: 'Equipo', value: (r) => r.name, render: (r) => <TeamLink team={r} year={year} /> },

@@ -113,8 +113,8 @@ export class Writer {
 
     this.db
       .prepare(
-        `INSERT INTO teams (club_id, competition_season_id, name, short_name, abbreviation, primary_color, text_color, logo_url, source_slug)
-         VALUES (@club, @cs, @name, @short, @abbr, @color, @text, @logo, @slug)
+        `INSERT INTO teams (club_id, competition_season_id, name, short_name, abbreviation, primary_color, text_color, logo_url, source_slug, group_name)
+         VALUES (@club, @cs, @name, @short, @abbr, @color, @text, @logo, @slug, @group)
          ON CONFLICT (club_id, competition_season_id) DO UPDATE SET
            name = excluded.name,
            short_name = COALESCE(excluded.short_name, short_name),
@@ -122,7 +122,8 @@ export class Writer {
            primary_color = COALESCE(excluded.primary_color, primary_color),
            text_color = COALESCE(excluded.text_color, text_color),
            logo_url = COALESCE(excluded.logo_url, logo_url),
-           source_slug = COALESCE(excluded.source_slug, source_slug)`
+           source_slug = COALESCE(excluded.source_slug, source_slug),
+           group_name = COALESCE(excluded.group_name, group_name)`
       )
       .run({
         club: clubId,
@@ -133,7 +134,8 @@ export class Writer {
         color: t.primaryColor ?? null,
         text: t.textColor ?? null,
         logo: t.logoUrl ?? null,
-        slug: t.slug ?? null
+        slug: t.slug ?? null,
+        group: t.group ?? null
       })
     const team = this.db
       .prepare('SELECT id FROM teams WHERE club_id = ? AND competition_season_id = ?')

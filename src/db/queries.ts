@@ -209,10 +209,10 @@ export class Queries {
 
   standings(csId: number): StandingRow[] {
     const rows = this.all(
-      `SELECT v.played, v.won, v.lost, v.points_for, v.points_against, v.diff, ${teamCols('t', '')}
+      `SELECT v.played, v.won, v.lost, v.points_for, v.points_against, v.diff, t.group_name, ${teamCols('t', '')}
        FROM v_standings v JOIN teams t ON t.id = v.team_id ${teamJoins('t', '')}
        WHERE v.competition_season_id = ?
-       ORDER BY v.won DESC, v.diff DESC, v.points_for DESC`,
+       ORDER BY t.group_name, v.won DESC, v.diff DESC, v.points_for DESC`,
       csId
     )
     const results = this.all<{ home_team_id: number; away_team_id: number; home_score: number; away_score: number }>(
@@ -226,17 +226,24 @@ export class Queries {
       push(g.home_team_id, g.home_score > g.away_score)
       push(g.away_team_id, g.away_score > g.home_score)
     }
-    return rows.map((r, i) => ({
-      ...team(r),
-      position: i + 1,
-      played: r.played,
-      won: r.won,
-      lost: r.lost,
-      points_for: r.points_for,
-      points_against: r.points_against,
-      diff: r.diff,
-      form: (form.get(r.team_id) ?? []).slice(-5)
-    }))
+    // En ligas por grupos la posición se cuenta dentro de cada grupo.
+    const inGroup = new Map<string, number>()
+    return rows.map((r) => {
+      const position = (inGroup.get(r.group_name ?? '') ?? 0) + 1
+      inGroup.set(r.group_name ?? '', position)
+      return {
+        ...team(r),
+        group: r.group_name ?? null,
+        position,
+        played: r.played,
+        won: r.won,
+        lost: r.lost,
+        points_for: r.points_for,
+        points_against: r.points_against,
+        diff: r.diff,
+        form: (form.get(r.team_id) ?? []).slice(-5)
+      }
+    })
   }
 
   playerStats(csId: number, teamId?: number): PlayerStatRow[] {
