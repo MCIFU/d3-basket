@@ -119,7 +119,48 @@ function teamFrom(cell: cheerio.Cheerio<never>): NTeam | undefined {
   }
 }
 
-export function parseFebCalendar(html: string, competition: CompetitionCode, startYear: number, name: string): NCalendar {
+export interface FebGroups {
+  /** Grupos de la fase (Segunda FEB: 'A' y 'B'); uno solo si la liga no se divide. */
+  groups: { value: string; name: string }[]
+  selected?: string
+  /** Campos del formulario ASP.NET para pedir otro grupo por postback. */
+  postback: (groupValue: string) => Record<string, string>
+}
+
+/** Selector de grupo del calendario: 'Liga Regular "A"' → 'A'. */
+export function parseFebGroups(html: string): FebGroups {
+  const $ = cheerio.load(html)
+  const select = $('select[name$="gruposDropDownList"]').first()
+  const groups = select
+    .find('option')
+    .toArray()
+    .map((o) => {
+      const label = clean($(o).text())
+      return { value: $(o).attr('value') ?? '', name: /"([^"]+)"/.exec(label)?.[1] ?? label }
+    })
+    .filter((g) => g.value)
+  const hidden: Record<string, string> = {}
+  for (const input of $('form input[type="hidden"]').toArray()) {
+    const n = $(input).attr('name')
+    if (n) hidden[n] = $(input).attr('value') ?? ''
+  }
+  const season = $('select[name$="temporadasDropDownList"]').first()
+  const groupField = select.attr('name') ?? ''
+  const seasonField = season.attr('name')
+  return {
+    groups,
+    selected: select.find('option[selected]').attr('value') ?? groups[0]?.value,
+    postback: (groupValue) => ({
+      ...hidden,
+      __EVENTTARGET: groupField,
+      __EVENTARGUMENT: '',
+      ...(seasonField ? { [seasonField]: season.find('option[selected]').attr('value') ?? '' } : {}),
+      [groupField]: groupValue
+    })
+  }
+}
+
+export function parseFebCalendar(html: string, competition: CompetitionCode, startYear: number, name: string, group?: string): NCalendar {
   const $ = cheerio.load(html)
   const rounds = $('div.columna').toArray()
   if (!rounds.length) throw new FebParseError('calendario', 'no se encontraron jornadas')
@@ -138,6 +179,7 @@ export function parseFebCalendar(html: string, competition: CompetitionCode, sta
       const link = mid.find('a[href*="Partido.aspx"]').attr('href')
       const gameId = param(link, 'p')
       if (!home || !away || !gameId) continue
+      if (group) home.group = away.group = group
       teams.set(home.ref.id, home)
       teams.set(away.ref.id, away)
       const text = clean(mid.text())

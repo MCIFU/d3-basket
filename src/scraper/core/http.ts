@@ -51,7 +51,16 @@ export class HttpClient {
 
   get(url: string): Promise<FetchResult> {
     // Serializamos todas las peticiones: el scraper es deliberadamente secuencial.
-    const run = this.queue.then(() => this.doGet(url))
+    return this.enqueue(url)
+  }
+
+  /** POST de formulario (postbacks de ASP.NET, p. ej. cambiar de grupo en la FEB). */
+  post(url: string, form: Record<string, string>): Promise<FetchResult> {
+    return this.enqueue(url, new URLSearchParams(form).toString())
+  }
+
+  private enqueue(url: string, formBody?: string): Promise<FetchResult> {
+    const run = this.queue.then(() => this.doRequest(url, formBody))
     this.queue = run.catch(() => undefined)
     return run
   }
@@ -80,9 +89,10 @@ export class HttpClient {
     fs.writeFileSync(file, body)
   }
 
-  private async doGet(url: string): Promise<FetchResult> {
-    const cached = this.readCache(url)
-    if (cached) return cached
+  private async doRequest(url: string, formBody?: string): Promise<FetchResult> {
+    const cacheKey = formBody ? `${url}#${formBody}` : url
+    const cached = this.readCache(cacheKey)
+    if (cached) return { ...cached, url, finalUrl: url }
 
     const host = new URL(url).host
     const minDelay = this.opts.minDelayMs ?? 1000
@@ -97,17 +107,20 @@ export class HttpClient {
 
       try {
         const res = await fetch(url, {
+          method: formBody ? 'POST' : 'GET',
+          body: formBody,
           redirect: 'follow',
           signal: AbortSignal.timeout(this.opts.timeoutMs ?? 30_000),
           headers: {
             'User-Agent': this.opts.userAgent ?? DEFAULT_USER_AGENT,
             Accept: 'text/html,application/xhtml+xml',
-            'Accept-Language': 'es-ES,es;q=0.9'
+            'Accept-Language': 'es-ES,es;q=0.9',
+            ...(formBody ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {})
           }
         })
         const body = await res.text()
         if (res.ok) {
-          this.writeCache(url, body)
+          this.writeCache(cacheKey, body)
           return { url, finalUrl: res.url || url, status: res.status, body, fromCache: false }
         }
         lastError = new HttpError(url, res.status)

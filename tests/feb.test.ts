@@ -6,7 +6,7 @@ import { openDatabase } from '../src/db/database'
 import { Queries } from '../src/db/queries'
 import { Writer } from '../src/db/writer'
 import { madridToUtc } from '../src/scraper/core/time'
-import { parseFebBoxscore, parseFebCalendar, parseFebPlayer, parseFebTeam, splitName, titleCase } from '../src/scraper/feb/parsers'
+import { parseFebBoxscore, parseFebCalendar, parseFebGroups, parseFebPlayer, parseFebTeam, splitName, titleCase } from '../src/scraper/feb/parsers'
 
 // Copias reales de baloncestoenvivo.feb.es (Primera FEB 2026-27, jornada 1).
 const feb = (name: string) => zlib.gunzipSync(fs.readFileSync(path.join(__dirname, 'fixtures', 'feb', `${name}.html.gz`))).toString('utf8')
@@ -85,5 +85,30 @@ describe('Primera FEB', () => {
     expect(p.stints.length).toBeGreaterThanOrEqual(10)
     expect(p.trajectory[0]).toMatchObject({ competition_code: 'LEB_ORO', games: 1 })
     expect(q.club('f1009716')?.club.arena).toBe('Pabellón del Parque')
+  })
+})
+
+describe('Segunda FEB (liga por grupos)', () => {
+  it('detecta los grupos y prepara el postback del grupo B', () => {
+    const html = feb('cal-plata')
+    const info = parseFebGroups(html)
+    expect(info.groups).toEqual([
+      { value: '89999', name: 'A' },
+      { value: '90000', name: 'B' }
+    ])
+    expect(info.selected).toBe('89999')
+    const form = info.postback('90000')
+    expect(form.__EVENTTARGET).toMatch(/gruposDropDownList$/)
+    expect(form.__VIEWSTATE).toBeTruthy()
+    expect(Object.entries(form).find(([k]) => k.endsWith('gruposDropDownList'))?.[1]).toBe('90000')
+    expect(Object.entries(form).find(([k]) => k.endsWith('temporadasDropDownList'))?.[1]).toBe('2026')
+
+    const cal = parseFebCalendar(html, 'LEB_PLATA', 2026, 'Segunda FEB 2026-27', 'A')
+    expect(cal.teams).toHaveLength(14)
+    expect(cal.teams.every((t) => t.group === 'A')).toBe(true)
+  })
+
+  it('Primera FEB no tiene grupos', () => {
+    expect(parseFebGroups(feb('cal')).groups.length).toBeLessThanOrEqual(1)
   })
 })

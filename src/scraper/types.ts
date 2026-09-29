@@ -34,6 +34,8 @@ export interface NTeam {
   textColor?: string
   logoUrl?: string
   slug?: string
+  /** Grupo dentro de la liga regular (p. ej. 'A' en la Segunda FEB), si la competición se divide. */
+  group?: string
 }
 
 export interface NPlayer {
