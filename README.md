@@ -1,6 +1,6 @@
 # D3 Basket
 
-Aplicación de **scouting y análisis estadístico de baloncesto español**: ACB (Liga Endesa), LEB Oro (Primera FEB) y LEB Plata (Segunda FEB).
+Aplicación de **scouting y análisis estadístico de baloncesto español**: ACB (Liga Endesa), Primera FEB (LEB Oro), Segunda FEB (LEB Plata) y Tercera FEB.
 Funciona como **app de escritorio** (Windows/macOS/Linux) y como **web** en cualquier navegador moderno (Chrome, Firefox, Brave, Edge, Safari), publicada en Netlify: **https://d3basket.netlify.app**.
 
 **Stack:** Electron · React · TypeScript · SQLite (better-sqlite3) · Vite (electron-vite) · Vitest
@@ -18,7 +18,8 @@ Funciona como **app de escritorio** (Windows/macOS/Linux) y como **web** en cual
 | ✅ Scraper ACB | calendario, resultados, plantillas, fichas, boxscores, datos de club, trayectorias y clasificación histórica de **acb.com**; palmarés e historia de **Wikipedia** |
 | ✅ Primera FEB (LEB Oro) | calendario, resultados, estadísticas por partido, plantillas con fotos sin fondo, datos de club y **trayectoria completa de cada jugador en todas las categorías FEB** (`baloncestoenvivo.feb.es`) |
 | ✅ Histórico ACB | temporadas 2025-26 y 2024-25 completas, y trayectoria de todos los jugadores actuales desde su debut |
-| ⏳ Segunda FEB (LEB Plata) | el adaptador FEB ya la soporta (`sync segunda-feb`); falta activarla en el build |
+| ✅ Segunda y Tercera FEB | mismas páginas y datos que la Primera FEB; ligas divididas en grupos (Segunda: A y B; Tercera: 10 grupos) con clasificación y calendario por grupo |
+| ✅ Identidad visual | colores y logos oficiales de cada liga; escudos homogéneos y colores de cada club; fotos FEB en primer plano como las de la ACB (ver *Fotos, escudos y colores*) |
 
 La temporada 2026-27 de la ACB arrancó el 26-27 de septiembre de 2026: la primera sincronización ya trae los 9 resultados y boxscores de la jornada 1 y los 297 partidos restantes del calendario.
 
@@ -45,7 +46,7 @@ La web usa exactamente la misma interfaz que la app de escritorio. La diferencia
 - **Actualización diaria automática:** la función programada `netlify/functions/refresh-data.mts` lanza un *build* cada día a las 06:00 UTC si existe la variable `BUILD_HOOK_URL`.
 
 ```bash
-npm run export:web     # exporta tu BD local a data/web/ para probar la web
+npm run export:web     # exporta tu BD local a public/data/ para probar la web
 npm run dev:web        # web en modo desarrollo (http://localhost:5174)
 npm run build:web      # web estática en dist-web/
 ```
@@ -57,6 +58,24 @@ npm run build:web      # web estática en dist-web/
 2. **Build hook para la actualización diaria:** *Build & deploy → Build hooks → Add build hook* (rama `main`) y guarda su URL como variable de entorno `BUILD_HOOK_URL` (*Environment variables*).
 3. **Acceso público:** si el proyecto tiene activada la protección de visitantes (*Visitor access / login de equipo*), desactívala para que cualquiera pueda abrir la web.
 
+## Fotos, escudos y colores (`public/media`)
+
+Las fotos de la FEB llegan de medio cuerpo o con fondo, y cada escudo tiene márgenes distintos. `tools/media` los deja todos como los de la ACB:
+
+- **`faces.py`**: quita el fondo si lo hay (rembg, `u2net_human_seg`), detecta la cara (YuNet de OpenCV) y recorta con el encuadre de acb.com (cara al 50 % del ancho, ojos al 38,6 % del alto, 5:6) → `public/media/players/<ref>.webp`.
+- **`logos.py`**: quita fondos lisos, recorta el margen vacío y centra cada escudo en 256×256 → `public/media/logos/<ref>.png`. De cada escudo saca los dos colores del club → `public/media/colors.json` (en la ACB se respeta el color oficial de acb.com).
+- `src/db/media.ts` (`applyMedia`) aplica todo esto a la base de datos al exportar la web y en la app de escritorio. Si falta algún fichero se usa el original.
+
+```bash
+pip install pillow numpy opencv-python-headless "rembg[cpu]"
+python tools/media/logos.py                  # escudos y colores nuevos
+python tools/media/faces.py --shard 0/3 &    # fotos nuevas (en paralelo: 0/3, 1/3, 2/3)
+```
+
+Solo procesa lo que falta; después hay que hacer commit de `public/media`. Los jugadores que lleguen después en el build diario usan la foto original de la FEB hasta la siguiente pasada.
+
+Los colores y logos de cada liga están en `src/renderer/src/leagues.ts` y `public/media/leagues` (paleta de acb.com y logos oficiales de la FEB).
+
 ## Scraper (CLI)
 
 ```bash
@@ -65,6 +84,8 @@ npm run scrape -- sync acb --no-players            # sin fichas biográficas (r�
 npm run scrape -- sync acb --season 2025           # histórico 2025-26
 npm run scrape -- sync primera-feb                 # Primera FEB (LEB Oro) en curso
 npm run scrape -- sync segunda-feb                 # Segunda FEB (LEB Plata)
+npm run scrape -- sync tercera-feb                 # Tercera FEB (10 grupos)
+npm run scrape -- sync tercera-feb --max-bios 150  # como mucho 150 fichas por ejecución (build diario)
 npm run scrape -- sync acb --force                 # vuelve a descargar boxscores y refresca la historia
 npm run scrape -- sync acb --career-budget 1000    # descarga más trayectorias de jugadores de una vez
 npm run scrape -- editions acb                     # temporadas disponibles en acb.com

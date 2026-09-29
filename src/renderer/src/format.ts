@@ -44,6 +44,19 @@ export const initials = (name: string) =>
     .map((w) => w[0]?.toUpperCase())
     .join('')
 
+/** Mezcla dos colores #rrggbb: t = 0 → a, t = 1 → b. */
+export function mix(a: string, b: string, t: number): string {
+  const p = (c: string) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16))
+  const [x, y] = [p(a), p(b)]
+  return `#${x.map((v, i) => Math.round(v + (y[i] - v) * t).toString(16).padStart(2, '0')).join('')}`
+}
+
+/** Luminosidad relativa aproximada (0 negro, 1 blanco). */
+export function luminance(c: string): number {
+  const n = parseInt(c.slice(1), 16)
+  return (0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255
+}
+
 /** Color de equipo seguro para fondos (evita grises/blancos poco legibles). */
 export function teamColor(color?: string | null, fallback = '#ff6b00'): string {
   if (!color || !/^#[0-9a-f]{6}$/i.test(color)) return fallback

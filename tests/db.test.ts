@@ -20,10 +20,10 @@ function seed() {
 }
 
 describe('esquema y escritura', () => {
-  it('aplica migraciones y siembra las tres competiciones', () => {
+  it('aplica migraciones y siembra las cuatro competiciones', () => {
     const db = openDatabase(':memory:')
     const codes = db.prepare('SELECT code FROM competitions ORDER BY tier').all().map((r: any) => r.code)
-    expect(codes).toEqual(['ACB', 'LEB_ORO', 'LEB_PLATA'])
+    expect(codes).toEqual(['ACB', 'LEB_ORO', 'LEB_PLATA', 'TERCERA_FEB'])
   })
 
   it('guardar el calendario dos veces no duplica nada (idempotente)', () => {

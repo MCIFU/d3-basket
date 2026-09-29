@@ -98,9 +98,11 @@ export class FebScraper {
              JOIN external_ids px ON px.entity_type = 'player' AND px.entity_id = p.id AND px.source = 'feb'
              JOIN external_ids tx ON tx.entity_type = 'team' AND tx.entity_id = t.id AND tx.source = 'feb'
              WHERE NOT EXISTS (SELECT 1 FROM player_stints s WHERE s.player_id = p.id AND s.source = 'feb')
-                OR p.bio_synced_at IS NULL OR p.bio_synced_at < datetime('now', ?)`
+                OR p.bio_synced_at IS NULL OR p.bio_synced_at < datetime('now', ?)
+             ORDER BY p.bio_synced_at IS NOT NULL, p.bio_synced_at`
           )
-          .all(csId, `-${maxAge} days`) as { id: number; person: string; team: string }[]
+          .all(csId, `-${maxAge} days`)
+          .slice(0, opts.maxPlayerBios ?? Infinity) as { id: number; person: string; team: string }[]
         log(`▶ Fichas y trayectorias (${pending.length} pendientes)`)
         for (const [i, p] of pending.entries()) {
           opts.onProgress?.({ stage: 'players', done: i, total: pending.length })

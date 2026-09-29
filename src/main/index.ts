@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import path from 'node:path'
 import { defaultDbPath, openDatabase, type DB } from '../db/database'
+import { applyMedia } from '../db/media'
 import { Queries } from '../db/queries'
 import { HttpClient } from '../scraper/core/http'
 import { AcbScraper } from '../scraper/acb/sync'
@@ -11,6 +12,9 @@ let db: DB
 let queries: Queries
 let win: BrowserWindow | null = null
 let syncing = false
+
+// Fotos y escudos procesados: se copian junto al renderer (public/ de electron-vite).
+const mediaDir = () => (app.isPackaged ? path.join(__dirname, '../renderer/media') : path.resolve('public', 'media'))
 
 function createWindow() {
   win = new BrowserWindow({
@@ -83,7 +87,7 @@ function registerIpc() {
     }
     try {
       const s =
-        opts.league === 'LEB_ORO' || opts.league === 'LEB_PLATA'
+        opts.league === 'LEB_ORO' || opts.league === 'LEB_PLATA' || opts.league === 'TERCERA_FEB'
           ? await new FebScraper(db, http).sync(opts.league, { ...common, season: opts.season })
           : opts.season
             ? await scraper.syncHistoric(opts.season, common)
@@ -97,6 +101,7 @@ function registerIpc() {
     } catch (err) {
       return { ok: false, message: err instanceof Error ? err.message : String(err) }
     } finally {
+      applyMedia(db, mediaDir())
       syncing = false
     }
   })
@@ -104,6 +109,7 @@ function registerIpc() {
 
 app.whenReady().then(() => {
   db = openDatabase()
+  applyMedia(db, mediaDir())
   queries = new Queries(db)
   registerIpc()
   createWindow()

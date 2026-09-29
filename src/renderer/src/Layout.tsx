@@ -55,7 +55,9 @@ export function Layout({ route, children }: { route: Route; children: ReactNode 
           <div>
             <p>
               <b>D3 Basket</b> · Datos de <a href="https://acb.com" target="_blank" rel="noreferrer">acb.com</a> (estadísticas,
-              plantillas, clasificación histórica) y de{' '}
+              plantillas, clasificación histórica), de{' '}
+              <a href="https://baloncestoenvivo.feb.es" target="_blank" rel="noreferrer">baloncestoenvivo.feb.es</a> (Primera, Segunda y
+              Tercera FEB) y de{' '}
               <a href="https://es.wikipedia.org" target="_blank" rel="noreferrer">Wikipedia</a> (palmarés por temporadas e historia
               de los clubes, CC BY-SA 4.0).
             </p>

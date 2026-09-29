@@ -12,8 +12,9 @@ const projectRoot = realpathSync.native(__dirname)
 export default defineConfig({
   root: resolve(projectRoot, 'src/renderer'),
   base: './',
-  // Datos publicados por `npm run scrape -- export-web` (data/web/data/d3basket.db.gz).
-  publicDir: resolve(projectRoot, 'data/web'),
+  // public/media: fotos y escudos procesados (tools/media); public/data: datos
+  // publicados por `npm run scrape -- export-web` (no se versionan).
+  publicDir: resolve(projectRoot, 'public'),
   plugins: [react()],
   build: {
     outDir: resolve(projectRoot, 'dist-web'),

@@ -27,9 +27,10 @@ const compKey = (c: string) => {
   if (/^(ACB|LIGA ENDESA)/.test(u)) return 'ACB'
   if (/^(LEB_ORO|PRIMERA FEB|LEB ORO)/.test(u)) return 'LEB_ORO'
   if (/^(LEB_PLATA|SEGUNDA FEB|LEB PLATA)/.test(u)) return 'LEB_PLATA'
+  if (/^(TERCERA_FEB|TERCERA FEB)/.test(u)) return 'TERCERA_FEB'
   return u
 }
-const COMP_NAME: Record<string, string> = { ACB: 'LIGA ENDESA', LEB_ORO: 'PRIMERA FEB', LEB_PLATA: 'SEGUNDA FEB' }
+const COMP_NAME: Record<string, string> = { ACB: 'LIGA ENDESA', LEB_ORO: 'PRIMERA FEB', LEB_PLATA: 'SEGUNDA FEB', TERCERA_FEB: 'TERCERA FEB' }
 const seasonLabel = (y: number) => `${y}-${String(y + 1).slice(-2)}`
 
 export function buildCareer(data: PlayerData): CareerEntry[] {

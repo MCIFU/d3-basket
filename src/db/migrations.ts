@@ -515,5 +515,22 @@ CREATE VIEW v_game_ref AS
 -- Ligas divididas en grupos (Segunda FEB: grupos A y B). NULL = liga de grupo único.
 ALTER TABLE teams ADD COLUMN group_name TEXT;
 `
+  },
+  {
+    version: 5,
+    name: 'tercera_feb',
+    sql: /* sql */ `
+-- Tercera FEB (antigua Liga EBA): cuarta categoría, 10 grupos territoriales.
+INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier) VALUES
+  ('TERCERA_FEB', 'Tercera FEB', 'Tercera FEB', 'FEB', 4);
+`
+  },
+  {
+    version: 6,
+    name: 'club_secondary_color',
+    sql: /* sql */ `
+-- Segundo color del club (sacado de su escudo, ver src/db/media.ts).
+ALTER TABLE clubs ADD COLUMN secondary_color TEXT;
+`
   }
 ]

@@ -21,6 +21,8 @@ export default defineConfig({
   },
   renderer: {
     root: rendererRoot,
+    // Fotos y escudos procesados (public/media), compartidos con la versión web.
+    publicDir: resolve(__dirname, 'public'),
     build: {
       rollupOptions: { input: { index: resolve(rendererRoot, 'index.html') } }
     },

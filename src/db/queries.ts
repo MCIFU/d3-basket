@@ -68,7 +68,7 @@ const team = (r: Row, prefix = ''): TeamLite => ({
 const GAME_SELECT = `
   SELECT g.id, gr.ref, rd.name AS round_name, rd.number AS round_number, rd.phase, g.scheduled_at, g.status,
          g.home_score, g.away_score, (g.boxscore_synced_at IS NOT NULL) AS has_boxscore, g.attendance, g.arena,
-         g.competition_season_id,
+         g.competition_season_id, ht.group_name,
          ${teamCols('ht', 'h_')}, ${teamCols('at', 'a_')}
   FROM games g
   JOIN teams ht ON ht.id = g.home_team_id
@@ -91,7 +91,8 @@ const toGame = (r: Row): GameRow => ({
   away_score: r.away_score,
   has_boxscore: r.has_boxscore,
   attendance: r.attendance,
-  arena: r.arena
+  arena: r.arena,
+  group: r.group_name ?? null
 })
 
 const SUM_COLS = `COUNT(*) AS games, SUM(s.seconds) AS seconds, SUM(s.points) AS pts, SUM(s.reb) AS reb,
@@ -209,10 +210,14 @@ export class Queries {
 
   standings(csId: number): StandingRow[] {
     const rows = this.all(
-      `SELECT v.played, v.won, v.lost, v.points_for, v.points_against, v.diff, t.group_name, ${teamCols('t', '')}
-       FROM v_standings v JOIN teams t ON t.id = v.team_id ${teamJoins('t', '')}
-       WHERE v.competition_season_id = ?
-       ORDER BY t.group_name, v.won DESC, v.diff DESC, v.points_for DESC`,
+      // Todos los equipos de la edición, aunque aún no hayan jugado (así se ve la composición de cada grupo).
+      `SELECT COALESCE(v.played, 0) AS played, COALESCE(v.won, 0) AS won, COALESCE(v.lost, 0) AS lost,
+              COALESCE(v.points_for, 0) AS points_for, COALESCE(v.points_against, 0) AS points_against,
+              COALESCE(v.diff, 0) AS diff, t.group_name, ${teamCols('t', '')}
+       FROM teams t ${teamJoins('t', '')}
+       LEFT JOIN v_standings v ON v.team_id = t.id AND v.competition_season_id = t.competition_season_id
+       WHERE t.competition_season_id = ?
+       ORDER BY t.group_name, COALESCE(v.won, 0) DESC, COALESCE(v.diff, 0) DESC, COALESCE(v.points_for, 0) DESC, t.name`,
       csId
     )
     const results = this.all<{ home_team_id: number; away_team_id: number; home_score: number; away_score: number }>(
@@ -426,17 +431,18 @@ export class Queries {
     const ids = this.currentEditionIds()
     if (!ids.length) return []
     return this.all(
-      `SELECT ${teamCols('t', '')}, c.arena, c.founded_year, co.code AS competition_code, co.name AS competition_name
+      `SELECT ${teamCols('t', '')}, c.arena, c.founded_year, t.group_name, co.code AS competition_code, co.name AS competition_name
        FROM teams t ${teamJoins('t', '')}
        JOIN competition_seasons cs ON cs.id = t.competition_season_id JOIN competitions co ON co.id = cs.competition_id
-       WHERE t.competition_season_id IN (${ids.map(() => '?').join(',')}) ORDER BY co.tier, t.name`,
+       WHERE t.competition_season_id IN (${ids.map(() => '?').join(',')}) ORDER BY co.tier, t.group_name, t.name`,
       ...ids
     ).map((r) => ({
       ...team(r),
       arena: r.arena as string | null,
       founded_year: r.founded_year as number | null,
       competition_code: r.competition_code as string,
-      competition_name: r.competition_name as string
+      competition_name: r.competition_name as string,
+      group: (r.group_name as string | null) ?? null
     }))
   }
 
@@ -522,6 +528,7 @@ export class Queries {
       abbr: c.abbreviation,
       logo: c.logo_url ?? teamRow?.logo ?? null,
       color: c.primary_color ?? teamRow?.color ?? null,
+      color2: c.secondary_color ?? null,
       founded_year: c.founded_year,
       arena: c.arena,
       arena_address: c.arena_address,
