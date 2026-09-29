@@ -24,7 +24,7 @@ export interface LeagueTheme {
  * Identidad oficial de cada liga.
  * - Liga Endesa: paleta de acb.com (--primary-color #da3b00, --secondary-color negro) y su logo.
  * - Primera, Segunda y Tercera FEB: colores de sus logos oficiales (imagenes.feb.es), que comparten
- *   el gris y se distinguen por el color: naranja, rojo y ámbar.
+ *   el gris y se distinguen por el color: naranja, rojo y ámbar. Copa España: rojo y amarillo de su logo.
  * Zonas según el formato de la temporada 2026-27 (solo las ligas de grupo único).
  */
 export const LEAGUES: Record<string, LeagueTheme> = {
@@ -60,6 +60,15 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     color2: '#78777a',
     ink: '#ffffff',
     logo: 'media/leagues/leb_plata.png',
+    zones: []
+  },
+  COPA_ESPANA: {
+    name: 'Copa España',
+    division: 'Copa · FEB',
+    color: '#c53740',
+    color2: '#f89d1f',
+    ink: '#ffffff',
+    logo: 'media/leagues/copa_espana.png',
     zones: []
   },
   TERCERA_FEB: {

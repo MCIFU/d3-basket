@@ -547,5 +547,28 @@ CREATE VIEW v_club_ref AS
     'i' || c.id) AS ref
   FROM clubs c;
 `
+  },
+  {
+    version: 8,
+    name: 'player_ref_one_feb_id',
+    sql: /* sql */ `
+-- Un jugador puede tener dos ids de persona en la FEB (licencias duplicadas): una sola ref.
+DROP VIEW v_player_ref;
+CREATE VIEW v_player_ref AS
+  SELECT p.id AS player_id, COALESCE(
+    (SELECT external_id FROM external_ids WHERE entity_type = 'player' AND entity_id = p.id AND source = 'acb' LIMIT 1),
+    'f' || (SELECT MAX(CAST(external_id AS INTEGER)) FROM external_ids WHERE entity_type = 'player' AND entity_id = p.id AND source = 'feb'),
+    'i' || p.id) AS ref
+  FROM players p;
+`
+  },
+  {
+    version: 9,
+    name: 'copa_espana',
+    sql: /* sql */ `
+-- Copa España (FEB): competición de copa, sin categoría (tier NULL = copa, no liga).
+INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier) VALUES
+  ('COPA_ESPANA', 'Copa España', 'Copa España', 'FEB', NULL);
+`
   }
 ]

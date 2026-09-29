@@ -250,6 +250,85 @@ export class Writer {
     return hit.length === 1 ? hit[0].id : undefined
   }
 
+  /** Une dos fichas de la misma persona (p. ej. la de acb.com y la de la FEB): todo pasa a `into`. */
+  mergePlayer(from: number, into: number) {
+    if (from === into) return
+    const db = this.db
+    db.prepare('UPDATE OR IGNORE roster_entries SET player_id = ? WHERE player_id = ?').run(into, from)
+    db.prepare('UPDATE OR IGNORE player_game_stats SET player_id = ? WHERE player_id = ?').run(into, from)
+    db.prepare('UPDATE OR IGNORE player_stints SET player_id = ? WHERE player_id = ?').run(into, from)
+    db.prepare('UPDATE OR IGNORE player_season_lines SET player_id = ? WHERE player_id = ?').run(into, from)
+    db.prepare('UPDATE OR IGNORE player_season_fetches SET player_id = ? WHERE player_id = ?').run(into, from)
+    db.prepare('UPDATE scouting_reports SET player_id = ? WHERE player_id = ?').run(into, from)
+    db.prepare("UPDATE external_ids SET entity_id = ? WHERE entity_type = 'player' AND entity_id = ?").run(into, from)
+    const cols = ['first_name', 'last_name', 'known_as', 'birth_date', 'birth_place', 'birth_country', 'nationality',
+      'height_cm', 'weight_kg', 'position', 'position_code', 'photo_url', 'photo_nobg_url']
+    const existing = new Set((db.prepare('PRAGMA table_info(players)').all() as { name: string }[]).map((c) => c.name))
+    const fill = cols.filter((c) => existing.has(c)).map((c) => `${c} = COALESCE(${c}, (SELECT ${c} FROM players WHERE id = @from))`)
+    db.prepare(`UPDATE players SET ${fill.join(', ')} WHERE id = @into`).run({ from, into })
+    // Lo que no se pudo mover por duplicado (mismo partido o misma plantilla) se descarta.
+    for (const t of ['roster_entries', 'player_game_stats', 'player_stints', 'player_season_lines', 'player_season_fetches']) {
+      db.prepare(`DELETE FROM ${t} WHERE player_id = ?`).run(from)
+    }
+    db.prepare('DELETE FROM players WHERE id = ?').run(from)
+  }
+
+  /**
+   * Une las fichas de una misma persona creadas desde fuentes distintas: la FEB crea el jugador
+   * sin fecha de nacimiento (llega después con su ficha), así que al crearlo no se pudo emparejar.
+   * Criterio: misma fecha de nacimiento, algún apellido en común, fuentes distintas y un único
+   * candidato. Se conserva la ficha de acb.com (su ref es la estable).
+   */
+  dedupePlayers(): number {
+    const words = (s: string) =>
+      new Set(
+        s
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .split(/[^a-z]+/)
+          .filter((w) => w.length > 2)
+      )
+    const rows = this.db
+      .prepare(
+        `SELECT p.id, p.full_name AS name, p.last_name AS last, p.birth_date AS birth,
+                (SELECT GROUP_CONCAT(DISTINCT source) FROM external_ids x WHERE x.entity_type = 'player' AND x.entity_id = p.id) AS sources
+         FROM players p WHERE p.birth_date IN (SELECT birth_date FROM players WHERE birth_date IS NOT NULL GROUP BY birth_date HAVING COUNT(*) > 1)`
+      )
+      .all() as { id: number; name: string; last: string | null; birth: string; sources: string | null }[]
+    const byBirth = new Map<string, typeof rows>()
+    for (const r of rows) byBirth.set(r.birth, [...(byBirth.get(r.birth) ?? []), r])
+    let merged = 0
+    this.transaction(() => {
+      for (const group of byBirth.values()) {
+        const alive = new Set(group.map((r) => r.id))
+        for (const acb of group.filter((r) => r.sources === 'acb')) {
+          const mine = words(acb.last ?? acb.name)
+          const hits = group.filter((r) => r.sources === 'feb' && alive.has(r.id) && [...words(r.name)].some((w) => mine.has(w)))
+          if (hits.length !== 1) continue
+          this.mergePlayer(hits[0].id, acb.id)
+          alive.delete(hits[0].id)
+          merged++
+        }
+        // La propia FEB a veces da dos ids de persona al mismo jugador: una ficha solo FEB se une a
+        // otra (de la fuente que sea) con el mismo nombre completo y nacimiento.
+        const key = (r: (typeof group)[number]) => [...words(r.name)].sort().join(' ')
+        for (const r of group.filter((x) => x.sources === 'feb')) {
+          if (!alive.has(r.id)) continue
+          const same = group.filter((o) => o.id !== r.id && alive.has(o.id) && key(o) === key(r))
+          if (same.length !== 1) continue
+          // Se conserva la ficha que ya tenga ACB; si no, la más antigua.
+          const into = same[0].sources?.includes('acb') || same[0].id < r.id ? same[0] : r
+          const from = into === r ? same[0] : r
+          this.mergePlayer(from.id, into.id)
+          alive.delete(from.id)
+          merged++
+        }
+      }
+    })
+    return merged
+  }
+
   savePlayerStints(playerId: number, source: string, stints: NStint[]) {
     this.transaction(() => {
       this.db.prepare('DELETE FROM player_stints WHERE player_id = ? AND source = ?').run(playerId, source)
@@ -349,6 +428,55 @@ export class Writer {
       .get(csId, r.phase, r.number) as { id: number }
     if (r.ref) this.link('round', row.id, r.ref)
     return row.id
+  }
+
+  /**
+   * Playoffs de acb.com: solo llegan como "Playoff" (o "Playoff · ronda N"). Se deducen las rondas del
+   * cuadro: cada emparejamiento es una serie, se ordenan por fecha de inicio y se reparten de mayor a
+   * menor (con 7 series: 4 cuartos, 2 semifinales y la final). Cada partido queda como
+   * "Cuartos de final · Partido 2".
+   */
+  labelPlayoffSeries(csId: number) {
+    const games = this.db
+      .prepare(
+        `SELECT g.id, g.home_team_id AS h, g.away_team_id AS a, g.scheduled_at AS at FROM games g
+         JOIN rounds r ON r.id = g.round_id
+         WHERE g.competition_season_id = ? AND r.phase = 'playoff' AND r.name LIKE 'Playoff%'
+         ORDER BY g.scheduled_at, g.id`
+      )
+      .all(csId) as { id: number; h: number; a: number; at: string | null }[]
+    if (!games.length) return
+    const series = new Map<string, typeof games>()
+    for (const g of games) {
+      const key = [g.h, g.a].sort((x, y) => x - y).join('-')
+      series.set(key, [...(series.get(key) ?? []), g])
+    }
+    const ordered = [...series.values()]
+    const names = ['Final', 'Semifinales', 'Cuartos de final', 'Octavos de final']
+    // Tamaños por ronda (de la última hacia atrás): 1, 2, 4, 8...
+    const stages: { name: string; order: number; size: number }[] = []
+    for (let i = 0, left = ordered.length; left > 0 && i < names.length; i++) {
+      const size = Math.min(2 ** i, left)
+      stages.unshift({ name: names[i], order: 5 - i, size })
+      left -= size
+    }
+    if (stages.reduce((a, s) => a + s.size, 0) !== ordered.length) return // cuadro no reconocible: se deja como está
+    let idx = 0
+    this.transaction(() => {
+      for (const stage of stages) {
+        for (const s of ordered.slice(idx, idx + stage.size)) {
+          s.forEach((g, n) => {
+            const round = this.upsertRound(csId, { phase: 'playoff', number: stage.order * 100 + n + 1, name: `${stage.name} · Partido ${n + 1}` })
+            this.db.prepare('UPDATE games SET round_id = ? WHERE id = ?').run(round, g.id)
+          })
+        }
+        idx += stage.size
+      }
+      this.db
+        .prepare('DELETE FROM rounds WHERE competition_season_id = ? AND NOT EXISTS (SELECT 1 FROM games g WHERE g.round_id = rounds.id)')
+        .run(csId)
+      this.refreshRoundDates(csId)
+    })
   }
 
   refreshRoundDates(csId: number) {

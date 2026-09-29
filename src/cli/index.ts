@@ -17,7 +17,9 @@ import zlib from 'node:zlib'
 import { parseArgs } from 'node:util'
 import Database from 'better-sqlite3'
 import { defaultDbPath, openDatabase } from '../db/database'
+import { runChecks } from '../db/check'
 import { applyMedia } from '../db/media'
+import { Writer } from '../db/writer'
 import { HttpClient } from '../scraper/core/http'
 import { AcbScraper } from '../scraper/acb/sync'
 import { FebScraper } from '../scraper/feb/sync'
@@ -52,11 +54,12 @@ function usage(code = 0): never {
   npm run scrape -- sync acb [--season 2025] [--no-rosters] [--no-players] [--no-boxscores]
                              [--max-boxscores N] [--force] [--player-max-age DÍAS]
                              [--no-history] [--no-careers] [--career-budget N]
-  npm run scrape -- sync primera-feb [--season 2026]   (LEB Oro; también segunda-feb y tercera-feb)
+  npm run scrape -- sync primera-feb [--season 2026]   (LEB Oro; también segunda-feb, tercera-feb y copa-espana)
   npm run scrape -- editions acb
   npm run scrape -- info
   npm run scrape -- restore-db [seed/d3basket.db.gz]   (build: semilla → caché → web)
   npm run scrape -- export-web [public/data/d3basket.db.gz]
+  npm run scrape -- check                              (auditoría de integridad de los datos)
   npm run scrape -- import-club-wiki tools/media/club-wiki.json   (fundación e historia de clubes FEB)
 
 Opciones: --db <ruta.db> (por defecto ${defaultDbPath()})
@@ -75,6 +78,18 @@ async function main() {
   const db = openDatabase(dbPath)
   process.on('exit', () => db.open && db.close()) // cierra y vuelca el WAL al fichero principal
   console.log(`Base de datos: ${dbPath}`)
+
+  if (command === 'check') {
+    let errors = 0
+    for (const c of runChecks(db)) {
+      const mark = !c.rows.length ? '✔' : c.level === 'error' ? '✗' : '⚠'
+      console.log(`${mark} ${c.title}${c.rows.length ? ` (${c.rows.length})` : ''}`)
+      if (c.rows.length) console.table(c.rows.slice(0, 15))
+      if (c.level === 'error') errors += c.rows.length
+    }
+    process.exitCode = errors ? 1 : 0
+    return
+  }
 
   if (command === 'import-club-wiki') {
     // Emparejamientos club ↔ Wikipedia revisados (tools/media/club_wiki.py): solo rellena lo que falte.
@@ -145,11 +160,12 @@ async function main() {
     'leb-oro': 'LEB_ORO',
     'segunda-feb': 'LEB_PLATA',
     'leb-plata': 'LEB_PLATA',
-    'tercera-feb': 'TERCERA_FEB'
+    'tercera-feb': 'TERCERA_FEB',
+    'copa-espana': 'COPA_ESPANA'
   }
   const febCompetition = league ? FEB_ALIASES[league.toLowerCase()] : undefined
   if (league !== 'acb' && !febCompetition) {
-    console.error(`Liga no soportada: ${league ?? '(ninguna)'} — usa "acb", "primera-feb", "segunda-feb" o "tercera-feb".`)
+    console.error(`Liga no soportada: ${league ?? '(ninguna)'} — usa "acb", "primera-feb", "segunda-feb", "tercera-feb" o "copa-espana".`)
     usage(1)
   }
 
@@ -187,6 +203,8 @@ async function main() {
       : values.season
         ? await acb.syncHistoric(Number(values.season), opts)
         : await acb.syncCurrent(opts)
+    const merged = new Writer(db).dedupePlayers()
+    if (merged) console.log(`  ${merged} jugadores unificados (misma persona en acb.com y en la FEB)`)
     const secs = Math.round((Date.now() - t0) / 1000)
     console.log(`\n✔ ${summary.edition} sincronizada en ${secs}s (${summary.requests} peticiones)`)
     console.log(

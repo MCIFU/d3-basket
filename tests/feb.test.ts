@@ -7,7 +7,7 @@ import { Queries } from '../src/db/queries'
 import { Writer } from '../src/db/writer'
 import { madridToUtc } from '../src/scraper/core/time'
 import { linkFebClubs } from '../src/scraper/feb/sync'
-import { parseFebBoxscore, parseFebCalendar, parseFebGroups, parseFebPlayer, parseFebTeam, splitName, titleCase } from '../src/scraper/feb/parsers'
+import { febStage, parseFebBoxscore, parseFebCalendar, parseFebGroups, parseFebPlayer, parseFebTeam, splitName, titleCase } from '../src/scraper/feb/parsers'
 
 // Copias reales de baloncestoenvivo.feb.es (Primera FEB 2026-27, jornada 1).
 const feb = (name: string) => zlib.gunzipSync(fs.readFileSync(path.join(__dirname, 'fixtures', 'feb', `${name}.html.gz`))).toString('utf8')
@@ -165,5 +165,29 @@ describe('un mismo club FEB en varias temporadas', () => {
     expect(clubOf(db, '60')).not.toBe(clubOf(db, '101'))
     // La referencia estable del club es la de su id FEB más reciente.
     expect((db.prepare('SELECT ref FROM v_club_ref WHERE club_id = ?').get(clubOf(db, '100')) as { ref: string }).ref).toBe('f100')
+  })
+})
+
+describe('fases de eliminatoria de la FEB', () => {
+  it('nombra cada ronda y separa los grupos de la Tercera', () => {
+    expect(febStage('Play-offs 1/4 Final')).toEqual({ name: 'Cuartos de final', order: 3, group: 0 })
+    expect(febStage('Play-offs Final')).toMatchObject({ name: 'Final', order: 5 })
+    expect(febStage('1ºE-1ºO Final')).toMatchObject({ name: 'Final por el título', group: 0 })
+    expect(febStage('PERMANENCIA Final')).toMatchObject({ name: 'Permanencia' })
+    expect(febStage('ELIMIN. GR "C" 1/2 Final')).toEqual({ name: 'Semifinales · Grupo C', order: 4, group: 3 })
+    expect(febStage('1ºDA-1ºDB Final')).toEqual({ name: 'Final del grupo D', order: 5, group: 4 })
+  })
+})
+
+describe('Copa España', () => {
+  it('trata la fase de grupos como liga regular, con o sin comillas', () => {
+    const html = `<form><select name="_ctl0:x:gruposDropDownList">
+      <option selected="selected" value="1">FASE DE GRUPOS "A"</option><option value="2">FASE DE GRUPOS B</option>
+      <option value="3">Play-offs 1/4 Final</option></select></form>`
+    expect(parseFebGroups(html).groups).toMatchObject([
+      { name: 'A', regular: true },
+      { name: 'B', regular: true },
+      { regular: false }
+    ])
   })
 })

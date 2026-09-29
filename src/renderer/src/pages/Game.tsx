@@ -12,6 +12,13 @@ export function GamePage({ refId }: { refId: string }) {
   const played = g.home_score != null && g.away_score != null
   const homeWon = played && g.home_score! > g.away_score!
   const periodLabel = (p: number) => (p <= 4 ? `${p}º` : `PR${p - 4}`)
+  // La FEB publica a veces actas incompletas (faltan jugadores): se avisa en lugar de ocultarlo.
+  const incomplete = played
+    ? teams
+        .filter((t) => t.lines.length)
+        .map((t) => ({ name: t.team.name, sum: t.lines.reduce((a, l) => a + (l.points ?? 0), 0), score: t.is_home ? g.home_score! : g.away_score! }))
+        .filter((t) => t.sum !== t.score)
+    : []
 
   return (
     <>
@@ -91,10 +98,20 @@ export function GamePage({ refId }: { refId: string }) {
 
       {teams.every((t) => !t.lines.length) ? (
         <Section>
-          <Empty>La estadística estará disponible cuando se juegue el partido.</Empty>
+          <Empty>
+            {played
+              ? 'La fuente oficial no ha publicado la estadística de este partido (p. ej., partido no disputado).'
+              : 'La estadística estará disponible cuando se juegue el partido.'}
+          </Empty>
         </Section>
       ) : (
         <div className="stack">
+          {incomplete.length > 0 && (
+            <p className="notice">
+              Estadística oficial incompleta: {incomplete.map((t) => `${t.name} suma ${t.sum} de ${t.score} puntos`).join(' · ')}. Así la
+              publica la fuente; el marcador es el oficial.
+            </p>
+          )}
           {teams.map((t) => (
             <BoxTable key={t.team.team_id} team={t} />
           ))}

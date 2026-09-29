@@ -353,8 +353,9 @@ a.league-card:hover { border-color: var(--brand); }
   .player-hero .portrait { height: 190px; }
   .player-hero .portrait img { max-height: 190px; }
   .hero::after { display: none; }
-  .scoreboard { gap: 10px; }
-  .scoreboard .score { font-size: 36px; }
+  .scoreboard { gap: 8px; }
+  .scoreboard .score { font-size: 30px; white-space: nowrap; }
+  .scoreboard .team { font-size: 15px; }
   .honour-row { grid-template-columns: 70px 1fr; }
   .honour-row .result, .honour-row .runner { grid-column: 2; text-align: left; }
 }
@@ -481,3 +482,6 @@ img.logo { filter: drop-shadow(0 0 1px rgba(15, 23, 42, .28)); }
 }
 .league-card h3 { max-width: none; }
 .team-hero .eyebrow { color: rgba(255, 255, 255, .78); }
+.notice { margin: 0; padding: 12px 16px; border-radius: var(--radius-sm); background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; font-size: 13px; }
+.stage + .stage { margin-top: 22px; }
+.stage-title { font-weight: 800; font-size: 15px; margin-bottom: 10px; }

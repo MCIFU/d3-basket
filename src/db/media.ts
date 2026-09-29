@@ -26,7 +26,10 @@ export function applyMedia(db: DB, mediaDir: string): { players: number; logos: 
   const current = `club_id = ? AND competition_season_id IN (SELECT id FROM competition_seasons WHERE is_current = 1)`
 
   db.transaction(() => {
-    const setPhoto = db.prepare('UPDATE players SET photo_nobg_url = ? WHERE id = ?')
+    // Sin pisar la foto oficial de acb.com de quien también tiene ficha en la ACB.
+    const setPhoto = db.prepare(
+      `UPDATE players SET photo_nobg_url = ? WHERE id = ? AND (photo_nobg_url IS NULL OR photo_nobg_url LIKE '%feb.es%' OR photo_nobg_url LIKE 'media/%')`
+    )
     for (const file of list('players', '.webp')) {
       const row = playerId.get(path.basename(file, '.webp').replace(/^f/, '')) as { id: number } | undefined
       if (row) done.players += setPhoto.run(`media/players/${file}`, row.id).changes

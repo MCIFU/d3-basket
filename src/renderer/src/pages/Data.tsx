@@ -42,24 +42,26 @@ export function DataPage() {
         ) : (
           <Section title="Actualización automática">
             <p className="muted" style={{ margin: 0 }}>
-              La versión web se actualiza sola en el servidor: cada día se descargan los resultados, estadísticas y plantillas nuevas
-              de acb.com. Los informes de scouting se guardan en tu navegador (expórtalos desde Scouting para tener una copia).
+              La versión web se actualiza en el servidor: en cada actualización se descargan los resultados, estadísticas y plantillas
+              nuevas de acb.com y de la FEB. Los informes de scouting se guardan en tu navegador (expórtalos desde Scouting para tener
+              una copia).
             </p>
           </Section>
         )}
         <Section title="Fuentes">
           <ul className="muted" style={{ margin: 0, paddingLeft: 18, lineHeight: 1.9 }}>
             <li>
-              <b>baloncestoenvivo.feb.es</b> — Primera FEB: calendario, resultados, estadísticas por partido, plantillas,
-              datos de los clubes, fotos y trayectoria completa de cada jugador en todas las categorías FEB.
+              <b>baloncestoenvivo.feb.es</b> — Primera, Segunda y Tercera FEB: calendario, resultados (también playoffs y fases
+              finales), estadísticas por partido, plantillas, datos de los clubes, fotos y trayectoria completa de cada jugador en
+              todas las categorías FEB.
             </li>
             <li>
               <b>acb.com</b> — calendario, resultados, estadísticas por partido y cuarto, plantillas, fichas de jugador, datos de los
               clubes, clasificación histórica y cuadro de honor.
             </li>
             <li>
-              <b>Wikipedia</b> (CC BY-SA 4.0) — campeones y subcampeones por temporada de Liga, Copa del Rey y Supercopa, e historia
-              de los clubes.
+              <b>Wikipedia</b> (CC BY-SA 4.0) y <b>Wikidata</b> — campeones y subcampeones por temporada de Liga, Copa del Rey y
+              Supercopa, e historia y año de fundación de los clubes.
             </li>
             <li>
               <b>Wikimedia Commons</b> — fotografías de los trofeos (autor: Brgesto, CC BY-SA 4.0).
@@ -108,6 +110,7 @@ function SyncPanel({ onDone }: { onDone: () => void }) {
           <option value="LEB_ORO">Primera FEB (feb.es)</option>
           <option value="LEB_PLATA">Segunda FEB (feb.es)</option>
           <option value="TERCERA_FEB">Tercera FEB (feb.es)</option>
+          <option value="COPA_ESPANA">Copa España (feb.es)</option>
         </select>
         <select className="select" value={season} onChange={(e) => setSeason(e.target.value)} disabled={busy}>
           <option value="">Temporada en curso</option>
