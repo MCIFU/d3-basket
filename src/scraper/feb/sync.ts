@@ -150,7 +150,10 @@ export class FebScraper {
              FROM games g
              JOIN external_ids x ON x.entity_type = 'game' AND x.entity_id = g.id AND x.source = 'feb'
              LEFT JOIN rounds rd ON rd.id = g.round_id
-             WHERE g.competition_season_id = ? AND g.status = 'finished' ${opts.force ? '' : 'AND g.boxscore_synced_at IS NULL'}
+             WHERE g.competition_season_id = ? ${opts.force ? '' : 'AND g.boxscore_synced_at IS NULL'}
+               -- También los partidos pasados sin resultado: a veces el calendario de la FEB no lo
+               -- publica pero la ficha del partido sí.
+               AND (g.status = 'finished' OR g.scheduled_at < datetime('now', '-1 day'))
              ORDER BY g.scheduled_at`
           )
           .all(csId) as { feb_id: string; phase: string | null; number: number | null; name: string | null }[]

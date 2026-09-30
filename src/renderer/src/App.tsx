@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Layout } from './Layout'
 import { useRoute } from './router'
 import { ClubPage, ClubsPage } from './pages/Clubs'
+import { ComparePage } from './pages/Compare'
 import { DataPage } from './pages/Data'
 import { GamePage } from './pages/Game'
 import { HomePage } from './pages/Home'
@@ -35,6 +36,9 @@ export function App() {
       break
     case 'players':
       page = <PlayersPage />
+      break
+    case 'compare':
+      page = <ComparePage a={route.a} b={route.b} />
       break
     case 'player':
       page = <PlayerPage refId={route.ref} tab={route.tab} />

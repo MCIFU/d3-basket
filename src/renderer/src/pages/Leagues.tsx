@@ -23,6 +23,7 @@ import { brandVars, leagueTheme, zoneOf } from '../leagues'
 import { href, navigate } from '../router'
 import { LeadersBox } from './Home'
 import { PlayerStatsTable, TeamStatsTable } from './StatTables'
+import { StandingsRace } from './StandingsRace'
 
 export function LeaguesPage() {
   const [comps, error] = useLoad(() => window.d3.competitions(), [])
@@ -147,9 +148,7 @@ export function LeaguePage({ code, tab = 'resumen', year }: { code: string; tab?
 
       {tab === 'resumen' && <Summary data={data} />}
       {tab === 'clasificacion' && (
-        <Section eyebrow={edition?.season_label} title="Clasificación · liga regular">
-          <StandingsTable rows={data.standings} year={selectedYear} code={code} />
-        </Section>
+        <StandingsView data={data} year={selectedYear} code={code} />
       )}
       {tab === 'resultados' && <Results games={data.games} />}
       {tab === 'equipos' && (
@@ -222,6 +221,26 @@ function Summary({ data }: { data: LeagueData }) {
 }
 
 /** Selector de grupo para ligas divididas (Segunda FEB: A y B; Tercera FEB: A-A ... E-B). */
+function StandingsView({ data, year, code }: { data: LeagueData; year?: number; code: string }) {
+  const groups = useMemo(() => [...new Set(data.standings.map((r) => r.group ?? ''))].filter(Boolean), [data.standings])
+  const [group, setGroup] = useState<string>()
+  const current = groups.length > 1 ? (group ?? groups[0]) : undefined
+  const rows = current ? data.standings.filter((r) => r.group === current) : data.standings
+  const hasRace = data.games.filter((g) => g.phase === 'regular' && g.status === 'finished').length > rows.length
+  return (
+    <>
+      <Section eyebrow={data.edition?.season_label} title="Clasificación · liga regular">
+        <StandingsTable rows={data.standings} year={year} code={code} group={current} onGroup={setGroup} />
+      </Section>
+      {hasRace && (
+        <Section eyebrow={current ? `Grupo ${current}` : data.edition?.season_label} title="Evolución jornada a jornada">
+          <StandingsRace key={`${data.edition?.id}-${current}`} games={data.games} rows={rows} code={code} />
+        </Section>
+      )}
+    </>
+  )
+}
+
 function GroupPills({ groups, value, onChange }: { groups: string[]; value: string; onChange: (g: string) => void }) {
   return (
     <div className="group-pills" role="group" aria-label="Grupo">
@@ -234,9 +253,25 @@ function GroupPills({ groups, value, onChange }: { groups: string[]; value: stri
   )
 }
 
-export function StandingsTable({ rows, compact, year, code }: { rows: StandingRow[]; compact?: boolean; year?: number; code?: string }) {
+export function StandingsTable({
+  rows,
+  compact,
+  year,
+  code,
+  group: controlled,
+  onGroup
+}: {
+  rows: StandingRow[]
+  compact?: boolean
+  year?: number
+  code?: string
+  group?: string
+  onGroup?: (g: string) => void
+}) {
   const groups = useMemo(() => [...new Set(rows.map((r) => r.group ?? ''))].filter(Boolean), [rows])
-  const [group, setGroup] = useState<string>()
+  const [own, setOwn] = useState<string>()
+  const group = controlled ?? own
+  const setGroup = onGroup ?? setOwn
   if (!rows.length) return <Empty>Todavía no hay equipos en esta edición.</Empty>
   const current = groups.length > 1 ? (group ?? groups[0]) : undefined
   const list = current ? rows.filter((r) => r.group === current) : rows

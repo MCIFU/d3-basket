@@ -1,0 +1,51 @@
+# App de escritorio para Windows: instalador .exe con los datos ya incluidos.
+# - Al crear una etiqueta vX.Y.Z (o lanzarlo a mano desde Actions) se publica en Releases.
+# - En cada pull request se construye igualmente y queda como artefacto descargable.
+name: App de escritorio (Windows)
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test
+
+      # electron-builder recompila better-sqlite3 para Electron y empaqueta la semilla.
+      - name: Construir el instalador
+        run: npm run dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: D3-Basket-Windows
+          path: release/*.exe
+          retention-days: 30
+
+      - name: Publicar en Releases
+        if: github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('app-{0}', github.run_number) }}
+          name: D3 Basket ${{ github.ref_type == 'tag' && github.ref_name || format('(build {0})', github.run_number) }}
+          files: release/*.exe
+          body: |
+            Instalador de D3 Basket para Windows. Descarga el `.exe`, ábrelo y sigue el asistente.
+            Windows puede avisar de que el programa no está firmado: "Más información" → "Ejecutar de todas formas".
+            La app arranca con todos los datos incluidos; desde "Datos" se actualizan las temporadas en curso.

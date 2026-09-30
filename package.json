@@ -1,7 +1,7 @@
 {
   "name": "d3-basket",
   "version": "0.1.0",
-  "description": "D3 Basket — scouting y estadísticas de baloncesto español (ACB, LEB Oro, LEB Plata)",
+  "description": "D3 Basket — scouting y estadísticas de baloncesto español (Liga Endesa, Primera, Segunda y Tercera FEB)",
   "author": "MCIFU",
   "license": "UNLICENSED",
   "private": true,
@@ -14,10 +14,11 @@
     "test": "vitest run",
     "scrape": "tsx src/cli/index.ts",
     "scrape:acb": "tsx src/cli/index.ts sync acb",
-    "dist": "electron-vite build && electron-builder --win",
+    "dist": "electron-vite build && electron-builder --win --publish never",
     "dev:web": "vite --config vite.web.config.ts",
     "build:web": "vite build --config vite.web.config.ts",
     "export:web": "tsx src/cli/index.ts export-web",
+    "build:site": "npm run build:netlify",
     "build:netlify": "tsx src/cli/index.ts restore-db --db data/d3basket.db && (tsx src/cli/index.ts sync acb --db data/d3basket.db --delay 700 || echo \"AVISO: fallo al sincronizar la ACB; se publican los últimos datos\") && (tsx src/cli/index.ts sync primera-feb --db data/d3basket.db --delay 400 --max-bios 150 || echo \"AVISO: fallo al sincronizar la Primera FEB; se publican los últimos datos\") && (tsx src/cli/index.ts sync segunda-feb --db data/d3basket.db --delay 400 --max-bios 150 || echo \"AVISO: fallo al sincronizar la Segunda FEB; se publican los últimos datos\") && (tsx src/cli/index.ts sync tercera-feb --db data/d3basket.db --delay 400 --max-bios 150 || echo \"AVISO: fallo al sincronizar la Tercera FEB; se publican los últimos datos\") && (tsx src/cli/index.ts sync copa-espana --db data/d3basket.db --delay 400 || echo \"AVISO: fallo al sincronizar la Copa España; se publican los últimos datos\") && (tsx src/cli/index.ts check --db data/d3basket.db || echo \"AVISO: la auditoría ha encontrado errores (ver arriba)\") && tsx src/cli/index.ts export-web --db data/d3basket.db && vite build --config vite.web.config.ts",
     "seed": "tsx src/cli/index.ts export-web seed/d3basket.db.gz"
   },
@@ -27,11 +28,27 @@
     "files": [
       "out/**/*"
     ],
+    "extraResources": [
+      {
+        "from": "seed/d3basket.db.gz",
+        "to": "seed/d3basket.db.gz"
+      }
+    ],
+    "directories": {
+      "output": "release"
+    },
     "asarUnpack": [
       "node_modules/better-sqlite3/**"
     ],
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "artifactName": "D3-Basket-${version}-setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "D3 Basket"
     }
   },
   "dependencies": {

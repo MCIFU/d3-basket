@@ -1,7 +1,24 @@
 # D3 Basket
 
 Aplicación de **scouting y análisis estadístico de baloncesto español**: ACB (Liga Endesa), Primera FEB (LEB Oro), Segunda FEB (LEB Plata) y Tercera FEB.
-Funciona como **app de escritorio** (Windows/macOS/Linux) y como **web** en cualquier navegador moderno (Chrome, Firefox, Brave, Edge, Safari), publicada en Netlify: **https://d3basket.netlify.app**.
+Funciona como **app de escritorio** (instalador de Windows en *Releases*) y como **web** en cualquier navegador moderno (Chrome, Firefox, Brave, Edge, Safari), publicada gratis en **Cloudflare Pages** (`https://d3-basket.pages.dev`) desde GitHub Actions. Netlify queda como alternativa opcional.
+
+## Abrirla
+
+| | Cómo |
+|---|---|
+| 🌐 Web | `https://d3-basket.pages.dev` — se actualiza sola cada día a las 05:17 UTC (flujo `.github/workflows/web.yml`) |
+| 💻 App de Windows | GitHub → *Releases* → descarga `D3-Basket-x.y.z-setup.exe` e instálalo. Arranca con todos los datos incluidos y desde la app se actualizan las temporadas en curso. Se genera con el flujo `.github/workflows/desktop.yml` (a mano desde *Actions* o al crear una etiqueta `vX.Y.Z`) |
+
+### Configurar la web en Cloudflare Pages (una sola vez, gratis)
+
+1. Crea una cuenta en [dash.cloudflare.com](https://dash.cloudflare.com) (no pide tarjeta).
+2. **Id de cuenta:** en el panel, *Workers y Pages* → columna derecha → *Account ID*.
+3. **Token:** *My Profile → API Tokens → Create Token → Custom token* con el permiso *Account · Cloudflare Pages · Edit*.
+4. En GitHub: *Settings → Secrets and variables → Actions → New repository secret*: `CLOUDFLARE_ACCOUNT_ID` y `CLOUDFLARE_API_TOKEN`.
+5. *Actions → Web (Cloudflare Pages) → Run workflow*. La primera vez crea el proyecto `d3-basket`; la web queda en `https://d3-basket.pages.dev`.
+
+La base de datos se guarda en la caché de GitHub Actions entre ejecuciones, así cada día solo se descarga lo nuevo (si la caché caduca se parte de `seed/d3basket.db.gz`).
 
 **Stack:** Electron · React · TypeScript · SQLite (better-sqlite3) · Vite (electron-vite) · Vitest
 
@@ -10,9 +27,10 @@ Funciona como **app de escritorio** (Windows/macOS/Linux) y como **web** en cual
 | | |
 |---|---|
 | ✅ Portada | campeones vigentes con sus trofeos, últimos resultados y próxima jornada, líderes con foto, clasificación con forma |
-| ✅ Ligas | por temporada: clasificación, calendario y resultados, estadísticas de equipos (incluidos espectadores) y de jugadores (medias y totales, TS%, eFG%…), palmarés de Liga/Copa/Supercopa desde 1956 y clasificación histórica |
+| ✅ Ligas | por temporada: clasificación, calendario y resultados, estadísticas de equipos (incluidos espectadores) y de jugadores (medias y totales, TS%, eFG%…), palmarés de Liga/Copa/Supercopa desde 1956 y clasificación histórica; **evolución de la clasificación jornada a jornada** con equipos destacados |
 | ✅ Equipos | escudo, pabellón (foto, aforo, ocupación), fundación, web y redes, historia, vitrina de trofeos con años de campeonatos y subcampeonatos, **rendimiento con el puesto en la liga de cada estadística**, líderes con foto, últimos resultados, balance en casa y fuera, plantilla con fotos agrupada por posición, estadísticas y partidos |
 | ✅ Jugadores | foto sin fondo, fecha y lugar de nacimiento, posición, altura, licencia, equipo; **trayectoria completa** (línea de tiempo con escudos y categorías + gráfica de puntos y valoración por temporada), estadísticas completas (por partido, totales y por 40 minutos, con TS%, eFG%, mates, faltas recibidas, +/−…), carrera ACB, récords personales y partido a partido |
+| ✅ Comparador | dos jugadores cara a cara (`#/comparar`), cada uno en la temporada que elijas: barras emparejadas por partido o por 40 minutos, con detalle al pasar el ratón |
 | ✅ Scouting | informes de ojeador con valoración por atributos (en la web, guardados en el navegador con exportación/importación) |
 | ✅ Enlaces reales | cada página tiene su URL (`#/jugador/sergio-llull-20201774`): se puede compartir y abrir en otra pestaña con el botón central o Ctrl+clic |
 | ✅ Scraper ACB | calendario, resultados, plantillas, fichas, boxscores, datos de club, trayectorias y clasificación histórica de **acb.com**; palmarés e historia de **Wikipedia** |
@@ -20,9 +38,9 @@ Funciona como **app de escritorio** (Windows/macOS/Linux) y como **web** en cual
 | ✅ Histórico ACB | temporadas 2025-26 y 2024-25 completas, y trayectoria de todos los jugadores actuales desde su debut |
 | ✅ Segunda y Tercera FEB | mismas páginas y datos que la Primera FEB; ligas divididas en grupos (Segunda: A y B; Tercera: 10 grupos) con clasificación y calendario por grupo |
 | ✅ Eliminatorias y Copa España | playoffs de ascenso, finales y permanencia de las ligas FEB (desde la página de resultados de la FEB), rondas de playoff de la ACB deducidas del cuadro, y la Copa España de la FEB |
-| ✅ Histórico | ACB 2022-23 a 2026-27; FEB (Primera, Segunda, Tercera y Copa) 2024-25 a 2026-27; un mismo club queda unido entre temporadas y ligas |
+| ✅ Histórico | ACB 2021-22 a 2026-27; FEB (Primera, Segunda, Tercera y Copa) 2023-24 a 2026-27; un mismo club queda unido entre temporadas y ligas |
 | ✅ Auditoría | `npm run scrape -- check`: marcadores contra estadísticas, partidos sin estadística, calendarios incompletos, clubes y jugadores duplicados |
-| ✅ Identidad visual | colores y logos oficiales de cada liga; escudos homogéneos y colores de cada club; fotos FEB en primer plano como las de la ACB (ver *Fotos, escudos y colores*) |
+| ✅ Identidad visual | modo claro/oscuro (sigue al sistema o se fija en la cabecera); colores y logos oficiales de cada liga; escudos homogéneos y colores de cada club; fotos FEB en primer plano como las de la ACB (ver *Fotos, escudos y colores*) |
 
 La temporada 2026-27 de la ACB arrancó el 26-27 de septiembre de 2026: la primera sincronización ya trae los 9 resultados y boxscores de la jornada 1 y los 297 partidos restantes del calendario.
 
@@ -38,11 +56,11 @@ npm run dev            # abre la app
 
 También se puede sincronizar desde la propia app (Inicio → *Sincronizar*).
 
-## Versión web (navegador y Netlify)
+## Versión web (cómo funciona)
 
 La web usa exactamente la misma interfaz que la app de escritorio. La diferencia es de dónde salen los datos:
 
-- En cada *build* de Netlify se ejecuta el scraper, se exporta una copia compacta y comprimida de la base de datos (`data/d3basket.db.gz`, ~120 KB) y se publica junto a la web estática.
+- En cada *build* (GitHub Actions o Netlify) se ejecuta el scraper, se exporta una copia compacta y comprimida de la base de datos (`data/d3basket.db.gz`, ~120 KB) y se publica junto a la web estática.
 - El navegador abre esa base de datos con **SQLite en WebAssembly** (sql.js) y hace las mismas consultas que la app de escritorio. No hay servidor ni API que mantener.
 - Los **informes de scouting** se guardan en el navegador de cada usuario (`localStorage`), ligados al id oficial del jugador, y se pueden **exportar/importar** en JSON desde *Scouting*. Los informes de tu app de escritorio nunca se publican.
 - La base de datos se conserva entre *builds* (plugin local `netlify/plugins/cache-db`), así cada actualización solo pide lo nuevo.
@@ -54,7 +72,7 @@ npm run dev:web        # web en modo desarrollo (http://localhost:5174)
 npm run build:web      # web estática en dist-web/
 ```
 
-### Configuración en Netlify (una sola vez)
+### Alternativa: Netlify (una sola vez)
 
 0. **Semilla de datos:** `seed/d3basket.db.gz` es una copia completa (trayectorias e históricos incluidos) generada en local con `npm run seed -- --db <tu.db>`. El build (`restore-db`) la usa si es más nueva que la caché; si no, sigue con la caché o descarga la base de datos publicada en la web. Así Netlify solo tiene que pedir lo nuevo.
 1. **Enlazar el repositorio:** *Project configuration → Build & deploy → Link repository* → GitHub → `MCIFU/d3-basket`. El `netlify.toml` ya define el comando (`npm run build:netlify`) y la carpeta (`dist-web`). Cada `git push` a `main` publica una versión nueva.
