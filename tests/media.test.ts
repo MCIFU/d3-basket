@@ -50,3 +50,28 @@ describe('zonas de clasificación', () => {
     expect(zoneOf(LEAGUES.LEB_ORO.zones, 1, 18)?.kind).toBe('up')
   })
 })
+
+describe('fichas duplicadas de un mismo jugador', () => {
+  it('une ACB + FEB por nacimiento y apellido, y dos ids FEB con el mismo nombre', () => {
+    const db = openDatabase(':memory:')
+    const w = new Writer(db)
+    const acb = w.upsertPlayer({ ref: { source: 'acb', id: '30001' }, fullName: 'Sergio Pérez López', lastName: 'Pérez López', birthDate: '2000-01-01' })
+    const feb = w.upsertPlayer({ ref: { source: 'feb', id: '900' }, fullName: 'Sergio Perez Lopez' })
+    db.prepare('UPDATE players SET birth_date = ? WHERE id = ?').run('2000-01-01', feb)
+    const febA = w.upsertPlayer({ ref: { source: 'feb', id: '700' }, fullName: 'Ana Ruiz Gil' })
+    const febB = w.upsertPlayer({ ref: { source: 'feb', id: '701' }, fullName: 'Ana Ruiz Gil' })
+    db.prepare('UPDATE players SET birth_date = ? WHERE id IN (?, ?)').run('1999-05-05', febA, febB)
+    // Otra persona con la misma fecha y otro apellido no se toca.
+    const other = w.upsertPlayer({ ref: { source: 'feb', id: '800' }, fullName: 'Luis Gómez Sanz' })
+    db.prepare('UPDATE players SET birth_date = ? WHERE id = ?').run('2000-01-01', other)
+
+    expect(w.dedupePlayers()).toBe(2)
+    const n = (id: number) => (db.prepare('SELECT COUNT(*) AS n FROM players WHERE id = ?').get(id) as { n: number }).n
+    expect([n(acb), n(feb), n(other)]).toEqual([1, 0, 1])
+    expect(n(febA) + n(febB)).toBe(1)
+    expect((db.prepare(`SELECT COUNT(*) AS n FROM external_ids WHERE entity_type = 'player' AND entity_id = ?`).get(acb) as { n: number }).n).toBe(2)
+    // La ref estable sigue siendo la de acb.com, y hay una sola por jugador.
+    expect((db.prepare('SELECT ref FROM v_player_ref WHERE player_id = ?').get(acb) as { ref: string }).ref).toBe('30001')
+    expect((db.prepare('SELECT COUNT(*) AS n FROM v_player_ref').get() as { n: number }).n).toBe(3)
+  })
+})

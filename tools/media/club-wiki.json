@@ -1,0 +1,2070 @@
+{
+ "f1009837": {
+  "name": "Alimerka Oviedo Baloncesto",
+  "league": "LEB_ORO",
+  "arena": "Palacio de los Deportes de Oviedo",
+  "match": {
+   "qid": "Q5401630",
+   "basket": true,
+   "spain": true,
+   "founded": 2004,
+   "title": "Oviedo Club Baloncesto",
+   "extract": "El Oviedo Club Baloncesto, actualmente denominado Alimerka Oviedo Baloncesto por motivos de patrocinio, es un equipo de baloncesto con sede en Oviedo, Asturias (España). Actualmente compite en la Primera FEB, la segunda categoría del baloncesto español.",
+   "url": "https://es.wikipedia.org/wiki/Oviedo_Club_Baloncesto",
+   "shared": [
+    "oviedo"
+   ]
+  },
+  "ok": true
+ },
+ "f1009716": {
+  "name": "Bueno Arenas Albacete Basket",
+  "league": "LEB_ORO",
+  "arena": "Pabellón del Parque",
+  "match": {
+   "qid": "Q20922030",
+   "basket": true,
+   "spain": true,
+   "founded": 2012,
+   "title": "Albacete Basket",
+   "extract": "El Albacete Basket es un club de baloncesto español con sede en la ciudad de Albacete, mayor capital de la comunidad autónoma de Castilla-La Mancha, que compite en Primera FEB, segunda categoría del baloncesto nacional.",
+   "url": "https://es.wikipedia.org/wiki/Albacete_Basket",
+   "shared": [
+    "albacete"
+   ]
+  },
+  "ok": true
+ },
+ "f1009929": {
+  "name": "Bàsquet Menorca",
+  "league": "LEB_ORO",
+  "arena": "Pavelló Menorca",
+  "match": {
+   "qid": "Q48966729",
+   "basket": true,
+   "spain": true,
+   "founded": 2016,
+   "title": "Club Bàsquet Menorca",
+   "extract": "El Club Bàsquet Menorca, conocido como Hestia Menorca por motivos de patrocinio, es un club de baloncesto de Mahón que juega actualmente en Primera FEB.",
+   "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Menorca",
+   "shared": [
+    "menorca"
+   ]
+  },
+  "ok": true
+ },
+ "f1008900": {
+  "name": "Caja Rural Cb Zamora",
+  "league": "LEB_ORO",
+  "arena": "Pabellon Angel Nieto",
+  "match": {
+   "qid": "Q26862804",
+   "basket": true,
+   "spain": true,
+   "founded": 1978,
+   "title": "Club Baloncesto Zamora",
+   "extract": "El Club Baloncesto Zamora, conocido por motivos de patrocinio como Caja Rural CB Zamora, es un club de baloncesto español con sede en Zamora. Actualmente compite en la Primera FEB, segunda categoría del baloncesto nacional. Disputa sus encuentros en el Pabellón Ángel Nieto, con capacidad para 1.790 personas.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Zamora",
+   "shared": [
+    "zamora"
+   ]
+  },
+  "ok": true
+ },
+ "f1008797": {
+  "name": "Cajasiete Gran Canaria",
+  "league": "LEB_ORO",
+  "arena": "Gran Canaria Arena",
+  "match": {
+   "qid": "Q54906",
+   "basket": true,
+   "spain": true,
+   "founded": 1963,
+   "title": "Club Baloncesto Gran Canaria",
+   "extract": "El Club Baloncesto Gran Canaria es un equipo profesional de baloncesto de la ciudad de Las Palmas de Gran Canaria. Participa en la Primera FEB de España.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Gran_Canaria",
+   "shared": [
+    "canaria",
+    "gran"
+   ]
+  },
+  "ok": true
+ },
+ "f1009110": {
+  "name": "Cajasol Coto Córdoba",
+  "league": "LEB_ORO",
+  "arena": "Palacio Municipal de Deportes Vista Alegre",
+  "match": {
+   "qid": "Q130313814",
+   "basket": true,
+   "spain": true,
+   "founded": 2022,
+   "title": "Córdoba Club de Baloncesto",
+   "extract": "Córdoba Club de Baloncesto, también conocido como Cajasol Coto Córdoba CB por motivos de patrocinio, es un club de baloncesto con sede en Córdoba, España. Actualmente compite en la Primera FEB, la segunda categoría del baloncesto español. Disputa sus encuentros en el Palacio Municipal de Deportes Vista Alegre de Córdoba.",
+   "url": "https://es.wikipedia.org/wiki/C%C3%B3rdoba_Club_de_Baloncesto",
+   "shared": [
+    "cordoba"
+   ]
+  },
+  "ok": true
+ },
+ "f1009095": {
+  "name": "Club Ourense Baloncesto",
+  "league": "LEB_ORO",
+  "arena": "Pazo dos Deportes Paco Paz",
+  "match": {
+   "qid": "Q2399223",
+   "basket": true,
+   "spain": true,
+   "founded": 1979,
+   "title": "Club Ourense Baloncesto",
+   "extract": "El Club Ourense Baloncesto, también conocido como COB o actualmente como Cloud.gal Ourense Baloncesto, es un club de baloncesto español con sede en Ourense, Galicia, fundado en el año 1978. Disputa sus partidos en el pabellón Pazo dos Deportes Paco Paz. En la temporada 2026/2027, su equipo senior compite en la Primera FEB, segunda categoría del baloncesto nacional tras la ACB.",
+   "url": "https://es.wikipedia.org/wiki/Club_Ourense_Baloncesto",
+   "shared": [
+    "ourense"
+   ]
+  },
+  "ok": true
+ },
+ "f1009109": {
+  "name": "Coviran Granada",
+  "league": "LEB_ORO",
+  "arena": "Palacio Deportes Granada",
+  "match": {
+   "qid": "Q8963073",
+   "basket": true,
+   "spain": true,
+   "founded": 2012,
+   "title": "Fundación Club Baloncesto Granada",
+   "extract": "La Fundación Club Baloncesto Granada, también conocida como Covirán Granada por motivos de patrocinio, es un equipo de baloncesto de la ciudad de Granada que milita en la Primera FEB, segunda categoría del baloncesto español. Es el equipo referente de baloncesto de la ciudad.",
+   "url": "https://es.wikipedia.org/wiki/Fundaci%C3%B3n_Club_Baloncesto_Granada",
+   "shared": [
+    "granada"
+   ]
+  },
+  "ok": true
+ },
+ "f1009072": {
+  "name": "Fibwi Mallorca Basquet Palma",
+  "league": "LEB_ORO",
+  "arena": "Polideportivo de Son Moix",
+  "match": null,
+  "ok": false
+ },
+ "f1009584": {
+  "name": "Grupo Alega Cantabria",
+  "league": "LEB_ORO",
+  "arena": "Pabellón Vicente Trueba",
+  "match": {
+   "qid": "Q5010079",
+   "basket": true,
+   "spain": true,
+   "founded": 1999,
+   "title": "Club Deportivo Elemental Grupo Alega Cantabria",
+   "extract": "El Club Deportivo Elemental Grupo Alega Cantabria, oficialmente denominado Club Deportivo Elemental Estela de Cantabria hasta 2023, es un equipo español de baloncesto con sede en Torrelavega (Cantabria) desde su traslado en 2020.",
+   "url": "https://es.wikipedia.org/wiki/Club_Deportivo_Elemental_Grupo_Alega_Cantabria",
+   "shared": [
+    "alega",
+    "cantabria"
+   ]
+  },
+  "ok": true
+ },
+ "f1008400": {
+  "name": "Grupo Ureta Tizona Burgos",
+  "league": "LEB_ORO",
+  "arena": "Polideportivo Municipal el Plantio",
+  "match": {
+   "qid": "Q17090672",
+   "basket": true,
+   "spain": true,
+   "founded": 2013,
+   "title": "Club Baloncesto Tizona",
+   "extract": "El Club Baloncesto Tizona es un equipo profesional de baloncesto de Burgos, Castilla y León que compite en el Polideportivo Municipal El Plantío, en la liga LEB Oro.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Tizona",
+   "shared": [
+    "tizona"
+   ]
+  },
+  "ok": true
+ },
+ "f1008687": {
+  "name": "Hla Alicante",
+  "league": "LEB_ORO",
+  "arena": "Centre de Tecnificació Esportiva D’alacant",
+  "match": {
+   "qid": "Q643748",
+   "basket": true,
+   "spain": true,
+   "founded": 1994,
+   "title": "Club Baloncesto Lucentum Alicante",
+   "extract": "El Lucentum Baloncesto Alicante, actualmente HLA Lucentum Alicante por motivos de patrocinio, es un club de baloncesto español de la ciudad de Alicante. Compite en la Primera FEB, antes conocida como Liga LEB Oro.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Lucentum_Alicante",
+   "shared": [
+    "alicante"
+   ]
+  },
+  "ok": true
+ },
+ "f1010207": {
+  "name": "Iberolea Palencia",
+  "league": "LEB_ORO",
+  "arena": "Pabellón Municipal de Deportes (Palencia)",
+  "match": {
+   "qid": "Q3391928",
+   "basket": true,
+   "spain": true,
+   "founded": 1979,
+   "title": "Palencia Baloncesto",
+   "extract": "El Palencia Baloncesto, fundado en 1979 como Club Deportivo Maristas, y denominado por motivos de patrocinio Iberolea Palencia, es un equipo profesional español de baloncesto con sede en Palencia, Castilla y León, que compite en la Primera FEB.",
+   "url": "https://es.wikipedia.org/wiki/Palencia_Baloncesto",
+   "shared": [
+    "palencia"
+   ]
+  },
+  "ok": true
+ },
+ "f1010324": {
+  "name": "Insolac Caja 87",
+  "league": "LEB_ORO",
+  "arena": "Palacio Deportes San Pablo",
+  "match": null,
+  "ok": false
+ },
+ "f1008378": {
+  "name": "Inveready Askatuak Gipuzkoa",
+  "league": "LEB_ORO",
+  "arena": "Polideportivo Josean Gasca",
+  "match": {
+   "qid": "Q54924",
+   "basket": true,
+   "spain": true,
+   "founded": 2001,
+   "title": "San Sebastián Gipuzkoa Basket Club",
+   "extract": "El Askatuak Gipuzkoa,es un club de baloncesto de la ciudad de San Sebastián, Guipúzcoa. Actualmente milita en la Primera FEB, la segunda categoría del baloncesto español, habiendo disputado anteriormente 13 temporadas en la Liga ACB, de las cuáles en una de ellas se clasificó para el play-off por el título y la Copa del Rey.",
+   "url": "https://es.wikipedia.org/wiki/San_Sebasti%C3%A1n_Gipuzkoa_Basket_Club",
+   "shared": [
+    "gipuzkoa"
+   ]
+  },
+  "ok": true
+ },
+ "f1010493": {
+  "name": "Movistar Estudiantes",
+  "league": "LEB_ORO",
+  "arena": "Movistar Arena",
+  "match": {
+   "qid": "Q54900",
+   "basket": true,
+   "spain": true,
+   "founded": 1948,
+   "title": "Club Estudiantes de Baloncesto",
+   "extract": "El Club Estudiantes de Baloncesto, denominado por motivos de patrocinio Movistar Estudiantes, y coloquialmente Estudiantes o Estu, es un club de baloncesto español fundado en 1948 con sede en la ciudad de Madrid, que compite en la Primera FEB. Fue, hasta 2021, junto al Club Joventut Badalona y el Real Madrid el único club español que había participado en todas las ediciones de la máxima categoría del baloncesto español, desde su creación como Liga Española hasta su sustitución por la Liga ACB; y también ha participado en la fundación de la Asociación de Clubes de Baloncesto.",
+   "url": "https://es.wikipedia.org/wiki/Club_Estudiantes_de_Baloncesto",
+   "shared": [
+    "estudiantes"
+   ]
+  },
+  "ok": true
+ },
+ "f1009713": {
+  "name": "Palmer Basket Mallorca Palma",
+  "league": "LEB_ORO",
+  "arena": "Poliesportiu Son Moix",
+  "match": null,
+  "ok": false
+ },
+ "f1010494": {
+  "name": "Partizán de Fuenlabrada",
+  "league": "LEB_ORO",
+  "arena": "Fernando Martin, Pabellon",
+  "match": {
+   "qid": "Q54904",
+   "basket": true,
+   "spain": true,
+   "founded": 1983,
+   "title": "Club Baloncesto Fuenlabrada",
+   "extract": "El Club Baloncesto Fuenlabrada, S. A. D., renombrado como Partizán de Fuenlabrada en 2026 tras un acuerdo con el Partizán de Belgrado, es un equipo de baloncesto español, con sede en la ciudad de Fuenlabrada (Madrid), que disputa la Primera FEB, segunda categoría del baloncesto en España.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Fuenlabrada",
+   "shared": [
+    "fuenlabrada"
+   ]
+  },
+  "ok": true
+ },
+ "f1010208": {
+  "name": "Amics Castelló",
+  "league": "LEB_PLATA",
+  "arena": "Pab Muni Ciutat Castello",
+  "match": {
+   "qid": "Q3823987",
+   "basket": true,
+   "spain": true,
+   "founded": 1994,
+   "title": "Amics del Bàsquet Castelló",
+   "extract": "El Amics del Bàsquet Castelló es un equipo de baloncesto español con sede en la ciudad de Castellón de la Plana, que compite en la Segunda FEB, la tercera categoría del baloncesto nacional y en la Copa España. Disputa sus partidos en el Pabellón Ciudad de Castellón, con capacidad para 5260 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Amics_del_B%C3%A0squet_Castell%C3%B3",
+   "shared": [
+    "amics",
+    "castello"
+   ]
+  },
+  "ok": true
+ },
+ "f1010502": {
+  "name": "Basket Cartagena",
+  "league": "LEB_PLATA",
+  "arena": "Palacio de los Deportes de Cartagena",
+  "match": {
+   "qid": "Q107611928",
+   "basket": true,
+   "spain": true,
+   "founded": 2007,
+   "title": "Club Basket Cartagena",
+   "extract": "El  Club Basket Cartagena  o más conocido como Grupo Caesa Seguros Cartagena CB, es un club de baloncesto de Cartagena, con equipos de cantera. En la 2026-27 jugará en Segunda FEB tras descender de Primera FEB, la temporada anterior.",
+   "url": "https://es.wikipedia.org/wiki/Club_Basket_Cartagena",
+   "shared": [
+    "cartagena"
+   ]
+  },
+  "ok": true
+ },
+ "f1008391": {
+  "name": "Biele Isb",
+  "league": "LEB_PLATA",
+  "arena": "Pol. Municipal de Azpeitia",
+  "match": null,
+  "ok": false
+ },
+ "f1009073": {
+  "name": "C.b. Getafe",
+  "league": "LEB_PLATA",
+  "arena": "Juan de la Cierva, Pabellon",
+  "match": {
+   "qid": "Q20978007",
+   "basket": true,
+   "spain": true,
+   "founded": 2014,
+   "title": "Club Baloncesto Getafe",
+   "extract": "El Club Baloncesto Getafe es un club de baloncesto español con sede en la ciudad de Getafe (Madrid) que cuenta con una de las mayores canteras de la Comunidad de Madrid y de la zona sur. Cuenta con equipos tanto masculinos como femeninos en todas las categorías de cantera, desde benjamín hasta júnior, compitiendo todos ellos en la Federación de Baloncesto de Madrid. Actualmente, su equipo masculino compite en Segunda FEB y el femenino en 1.ª División Nacional.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Getafe",
+   "shared": [
+    "getafe"
+   ]
+  },
+  "ok": true
+ },
+ "f1010193": {
+  "name": "C.b. Starlabs Morón",
+  "league": "LEB_PLATA",
+  "arena": "Pabellón Alameda",
+  "match": {
+   "qid": "Q20978120",
+   "basket": true,
+   "spain": true,
+   "founded": 1993,
+   "title": "Club Baloncesto Morón",
+   "extract": "Club Baloncesto Morón, también conocido como CB Starlabs Morón por motivos de patrocinio, es un equipo de baloncesto con sede en Morón de la Frontera, Sevilla, España. Juega sus partidos como local en el Pabellón Alameda. Actualmente compite en la Segunda FEB.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Mor%C3%B3n",
+   "shared": [
+    "moron"
+   ]
+  },
+  "ok": true
+ },
+ "f1009723": {
+  "name": "C.b. Tres Cantos",
+  "league": "LEB_PLATA",
+  "arena": "La Luz, Pabellon (Pista Central)",
+  "match": null,
+  "ok": false
+ },
+ "f1009133": {
+  "name": "C.b. Zaragoza",
+  "league": "LEB_PLATA",
+  "arena": "Pabellón Siglo Xxi",
+  "match": {
+   "qid": "Q610446",
+   "basket": true,
+   "spain": true,
+   "founded": 1981,
+   "title": "Club Baloncesto Zaragoza",
+   "extract": "El Club Baloncesto Zaragoza (CBZ) es un club de baloncesto español de la ciudad aragonesa de Zaragoza, fundado en 1980, que compite en Segunda FEB (anteriormente denominada LEB Plata), la tercera categoría del baloncesto nacional.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Zaragoza",
+   "shared": [
+    "zaragoza"
+   ]
+  },
+  "ok": true
+ },
+ "f1010321": {
+  "name": "Caceres Patrimonio de la Humanidad",
+  "league": "LEB_PLATA",
+  "arena": "Pabellón Multiusos Ciudad de Cáceres",
+  "match": {
+   "qid": "Q2357405",
+   "basket": true,
+   "spain": true,
+   "founded": 2007,
+   "title": "Cáceres Ciudad del Baloncesto",
+   "extract": "El Cáceres Ciudad del Baloncesto es un club español de baloncesto profesional con sede en la ciudad de Cáceres fundado en el año 2007. Está considerado uno de los máximos representantes del deporte extremeño a nivel nacional, especialmente en lo que al mundo del baloncesto se refiere, recogiendo el testigo del desaparecido Cáceres C. B.",
+   "url": "https://es.wikipedia.org/wiki/C%C3%A1ceres_Ciudad_del_Baloncesto",
+   "shared": [
+    "caceres"
+   ]
+  },
+  "ok": true
+ },
+ "f1010192": {
+  "name": "Cb Algeciras",
+  "league": "LEB_PLATA",
+  "arena": "Pabellón Dr. Juan Carlos Mateo Algeciras",
+  "match": {
+   "qid": "Q4254003",
+   "basket": true,
+   "spain": true,
+   "founded": null,
+   "title": "Club Baloncesto Ciudad de Algeciras",
+   "extract": "El Club Baloncesto Ciudad de Algeciras es un club de baloncesto de la ciudad de Algeciras (Cádiz) España. En el club han jugado jugadores de la talla de Steve Turner, David García Ramínez, Anthony Stacey, Javi Chica, Jeff Chambers, David Scott, Álex Escudero, Nacho Romero, Aaron Swinson o entrenadores como Porfirio Fisac, Manolo Hussein.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Ciudad_de_Algeciras",
+   "shared": [
+    "algeciras"
+   ]
+  },
+  "ok": true
+ },
+ "f1008706": {
+  "name": "Class Basquet Sant Antoni",
+  "league": "LEB_PLATA",
+  "arena": "Polideportivo Siroko Sa Pedrera",
+  "match": {
+   "qid": "Q111721369",
+   "basket": true,
+   "spain": true,
+   "founded": 1998,
+   "title": "Club Bàsquet Sant Antoni",
+   "extract": "El  Club Bàsquet Sant Antoni , es un club de baloncesto de las Islas Baleares, con sede en San Antonio Abad, Ibiza, con equipos de cantera y que juega en Segunda FEB, tercera categoría de baloncesto nacional.",
+   "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Sant_Antoni",
+   "shared": [
+    "antoni",
+    "sant"
+   ]
+  },
+  "ok": true
+ },
+ "f1010318": {
+  "name": "Club Baloncesto Toledo Basket",
+  "league": "LEB_PLATA",
+  "arena": "Pabellón Javier Lozano",
+  "match": {
+   "qid": "Q140160469",
+   "basket": true,
+   "spain": true,
+   "founded": 2025,
+   "title": "Club Baloncesto Toledo Basket",
+   "extract": "El Club Baloncesto Toledo es un club profesional de baloncesto con sede en Toledo, Castilla-La Mancha (España). Fue fundado en julio de 2025, actualmente compite en la Segunda FEB, la tercera categoría del baloncesto nacional español. Disputa sus partidos como local en el Pabellón Municipal Javier Lozano Cid.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Toledo_Basket",
+   "shared": [
+    "toledo"
+   ]
+  },
+  "ok": true
+ },
+ "f1008978": {
+  "name": "Club Esportiu Bàsquet Llíria",
+  "league": "LEB_PLATA",
+  "arena": "Pabellón Pla del Arc",
+  "match": {
+   "qid": "Q5480194",
+   "basket": true,
+   "spain": true,
+   "founded": 1945,
+   "title": "Club Bàsquet Llíria",
+   "extract": "El Club Esportiu Bàsquet Llíria es un equipo de baloncesto con sede en la ciudad Liria, (Valencia) España, que actualmente juega en la Segunda FEB, tercera categoría del baloncesto español.",
+   "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Ll%C3%ADria",
+   "shared": [
+    "lliria"
+   ]
+  },
+  "ok": true
+ },
+ "f1008643": {
+  "name": "Clínica Ponferrada Sdp",
+  "league": "LEB_PLATA",
+  "arena": "Pab.mun.deportes Lydia Valentín",
+  "match": {
+   "qid": "Q65161608",
+   "basket": true,
+   "spain": true,
+   "founded": null,
+   "title": "Club Baloncesto Ciudad de Ponferrada",
+   "extract": "El Club Baloncesto Ciudad de Ponferrada, también conocido por motivos de patrocinio como Clínica Ponferrada SDP, es un club de baloncesto español fundado en 2002, con sede en la ciudad de Ponferrada, (León), que compite en la Segunda FEB, la tercera categoría del baloncesto español tras la ACB y la Primera FEB. Disputa sus partidos en el pabellón municipal, recientemente renombrado, Complejo Deportivo Lydia Valentín, con capacidad para 2870 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Ciudad_de_Ponferrada",
+   "shared": [
+    "ponferrada"
+   ]
+  },
+  "ok": true
+ },
+ "f1008857": {
+  "name": "Cultural y Deportiva Leonesa",
+  "league": "LEB_PLATA",
+  "arena": "P. Mcpal. Deportes Urbano González Escapa",
+  "match": {
+   "qid": "Q128106532",
+   "basket": true,
+   "spain": true,
+   "founded": 2022,
+   "title": "Cultural y Deportiva Leonesa (baloncesto)",
+   "extract": "La Cultural y Deportiva Leonesa (baloncesto) es un equipo de baloncesto de la ciudad de León, España, creado oficialmente el 22 de junio de 2022 y que actualmente juega en Segunda FEB.",
+   "url": "https://es.wikipedia.org/wiki/Cultural_y_Deportiva_Leonesa_(baloncesto)",
+   "shared": [
+    "cultural",
+    "leonesa"
+   ]
+  },
+  "ok": true
+ },
+ "f1010200": {
+  "name": "Intermaquinas Benicarlo",
+  "league": "LEB_PLATA",
+  "arena": "Pabellon Municipal de Benicarlo",
+  "match": {
+   "qid": "Q74110188",
+   "basket": true,
+   "spain": true,
+   "founded": 1969,
+   "title": "Club Baloncesto Benicarló",
+   "extract": "El CB Benicarló o más conocido por razones de patrocinio como Intermáquinas Benicarló, es un club de baloncesto de la provincia de Castellón, con sede en Benicarló, con equipos de cantera tanto masculinos como femeninos y que juega en Segunda FEB, tercera categoría del baloncesto nacional, durante la temporada 2026-27.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Benicarl%C3%B3",
+   "shared": [
+    "benicarlo"
+   ]
+  },
+  "ok": true
+ },
+ "f1010320": {
+  "name": "Iren Bcbadajoz",
+  "league": "LEB_PLATA",
+  "arena": "Pabellón la Granadilla",
+  "match": null,
+  "ok": false
+ },
+ "f1010194": {
+  "name": "Jaen Paraiso Interior Fs",
+  "league": "LEB_PLATA",
+  "arena": "Palacio de Deportes Olivo Arena",
+  "match": null,
+  "ok": false
+ },
+ "f1008899": {
+  "name": "Lobe Tu Provincia Huesca la Magia",
+  "league": "LEB_PLATA",
+  "arena": "Palacio Municipal de los Deportes",
+  "match": {
+   "qid": "Q2737194",
+   "basket": true,
+   "spain": true,
+   "founded": 1977,
+   "title": "Club Baloncesto Peñas Huesca",
+   "extract": "El Club Baloncesto Peñas Huesca es un club de baloncesto de la ciudad de Huesca, Aragón, España, fundado inicialmente como Club Deportivo Peñas Recreativas de Huesca, en 1977, aunque ya constituido, se formalizó una escritura en 1981. Ha competido en la liga ACB un total de 12 temporadas. Actualmente compite en la Segunda FEB, 3.ª categoría del baloncesto español.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Pe%C3%B1as_Huesca",
+   "shared": [
+    "huesca"
+   ]
+  },
+  "ok": true
+ },
+ "f1008985": {
+  "name": "Logrobasket Logi7",
+  "league": "LEB_PLATA",
+  "arena": "0-Pol. Lobete",
+  "match": {
+   "qid": "Q138412270",
+   "basket": true,
+   "spain": true,
+   "founded": 2016,
+   "title": "LogroBasket Club",
+   "extract": "El LogroBasket Club, también conocido como LogroBasket Logi7 es un club de baloncesto con sede en la ciudad de Logroño, La Rioja. Actualmente, milita en Segunda FEB, la tercera categoría del baloncesto español.",
+   "url": "https://es.wikipedia.org/wiki/LogroBasket_Club",
+   "shared": [
+    "logrobasket"
+   ]
+  },
+  "ok": true
+ },
+ "f1010352": {
+  "name": "Melilla Ciudad del Deporte",
+  "league": "LEB_PLATA",
+  "arena": "Pabellón de Deportes Javier Imbroda Ortiz",
+  "match": {
+   "qid": "Q4893030",
+   "basket": true,
+   "spain": true,
+   "founded": 1991,
+   "title": "Club Melilla Baloncesto",
+   "extract": "El Club Melilla Baloncesto es un Club de baloncesto de España con sede en Melilla y que milita actualmente en Segunda FEB, tercera categoría del baloncesto español. Su pabellón es el Javier Imbroda Ortiz, que cuenta con un aforo de 2900 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Club_Melilla_Baloncesto",
+   "shared": [
+    "melilla"
+   ]
+  },
+  "ok": true
+ },
+ "f1010496": {
+  "name": "Movistar Estudiantes",
+  "league": "LEB_PLATA",
+  "arena": "Movistar Academy Magariños, Pabellon",
+  "match": {
+   "qid": "Q54900",
+   "basket": true,
+   "spain": true,
+   "founded": 1948,
+   "title": "Club Estudiantes de Baloncesto",
+   "extract": "El Club Estudiantes de Baloncesto, denominado por motivos de patrocinio Movistar Estudiantes, y coloquialmente Estudiantes o Estu, es un club de baloncesto español fundado en 1948 con sede en la ciudad de Madrid, que compite en la Primera FEB. Fue, hasta 2021, junto al Club Joventut Badalona y el Real Madrid el único club español que había participado en todas las ediciones de la máxima categoría del baloncesto español, desde su creación como Liga Española hasta su sustitución por la Liga ACB; y también ha participado en la fundación de la Asociación de Clubes de Baloncesto.",
+   "url": "https://es.wikipedia.org/wiki/Club_Estudiantes_de_Baloncesto",
+   "shared": [
+    "estudiantes"
+   ]
+  },
+  "ok": true
+ },
+ "f1010351": {
+  "name": "Proinbeni Upb Gandia",
+  "league": "LEB_PLATA",
+  "arena": "Pabellon Municipal de Gandia",
+  "match": {
+   "qid": "Q20104552",
+   "basket": true,
+   "spain": true,
+   "founded": 2013,
+   "title": "Units Pel Bàsquet Gandía",
+   "extract": "El Units Pel Bàsquet Gandía, también conocido com UPB Gandía o Proinbeni UPB Gandía es un club de baloncesto con sede en Gandía, Valencia y que juega en Segunda FEB, tercera categoría de baloncesto nacional.",
+   "url": "https://es.wikipedia.org/wiki/Units_Pel_B%C3%A0squet_Gand%C3%ADa",
+   "shared": [
+    "gandia"
+   ]
+  },
+  "ok": true
+ },
+ "f1010350": {
+  "name": "Reina Proteínas Clavijo",
+  "league": "LEB_PLATA",
+  "arena": "Palacio de los Deportes de la Rioja",
+  "match": {
+   "qid": "Q3681465",
+   "basket": true,
+   "spain": true,
+   "founded": 1967,
+   "title": "Club Baloncesto Clavijo",
+   "extract": "El Club Baloncesto Clavijo es un club de baloncesto español con sede en Logroño, La Rioja. Actualmente compite en la Segunda FEB y tiene hasta un total de 18 equipos de cantera que juegan en diversas categorías formativas. Disputa sus encuentros en el Palacio de los Deportes de La Rioja.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Clavijo",
+   "shared": [
+    "clavijo"
+   ]
+  },
+  "ok": true
+ },
+ "f1009441": {
+  "name": "Sol Gironès Bisbal Bàsquet",
+  "league": "LEB_PLATA",
+  "arena": "Pavelló Municipal D'esports",
+  "match": {
+   "qid": "Q11909432",
+   "basket": true,
+   "spain": true,
+   "founded": 1994,
+   "title": "Club Esportiu Bisbal Bàsquet",
+   "extract": "El Club Esportiu Bisbal Bàsquet, también conocido como Bisbal Bàsquet o Sol Gironès Bisbal Bàsquet es un club de baloncesto con sede en La Bisbal d'Empordà, Gerona y que juega en Segunda FEB, tercera categoría de baloncesto nacional.",
+   "url": "https://es.wikipedia.org/wiki/Club_Esportiu_Bisbal_B%C3%A0squet",
+   "shared": [
+    "bisbal"
+   ]
+  },
+  "ok": true
+ },
+ "f1010495": {
+  "name": "Spanish Basketball Academy",
+  "league": "LEB_PLATA",
+  "arena": "Principes de Asturias, Pabellon",
+  "match": null,
+  "ok": false
+ },
+ "f1008636": {
+  "name": "Tq-Cb Prat",
+  "league": "LEB_PLATA",
+  "arena": "Pavello Joan Busquets (C.e.m. Estruch)",
+  "match": {
+   "qid": "Q3294476",
+   "basket": true,
+   "spain": true,
+   "founded": 1932,
+   "title": "Club Bàsquet Prat",
+   "extract": "El Club Bàsquet Prat es un club de baloncesto de la ciudad de El Prat de Llobregat. Está integrado en la Federación Catalana de Baloncesto y Federación Española de Baloncesto.",
+   "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Prat",
+   "shared": [
+    "prat"
+   ]
+  },
+  "ok": true
+ },
+ "f1009588": {
+  "name": "Uemc Baloncesto Valladolid",
+  "league": "LEB_PLATA",
+  "arena": "Polideportivo Pisuerga",
+  "match": {
+   "qid": "Q22080113",
+   "basket": true,
+   "spain": true,
+   "founded": 2015,
+   "title": "Club Baloncesto Ciudad de Valladolid",
+   "extract": "El Club Baloncesto Ciudad de Valladolid, es un club de baloncesto español de la ciudad de Valladolid que actualmente juega en la liga Segunda FEB. Fue fundado el 18 de junio de 2015 tras la desaparición del Club Baloncesto Valladolid y su actual presidente es Lorenzo Alonso Nistal. En julio de 2020 pasó a integrarse en la estructura del Real Valladolid C.F., cambiando su denominación durante varias temporadas, antes de regresar a los orígenes y recuperar la denominación de Club Baloncesto Ciudad de Valladolid. \nEl color que identifica en la actualidad al club es el morado, aunque anteriormente lo fue el carmesí en la fundación de la entidad. El tono también cambió al blanquivioleta cuando se unió en 2020 al equipo de fútbol de la ciudad.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Ciudad_de_Valladolid",
+   "shared": [
+    "valladolid"
+   ]
+  },
+  "ok": true
+ },
+ "f1010348": {
+  "name": "Vidal Golosinas Ciudad Molina Basket",
+  "league": "LEB_PLATA",
+  "arena": "Pabellon Serrerias",
+  "match": {
+   "qid": "Q138459282",
+   "basket": true,
+   "spain": true,
+   "founded": 2010,
+   "title": "Ciudad Molina Basket",
+   "extract": "El Ciudad Molina Basket, también conocido como Molina Basket es un club de baloncesto con sede en Molina de Segura, Murcia. Actualmente, milita en Segunda FEB, la tercera categoría del baloncesto español.",
+   "url": "https://es.wikipedia.org/wiki/Ciudad_Molina_Basket",
+   "shared": [
+    "molina"
+   ]
+  },
+  "ok": true
+ },
+ "f1010330": {
+  "name": "Ad Rem Onuba",
+  "league": "TERCERA_FEB",
+  "arena": "Polidep Andrés Estrada",
+  "match": null,
+  "ok": false
+ },
+ "f1009835": {
+  "name": "Ag Movialsa Qualitysport Criptana",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Municipal de Criptana",
+  "match": null,
+  "ok": false
+ },
+ "f1010899": {
+  "name": "Amics Castelló B",
+  "league": "TERCERA_FEB",
+  "arena": "Pab Muni Ciutat Castello",
+  "match": {
+   "qid": "Q3823987",
+   "basket": true,
+   "spain": true,
+   "founded": 1994,
+   "title": "Amics del Bàsquet Castelló",
+   "extract": "El Amics del Bàsquet Castelló es un equipo de baloncesto español con sede en la ciudad de Castellón de la Plana, que compite en la Segunda FEB, la tercera categoría del baloncesto nacional y en la Copa España. Disputa sus partidos en el Pabellón Ciudad de Castellón, con capacidad para 5260 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Amics_del_B%C3%A0squet_Castell%C3%B3",
+   "shared": [
+    "amics",
+    "castello"
+   ]
+  },
+  "ok": true
+ },
+ "f1010498": {
+  "name": "Aristos Partizán de Fuenlabrada",
+  "league": "TERCERA_FEB",
+  "arena": "Polideportivo Fernando Martín",
+  "match": null,
+  "ok": false
+ },
+ "f1010499": {
+  "name": "Baloncesto Alcala",
+  "league": "TERCERA_FEB",
+  "arena": "Espartales, Ciudad Deportiva",
+  "match": null,
+  "ok": false
+ },
+ "f1009724": {
+  "name": "Baloncesto Badajoz",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón la Granadilla",
+  "match": null,
+  "ok": false
+ },
+ "f1010895": {
+  "name": "Baloncesto Comarca de la Axarquia",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Torre del Mar Maestro Salvador Sánchez",
+  "match": {
+   "qid": "Q3681464",
+   "basket": true,
+   "spain": true,
+   "founded": 1988,
+   "title": "Club Baloncesto Axarquía",
+   "extract": "Club Baloncesto Axarquía, más conocido en la actualidad por su nombre de patrocinio Clínicas Rincón, fue un equipo profesional de Baloncesto vinculado al Unicaja Málaga (filial) que participó en su última temporada de existencia (2015-2016) en la LEB Plata.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Axarqu%C3%ADa",
+   "shared": [
+    "axarquia"
+   ]
+  },
+  "ok": true
+ },
+ "f1010580": {
+  "name": "Baloncesto Talavera",
+  "league": "TERCERA_FEB",
+  "arena": "0-Polideportivo Primero de Mayo",
+  "match": null,
+  "ok": false
+ },
+ "f1008627": {
+  "name": "Baloncesto la Flecha",
+  "league": "TERCERA_FEB",
+  "arena": "Polideportivo Mpal. la Vega",
+  "match": null,
+  "ok": false
+ },
+ "f1008946": {
+  "name": "Basket Cervantes Ciudad Real",
+  "league": "TERCERA_FEB",
+  "arena": "Puerta de Santa María",
+  "match": null,
+  "ok": false
+ },
+ "f1010323": {
+  "name": "Basket Globalcaja Quintanar",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Angel Lancho",
+  "match": null,
+  "ok": false
+ },
+ "f1010341": {
+  "name": "Baublock Gymnástica Avanza el Puerto",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Ramón Velázquez",
+  "match": null,
+  "ok": false
+ },
+ "f1009719": {
+  "name": "Bauhaus Godella",
+  "league": "TERCERA_FEB",
+  "arena": "#131# Pab Muni Godella",
+  "match": {
+   "qid": "Q114738831",
+   "basket": true,
+   "spain": true,
+   "founded": null,
+   "title": "CB L'Horta Godella",
+   "extract": "El Club Bàsquet L'Horta Godella, también conocido como Bauhaus Godella por razones de patrocinio, es un club de baloncesto español con sede en la localidad de Godella (Valencia), con equipos de cantera y que juega en Tercera FEB, cuarta categoría del baloncesto nacional.",
+   "url": "https://es.wikipedia.org/wiki/CB_L'Horta_Godella",
+   "shared": [
+    "godella"
+   ]
+  },
+  "ok": true
+ },
+ "f1009814": {
+  "name": "Bosco Mérida Patrimonio de la Humanidad",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Polideportivo Guadiana",
+  "match": null,
+  "ok": false
+ },
+ "f1008915": {
+  "name": "Burjassot Cb",
+  "league": "TERCERA_FEB",
+  "arena": "Poli Muni Burjassot",
+  "match": null,
+  "ok": false
+ },
+ "f1008788": {
+  "name": "Bàsquet Calvià",
+  "league": "TERCERA_FEB",
+  "arena": "Pavelló Galatzó (Cb. Calvià)",
+  "match": null,
+  "ok": false
+ },
+ "f1008408": {
+  "name": "C. D. Mensajero Isla de la Palma",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Ciudad Deportiva Miraflores",
+  "match": null,
+  "ok": false
+ },
+ "f1009154": {
+  "name": "C.b. Cuarte de Huerva",
+  "league": "TERCERA_FEB",
+  "arena": "Polideportivo Municipal de Cuarte de Huerva",
+  "match": null,
+  "ok": false
+ },
+ "f1010189": {
+  "name": "C.b. Dadarmo de Güimar",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Municipal Quique Ruiz",
+  "match": null,
+  "ok": false
+ },
+ "f1010579": {
+  "name": "C.b. Estudiantes Cartagena",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Urban",
+  "match": {
+   "qid": "Q107611928",
+   "basket": true,
+   "spain": true,
+   "founded": 2007,
+   "title": "Club Basket Cartagena",
+   "extract": "El  Club Basket Cartagena  o más conocido como Grupo Caesa Seguros Cartagena CB, es un club de baloncesto de Cartagena, con equipos de cantera. En la 2026-27 jugará en Segunda FEB tras descender de Primera FEB, la temporada anterior.",
+   "url": "https://es.wikipedia.org/wiki/Club_Basket_Cartagena",
+   "shared": [
+    "cartagena"
+   ]
+  },
+  "ok": false,
+  "note": "revisado: club distinto del artículo"
+ },
+ "f1010501": {
+  "name": "C.b. Fenix",
+  "league": "TERCERA_FEB",
+  "arena": "0-0-0-Campoamor",
+  "match": null,
+  "ok": false
+ },
+ "f1010191": {
+  "name": "C.b. Granollers",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón C.b. Granollers",
+  "match": {
+   "qid": "Q3392246",
+   "basket": true,
+   "spain": true,
+   "founded": 1932,
+   "title": "Granollers Esportiu Bàsquet",
+   "extract": "Granollers Esportiu Bàsquet en la actualidad Club Bàsquet Granollers es el nombre oficial de un club de baloncesto de la ciudad de Granollers (Barcelona) España. Actualmente compite en la Tercera FEB. Fundado en 1932, es uno de los clubes de baloncesto más antiguos de España. En sus orígenes fue concebido como sección del club de fútbol Granollers Sport Club. En 1977 de la mano del entrenador Vicente Sanjuan consiguió el ascenso a la máxima categoría del baloncesto español, en la que se mantuvo hasta 1993.\nA lo largo de su historia ha tenido diversas denominaciones, en función de la empresa que lo ha patrocinado. Entre 1977 y 1982 fue denominado CB Areslux Granollers, entre 1983 y 1988 Cacaolat Granollers. En 1989 el club se fusionó con el R. C. D. Español de baloncesto, pasando a denominarse Grupo IFA Granollers. En 1991 abandonó la dirección del club la empresa Unipublic y se creó la entidad Granollers Esportiu Bàsquet.",
+   "url": "https://es.wikipedia.org/wiki/Granollers_Esportiu_B%C3%A0squet",
+   "shared": [
+    "granollers"
+   ]
+  },
+  "ok": true
+ },
+ "f1008688": {
+  "name": "C.b. Jorge Juan Castelló Since 1907",
+  "league": "TERCERA_FEB",
+  "arena": "Pab Muni la Magdalena",
+  "match": null,
+  "ok": false
+ },
+ "f1008690": {
+  "name": "C.b. Puerto Sagunto",
+  "league": "TERCERA_FEB",
+  "arena": "Pab Muni Jose Veral",
+  "match": null,
+  "ok": false
+ },
+ "f1009918": {
+  "name": "C.b. Vic - Universitat de Vic",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Municipal Castell D'en Planes",
+  "match": null,
+  "ok": false
+ },
+ "f1010190": {
+  "name": "C.b. las Rozas",
+  "league": "TERCERA_FEB",
+  "arena": "Alfredo Espiniella, Pabellon",
+  "match": {
+   "qid": "Q5009381",
+   "basket": true,
+   "spain": true,
+   "founded": null,
+   "title": "Club Baloncesto Las Rozas",
+   "extract": "El Club Baloncesto Las Rozas es un club de baloncesto España, de la ciudad de Las Rozas de Madrid (Madrid). Fue fundado en 1988.\nEn la actualidad el Club cuenta con aproximadamente 500 jugadores repartidos en todas las categorías del baloncesto federado, municipal e inclusivo, dónde apuesta fuertemente por la integración social.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Las_Rozas",
+   "shared": [
+    "rozas"
+   ]
+  },
+  "ok": true
+ },
+ "f1009815": {
+  "name": "C.b.roser",
+  "league": "TERCERA_FEB",
+  "arena": "Centre Esportiu Municipal Estacio del Nord",
+  "match": null,
+  "ok": false
+ },
+ "f1008800": {
+  "name": "C.b.valls.tallers Pablo Martínez",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Joana Ballart",
+  "match": {
+   "qid": "Q11914231",
+   "basket": true,
+   "spain": true,
+   "founded": 1952,
+   "title": "Club Bàsquet Valls",
+   "extract": "El Club Bàsquet Valls es un club de baloncesto de la ciudad de Valls (Tarragona). El primer equipo masculino también conocido como CB Valls Tallers Pablo Martínez compite en la Tercera FEB, cuarta categoría del baloncesto nacional. Su primer equipo femenino conocido como CB Valls DIC juega en la Copa Catalunya.",
+   "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Valls",
+   "shared": [
+    "valls"
+   ]
+  },
+  "ok": true
+ },
+ "f1010332": {
+  "name": "Caja Rural Jaen Paraiso Interior Cb",
+  "league": "TERCERA_FEB",
+  "arena": "Palacio de Deportes Olivo Arena",
+  "match": null,
+  "ok": false
+ },
+ "f1010490": {
+  "name": "Caja Rural Rdl",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellon Deportes San Esteban",
+  "match": null,
+  "ok": false
+ },
+ "f1010503": {
+  "name": "Calvo Basket Xiria",
+  "league": "TERCERA_FEB",
+  "arena": "Pavillón Municipal Vila de Noia",
+  "match": null,
+  "ok": false
+ },
+ "f1008707": {
+  "name": "Cb 7 Palmas",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Polideportivo el Batán",
+  "match": null,
+  "ok": false
+ },
+ "f1008407": {
+  "name": "Cb Aridane",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Severo Rodríguez",
+  "match": {
+   "qid": "Q5773378",
+   "basket": true,
+   "spain": true,
+   "founded": 1978,
+   "title": "Club Baloncesto Aridane",
+   "extract": "El Club Baloncesto Aridane es un club de baloncesto de España con sede en Los Llanos de Aridane, La Palma. Figura inscrito en las competiciones oficiales como Club Baloncesto Aridane-La Palma.\nFue fundado en 1980 aunque su historia se remonta a principios de los 70. Actualmente milita en Tercera FEB, siendo uno de los conjuntos canarios con más historia a nivel nacional.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Aridane",
+   "shared": [
+    "aridane"
+   ]
+  },
+  "ok": true
+ },
+ "f1009701": {
+  "name": "Cb Artés",
+  "league": "TERCERA_FEB",
+  "arena": "Pavello Esportiu D'artes",
+  "match": null,
+  "ok": false
+ },
+ "f1010195": {
+  "name": "Cb Coria",
+  "league": "TERCERA_FEB",
+  "arena": "Pab. Municipal Cb Coria",
+  "match": null,
+  "ok": false
+ },
+ "f1008691": {
+  "name": "Cb Ifach Calpe",
+  "league": "TERCERA_FEB",
+  "arena": "Complejo Deportivo Mpal Calpe",
+  "match": {
+   "qid": "Q139601234",
+   "basket": true,
+   "spain": true,
+   "founded": 1964,
+   "title": "CB Ifach Calpe",
+   "extract": "El CB Ifach Calpe, es un equipo de baloncesto con sede en el municipio de Calpe (Alicante), que compite en Tercera FEB, la cuarta categoría del baloncesto nacional. Disputa sus partidos en el Complejo Deportivo Municipal Calpe.",
+   "url": "https://es.wikipedia.org/wiki/CB_Ifach_Calpe",
+   "shared": [
+    "calpe",
+    "ifach"
+   ]
+  },
+  "ok": true
+ },
+ "f1010491": {
+  "name": "Cb Jovens Almàssera",
+  "league": "TERCERA_FEB",
+  "arena": "#47# Pab Muni Almassera",
+  "match": null,
+  "ok": false
+ },
+ "f1008790": {
+  "name": "Cb Morvedre",
+  "league": "TERCERA_FEB",
+  "arena": "Pab Muni Rene Marigil",
+  "match": null,
+  "ok": false
+ },
+ "f1009144": {
+  "name": "Cb Navàs Viscola",
+  "league": "TERCERA_FEB",
+  "arena": "Pavelló Municipal D'esports",
+  "match": null,
+  "ok": false
+ },
+ "f1010325": {
+  "name": "Cb Novaschool Rincón de la Victoria",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Novaschool Añoreta",
+  "match": null,
+  "ok": false
+ },
+ "f1009062": {
+  "name": "Cb Quart Fai Berti",
+  "league": "TERCERA_FEB",
+  "arena": "Pavello Esportiu Municipal Quart",
+  "match": null,
+  "ok": false
+ },
+ "f1008692": {
+  "name": "Cb Tabernes Blanques - Fernando Gil",
+  "league": "TERCERA_FEB",
+  "arena": "#237# Pab Muni Tabernes Blanques",
+  "match": null,
+  "ok": false
+ },
+ "f1010197": {
+  "name": "Cb la Zubia",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón 11 de Marzo",
+  "match": null,
+  "ok": false
+ },
+ "f1010893": {
+  "name": "Cba Spain",
+  "league": "TERCERA_FEB",
+  "arena": "Colegio Marista Ntra. Sra. del Carmen",
+  "match": null,
+  "ok": false
+ },
+ "f1010205": {
+  "name": "Cbi Elche",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Esperanza Lag",
+  "match": null,
+  "ok": false
+ },
+ "f1010331": {
+  "name": "Cdbo Byspania Tíjola",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellon Municipal Tijola",
+  "match": null,
+  "ok": false
+ },
+ "f1009585": {
+  "name": "Cemalu Aldaia",
+  "league": "TERCERA_FEB",
+  "arena": "#18# Pab Muni Aldaia",
+  "match": null,
+  "ok": false
+ },
+ "f1009119": {
+  "name": "Cesur Distrito Olimpico",
+  "league": "TERCERA_FEB",
+  "arena": "San Blas, Pdvo. Mpal.",
+  "match": null,
+  "ok": false
+ },
+ "f1010329": {
+  "name": "Club Baloncesto San Fernando",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Municipal el Parque",
+  "match": null,
+  "ok": false
+ },
+ "f1009720": {
+  "name": "Cmg Hidráulica Nb Torrent",
+  "league": "TERCERA_FEB",
+  "arena": "#247# Pab Muni el Vedat",
+  "match": null,
+  "ok": false
+ },
+ "f1010198": {
+  "name": "Colegio el Pinar",
+  "league": "TERCERA_FEB",
+  "arena": "Colegio el Pinar",
+  "match": null,
+  "ok": false
+ },
+ "f1010577": {
+  "name": "Construcciones Gonzalo Crespo Pas Piélagos",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Polideportivo Fernando Expósito",
+  "match": null,
+  "ok": false
+ },
+ "f1009704": {
+  "name": "De Morro Fino Cantbasket04",
+  "league": "TERCERA_FEB",
+  "arena": "Palacio de los Deportes de Santander",
+  "match": null,
+  "ok": false
+ },
+ "f1010199": {
+  "name": "Dehesas Reunidas Climanavas Agrometal Peñarroya",
+  "league": "TERCERA_FEB",
+  "arena": "Pdvo. Lourdes Mohedano",
+  "match": null,
+  "ok": false
+ },
+ "f1009593": {
+  "name": "Denia Basquet",
+  "league": "TERCERA_FEB",
+  "arena": "Pavelló D´esports Joan Fuster",
+  "match": null,
+  "ok": false
+ },
+ "f1008778": {
+  "name": "Eb Felipe Antón",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Multiusos Roberto Rodríguez Estrello",
+  "match": null,
+  "ok": false
+ },
+ "f1010894": {
+  "name": "Ecoculture Cb Almería",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Moisés Ruiz",
+  "match": null,
+  "ok": false
+ },
+ "f1010204": {
+  "name": "Ecosiona Jovens L’eliana",
+  "league": "TERCERA_FEB",
+  "arena": "#117# Pab Muni Eliana",
+  "match": null,
+  "ok": false
+ },
+ "f1009587": {
+  "name": "Eglobe Tecla Sala",
+  "league": "TERCERA_FEB",
+  "arena": "0-Pavello del Centre - Marcel·li Maneja",
+  "match": null,
+  "ok": false
+ },
+ "f1010347": {
+  "name": "Eiffage Cb Ciudad de dos Hermanas",
+  "league": "TERCERA_FEB",
+  "arena": "Los Montecillos",
+  "match": null,
+  "ok": false
+ },
+ "f1009591": {
+  "name": "El Ventero Cbv",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Municipal del Barrio de los Pintores",
+  "match": null,
+  "ok": false
+ },
+ "f1008735": {
+  "name": "Elaborados Naturales Valle de Egüés",
+  "league": "TERCERA_FEB",
+  "arena": "Pdvo. Sarriguren",
+  "match": {
+   "qid": "Q138349911",
+   "basket": true,
+   "spain": true,
+   "founded": 2008,
+   "title": "Club Baloncesto Valle de Egüés",
+   "extract": "El Club Baloncesto Valle de Egüés, también conocido como Elaborados Naturales Valle de Egüés, es un club de baloncesto con sede en el municipio de Valle de Egüés, Navarra. Actualmente, milita en Tercera FEB, la cuarta categoría del baloncesto español.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Valle_de_Eg%C3%BC%C3%A9s",
+   "shared": [
+    "egues",
+    "valle"
+   ]
+  },
+  "ok": true
+ },
+ "f1009732": {
+  "name": "Eset Ontinet",
+  "league": "TERCERA_FEB",
+  "arena": "#471# Pab Fernando Rubio",
+  "match": null,
+  "ok": false
+ },
+ "f1008948": {
+  "name": "Florange U.e.mataró",
+  "league": "TERCERA_FEB",
+  "arena": "Poliesportiu de Valldemia",
+  "match": {
+   "qid": "Q20106712",
+   "basket": true,
+   "spain": true,
+   "founded": 1930,
+   "title": "Unió Esportiva Mataró",
+   "extract": "La Unió Esportiva Mataró, también conocida como Homs UE Mataró por motivos de patrocinio, es un equipo de baloncesto español con sede en la ciudad de Mataró, (Barcelona), que compite en Tercera FEB, cuarta categoría de baloncesto español.",
+   "url": "https://es.wikipedia.org/wiki/Uni%C3%B3_Esportiva_Matar%C3%B3",
+   "shared": [
+    "mataro"
+   ]
+  },
+  "ok": true
+ },
+ "f1009702": {
+  "name": "Fundacion Globalcaja la Roda",
+  "league": "TERCERA_FEB",
+  "arena": "Juan Jose Lozano Jareño",
+  "match": {
+   "qid": "Q39056220",
+   "basket": true,
+   "spain": true,
+   "founded": 1960,
+   "title": "Club Polideportivo La Roda",
+   "extract": "El Club Polideportivo La Roda o más conocido como Fundación Globalcaja La Roda por cuestiones de patrocinio, es un club de baloncesto de La Roda (Albacete) que juega en Tercera FEB, cuarta categoría del baloncesto nacional.",
+   "url": "https://es.wikipedia.org/wiki/Club_Polideportivo_La_Roda",
+   "shared": [
+    "roda"
+   ]
+  },
+  "ok": true
+ },
+ "f1009083": {
+  "name": "Fundacion Grupo Jorge Baloncesto Zuera",
+  "league": "TERCERA_FEB",
+  "arena": "Pab. Municipal Zuera",
+  "match": null,
+  "ok": false
+ },
+ "f1010203": {
+  "name": "Fundació Caixa Rural Vila-Real",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Centro Tecnificación Dva. de Vilareal",
+  "match": null,
+  "ok": false
+ },
+ "f1009120": {
+  "name": "Fundal Alcobendas",
+  "league": "TERCERA_FEB",
+  "arena": "Antela Parada, Pabellon",
+  "match": null,
+  "ok": false
+ },
+ "f1008941": {
+  "name": "Ginelux Telde",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Polideportivo Rita Hernández",
+  "match": null,
+  "ok": false
+ },
+ "f1009825": {
+  "name": "Gran Canaria",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellon Insular Vega de San Jose",
+  "match": {
+   "qid": "Q54906",
+   "basket": true,
+   "spain": true,
+   "founded": 1963,
+   "title": "Club Baloncesto Gran Canaria",
+   "extract": "El Club Baloncesto Gran Canaria es un equipo profesional de baloncesto de la ciudad de Las Palmas de Gran Canaria. Participa en la Primera FEB de España.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Gran_Canaria",
+   "shared": [
+    "canaria",
+    "gran"
+   ]
+  },
+  "ok": true
+ },
+ "f1009178": {
+  "name": "Grupo Egido Pintobasket",
+  "league": "TERCERA_FEB",
+  "arena": "Principes de Asturias, Pabellon",
+  "match": null,
+  "ok": false
+ },
+ "f1008694": {
+  "name": "Halal Food Quality Uixó Bàsquet",
+  "league": "TERCERA_FEB",
+  "arena": "Polideportivo Municipal Vall D'uixo",
+  "match": null,
+  "ok": false
+ },
+ "f1010327": {
+  "name": "Hospital Ochoa Cb Marbella",
+  "league": "TERCERA_FEB",
+  "arena": "Pol.bello Horizonte \"carlos Cabezas\"",
+  "match": {
+   "qid": "Q74110107",
+   "basket": true,
+   "spain": true,
+   "founded": null,
+   "title": "Club Baloncesto Marbella",
+   "extract": "El Club Baloncesto Marbella es un club de baloncesto de la provincia de Málaga, con sede en Marbella, con equipos de cantera y que juega en Tercera FEB, la cuarta división del baloncesto español.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Marbella",
+   "shared": [
+    "marbella"
+   ]
+  },
+  "ok": true
+ },
+ "f1009179": {
+  "name": "Hotel 4postes - Ávila Auténtica - el Bulevar",
+  "league": "TERCERA_FEB",
+  "arena": "C.u.multiples Carlos Sastre",
+  "match": null,
+  "ok": false
+ },
+ "f1010575": {
+  "name": "Ibersol Cb Tarragona",
+  "league": "TERCERA_FEB",
+  "arena": "Pavello Municipal el Serrallo",
+  "match": {
+   "qid": "Q3825370",
+   "basket": true,
+   "spain": true,
+   "founded": 1978,
+   "title": "Club Bàsquet Tarragona",
+   "extract": "El Club Bàsquet Tarragona, más conocido en la actualidad por su nombre de patrocinio de Ibersol CBT Tarragona, es un club de baloncesto español con sede en la ciudad de Tarragona, en la comunidad autónoma de Cataluña, España.",
+   "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Tarragona",
+   "shared": [
+    "tarragona"
+   ]
+  },
+  "ok": true
+ },
+ "f1008789": {
+  "name": "Immo Sa Marina Ciutat D’inca Basquet",
+  "league": "TERCERA_FEB",
+  "arena": "Palau Municipal D'esports D'inca",
+  "match": null,
+  "ok": false
+ },
+ "f1008865": {
+  "name": "Implica Real Canoe",
+  "league": "TERCERA_FEB",
+  "arena": "Real Canoe N.c.",
+  "match": {
+   "qid": "Q60825713",
+   "basket": true,
+   "spain": true,
+   "founded": 1940,
+   "title": "Real Canoe Natación Club Baloncesto Masculino",
+   "extract": "El Real Canoe Natación Club es un club deportivo español de la ciudad de Madrid, fundado el 8 de octubre de 1931, como resultado de la fusión del Club Canoe y el Club Natación Atlético.",
+   "url": "https://es.wikipedia.org/wiki/Real_Canoe_Nataci%C3%B3n_Club_Baloncesto_Masculino",
+   "shared": [
+    "canoe",
+    "real"
+   ]
+  },
+  "ok": true
+ },
+ "f1009446": {
+  "name": "Ineltron Santo Domingo Betanzos",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellon Municipal Jose Maria Valeiro Iglesias",
+  "match": {
+   "qid": "Q96142949",
+   "basket": true,
+   "spain": true,
+   "founded": 1983,
+   "title": "Club Santo Domingo Betanzos",
+   "extract": "El Club Santo Domingo Betanzos es un equipo de baloncesto con sede en Betanzos,, que compite en Tercera FEB, cuarta categoría del baloncesto español.",
+   "url": "https://es.wikipedia.org/wiki/Club_Santo_Domingo_Betanzos",
+   "shared": [
+    "betanzos",
+    "domingo",
+    "santo"
+   ]
+  },
+  "ok": true
+ },
+ "f1008409": {
+  "name": "Inmobiliaria Gálvez Santa Cruz",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Municipal Quico Cabrera",
+  "match": null,
+  "ok": false
+ },
+ "f1010573": {
+  "name": "Insolac Cb Alcalá",
+  "league": "TERCERA_FEB",
+  "arena": "Pab. Placido Fernandez Viagas",
+  "match": null,
+  "ok": false
+ },
+ "f1009122": {
+  "name": "Inversus - Aceitunas Fruyper A.d. Costera Sur",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Principe de Asturias",
+  "match": null,
+  "ok": false
+ },
+ "f1008808": {
+  "name": "Inversus Infante",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Federico Aliaga (Infante)",
+  "match": null,
+  "ok": false
+ },
+ "f1008399": {
+  "name": "Iruki Take",
+  "league": "TERCERA_FEB",
+  "arena": "Usabal Kiroldegia",
+  "match": null,
+  "ok": false
+ },
+ "f1010896": {
+  "name": "La Cartonera Lucentina Coto Lucena",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Antonio Ruiz Canela Evangelista",
+  "match": null,
+  "ok": false
+ },
+ "f1008966": {
+  "name": "La Parróquia - Básquet Samá",
+  "league": "TERCERA_FEB",
+  "arena": "C.e.m. Isaac Galvez",
+  "match": null,
+  "ok": false
+ },
+ "f1008693": {
+  "name": "Letra Corporea Barbastro",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellon Angel Orus",
+  "match": null,
+  "ok": false
+ },
+ "f1010898": {
+  "name": "Lis Data Solutions Bezana",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellon Jose Escandon",
+  "match": null,
+  "ok": false
+ },
+ "f1010322": {
+  "name": "Lithium Iberia Sagrado Cáceres",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Multiusos Ciudad de Cáceres",
+  "match": null,
+  "ok": false
+ },
+ "f1009931": {
+  "name": "Lujisa Guadalajara Basket",
+  "league": "TERCERA_FEB",
+  "arena": "Polideportivo Multiusos de Guadalajara Pista 1",
+  "match": null,
+  "ok": false
+ },
+ "f1008919": {
+  "name": "Marín Ence Peixegalego",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellon Municipal A Raña",
+  "match": {
+   "qid": "Q17078265",
+   "basket": true,
+   "spain": true,
+   "founded": 2003,
+   "title": "Club Baloncesto Peixefresco Marín",
+   "extract": "El Club Baloncesto Peixefresco Marín, también conocido por motivos de patrocinio como Oposita Marín Ence Peixe Galego, es un equipo de baloncesto español con sede en la villa de Marín (Pontevedra), que compite en la Tercera FEB, cuarta división del baloncesto español. Disputa sus partidos en el Pabellón A Raña.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Peixefresco_Mar%C3%ADn",
+   "shared": [
+    "marin"
+   ]
+  },
+  "ok": true
+ },
+ "f1008869": {
+  "name": "Megacalzado Ardoi",
+  "league": "TERCERA_FEB",
+  "arena": "Pdvo. Mun. Zizur Mayor",
+  "match": null,
+  "ok": false
+ },
+ "f1008850": {
+  "name": "Melilla Ciudad del Deporte Enrique Soler",
+  "league": "TERCERA_FEB",
+  "arena": "Pab. Guillermo Garcia Pezzi",
+  "match": {
+   "qid": "Q111687085",
+   "basket": true,
+   "spain": true,
+   "founded": 1996,
+   "title": "Melilla Sport Capital Enrique Soler",
+   "extract": "El CAM Enrique Soler o también conocido como Melilla Ciudad del Deporte Enrique Soler por motivos de patrocinio, es un club de baloncesto de la ciudad autónoma de Melilla, con equipos de cantera y que juega en Tercera FEB, cuarta categoría del baloncesto nacional.",
+   "url": "https://es.wikipedia.org/wiki/Melilla_Sport_Capital_Enrique_Soler",
+   "shared": [
+    "enrique",
+    "melilla",
+    "soler"
+   ]
+  },
+  "ok": true
+ },
+ "f1010328": {
+  "name": "Molina Olea Cb Costa Motril",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellon Municipal Motril",
+  "match": null,
+  "ok": false
+ },
+ "f1008699": {
+  "name": "Monbus - Cb Igualada",
+  "league": "TERCERA_FEB",
+  "arena": "Pavello Municipal de Les Comes",
+  "match": null,
+  "ok": false
+ },
+ "f1010578": {
+  "name": "Novobasket Vigo",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Quirós",
+  "match": null,
+  "ok": false
+ },
+ "f1009706": {
+  "name": "Náutico Tenerife",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón R.c.n.t.",
+  "match": {
+   "qid": "Q5693191",
+   "basket": true,
+   "spain": true,
+   "founded": 1952,
+   "title": "Real Club Náutico de Tenerife de Baloncesto",
+   "extract": "El Real Club Náutico de Tenerife de Baloncesto es la sección de baloncesto del Real Club Náutico de Tenerife, un club de España con sede en Santa Cruz de Tenerife. Fue el primer club canario en llegar al baloncesto nacional. Jugó durante once temporadas en 1ª División, siendo hasta la fecha el tercer club de Canarias con más años en la máxima competición tras ser bajado del primer y segundo cajón del pódium por el Club Baloncesto Gran Canaria y el CB Canarias-1939 de La Laguna, respectivamente. Juega sus encuentros como local en el Pabellón Anaga dentro del propio club nauta de la capital isleña, que también cuenta con instalaciones de natación, tenis y muelle deportivo. Actualmente compite en Tercera FEB.",
+   "url": "https://es.wikipedia.org/wiki/Real_Club_N%C3%A1utico_de_Tenerife_de_Baloncesto",
+   "shared": [
+    "nautico",
+    "tenerife"
+   ]
+  },
+  "ok": true
+ },
+ "f1009932": {
+  "name": "Oca Global C.b. Salou",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Centre Salou",
+  "match": {
+   "qid": "Q115219548",
+   "basket": true,
+   "spain": true,
+   "founded": 1985,
+   "title": "Club Bàsquet Salou",
+   "extract": "El Club Básquet Salou es un club de baloncesto de la provincia de Tarragona, con sede en la localidad de Salou, con equipos de cantera y que juega en Tercera FEB, cuarta categoría de baloncesto nacional, durante la temporada 2026-27.",
+   "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Salou",
+   "shared": [
+    "salou"
+   ]
+  },
+  "ok": true
+ },
+ "f1010342": {
+  "name": "Oh!tels Ulb",
+  "league": "TERCERA_FEB",
+  "arena": "Pab. Municipal",
+  "match": null,
+  "ok": false
+ },
+ "f1008981": {
+  "name": "Okticket Circulo Gijon",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón de Deportes Presidente Adolfo Suárez",
+  "match": {
+   "qid": "Q50678652",
+   "basket": true,
+   "spain": true,
+   "founded": 2017,
+   "title": "Círculo Gijón Noega Baloncesto",
+   "extract": "El Círculo Gijón Noega Baloncesto es un equipo de baloncesto con sede en Gijón, Asturias (España) que compite en la Tercera FEB, cuarta categoría del baloncesto español.",
+   "url": "https://es.wikipedia.org/wiki/C%C3%ADrculo_Gij%C3%B3n_Noega_Baloncesto",
+   "shared": [
+    "circulo",
+    "gijon"
+   ]
+  },
+  "ok": true
+ },
+ "f1010201": {
+  "name": "Personalhome Adesavi",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Deportivo el Sequet",
+  "match": null,
+  "ok": false
+ },
+ "f1008936": {
+  "name": "Pujol Mollerussa",
+  "league": "TERCERA_FEB",
+  "arena": "Pavello Municipal de Mollerussa",
+  "match": null,
+  "ok": false
+ },
+ "f1009575": {
+  "name": "Qualis C.b Villa de Valdemoro",
+  "league": "TERCERA_FEB",
+  "arena": "Jesus España, Pabellon",
+  "match": null,
+  "ok": false
+ },
+ "f1009817": {
+  "name": "Recoletas Salud Salamanca",
+  "league": "TERCERA_FEB",
+  "arena": "Polideportivo Municipal Carbajosa de la Sagrada",
+  "match": null,
+  "ok": false
+ },
+ "f1008935": {
+  "name": "Recucym Bazu",
+  "league": "TERCERA_FEB",
+  "arena": "Polideportivo la Paz",
+  "match": null,
+  "ok": false
+ },
+ "f1008697": {
+  "name": "Restaurante los Arcos Cb Solares",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellon Mies del Corro",
+  "match": null,
+  "ok": false
+ },
+ "f1009586": {
+  "name": "Rigalli-Alginet",
+  "league": "TERCERA_FEB",
+  "arena": "Pab Muni Alginet",
+  "match": null,
+  "ok": false
+ },
+ "f1009146": {
+  "name": "Sa Tintina Cb Es Castell Menorca",
+  "league": "TERCERA_FEB",
+  "arena": "Pavello Esportiu Municipal Sergio Llull",
+  "match": null,
+  "ok": false
+ },
+ "f1010353": {
+  "name": "San Antonio Cáceres",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellon Felipe Alvarez",
+  "match": {
+   "qid": "Q2357405",
+   "basket": true,
+   "spain": true,
+   "founded": 2007,
+   "title": "Cáceres Ciudad del Baloncesto",
+   "extract": "El Cáceres Ciudad del Baloncesto es un club español de baloncesto profesional con sede en la ciudad de Cáceres fundado en el año 2007. Está considerado uno de los máximos representantes del deporte extremeño a nivel nacional, especialmente en lo que al mundo del baloncesto se refiere, recogiendo el testigo del desaparecido Cáceres C. B.",
+   "url": "https://es.wikipedia.org/wiki/C%C3%A1ceres_Ciudad_del_Baloncesto",
+   "shared": [
+    "caceres"
+   ]
+  },
+  "ok": false,
+  "note": "revisado: club distinto del artículo"
+ },
+ "f1008679": {
+  "name": "San Prudencio",
+  "league": "TERCERA_FEB",
+  "arena": "Colegio San Prudencio",
+  "match": null,
+  "ok": false
+ },
+ "f1009816": {
+  "name": "Sandá C.b. L´hospitalet",
+  "league": "TERCERA_FEB",
+  "arena": "Nou Pavello del Centre",
+  "match": null,
+  "ok": false
+ },
+ "f1010202": {
+  "name": "Scd Carolinas",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Florida Babel",
+  "match": null,
+  "ok": false
+ },
+ "f1010576": {
+  "name": "Sd Espanyol Bàsquet Cornellà",
+  "league": "TERCERA_FEB",
+  "arena": "Parc Esportiu Baix Llobregat",
+  "match": {
+   "qid": "Q1646058",
+   "basket": true,
+   "spain": true,
+   "founded": 1929,
+   "title": "Club Bàsquet Cornellà",
+   "extract": "El Club Bàsquet Cornellà es un club de baloncesto de la ciudad de Cornellá de Llobregat. Está integrado en la Federación Catalana de Baloncesto y Federación Española de Baloncesto.",
+   "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Cornell%C3%A0",
+   "shared": [
+    "cornella"
+   ]
+  },
+  "ok": true
+ },
+ "f1008833": {
+  "name": "Servigroup Benidorm",
+  "league": "TERCERA_FEB",
+  "arena": "Pal Dep Illa Benidorm",
+  "match": null,
+  "ok": false
+ },
+ "f1009170": {
+  "name": "Sese A",
+  "league": "TERCERA_FEB",
+  "arena": "Poliesportiu Virrei Amat Ramon Aldrufeu",
+  "match": null,
+  "ok": false
+ },
+ "f1009074": {
+  "name": "Shad Mollet",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Municipal Plana Lledó",
+  "match": {
+   "qid": "Q8347022",
+   "basket": true,
+   "spain": true,
+   "founded": 1943,
+   "title": "Club Bàsquet Mollet",
+   "extract": "El Club Bàsquet Mollet es un equipo español de baloncesto fundado en 1943. Tiene su sede en Mollet del Vallés (Barcelona).",
+   "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Mollet",
+   "shared": [
+    "mollet"
+   ]
+  },
+  "ok": true
+ },
+ "f1010574": {
+  "name": "Sigaltec Bbc",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Sara Gómez",
+  "match": null,
+  "ok": false
+ },
+ "f1010196": {
+  "name": "Stop Biogás Tobarra",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón de la Granja",
+  "match": null,
+  "ok": false
+ },
+ "f1009928": {
+  "name": "Supermercados Diskont - Cb Ciutadella Ponent",
+  "league": "TERCERA_FEB",
+  "arena": "Pavelló Municipal D'esports de Ciutadella (Pista 1",
+  "match": null,
+  "ok": false
+ },
+ "f1010326": {
+  "name": "Surseeds - B. Murgi",
+  "league": "TERCERA_FEB",
+  "arena": "Pab.mun. Deportes el Ejido",
+  "match": null,
+  "ok": false
+ },
+ "f1008897": {
+  "name": "Tabirako Baque",
+  "league": "TERCERA_FEB",
+  "arena": "Polideportivo Landako",
+  "match": null,
+  "ok": false
+ },
+ "f1009714": {
+  "name": "Teknei Bizkaia Zornotza",
+  "league": "TERCERA_FEB",
+  "arena": "Pol.larrea",
+  "match": {
+   "qid": "Q17104925",
+   "basket": true,
+   "spain": true,
+   "founded": 1959,
+   "title": "Zornotza Saskibaloi Taldea",
+   "extract": "El Zornotza Saskibaloi Taldea, también conocido como Teknei Bizkaia Zornotza por motivos de patrocinio, es un equipo de baloncesto español con sede en la ciudad de Amorebieta (Vizcaya), que compite en la Tercera FEB, la cuarta división del baloncesto español. Disputa sus partidos en el Polideportivo Larrea, con capacidad para 600 espectadores. Es el equipo vinculado del Surne Bilbao Basket de la Liga Endesa.",
+   "url": "https://es.wikipedia.org/wiki/Zornotza_Saskibaloi_Taldea",
+   "shared": [
+    "zornotza"
+   ]
+  },
+  "ok": true
+ },
+ "f1008403": {
+  "name": "Tenea-C.b. Esparreguera",
+  "league": "TERCERA_FEB",
+  "arena": "Pavello Ramon Marti",
+  "match": null,
+  "ok": false
+ },
+ "f1010206": {
+  "name": "Territorio Minero Baloncesto Villa de Mieres",
+  "league": "TERCERA_FEB",
+  "arena": "Polideportivo Oñón",
+  "match": {
+   "qid": "Q30916579",
+   "basket": true,
+   "spain": true,
+   "founded": 2012,
+   "title": "Baloncesto Villa de Mieres 2012",
+   "extract": "El Baloncesto Villa de Mieres 2012 es un club deportivo de baloncesto localizado en Mieres del Camino, capital del concejo de Mieres, que compite en Tercera FEB, la cuarta categoría del baloncesto nacional.",
+   "url": "https://es.wikipedia.org/wiki/Baloncesto_Villa_de_Mieres_2012",
+   "shared": [
+    "mieres",
+    "villa"
+   ]
+  },
+  "ok": true
+ },
+ "f1010319": {
+  "name": "The Fitzgerald el Pilar",
+  "league": "TERCERA_FEB",
+  "arena": "#316# Col el Pilar",
+  "match": null,
+  "ok": false
+ },
+ "f1008680": {
+  "name": "Tibu-Ron Castelldefels",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón Can Vinader",
+  "match": null,
+  "ok": false
+ },
+ "f1009121": {
+  "name": "Topsurface Nb Paterna",
+  "league": "TERCERA_FEB",
+  "arena": "Pab Muni Paterna",
+  "match": null,
+  "ok": false
+ },
+ "f1009920": {
+  "name": "Traumacor Culleredo",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellón O Burgo",
+  "match": null,
+  "ok": false
+ },
+ "f1010492": {
+  "name": "Turbo Manises C.b.c M-Q",
+  "league": "TERCERA_FEB",
+  "arena": "Pab Muni Alberto Arnal Andres",
+  "match": null,
+  "ok": false
+ },
+ "f1009919": {
+  "name": "Ucoga Seguros C.b. Chantada",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellon Polideportivo Municipal Chantada",
+  "match": null,
+  "ok": false
+ },
+ "f1008701": {
+  "name": "Ue.montgat",
+  "league": "TERCERA_FEB",
+  "arena": "Poliesp. Municipal Silvia Dominguez",
+  "match": {
+   "qid": "Q113016782",
+   "basket": true,
+   "spain": true,
+   "founded": 1931,
+   "title": "Unió Esportiva Montgat",
+   "extract": "La Unió Esportiva Montgat es un club de baloncesto del municipio maresmense de Montgat, fundado en 1931.",
+   "url": "https://es.wikipedia.org/wiki/Uni%C3%B3_Esportiva_Montgat",
+   "shared": [
+    "montgat"
+   ]
+  },
+  "ok": true
+ },
+ "f1009106": {
+  "name": "Ulacia Zke",
+  "league": "TERCERA_FEB",
+  "arena": "Aritzbatalde Kir.",
+  "match": null,
+  "ok": false
+ },
+ "f1010897": {
+  "name": "Ulla Oil Rosalia",
+  "league": "TERCERA_FEB",
+  "arena": "Instituto Rosalía de Castro",
+  "match": {
+   "qid": "Q3325015",
+   "basket": true,
+   "spain": true,
+   "founded": 1990,
+   "title": "Club Baloncesto Rosalía de Castro",
+   "extract": "El Club Baloncesto Rosalía de Castro, en la actualidad Fundación Educación e Deporte de Santiago - FEDESA, entidad que ofrece diferentes actividades para promover el deporte. Su principal actividad es el baloncesto en el que cuenta con equipos en todas las categorías y equipos sénior, tanto masculinos como femeninos. Con sede en la ciudad de Santiago de Compostela España, juega sus partidos como local en el pabellón del Instituto Rosalía de Castro. El equipo masculino compite en Tercera FEB y su equipo femenino en Primera Nacional Femenina.",
+   "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Rosal%C3%ADa_de_Castro",
+   "shared": [
+    "rosalia"
+   ]
+  },
+  "ok": true
+ },
+ "f1009137": {
+  "name": "Universidad Deusto Loiola Indautxu",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellon Colegio Jesuitas Indautxu",
+  "match": null,
+  "ok": false
+ },
+ "f1008632": {
+  "name": "Universidad de Oviedo",
+  "league": "TERCERA_FEB",
+  "arena": "Pol. Universitario Oviedo",
+  "match": {
+   "qid": "Q4651242",
+   "basket": true,
+   "spain": true,
+   "founded": 1982,
+   "title": "Asociación Deportiva Universidad de Oviedo (baloncesto)",
+   "extract": "El AD Universidad de Oviedo, también conocido como CAU , es un club de baloncesto de la Universidad de Oviedo, con sede en Oviedo. El equipo masculino compite en Tercera FEB y su equipo femenino en Primera Nacional.",
+   "url": "https://es.wikipedia.org/wiki/Asociaci%C3%B3n_Deportiva_Universidad_de_Oviedo_(baloncesto)",
+   "shared": [
+    "oviedo",
+    "universidad"
+   ]
+  },
+  "ok": true
+ },
+ "f1008866": {
+  "name": "Uros de Rivas",
+  "league": "TERCERA_FEB",
+  "arena": "Cerro del Telegrafo, Pabellon",
+  "match": null,
+  "ok": false
+ },
+ "f1008382": {
+  "name": "Usal Meins Avenida",
+  "league": "TERCERA_FEB",
+  "arena": "Pabellon Municipal Wurzburg Silvia Dominguez",
+  "match": null,
+  "ok": false
+ },
+ "f1008689": {
+  "name": "Velabasket Cb Sueca",
+  "league": "TERCERA_FEB",
+  "arena": "Nou Pavello Oliveretes",
+  "match": null,
+  "ok": false
+ },
+ "f1010497": {
+  "name": "Zentro Basket Madrid",
+  "league": "TERCERA_FEB",
+  "arena": "Antonio Diaz Miguel, Pdvo. Mpal.",
+  "match": {
+   "qid": "Q111687081",
+   "basket": true,
+   "spain": true,
+   "founded": 2012,
+   "title": "Zentro Basket Madrid",
+   "extract": "El Zentro Basket Madrid o más conocido como Zentro CB, es un club de baloncesto con sede en Madrid, con equipos de cantera y que juega en Tercera FEB, cuarta categoría del baloncesto nacional.",
+   "url": "https://es.wikipedia.org/wiki/Zentro_Basket_Madrid",
+   "shared": [
+    "madrid",
+    "zentro"
+   ]
+  },
+  "ok": true
+ }
+}

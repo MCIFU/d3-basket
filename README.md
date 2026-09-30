@@ -19,6 +19,9 @@ Funciona como **app de escritorio** (Windows/macOS/Linux) y como **web** en cual
 | ✅ Primera FEB (LEB Oro) | calendario, resultados, estadísticas por partido, plantillas con fotos sin fondo, datos de club y **trayectoria completa de cada jugador en todas las categorías FEB** (`baloncestoenvivo.feb.es`) |
 | ✅ Histórico ACB | temporadas 2025-26 y 2024-25 completas, y trayectoria de todos los jugadores actuales desde su debut |
 | ✅ Segunda y Tercera FEB | mismas páginas y datos que la Primera FEB; ligas divididas en grupos (Segunda: A y B; Tercera: 10 grupos) con clasificación y calendario por grupo |
+| ✅ Eliminatorias y Copa España | playoffs de ascenso, finales y permanencia de las ligas FEB (desde la página de resultados de la FEB), rondas de playoff de la ACB deducidas del cuadro, y la Copa España de la FEB |
+| ✅ Histórico | ACB 2022-23 a 2026-27; FEB (Primera, Segunda, Tercera y Copa) 2024-25 a 2026-27; un mismo club queda unido entre temporadas y ligas |
+| ✅ Auditoría | `npm run scrape -- check`: marcadores contra estadísticas, partidos sin estadística, calendarios incompletos, clubes y jugadores duplicados |
 | ✅ Identidad visual | colores y logos oficiales de cada liga; escudos homogéneos y colores de cada club; fotos FEB en primer plano como las de la ACB (ver *Fotos, escudos y colores*) |
 
 La temporada 2026-27 de la ACB arrancó el 26-27 de septiembre de 2026: la primera sincronización ya trae los 9 resultados y boxscores de la jornada 1 y los 297 partidos restantes del calendario.
@@ -71,9 +74,12 @@ pip install pillow numpy opencv-python-headless "rembg[cpu]"
 python tools/media/logos.py                  # escudos y colores nuevos
 python tools/media/faces.py --shard 0/3 &    # fotos nuevas (en paralelo: 0/3, 1/3, 2/3)
 python tools/media/faces.py --recheck        # rehace las dudosas (restos de fondo, huecos)
+# tools/media/players-skip.txt: jugadores sin foto en la FEB o sin cara; no se reintentan (salvo --force)
 ```
 
 Solo procesa lo que falta; después hay que hacer commit de `public/media`. Los jugadores que lleguen después en el build diario usan la foto original de la FEB hasta la siguiente pasada.
+
+- **`club_wiki.py`**: fundación e historia de los clubes FEB desde Wikipedia/Wikidata (solo acepta artículos cuyo elemento de Wikidata es un club de baloncesto español). Genera `tools/media/club-wiki.json` para revisarlo a mano (`"ok": false` descarta un emparejamiento) y se importa con `npm run scrape -- import-club-wiki tools/media/club-wiki.json`.
 
 Los colores y logos de cada liga están en `src/renderer/src/leagues.ts` y `public/media/leagues` (paleta de acb.com y logos oficiales de la FEB).
 
@@ -87,6 +93,8 @@ npm run scrape -- sync primera-feb                 # Primera FEB (LEB Oro) en cu
 npm run scrape -- sync segunda-feb                 # Segunda FEB (LEB Plata)
 npm run scrape -- sync tercera-feb                 # Tercera FEB (10 grupos)
 npm run scrape -- sync tercera-feb --max-bios 150  # como mucho 150 fichas por ejecución (build diario)
+npm run scrape -- sync copa-espana                 # Copa España (FEB)
+npm run scrape -- check                            # auditoría de integridad de los datos
 npm run scrape -- sync acb --force                 # vuelve a descargar boxscores y refresca la historia
 npm run scrape -- sync acb --career-budget 1000    # descarga más trayectorias de jugadores de una vez
 npm run scrape -- editions acb                     # temporadas disponibles en acb.com

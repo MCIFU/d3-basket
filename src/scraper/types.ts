@@ -5,7 +5,7 @@
  */
 
 export type SourceName = 'acb' | 'feb'
-export type CompetitionCode = 'ACB' | 'LEB_ORO' | 'LEB_PLATA' | 'TERCERA_FEB'
+export type CompetitionCode = 'ACB' | 'LEB_ORO' | 'LEB_PLATA' | 'TERCERA_FEB' | 'COPA_ESPANA'
 
 export interface SourceRef {
   source: SourceName

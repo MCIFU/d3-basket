@@ -566,6 +566,7 @@ export class AcbScraper {
   }
 
   private finish(runId: number, csId: number, summary: SyncSummary) {
+    this.w.labelPlayoffSeries(csId)
     summary.requests = this.http.requests
     this.w.finishRun(runId, {
       csId,

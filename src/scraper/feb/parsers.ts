@@ -120,8 +120,11 @@ function teamFrom(cell: cheerio.Cheerio<never>): NTeam | undefined {
 }
 
 export interface FebGroups {
-  /** Grupos de la fase (Segunda FEB: 'A' y 'B'); uno solo si la liga no se divide. */
-  groups: { value: string; name: string }[]
+  /**
+   * Opciones del selector: grupos de liga regular (Segunda FEB: 'A' y 'B') y, en temporadas
+   * cerradas, fases finales ('FASE FINAL-A FFA1'...), que no son grupos de la clasificación.
+   */
+  groups: { value: string; name: string; label: string; regular: boolean }[]
   selected?: string
   /** Campos del formulario ASP.NET para pedir otro grupo por postback. */
   postback: (groupValue: string) => Record<string, string>
@@ -136,7 +139,9 @@ export function parseFebGroups(html: string): FebGroups {
     .toArray()
     .map((o) => {
       const label = clean($(o).text())
-      return { value: $(o).attr('value') ?? '', name: /"([^"]+)"/.exec(label)?.[1] ?? label }
+      // 'Liga Regular "A"' o, en la Copa España, 'FASE DE GRUPOS "A"' / 'FASE DE GRUPOS A'.
+      const name = /"([^"]+)"/.exec(label)?.[1] ?? /fase de grupos\s+(\S+)$/i.exec(label)?.[1] ?? label
+      return { value: $(o).attr('value') ?? '', name, label, regular: /liga regular|fase de grupos/i.test(label) }
     })
     .filter((g) => g.value)
   const hidden: Record<string, string> = {}
@@ -160,7 +165,100 @@ export function parseFebGroups(html: string): FebGroups {
   }
 }
 
-export function parseFebCalendar(html: string, competition: CompetitionCode, startYear: number, name: string, group?: string): NCalendar {
+/** Rondas de eliminatoria de la FEB: nombre en castellano y orden (para numerar las jornadas). */
+const KNOCKOUT: [RegExp, string, number][] = [
+  [/1\/16/, 'Dieciseisavos de final', 1],
+  [/1\/8/, 'Octavos de final', 2],
+  [/1\/4/, 'Cuartos de final', 3],
+  [/1\/2/, 'Semifinales', 4],
+  [/perman/i, 'Permanencia', 6],
+  [/final/i, 'Final', 5]
+]
+
+/**
+ * Nombre y orden de una fase de la página de resultados ('Play-offs 1/4 Final' → Cuartos de final, 3).
+ * En la Tercera FEB las eliminatorias van por grupo ('ELIMIN. GR "A" 1/4 Final', '1ºAA-1ºAB Final'):
+ * el grupo va en el nombre y en `group` (1 = A...) para que cada uno tenga sus propias rondas.
+ */
+export function febStage(label: string): { name: string; order: number; group: number } {
+  // '1ºE-1ºO Final' (Segunda FEB): final por el título entre los campeones de los grupos Este y Oeste.
+  if (/1º\s*E\s*-\s*1º\s*O/i.test(label)) return { name: 'Final por el título', order: 5, group: 0 }
+  // '1ºAA-1ºAB Final' (Tercera FEB): final del grupo A entre los campeones de A-A y A-B.
+  const final = /1º\s*([A-Z])A\s*-\s*1º\s*\1B/i.exec(label)
+  if (final) return { name: `Final del grupo ${final[1].toUpperCase()}`, order: 5, group: final[1].toUpperCase().charCodeAt(0) - 64 }
+  const letter = /GR\s*"([A-Z])"/i.exec(label)?.[1]?.toUpperCase()
+  const k = KNOCKOUT.find(([re]) => re.test(label))
+  const name = k ? k[1] : titleCase(label)
+  return { name: letter ? `${name} · Grupo ${letter}` : name, order: k ? k[2] : 7, group: letter ? letter.charCodeAt(0) - 64 : 0 }
+}
+
+export interface FebResultsPage {
+  /** Jornadas de la fase seleccionada (en eliminatorias, cada partido de la serie). */
+  jornadas: { value: string; number: number; selected: boolean }[]
+  jornadaField: string
+  games: NCalendar['games']
+  teams: NTeam[]
+}
+
+/**
+ * Página de resultados (resultados.aspx): a diferencia del calendario incluye las eliminatorias
+ * (playoffs, permanencia). Muestra una jornada de una fase; el resto se pide por postback.
+ */
+export function parseFebResults(html: string, phase: { id: string; name: string; order: number; group?: number }): FebResultsPage {
+  const $ = cheerio.load(html)
+  const select = $('select[name$="jornadasDropDownList"]').first()
+  const jornadas = select
+    .find('option')
+    .toArray()
+    .map((o, i) => ({
+      value: $(o).attr('value') ?? '',
+      number: int(/Jornada\s+(\d+)/i.exec($(o).text())?.[1]) || i + 1,
+      selected: $(o).attr('selected') !== undefined
+    }))
+  const current = jornadas.find((j) => j.selected)?.number ?? 1
+  const teams = new Map<string, NTeam>()
+  const games: NCalendar['games'] = []
+  for (const tr of $('table[id$="jornadaDataGrid"] tr').toArray()) {
+    const tds = $(tr).find('td').toArray()
+    if (tds.length < 4) continue
+    const links = $(tds[0]).find('a[href*="Equipo.aspx"]').toArray()
+    const [home, away] = links.map((a) => {
+      const id = param($(a).attr('href'), 'i')!
+      const name = titleCase($(a).text())
+      return { ref: { source: 'feb' as const, id, url: febUrls.team(id) }, clubRef: { source: 'feb' as const, id }, name, shortName: name, logoUrl: febUrls.logo(id) }
+    })
+    const result = $(tds[1]).find('a[href*="Partido.aspx"]')
+    const gameId = param(result.attr('href'), 'p')
+    if (!home || !away || !gameId) continue
+    teams.set(home.ref.id, home)
+    teams.set(away.ref.id, away)
+    const score = /^(\d+)\s*-\s*(\d+)$/.exec(clean(result.text()))
+    const day = clean($(tds[2]).text())
+    const time = clean($(tds[3]).text())
+    games.push({
+      ref: { source: 'feb', id: gameId, url: febUrls.game(gameId) },
+      // Número de ronda único por fase, grupo y partido de la serie (313 = cuartos, grupo A, partido 3).
+      round: { phase: phase.id, number: phase.order * 100 + (phase.group ?? 0) * 10 + current, name: `${phase.name} · Partido ${current}` },
+      homeTeam: home,
+      awayTeam: away,
+      scheduledAt: /\d{1,2}\/\d{1,2}\/\d{4}/.test(day) ? madridToUtc(day, /\d{1,2}:\d{2}/.test(time) ? time : undefined) : undefined,
+      status: score ? 'finished' : 'scheduled',
+      homeScore: score ? Number(score[1]) : undefined,
+      awayScore: score ? Number(score[2]) : undefined
+    })
+  }
+  return { jornadas, jornadaField: select.attr('name') ?? '', games, teams: [...teams.values()] }
+}
+
+export function parseFebCalendar(
+  html: string,
+  competition: CompetitionCode,
+  startYear: number,
+  name: string,
+  group?: string,
+  /** Fase distinta de la liga regular (fases finales): sus jornadas no cuentan para la clasificación. */
+  phase?: { id: string; name: string }
+): NCalendar {
   const $ = cheerio.load(html)
   const rounds = $('div.columna').toArray()
   if (!rounds.length) throw new FebParseError('calendario', 'no se encontraron jornadas')
@@ -188,7 +286,7 @@ export function parseFebCalendar(html: string, competition: CompetitionCode, sta
       const status: GameStatus = score ? 'finished' : when || roundDate ? 'scheduled' : 'unscheduled'
       games.push({
         ref: { source: 'feb', id: gameId, url: febUrls.game(gameId) },
-        round: { phase: 'regular', number, name: `Jornada ${number}` },
+        round: phase ? { phase: phase.id, number, name: `${phase.name} · Jornada ${number}` } : { phase: 'regular', number, name: `Jornada ${number}` },
         homeTeam: home,
         awayTeam: away,
         scheduledAt: when ? madridToUtc(when[1], when[2]) : roundDate ? madridToUtc(roundDate) : undefined,

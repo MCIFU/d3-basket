@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import path from 'node:path'
 import { defaultDbPath, openDatabase, type DB } from '../db/database'
 import { applyMedia } from '../db/media'
+import { Writer } from '../db/writer'
 import { Queries } from '../db/queries'
 import { HttpClient } from '../scraper/core/http'
 import { AcbScraper } from '../scraper/acb/sync'
@@ -87,7 +88,7 @@ function registerIpc() {
     }
     try {
       const s =
-        opts.league === 'LEB_ORO' || opts.league === 'LEB_PLATA' || opts.league === 'TERCERA_FEB'
+        opts.league === 'LEB_ORO' || opts.league === 'LEB_PLATA' || opts.league === 'TERCERA_FEB' || opts.league === 'COPA_ESPANA'
           ? await new FebScraper(db, http).sync(opts.league, { ...common, season: opts.season })
           : opts.season
             ? await scraper.syncHistoric(opts.season, common)
@@ -101,6 +102,7 @@ function registerIpc() {
     } catch (err) {
       return { ok: false, message: err instanceof Error ? err.message : String(err) }
     } finally {
+      new Writer(db).dedupePlayers()
       applyMedia(db, mediaDir())
       syncing = false
     }

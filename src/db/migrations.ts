@@ -532,5 +532,43 @@ INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier) VAL
 -- Segundo color del club (sacado de su escudo, ver src/db/media.ts).
 ALTER TABLE clubs ADD COLUMN secondary_color TEXT;
 `
+  },
+  {
+    version: 7,
+    name: 'club_ref_one_feb_id',
+    sql: /* sql */ `
+-- La FEB cambia el id de equipo cada temporada: un club con varias temporadas tiene varios
+-- ids FEB. La referencia estable es la del más reciente (un único valor por club).
+DROP VIEW v_club_ref;
+CREATE VIEW v_club_ref AS
+  SELECT c.id AS club_id, COALESCE(
+    (SELECT external_id FROM external_ids WHERE entity_type = 'club' AND entity_id = c.id AND source = 'acb' LIMIT 1),
+    'f' || (SELECT MAX(CAST(external_id AS INTEGER)) FROM external_ids WHERE entity_type = 'club' AND entity_id = c.id AND source = 'feb'),
+    'i' || c.id) AS ref
+  FROM clubs c;
+`
+  },
+  {
+    version: 8,
+    name: 'player_ref_one_feb_id',
+    sql: /* sql */ `
+-- Un jugador puede tener dos ids de persona en la FEB (licencias duplicadas): una sola ref.
+DROP VIEW v_player_ref;
+CREATE VIEW v_player_ref AS
+  SELECT p.id AS player_id, COALESCE(
+    (SELECT external_id FROM external_ids WHERE entity_type = 'player' AND entity_id = p.id AND source = 'acb' LIMIT 1),
+    'f' || (SELECT MAX(CAST(external_id AS INTEGER)) FROM external_ids WHERE entity_type = 'player' AND entity_id = p.id AND source = 'feb'),
+    'i' || p.id) AS ref
+  FROM players p;
+`
+  },
+  {
+    version: 9,
+    name: 'copa_espana',
+    sql: /* sql */ `
+-- Copa España (FEB): competición de copa, sin categoría (tier NULL = copa, no liga).
+INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier) VALUES
+  ('COPA_ESPANA', 'Copa España', 'Copa España', 'FEB', NULL);
+`
   }
 ]

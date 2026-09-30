@@ -129,7 +129,7 @@ export function LeaguePage({ code, tab = 'resumen', year }: { code: string; tab?
               <div className="stat-tiles">
                 <StatTile label="Equipos" value={edition.teams} />
                 <StatTile label="Partidos jugados" value={`${edition.finished}/${edition.games}`} />
-                <StatTile label="Espectadores" value={int(attendance)} />
+                {attendance > 0 && <StatTile label="Espectadores" value={int(attendance)} />}
                 <StatTile
                   label="Puntos por partido"
                   value={num(data.teamStats.reduce((a, t) => a + t.pts, 0) / Math.max(1, data.teamStats.reduce((a, t) => a + t.games, 0)))}
@@ -312,44 +312,108 @@ export function StandingsTable({ rows, compact, year, code }: { rows: StandingRo
 }
 
 function Results({ games }: { games: GameRow[] }) {
+  const knockout = useMemo(() => games.filter((g) => g.phase && g.phase !== 'regular'), [games])
+  const [mode, setMode] = useState<'regular' | 'knockout'>()
+  // Temporada terminada con eliminatorias: se abre en ellas; si no, en la liga regular.
+  const regularLeft = games.some((g) => g.phase === 'regular' && g.status !== 'finished')
+  const current = mode ?? (knockout.length && !regularLeft ? 'knockout' : 'regular')
+  return (
+    <Section
+      title={current === 'knockout' ? 'Eliminatorias' : 'Liga regular'}
+      eyebrow="Calendario y resultados"
+      actions={
+        knockout.length > 0 && (
+          <Segmented
+            value={current}
+            options={[
+              { id: 'regular', label: 'Liga regular' },
+              { id: 'knockout', label: 'Eliminatorias' }
+            ]}
+            onChange={setMode}
+          />
+        )
+      }
+    >
+      {current === 'knockout' ? <Knockout games={knockout} /> : <RegularRounds games={games.filter((g) => !g.phase || g.phase === 'regular')} />}
+      <p className="note">Pulsa un partido jugado para ver su estadística completa.</p>
+    </Section>
+  )
+}
+
+/** Eliminatorias agrupadas por ronda ("Cuartos de final", "Final del grupo A"...), en orden cronológico. */
+function Knockout({ games }: { games: GameRow[] }) {
+  const stages = useMemo(() => {
+    const map = new Map<string, { name: string; order: number; games: GameRow[] }>()
+    for (const g of games) {
+      const name = (g.round_name ?? 'Eliminatoria').replace(/ · (Partido|Jornada) \d+$/, '')
+      // La fase final (Tercera FEB) va después de las eliminatorias de grupo.
+      const e = map.get(name) ?? { name, order: g.phase === 'final' ? 999 : Math.floor((g.round_number ?? 0) / 10), games: [] }
+      e.games.push(g)
+      map.set(name, e)
+    }
+    return [...map.values()]
+      .map((s) => ({ ...s, games: [...s.games].sort((a, b) => (a.scheduled_at ?? '').localeCompare(b.scheduled_at ?? '')) }))
+      .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name))
+  }, [games])
+  return (
+    <>
+      {stages.map((s) => (
+        <div key={s.name} className="stage">
+          <div className="stage-title">{s.name}</div>
+          <div className="games-grid">
+            {s.games.map((g) => (
+              <GameCard key={g.id} g={g} />
+            ))}
+          </div>
+        </div>
+      ))}
+    </>
+  )
+}
+
+function RegularRounds({ games }: { games: GameRow[] }) {
   const groups = useMemo(() => [...new Set(games.map((g) => g.group ?? ''))].filter(Boolean).sort(), [games])
   const [group, setGroup] = useState<string>()
   const currentGroup = groups.length > 1 ? (group ?? groups[0]) : undefined
   const rounds = useMemo(() => {
-    const map = new Map<string, { key: string; label: string; games: GameRow[] }>()
+    const map = new Map<number, { number: number; games: GameRow[] }>()
     for (const g of games) {
       if (currentGroup && g.group !== currentGroup) continue
-      const key = `${g.phase ?? 'x'}-${g.round_number ?? 0}`
-      if (!map.has(key)) map.set(key, { key, label: g.phase === 'regular' ? String(g.round_number) : (g.round_name ?? '?'), games: [] })
-      map.get(key)!.games.push(g)
+      const n = g.round_number ?? 0
+      if (!map.has(n)) map.set(n, { number: n, games: [] })
+      map.get(n)!.games.push(g)
     }
-    return [...map.values()]
+    return [...map.values()].sort((a, b) => a.number - b.number)
   }, [games, currentGroup])
   const initial = rounds.find((r) => r.games.some((g) => g.status !== 'finished')) ?? rounds[rounds.length - 1]
-  const [selected, setSelected] = useState<string>()
-  const current = rounds.find((r) => r.key === (selected ?? initial?.key))
+  const [selected, setSelected] = useState<number>()
+  const round = rounds.find((r) => r.number === (selected ?? initial?.number))
   if (!rounds.length) return <Empty>Sin calendario.</Empty>
   return (
-    <Section title={current?.games[0]?.round_name ?? 'Jornada'} eyebrow={currentGroup ? `Calendario · Grupo ${currentGroup}` : 'Calendario'}>
+    <>
       {currentGroup && <GroupPills groups={groups} value={currentGroup} onChange={setGroup} />}
       <div className="rounds">
         {rounds.map((r) => (
           <button
-            key={r.key}
-            className={`${r.key === current?.key ? 'active' : ''} ${r.games.every((g) => g.status === 'finished') ? 'played' : ''}`}
-            onClick={() => setSelected(r.key)}
+            key={r.number}
+            className={`${r.number === round?.number ? 'active' : ''} ${r.games.every((g) => g.status === 'finished') ? 'played' : ''}`}
+            onClick={() => setSelected(r.number)}
+            title={`Jornada ${r.number}`}
           >
-            {r.label}
+            {r.number}
           </button>
         ))}
       </div>
+      <div className="stage-title">
+        Jornada {round?.number}
+        {currentGroup ? ` · Grupo ${currentGroup}` : ''}
+      </div>
       <div className="games-grid">
-        {current?.games.map((g) => (
+        {round?.games.map((g) => (
           <GameCard key={g.id} g={g} />
         ))}
       </div>
-      <p className="note">Pulsa un partido jugado para ver su estadística completa.</p>
-    </Section>
+    </>
   )
 }
 

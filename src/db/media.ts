@@ -26,14 +26,22 @@ export function applyMedia(db: DB, mediaDir: string): { players: number; logos: 
   const current = `club_id = ? AND competition_season_id IN (SELECT id FROM competition_seasons WHERE is_current = 1)`
 
   db.transaction(() => {
-    const setPhoto = db.prepare('UPDATE players SET photo_nobg_url = ? WHERE id = ?')
+    // Sin pisar la foto oficial de acb.com de quien también tiene ficha en la ACB.
+    const setPhoto = db.prepare(
+      `UPDATE players SET photo_nobg_url = ? WHERE id = ? AND (photo_nobg_url IS NULL OR photo_nobg_url LIKE '%feb.es%' OR photo_nobg_url LIKE 'media/%')`
+    )
     for (const file of list('players', '.webp')) {
       const row = playerId.get(path.basename(file, '.webp').replace(/^f/, '')) as { id: number } | undefined
       if (row) done.players += setPhoto.run(`media/players/${file}`, row.id).changes
     }
 
     const setClubLogo = db.prepare('UPDATE clubs SET logo_url = ? WHERE id = ?')
-    const setTeamLogo = db.prepare(`UPDATE teams SET logo_url = ? WHERE ${current}`)
+    // Temporada en curso y, en temporadas pasadas, los equipos FEB (la FEB solo tiene el escudo
+    // actual; los escudos históricos de acb.com sí se conservan).
+    const setTeamLogo = db.prepare(
+      `UPDATE teams SET logo_url = ? WHERE club_id = ? AND (logo_url IS NULL OR logo_url LIKE '%feb.es%'
+         OR competition_season_id IN (SELECT id FROM competition_seasons WHERE is_current = 1))`
+    )
     for (const file of list('logos', '.png')) {
       const row = clubId.get(path.basename(file, '.png')) as { id: number } | undefined
       if (!row) continue

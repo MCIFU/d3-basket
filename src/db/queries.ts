@@ -174,7 +174,7 @@ export class Queries {
               (SELECT COUNT(*) FROM competition_seasons cs WHERE cs.competition_id = c.id) AS editions,
               (SELECT s.label FROM competition_seasons cs JOIN seasons s ON s.id = cs.season_id
                WHERE cs.competition_id = c.id ORDER BY cs.is_current DESC, s.start_year DESC LIMIT 1) AS current_label
-       FROM competitions c ORDER BY c.tier`
+       FROM competitions c ORDER BY c.tier IS NULL, c.tier`
     )
   }
 
@@ -189,7 +189,7 @@ export class Queries {
        JOIN competitions c ON c.id = cs.competition_id
        JOIN seasons s ON s.id = cs.season_id
        ${code ? 'WHERE c.code = ?' : ''}
-       ORDER BY c.tier, s.start_year DESC`,
+       ORDER BY c.tier IS NULL, c.tier, s.start_year DESC`,
       ...(code ? [code] : [])
     )
   }
@@ -434,7 +434,8 @@ export class Queries {
       `SELECT ${teamCols('t', '')}, c.arena, c.founded_year, t.group_name, co.code AS competition_code, co.name AS competition_name
        FROM teams t ${teamJoins('t', '')}
        JOIN competition_seasons cs ON cs.id = t.competition_season_id JOIN competitions co ON co.id = cs.competition_id
-       WHERE t.competition_season_id IN (${ids.map(() => '?').join(',')}) ORDER BY co.tier, t.group_name, t.name`,
+       -- Solo ligas: los equipos de copa (tier NULL) son los mismos clubes.
+       WHERE t.competition_season_id IN (${ids.map(() => '?').join(',')}) AND co.tier IS NOT NULL ORDER BY co.tier, t.group_name, t.name`,
       ...ids
     ).map((r) => ({
       ...team(r),
@@ -458,7 +459,7 @@ export class Queries {
       `SELECT s.start_year, s.label, co.code AS competition_code, t.id AS team_id, t.name AS team_name
        FROM teams t JOIN competition_seasons cs ON cs.id = t.competition_season_id
        JOIN seasons s ON s.id = cs.season_id JOIN competitions co ON co.id = cs.competition_id
-       WHERE t.club_id = ? ORDER BY s.start_year DESC`,
+       WHERE t.club_id = ? AND co.tier IS NOT NULL ORDER BY s.start_year DESC`,
       clubId
     )
     const season = (year ? seasons.find((s) => s.start_year === year) : undefined) ?? seasons[0]

@@ -27,6 +27,8 @@ from PIL import Image, ImageFilter
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'media' / 'players'
+# Jugadores sin foto en la FEB o sin cara detectable: no se reintentan salvo con --force.
+SKIP = Path(__file__).with_name('players-skip.txt')
 YUNET = Path(__file__).with_name('face_detection_yunet_2023mar.onnx')
 YUNET_URL = 'https://huggingface.co/opencv/face_detection_yunet/resolve/main/face_detection_yunet_2023mar.onnx'
 
@@ -224,11 +226,14 @@ def main():
         return
     pipe = Pipeline()
     only = set(Path(args.refs).read_text().split()) if args.refs else None
+    skip = set(SKIP.read_text().split()) if SKIP.exists() and not args.force else set()
 
     def pending(ref: str) -> bool:
         file = OUT / f'{ref}.webp'
         if only is not None:
             return ref in only
+        if ref in skip:
+            return False
         return args.force or not file.exists() or (args.recheck and needs_recheck(file))
 
     todo = [(ref, url) for ref, url in targets(args.db) if pending(ref)]
@@ -237,21 +242,27 @@ def main():
     if args.limit:
         todo = todo[: args.limit]
     ok = noface = fail = 0
+    failed: list[str] = []
     print(f'{len(todo)} fotos por procesar')
     for i, (ref, url) in enumerate(todo, 1):
         try:
             out = pipe.process(fetch(url))
             if out is None:
                 noface += 1
+                failed.append(ref)
             else:
                 out.save(OUT / f'{ref}.webp', 'WEBP', quality=84, method=6)
                 ok += 1
         except Exception as e:  # noqa: BLE001
             fail += 1
+            failed.append(ref)
             print(f'  ✗ {ref} {url}: {e}', file=sys.stderr)
         if i % 50 == 0:
             print(f'  {i}/{len(todo)}  ok {ok} · sin cara {noface} · errores {fail}', flush=True)
         time.sleep(args.delay)
+    if failed:
+        with SKIP.open('a') as f:
+            f.write('\n'.join(failed) + '\n')
     print(f'✔ {ok} fotos nuevas · {noface} sin cara detectable · {fail} errores')
 
 

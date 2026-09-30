@@ -6,9 +6,9 @@
 import type { DB } from '../../db/database'
 import { Writer } from '../../db/writer'
 import type { HttpClient } from '../core/http'
-import type { NCalendar } from '../types'
+import type { NCalendar, NTeam } from '../types'
 import type { AcbSyncOptions, SyncSummary } from '../acb/sync'
-import { parseFebBoxscore, parseFebCalendar, parseFebGroups, parseFebPlayer, parseFebTeam } from './parsers'
+import { febStage, parseFebBoxscore, parseFebCalendar, parseFebGroups, parseFebPlayer, parseFebResults, parseFebTeam } from './parsers'
 import { FEB_COMPETITIONS, febUrls, type FebCompetition } from './urls'
 
 /** Temporada en curso: desde agosto se considera la nueva. */
@@ -47,7 +47,15 @@ export class FebScraper {
     try {
       log(`▶ ${label}: calendario`)
       opts.onProgress?.({ stage: 'calendar', done: 0, total: 1 })
+      const cup = competition === 'COPA_ESPANA'
+      // Copa: la FEB usa el mismo id de equipo que en la liga. El club es el mismo, pero el equipo de
+      // copa lleva su propia ref para no pisar el enlace del equipo de liga. Sin plantillas ni fichas
+      // (los jugadores son los de la liga) ni enlace de clubes (ya son los de la liga).
+      const own = (t: NTeam): NTeam => (cup ? { ...t, ref: { ...t.ref, id: `${t.ref.id}-copa` } } : t)
+      if (cup) opts = { ...opts, rosters: false, players: false }
       const cal = await this.calendar(g, competition, startYear, label)
+      cal.teams = cal.teams.map(own)
+      cal.games = cal.games.map((x) => ({ ...x, homeTeam: own(x.homeTeam), awayTeam: own(x.awayTeam) }))
       cal.edition.isCurrent = startYear === currentSeasonStart()
       const csId = this.w.transaction(() => {
         const csId = this.w.upsertEdition(cal.edition)
@@ -60,6 +68,20 @@ export class FebScraper {
       summary.teams = cal.teams.length
       summary.games = cal.games.length
       log(`  ${cal.teams.length} equipos, ${cal.games.length} partidos (${cal.games.filter((x) => x.status === 'finished').length} jugados)`)
+
+      const knockout = await this.knockoutGames(g, startYear)
+      if (knockout.length) {
+        this.w.transaction(() => {
+          for (const game of knockout) {
+            const home = this.w.upsertTeam(csId, own(game.homeTeam))
+            const away = this.w.upsertTeam(csId, own(game.awayTeam))
+            this.w.upsertGame(csId, game, home, away)
+          }
+          this.w.refreshRoundDates(csId)
+        })
+        summary.games += knockout.length
+        log(`  ${knockout.length} partidos de eliminatorias (playoffs, permanencia)`)
+      }
 
       if (opts.rosters !== false) {
         log('▶ Plantillas y datos de club')
@@ -86,6 +108,9 @@ export class FebScraper {
           }
         }
       }
+
+      const linked = cup ? 0 : linkFebClubs(this.db, csId)
+      if (linked) log(`  ${linked} clubes enlazados con sus otras temporadas`)
 
       if (opts.players !== false) {
         const maxAge = opts.playerMaxAgeDays ?? 30
@@ -136,6 +161,11 @@ export class FebScraper {
           const url = febUrls.game(g2.feb_id)
           try {
             const box = parseFebBoxscore((await this.http.get(url)).body, g2.feb_id)
+            if (cup) {
+              box.homeTeam = own(box.homeTeam)
+              box.awayTeam = own(box.awayTeam)
+              for (const t of box.teams) t.team = own(t.team)
+            }
             const round = g2.phase != null ? { phase: g2.phase, number: g2.number!, name: g2.name ?? undefined } : undefined
             this.w.saveBoxscore(csId, box, { round })
             summary.boxscores++
@@ -179,17 +209,119 @@ export class FebScraper {
   /**
    * Calendario completo. Si la liga se divide en grupos (Segunda FEB: A y B), la web
    * muestra uno por defecto y el resto se pide por postback; se unen todos y cada
-   * equipo queda marcado con su grupo.
+   * equipo queda marcado con su grupo. Las fases finales (temporadas cerradas de la
+   * Tercera FEB) se guardan como fase aparte, sin grupo.
    */
   private async calendar(g: number, competition: FebCompetition, startYear: number, label: string): Promise<NCalendar> {
     const first = await this.http.get(febUrls.calendar(g, startYear))
     const info = parseFebGroups(first.body)
     if (info.groups.length <= 1) return parseFebCalendar(first.body, competition, startYear, label)
+    const grouped = info.groups.filter((x) => x.regular).length > 1
     const parts: NCalendar[] = []
     for (const group of info.groups) {
       const html = group.value === info.selected ? first.body : (await this.http.post(first.finalUrl, info.postback(group.value))).body
-      parts.push(parseFebCalendar(html, competition, startYear, label, group.name))
+      parts.push(
+        group.regular
+          ? parseFebCalendar(html, competition, startYear, label, grouped ? group.name : undefined)
+          : parseFebCalendar(html, competition, startYear, label, undefined, { id: 'final', name: 'Fase final' })
+      )
     }
     return { ...parts[0], teams: parts.flatMap((c) => c.teams), games: parts.flatMap((c) => c.games) }
   }
+
+
+  /**
+   * Eliminatorias (playoffs, final por el título, permanencia): solo salen en la página de
+   * resultados, una jornada cada vez. Se pide cada fase que no sea de liga regular y, dentro,
+   * cada jornada (cada partido de la serie). Las fases finales que ya trae el calendario
+   * (Tercera FEB) se leen de allí.
+   */
+  private async knockoutGames(g: number, startYear: number): Promise<NCalendar['games']> {
+    const first = await this.http.get(febUrls.results(g, startYear))
+    const info = parseFebGroups(first.body)
+    const inCalendar = new Set(parseFebGroups((await this.http.get(febUrls.calendar(g, startYear))).body).groups.map((x) => x.value))
+    const games: NCalendar['games'] = []
+    for (const group of info.groups.filter((x) => !x.regular && !inCalendar.has(x.value))) {
+      const stage = febStage(group.label)
+      const phase = { id: 'playoff', ...stage }
+      const form = info.postback(group.value)
+      const page = group.value === info.selected ? first.body : (await this.http.post(first.finalUrl, form)).body
+      const parsed = parseFebResults(page, phase)
+      games.push(...parsed.games)
+      // Cada jornada se pide con el estado (viewstate) de la página de su fase.
+      const phaseForm = parseFebGroups(page).postback(group.value)
+      for (const j of parsed.jornadas.filter((x) => !x.selected)) {
+        const html = (await this.http.post(first.finalUrl, { ...phaseForm, __EVENTTARGET: parsed.jornadaField, [parsed.jornadaField]: j.value })).body
+        games.push(...parseFebResults(html, phase).games)
+      }
+    }
+    return games
+  }
+}
+
+const norm = (s: string) =>
+  s
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+
+/** Palabras que identifican a un club (sin genéricas como "club" o "baloncesto"). */
+const GENERIC = new Set(['club', 'baloncesto', 'basket', 'basquet', 'basketball', 'fundacion', 'deportivo', 'deportiva', 'escola', 'escuela', 'asociacion', 'grupo', 'sociedad', 'union', 'ciudad'])
+const tokens = (s: string) => new Set(norm(s).split(' ').filter((w) => w.length >= 4 && !GENERIC.has(w)))
+
+/**
+ * La FEB da a cada equipo un id nuevo cada temporada, así que cada edición crea clubes nuevos.
+ * Se une cada club que solo existe en esta edición con el mismo club de otras temporadas (FEB o
+ * ACB, para ascensos y descensos): mismo pabellón y alguna palabra significativa del nombre en
+ * común, o el mismo nombre. Los filiales (el club ya juega otra liga esa temporada) no se unen.
+ * Si hay dos candidatos igual de buenos no se une ninguno.
+ */
+export function linkFebClubs(db: DB, csId: number): number {
+  const w = new Writer(db)
+  const fresh = db
+    .prepare(
+      `SELECT c.id, c.arena, t.name FROM teams t JOIN clubs c ON c.id = t.club_id
+       WHERE t.competition_season_id = ? AND NOT EXISTS (SELECT 1 FROM teams o WHERE o.club_id = c.id AND o.competition_season_id <> ?)`
+    )
+    .all(csId, csId) as { id: number; arena: string | null; name: string }[]
+  if (!fresh.length) return 0
+  const candidates = db
+    .prepare(
+      `SELECT c.id, c.arena, group_concat(t.name, '|') AS names FROM clubs c
+       JOIN teams t ON t.club_id = c.id
+       -- Sin equipo esa misma temporada en ninguna liga: si lo tiene, este es su filial (Baskonia en Tercera FEB).
+       WHERE NOT EXISTS (
+         SELECT 1 FROM teams o JOIN competition_seasons ocs ON ocs.id = o.competition_season_id
+         WHERE o.club_id = c.id AND ocs.season_id = (SELECT season_id FROM competition_seasons WHERE id = ?))
+       GROUP BY c.id`
+    )
+    .all(csId) as { id: number; arena: string | null; names: string }[]
+  let linked = 0
+  w.transaction(() => {
+    for (const club of fresh) {
+      const words = tokens(club.name)
+      let best: { id: number; score: number } | undefined
+      let tie = false
+      for (const c of candidates) {
+        const names = c.names.split('|')
+        const shared = Math.max(...names.map((n) => [...tokens(n)].filter((w) => words.has(w)).length))
+        const sameName = names.some((n) => norm(n) === norm(club.name))
+        const sameArena = !!club.arena && !!c.arena && norm(club.arena) === norm(c.arena)
+        if (!(sameName || (sameArena && shared >= 1))) continue
+        const score = (sameName ? 10 : 0) + shared + (sameArena ? 1 : 0)
+        if (!best || score > best.score) {
+          best = { id: c.id, score }
+          tie = false
+        } else if (score === best.score) tie = true
+      }
+      if (best && !tie) {
+        w.mergeClub(club.id, best.id)
+        candidates.splice(candidates.findIndex((c) => c.id === best!.id), 1)
+        linked++
+      }
+    }
+  })
+  return linked
 }
