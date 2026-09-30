@@ -1,0 +1,65 @@
+# Web pública en Cloudflare Pages (gratis, sin límite de tráfico), sin depender de Netlify.
+# Cada día descarga los datos nuevos, exporta la base de datos para el navegador y publica.
+#
+# Configuración (una sola vez), en GitHub → Settings → Secrets and variables → Actions:
+#   CLOUDFLARE_API_TOKEN   token con permiso "Cloudflare Pages: Edit"
+#   CLOUDFLARE_ACCOUNT_ID  id de la cuenta de Cloudflare
+# Sin esos secretos el flujo construye la web igualmente (sirve de comprobación) pero no publica.
+name: Web (Cloudflare Pages)
+
+on:
+  schedule:
+    - cron: '17 5 * * *' # cada día a las 05:17 UTC (07:17 en Gijón en verano)
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+concurrency:
+  group: web
+  cancel-in-progress: false
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # La base de datos se conserva entre ejecuciones: cada día solo se pide lo nuevo.
+      - name: Recuperar la base de datos
+        uses: actions/cache/restore@v4
+        with:
+          path: data/d3basket.db
+          key: d3db-${{ github.run_id }}
+          restore-keys: d3db-
+
+      - name: Sincronizar datos y construir la web
+        run: npm run build:site
+
+      - name: Guardar la base de datos
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data/d3basket.db
+          key: d3db-${{ github.run_id }}
+
+      - name: Publicar en Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::warning::Faltan los secretos de Cloudflare: la web se ha construido pero no se publica."
+            exit 0
+          fi
+          npx --yes wrangler@4 pages project create d3-basket --production-branch main 2>/dev/null || true
+          npx --yes wrangler@4 pages deploy dist-web --project-name d3-basket --branch main --commit-dirty=true

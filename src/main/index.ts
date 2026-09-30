@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import path from 'node:path'
 import { defaultDbPath, openDatabase, type DB } from '../db/database'
 import { applyMedia } from '../db/media'
+import { installSeedIfMissing } from '../db/seed'
 import { Writer } from '../db/writer'
 import { Queries } from '../db/queries'
 import { HttpClient } from '../scraper/core/http'
@@ -109,7 +110,11 @@ function registerIpc() {
   })
 }
 
+// Semilla con todas las temporadas: viaja con el instalador (extraResources) o en seed/ al desarrollar.
+const seedPath = () => (app.isPackaged ? path.join(process.resourcesPath, 'seed', 'd3basket.db.gz') : path.resolve('seed', 'd3basket.db.gz'))
+
 app.whenReady().then(() => {
+  installSeedIfMissing(defaultDbPath(), seedPath())
   db = openDatabase()
   applyMedia(db, mediaDir())
   queries = new Queries(db)
