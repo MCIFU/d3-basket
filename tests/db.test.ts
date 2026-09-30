@@ -37,6 +37,17 @@ describe('esquema y escritura', () => {
     expect(n('rounds')).toBe(34)
   })
 
+  it('un calendario sin resultado no borra el marcador sacado de la ficha del partido', () => {
+    const { db, w, cal, csId } = seed()
+    const g = cal.games.find((x) => x.status !== 'finished')!
+    const home = w.findId('team', g.homeTeam.ref)!
+    const away = w.findId('team', g.awayTeam.ref)!
+    w.upsertGame(csId, { ...g, status: 'finished', homeScore: 75, awayScore: 67 }, home, away)
+    w.upsertGame(csId, { ...g, status: 'scheduled', homeScore: undefined, awayScore: undefined }, home, away)
+    const row = db.prepare('SELECT status, home_score, away_score FROM games WHERE id = ?').get(w.findId('game', g.ref)) as any
+    expect(row).toEqual({ status: 'finished', home_score: 75, away_score: 67 })
+  })
+
   it('boxscore + plantilla alimentan la vista de medias y la clasificación', () => {
     const { db, w, csId } = seed()
     w.saveBoxscore(csId, parseBoxscore(fixture('boxscore-105375'), '105375'))

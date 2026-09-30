@@ -65,18 +65,32 @@ export function runChecks(db: DB): CheckResult[] {
     },
     {
       id: 'calendario-descompensado',
-      title: 'Temporadas cerradas con equipos que jugaron distinto número de partidos de liga regular (mismo grupo)',
+      title: 'Temporadas cerradas con equipos con distinto número de partidos de liga regular en el calendario (mismo grupo)',
       level: 'error',
       sql: `WITH played AS (
               SELECT cs.id AS cs, t.group_name AS grupo, t.id AS team, COUNT(*) AS n
               FROM games g JOIN rounds r ON r.id = g.round_id AND r.phase = 'regular'
               JOIN teams t ON t.id IN (g.home_team_id, g.away_team_id)
               JOIN competition_seasons cs ON cs.id = g.competition_season_id
-              WHERE cs.is_current = 0 AND g.status = 'finished' GROUP BY cs.id, t.id)
+              WHERE cs.is_current = 0 GROUP BY cs.id, t.id)
             SELECT c.code || ' ' || s.label AS edicion, COALESCE(p.grupo, '') AS grupo, MIN(p.n) AS min, MAX(p.n) AS max
             FROM played p JOIN competition_seasons cs ON cs.id = p.cs JOIN competitions c ON c.id = cs.competition_id
             JOIN seasons s ON s.id = cs.season_id
             GROUP BY p.cs, p.grupo HAVING MAX(p.n) - MIN(p.n) > 1`
+    },
+    {
+      // La FEB deja en el calendario partidos que no se llegaron a jugar (aplazados sin fecha,
+      // incomparecencias) sin publicar resultado: no es un fallo de la descarga.
+      id: 'sin-resultado-fuente',
+      title: 'Partidos de temporadas cerradas sin resultado en la fuente (no disputados)',
+      level: 'aviso',
+      sql: `SELECT c.code || ' ' || s.label AS edicion, COALESCE(h.group_name, '') AS grupo, h.name AS local, a.name AS visitante,
+                   substr(g.scheduled_at, 1, 10) AS fecha
+            FROM games g JOIN rounds r ON r.id = g.round_id AND r.phase = 'regular'
+            JOIN teams h ON h.id = g.home_team_id JOIN teams a ON a.id = g.away_team_id
+            JOIN competition_seasons cs ON cs.id = g.competition_season_id AND cs.is_current = 0
+            JOIN competitions c ON c.id = cs.competition_id JOIN seasons s ON s.id = cs.season_id
+            WHERE g.status <> 'finished'`
     },
     {
       id: 'club-dos-equipos',

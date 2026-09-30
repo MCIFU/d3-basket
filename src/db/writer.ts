@@ -524,8 +524,12 @@ export class Writer {
     this.db
       .prepare(
         `UPDATE games SET round_id = COALESCE(@round, round_id), home_team_id = @home, away_team_id = @away,
-           scheduled_at = COALESCE(@at, scheduled_at), status = @status,
-           home_score = @hs, away_score = @as, updated_at = @now
+           scheduled_at = COALESCE(@at, scheduled_at),
+           -- Un calendario sin resultado no borra el marcador que ya sacamos de la ficha del partido.
+           status = CASE WHEN @status <> 'finished' AND @hs IS NULL AND status = 'finished' THEN status ELSE @status END,
+           home_score = CASE WHEN @hs IS NULL AND status = 'finished' THEN home_score ELSE @hs END,
+           away_score = CASE WHEN @as IS NULL AND status = 'finished' THEN away_score ELSE @as END,
+           updated_at = @now
          WHERE id = @id`
       )
       .run({ ...values, id })

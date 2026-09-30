@@ -522,7 +522,9 @@ export function parseFebBoxscore(html: string, gameId: string): NBoxscore {
       ]
     }
   })
-  const played = teams.some((t) => t.periods[0].players.some((p) => p.seconds > 0))
+  const hasStats = teams.some((t) => t.periods[0].players.some((p) => p.seconds > 0))
+  // Algunos partidos tienen marcador en la ficha pero no estadística individual.
+  const played = hasStats || homeScore + awayScore > 0
   return {
     gameRef: { source: 'feb', id: gameId, url: febUrls.game(gameId) },
     scheduledAt: when ? madridToUtc(when[1], when[2]) : undefined,
@@ -534,7 +536,7 @@ export function parseFebBoxscore(html: string, gameId: string): NBoxscore {
     periodScores,
     arena,
     referees,
-    teams: played ? teams : []
+    teams: hasStats ? teams : []
   }
 }
 
