@@ -10,9 +10,10 @@ Funciona como **app de escritorio** (Windows/macOS/Linux) y como **web** en cual
 | | |
 |---|---|
 | ✅ Portada | campeones vigentes con sus trofeos, últimos resultados y próxima jornada, líderes con foto, clasificación con forma |
-| ✅ Ligas | por temporada: clasificación, calendario y resultados, estadísticas de equipos (incluidos espectadores) y de jugadores (medias y totales, TS%, eFG%…), palmarés de Liga/Copa/Supercopa desde 1956 y clasificación histórica |
+| ✅ Ligas | por temporada: clasificación, calendario y resultados, estadísticas de equipos (incluidos espectadores) y de jugadores (medias y totales, TS%, eFG%…), palmarés de Liga/Copa/Supercopa desde 1956 y clasificación histórica; **evolución de la clasificación jornada a jornada** con equipos destacados |
 | ✅ Equipos | escudo, pabellón (foto, aforo, ocupación), fundación, web y redes, historia, vitrina de trofeos con años de campeonatos y subcampeonatos, **rendimiento con el puesto en la liga de cada estadística**, líderes con foto, últimos resultados, balance en casa y fuera, plantilla con fotos agrupada por posición, estadísticas y partidos |
 | ✅ Jugadores | foto sin fondo, fecha y lugar de nacimiento, posición, altura, licencia, equipo; **trayectoria completa** (línea de tiempo con escudos y categorías + gráfica de puntos y valoración por temporada), estadísticas completas (por partido, totales y por 40 minutos, con TS%, eFG%, mates, faltas recibidas, +/−…), carrera ACB, récords personales y partido a partido |
+| ✅ Comparador | dos jugadores cara a cara (`#/comparar`), cada uno en la temporada que elijas: barras emparejadas por partido o por 40 minutos, con detalle al pasar el ratón |
 | ✅ Scouting | informes de ojeador con valoración por atributos (en la web, guardados en el navegador con exportación/importación) |
 | ✅ Enlaces reales | cada página tiene su URL (`#/jugador/sergio-llull-20201774`): se puede compartir y abrir en otra pestaña con el botón central o Ctrl+clic |
 | ✅ Scraper ACB | calendario, resultados, plantillas, fichas, boxscores, datos de club, trayectorias y clasificación histórica de **acb.com**; palmarés e historia de **Wikipedia** |
@@ -20,9 +21,9 @@ Funciona como **app de escritorio** (Windows/macOS/Linux) y como **web** en cual
 | ✅ Histórico ACB | temporadas 2025-26 y 2024-25 completas, y trayectoria de todos los jugadores actuales desde su debut |
 | ✅ Segunda y Tercera FEB | mismas páginas y datos que la Primera FEB; ligas divididas en grupos (Segunda: A y B; Tercera: 10 grupos) con clasificación y calendario por grupo |
 | ✅ Eliminatorias y Copa España | playoffs de ascenso, finales y permanencia de las ligas FEB (desde la página de resultados de la FEB), rondas de playoff de la ACB deducidas del cuadro, y la Copa España de la FEB |
-| ✅ Histórico | ACB 2022-23 a 2026-27; FEB (Primera, Segunda, Tercera y Copa) 2024-25 a 2026-27; un mismo club queda unido entre temporadas y ligas |
+| ✅ Histórico | ACB 2021-22 a 2026-27; FEB (Primera, Segunda, Tercera y Copa) 2023-24 a 2026-27; un mismo club queda unido entre temporadas y ligas |
 | ✅ Auditoría | `npm run scrape -- check`: marcadores contra estadísticas, partidos sin estadística, calendarios incompletos, clubes y jugadores duplicados |
-| ✅ Identidad visual | colores y logos oficiales de cada liga; escudos homogéneos y colores de cada club; fotos FEB en primer plano como las de la ACB (ver *Fotos, escudos y colores*) |
+| ✅ Identidad visual | modo claro/oscuro (sigue al sistema o se fija en la cabecera); colores y logos oficiales de cada liga; escudos homogéneos y colores de cada club; fotos FEB en primer plano como las de la ACB (ver *Fotos, escudos y colores*) |
 
 La temporada 2026-27 de la ACB arrancó el 26-27 de septiembre de 2026: la primera sincronización ya trae los 9 resultados y boxscores de la jornada 1 y los 297 partidos restantes del calendario.
 
