@@ -16,6 +16,10 @@ async function boot() {
   if (!window.d3) {
     const { createWebApi } = await import('./web/webApi')
     window.d3 = await createWebApi()
+    if (import.meta.env.VITE_ARTIFACT) {
+      const { withMediaPack } = await import('./web/mediaPack')
+      window.d3 = await withMediaPack(window.d3)
+    }
   }
   createRoot(root).render(
     <StrictMode>

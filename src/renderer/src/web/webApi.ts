@@ -8,14 +8,15 @@
  * - Los informes de scouting se guardan en el navegador (localStorage), ligados al
  *   id oficial del jugador para que sobrevivan a cada actualización de datos.
  */
-import initSqlJs from 'sql.js'
-import wasmUrl from 'sql.js/dist/sql-wasm.wasm?url'
+import type { SqlJsStatic } from 'sql.js'
 import { migrations } from '../../../db/migrations'
 import { Queries } from '../../../db/queries'
 import type { D3Api, ScoutingReport } from '../../../shared/api'
 import { wrapSqlJs } from './sqljs'
 
-const DATA_URL = 'data/d3basket.db.gz'
+// En Claude solo se sirven tipos web estándar: la base de datos va con extensión .wasm
+// (el contenido sigue siendo el .gz; loadDatabaseBytes lo detecta y descomprime).
+const DATA_URL = import.meta.env.VITE_ARTIFACT ? 'data/d3basket-db.wasm' : 'data/d3basket.db.gz'
 const REPORTS_KEY = 'd3basket.reports.v1'
 
 interface StoredReport {
@@ -52,8 +53,21 @@ const writeStore = (items: StoredReport[]) => {
   }
 }
 
+/**
+ * SQLite en WebAssembly. La versión para Claude (VITE_ARTIFACT) usa la compilación en
+ * JavaScript puro de sql.js: ese visor no garantiza WebAssembly.
+ */
+async function loadSql(): Promise<SqlJsStatic> {
+  if (import.meta.env.VITE_ARTIFACT) {
+    const mod = (await import('sql.js/dist/sql-asm-memory-growth.js')) as { default: () => Promise<SqlJsStatic> }
+    return mod.default()
+  }
+  const [{ default: initSqlJs }, { default: wasmUrl }] = await Promise.all([import('sql.js'), import('sql.js/dist/sql-wasm.wasm?url')])
+  return initSqlJs({ locateFile: () => wasmUrl })
+}
+
 export async function createWebApi(): Promise<D3Api> {
-  const [SQL, bytes] = await Promise.all([initSqlJs({ locateFile: () => wasmUrl }), loadDatabaseBytes()])
+  const [SQL, bytes] = await Promise.all([loadSql(), loadDatabaseBytes()])
   const raw = new SQL.Database(bytes)
   if (!bytes) for (const m of migrations) raw.exec(m.sql) // sin datos publicados: esquema vacío
   const db = wrapSqlJs(raw)
