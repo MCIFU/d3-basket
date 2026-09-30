@@ -3,6 +3,7 @@ import type { SearchResult } from '../../shared/api'
 import { PlayerPhoto, TeamLogo } from './components'
 import { fmtDateTime } from './format'
 import { href, navigate, type Route } from './router'
+import { getThemePref, setThemePref, type ThemePref } from './theme'
 
 export function BrandMark({ className = 'brand-mark' }: { className?: string }) {
   return (
@@ -18,10 +19,42 @@ const NAV: { page: Route['page']; label: string; to: string; also?: Route['page'
   { page: 'home', label: 'Inicio', to: href.home() },
   { page: 'leagues', label: 'Ligas', to: href.leagues(), also: ['league', 'game'] },
   { page: 'clubs', label: 'Equipos', to: href.clubs(), also: ['club'] },
-  { page: 'players', label: 'Jugadores', to: href.players(), also: ['player'] },
+  { page: 'players', label: 'Jugadores', to: href.players(), also: ['player', 'compare'] },
   { page: 'scouting', label: 'Scouting', to: href.scouting(), also: ['report'] },
   { page: 'data', label: 'Datos', to: href.data() }
 ]
+
+const THEME_NEXT: Record<ThemePref, ThemePref> = { system: 'light', light: 'dark', dark: 'system' }
+const THEME_LABEL: Record<ThemePref, string> = { system: 'Tema: automático (sistema)', light: 'Tema: claro', dark: 'Tema: oscuro' }
+
+/** Botón de tema: automático → claro → oscuro. */
+function ThemeToggle() {
+  const [pref, setPref] = useState<ThemePref>(getThemePref)
+  const change = () => {
+    const next = THEME_NEXT[pref]
+    setThemePref(next)
+    setPref(next)
+  }
+  return (
+    <button className="theme-toggle" onClick={change} title={THEME_LABEL[pref]} aria-label={THEME_LABEL[pref]}>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+        {pref === 'light' ? (
+          <>
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+          </>
+        ) : pref === 'dark' ? (
+          <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
+        ) : (
+          <>
+            <circle cx="12" cy="12" r="8" />
+            <path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor" />
+          </>
+        )}
+      </svg>
+    </button>
+  )
+}
 
 export function Layout({ route, children }: { route: Route; children: ReactNode }) {
   const [updated, setUpdated] = useState<string | null>(null)
@@ -47,6 +80,7 @@ export function Layout({ route, children }: { route: Route; children: ReactNode 
             ))}
           </nav>
           <Search />
+          <ThemeToggle />
         </div>
       </header>
       <main className="page">{children}</main>

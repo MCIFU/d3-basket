@@ -3,6 +3,10 @@ import { createRoot } from 'react-dom/client'
 import '@fontsource-variable/inter'
 import { App } from './App'
 import './styles.css'
+import { initTheme } from './theme'
+
+// Antes de pintar nada, para no mostrar un destello del tema equivocado.
+initTheme()
 
 const root = document.getElementById('root')!
 

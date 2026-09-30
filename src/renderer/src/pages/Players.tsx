@@ -77,7 +77,10 @@ export function PlayersPage() {
       <div className="page-title">
         <div className="eyebrow">Temporada en curso</div>
         <h1>Jugadores</h1>
-        <p>{players.length} jugadores con licencia en la Liga Endesa, la Primera, la Segunda y la Tercera FEB.</p>
+        <p>
+          {players.length} jugadores con licencia en la Liga Endesa, la Primera, la Segunda y la Tercera FEB.{' '}
+          <a href={href.compare()}>Comparar dos jugadores →</a>
+        </p>
       </div>
       <div className="card">
         <div className="row" style={{ marginBottom: 16 }}>
@@ -227,6 +230,9 @@ export function PlayerPage({ refId, tab = 'resumen' }: { refId: string; tab?: st
             <div className="hero-actions">
               <a className="btn" href={href.newReport(p.ref, p.display_name)}>
                 + Informe de scouting
+              </a>
+              <a className="btn btn-light" href={href.compare(p.ref)}>
+                Comparar
               </a>
               {p.acb_url && (
                 <ExternalLink url={p.acb_url}>

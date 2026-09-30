@@ -12,6 +12,7 @@ export type Route =
   | { page: 'clubs' }
   | { page: 'club'; ref: string; tab?: string; year?: number }
   | { page: 'players' }
+  | { page: 'compare'; a?: string; b?: string }
   | { page: 'player'; ref: string; tab?: string }
   | { page: 'game'; ref: string }
   | { page: 'scouting' }
@@ -51,6 +52,8 @@ export function parseHash(hash: string): Route {
       return b ? { page: 'club', ref: refFrom(b), tab: c, year } : { page: 'clubs' }
     case 'jugadores':
       return { page: 'players' }
+    case 'comparar':
+      return { page: 'compare', a: b && b !== '_' ? refFrom(b) : undefined, b: c ? refFrom(c) : undefined }
     case 'jugador':
       return b ? { page: 'player', ref: refFrom(b), tab: c } : { page: 'players' }
     case 'partido':
@@ -77,6 +80,8 @@ export const href = {
   club: (ref: string, name: string, tab?: string, year?: number) =>
     withYear(`#/equipo/${slugify(name)}-${ref}${tab ? `/${tab}` : ''}`, year),
   players: () => '#/jugadores',
+  /** Los huecos vacíos se marcan con '_' para que B no pase a ser A. */
+  compare: (a?: string, b?: string) => (a || b ? `#/comparar/${a ?? '_'}${b ? `/${b}` : ''}` : '#/comparar'),
   player: (ref: string, name: string, tab?: string) => `#/jugador/${slugify(name)}-${ref}${tab ? `/${tab}` : ''}`,
   game: (ref: string) => `#/partido/${ref}`,
   scouting: () => '#/scouting',
