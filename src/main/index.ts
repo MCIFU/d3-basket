@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, nativeTheme, shell } from 'electron'
 import path from 'node:path'
 import { defaultDbPath, openDatabase, type DB } from '../db/database'
 import { applyMedia } from '../db/media'
@@ -18,6 +18,9 @@ let syncing = false
 // Fotos y escudos procesados: se copian junto al renderer (public/ de electron-vite).
 const mediaDir = () => (app.isPackaged ? path.join(__dirname, '../renderer/media') : path.resolve('public', 'media'))
 
+// Fondo de la ventana mientras carga, del tema del sistema (sin fogonazo blanco en modo oscuro).
+const windowBackground = () => (nativeTheme.shouldUseDarkColors ? '#0d1117' : '#f4f6f9')
+
 function createWindow() {
   win = new BrowserWindow({
     width: 1400,
@@ -25,7 +28,7 @@ function createWindow() {
     minWidth: 1000,
     minHeight: 640,
     title: 'D3 Basket',
-    backgroundColor: '#f4f6f9',
+    backgroundColor: windowBackground(),
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
@@ -44,7 +47,7 @@ function createWindow() {
           width: 1400,
           height: 900,
           autoHideMenuBar: true,
-          backgroundColor: '#f4f6f9',
+          backgroundColor: windowBackground(),
           webPreferences: { preload: path.join(__dirname, '../preload/index.js'), contextIsolation: true, sandbox: true }
         }
       }
