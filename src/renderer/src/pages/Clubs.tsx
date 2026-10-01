@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { ClubData, ClubHonour } from '../../../shared/api'
 import {
+  CardPhoto,
   DataTable,
   Empty,
   ExternalLink,
@@ -17,7 +18,7 @@ import {
   useLoad,
   type Column
 } from '../components'
-import { LICENSE_LABEL, age, initials, int, luminance, mix, num, pct, teamColor } from '../format'
+import { LICENSE_LABEL, age, int, luminance, mix, num, pct, teamColor } from '../format'
 import { brandVars, leagueTheme } from '../leagues'
 import { href, navigate } from '../router'
 import { PlayerStatsTable } from './StatTables'
@@ -219,7 +220,7 @@ function TeamLeaders({ data }: { data: ClubData }) {
           <div className="lc-top" style={{ background: `linear-gradient(160deg, ${color}, ${color}bb)` }}>
             <span className="lc-cat">{label}</span>
             <span className="lc-val">{num(l.value)}</span>
-            {l.photo_nobg ? <img src={l.photo_nobg} alt="" loading="lazy" /> : <span className="rc-initials">{initials(l.display_name)}</span>}
+            <CardPhoto src={l.photo_nobg} name={l.display_name} />
           </div>
           <div className="lc-body">
             <div style={{ fontWeight: 700 }}>{l.display_name}</div>
@@ -370,14 +371,22 @@ function ClubSummary({ data }: { data: ClubData }) {
         <div className="stack">
           <CabinetMini data={data} />
           <Section title="Pabellón">
-            {club.arena_photo_url && <img className="arena-photo" src={club.arena_photo_url} alt={club.arena ?? ''} loading="lazy" />}
+            {club.arena_photo_url && <img className="arena-photo" src={club.arena_photo_url} alt={club.arena ?? ''} loading="lazy" onError={(e) => (e.currentTarget.style.display = 'none')} />}
             <dl className="kv">
               <dt>Nombre</dt>
               <dd>{club.arena ?? '—'}</dd>
-              <dt>Aforo</dt>
-              <dd>{club.arena_capacity ? `${int(club.arena_capacity)} espectadores` : '—'}</dd>
-              <dt>Dirección</dt>
-              <dd>{club.arena_address ?? '—'}</dd>
+              {club.arena_capacity ? (
+                <>
+                  <dt>Aforo</dt>
+                  <dd>{int(club.arena_capacity)} espectadores</dd>
+                </>
+              ) : null}
+              {club.arena_address && (
+                <>
+                  <dt>Dirección</dt>
+                  <dd>{club.arena_address}</dd>
+                </>
+              )}
               {data.stats?.attendance_avg != null && (
                 <>
                   <dt>Asistencia media</dt>
@@ -468,7 +477,7 @@ function Roster({ data }: { data: ClubData }) {
             <a key={r.player_id} className={`roster-card ${r.is_active ? '' : 'inactive'}`} href={href.player(r.player_ref, r.display_name)}>
               <div className="rc-top" style={{ background: `linear-gradient(160deg, ${color}, ${color}aa)` }}>
                 <span className="rc-num">{r.jersey_number}</span>
-                {r.photo_nobg ? <img src={r.photo_nobg} alt="" loading="lazy" /> : <span className="rc-initials">{initials(r.display_name)}</span>}
+                <CardPhoto src={r.photo_nobg} name={r.display_name} />
               </div>
               <div className="rc-body">
                 <div className="rc-name">{r.display_name}</div>

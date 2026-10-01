@@ -135,6 +135,14 @@ export function PlayerPhoto({
   )
 }
 
+/** Foto recortada de ficha (plantillas, índice, líderes): si no carga, iniciales. */
+export function CardPhoto({ src, name }: { src?: string | null; name: string }) {
+  const [failed, setFailed] = useState(false)
+  useEffect(() => setFailed(false), [src])
+  if (!src || failed) return <span className="rc-initials">{initials(name)}</span>
+  return <img src={src} alt="" loading="lazy" onError={() => setFailed(true)} />
+}
+
 export function PlayerLink({ refId, name, children }: { refId: string; name: string; children?: ReactNode }) {
   return (
     <a className="player-link" href={href.player(refId, name)}>
