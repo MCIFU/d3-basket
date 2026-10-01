@@ -350,7 +350,7 @@ a.league-card:hover { border-color: var(--brand); }
 .champion-card { grid-template-columns: auto minmax(0, 1fr); }
 .champion-card .chip { white-space: normal; height: auto; min-height: 26px; padding: 4px 10px; }
 .stat-tile { min-width: 0; }
-.stat-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stat-label { overflow-wrap: anywhere; line-height: 1.25; }
 .main-nav { scrollbar-width: none; }
 .main-nav::-webkit-scrollbar, .tabs::-webkit-scrollbar { display: none; }
 
@@ -692,3 +692,14 @@ h2 { font-stretch: 84%; word-spacing: .04em; }
   .hero .stat-label { letter-spacing: .03em; font-size: 10px; white-space: normal; overflow-wrap: anywhere; }
   .hero-actions .btn { height: 34px; padding: 0 12px; font-size: 13px; }
 }
+
+/* Acta de partido: en pantallas estrechas el dorsal y el nombre se quedan fijos al desplazar. */
+@media (max-width: 900px) {
+  .box-table th:nth-child(-n+2), .box-table td:nth-child(-n+2) { position: sticky; z-index: 1; background: var(--surface); }
+  .box-table th:nth-child(1), .box-table td:nth-child(1) { left: 0; min-width: 34px; }
+  .box-table th:nth-child(2), .box-table td:nth-child(2) { left: 34px; max-width: 132px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 1px 0 0 var(--line); }
+  .box-table tfoot td { background: var(--surface-2); }
+}
+.table-wrap { -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+.empty-state { display: grid; justify-items: start; gap: 10px; max-width: 60ch; padding: 8px 4px; }
+.empty-state p { margin: 0; color: var(--ink-2); }

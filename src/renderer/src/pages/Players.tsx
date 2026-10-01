@@ -9,6 +9,7 @@ import {
   Loading,
   Minutes,
   PlayerPhoto,
+  RankSheet,
   Section,
   Segmented,
   StatTile,
@@ -365,44 +366,15 @@ const SHEET: { title: string; rows: SheetRow[] }[] = [
 
 /** Hoja de estadística de la temporada con el puesto del jugador en su liga en cada fila. */
 function StatSheet({ s, ranks, league }: { s: PlayerStatRow; ranks: PlayerData['ranks']; league?: string }) {
-  const ranked = Object.keys(ranks).length > 0
+  const groups = SHEET.map((g) => ({
+    title: g.title,
+    rows: g.rows.map((r) => ({ label: r.label, value: r.value(s), sub: r.sub?.(s), rank: ranks[r.key as string] }))
+  }))
   return (
     <>
-      <div className="stat-sheet">
-        {SHEET.map((g) => (
-          <div key={g.title} className="sheet-group">
-            <h3>{g.title}</h3>
-            {g.rows.map((r) => {
-              const rk = ranks[r.key as string]
-              const share = rk ? (rk.of > 1 ? 1 - (rk.rank - 1) / (rk.of - 1) : 1) : 0
-              return (
-                <div key={r.key as string} className="sheet-row">
-                  <span className="sr-label">
-                    {r.label}
-                    {r.sub && <small>{r.sub(s)}</small>}
-                  </span>
-                  <span className="sr-val">{r.value(s)}</span>
-                  <span className={`sr-rank${rk && rk.rank <= Math.max(3, rk.of * 0.1) ? ' top' : ''}`} title={rk ? `${rk.rank}º de ${rk.of} en ${league ?? 'su liga'}` : undefined}>
-                    {rk ? (
-                      <>
-                        <span className="sr-bar" aria-hidden="true">
-                          <i style={{ width: `${Math.max(4, share * 100)}%` }} />
-                        </span>
-                        <b>{rk.rank}º</b>
-                        <span className="sr-of">/{rk.of}</span>
-                      </>
-                    ) : (
-                      <span className="sr-of">—</span>
-                    )}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
-        ))}
-      </div>
+      <RankSheet groups={groups} scope={league} />
       <p className="note">
-        {ranked
+        {Object.keys(ranks).length
           ? `Puesto entre los jugadores de ${league ?? 'su liga'} que han disputado al menos el 40 % de los partidos (los porcentajes exigen además un mínimo de intentos).`
           : 'Todavía no ha jugado el 40 % de los partidos de su liga: sin puesto en la clasificación de estadísticas.'}
       </p>

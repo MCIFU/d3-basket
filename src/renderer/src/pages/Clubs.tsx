@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { ClubData, ClubHonour } from '../../../shared/api'
 import {
   CardPhoto,
+  RankSheet,
   DataTable,
   Empty,
   ExternalLink,
@@ -234,51 +235,52 @@ function TeamLeaders({ data }: { data: ClubData }) {
   )
 }
 
-export function RankTile({ label, value, rank, of, sub }: { label: string; value: string; rank?: number; of: number; sub?: string }) {
-  const cls = rank == null ? '' : rank <= 3 ? 'top' : rank > of - 3 ? 'bottom' : ''
-  return (
-    <StatTile
-      label={label}
-      value={value}
-      sub={
-        <>
-          {rank != null && (
-            <span className={`rank-badge ${cls}`} style={{ marginLeft: 0 }}>
-              {rank}º de {of}
-            </span>
-          )}{' '}
-          {sub}
-        </>
-      }
-    />
-  )
-}
-
 function Performance({ data }: { data: ClubData }) {
   const s = data.stats
   if (!s) return null
   const r = data.ranks
   const n = data.teamsInLeague
+  const rk = (k: string) => (r[k] != null ? { rank: r[k], of: n } : undefined)
   const home = data.games.filter((g) => g.status === 'finished' && g.home.team_id === data.team?.team_id)
   const away = data.games.filter((g) => g.status === 'finished' && g.away.team_id === data.team?.team_id)
   const wins = (list: typeof home, isHome: boolean) =>
     list.filter((g) => (isHome ? g.home_score! > g.away_score! : g.away_score! > g.home_score!)).length
   return (
     <Section title="Rendimiento de la temporada" eyebrow={`${data.season?.label} · puesto entre los ${n} equipos de la liga`}>
-      <div className="stat-tiles">
-        <RankTile label="Puntos" value={num(s.ppg)} rank={r.ppg} of={n} />
-        <RankTile label="Recibidos" value={num(s.opp_ppg)} rank={r.opp_ppg} of={n} />
-        <RankTile label="Diferencia" value={num(s.diff_pg)} rank={r.diff_pg} of={n} />
-        <RankTile label="Rebotes" value={num(s.rpg)} rank={r.rpg} of={n} />
-        <RankTile label="Asistencias" value={num(s.apg)} rank={r.apg} of={n} />
-        <RankTile label="Robos" value={num(s.spg)} rank={r.spg} of={n} />
-        <RankTile label="Tapones" value={num(s.bpg)} rank={r.bpg} of={n} />
-        <RankTile label="Pérdidas" value={num(s.tpg)} rank={r.tpg} of={n} />
-        <RankTile label="Valoración" value={num(s.pirpg)} rank={r.pirpg} of={n} />
-        <RankTile label="T3%" value={pct(s.fg3_pct)} rank={r.fg3_pct} of={n} />
-        <RankTile label="TS%" value={pct(s.ts_pct)} rank={r.ts_pct} of={n} />
-        <RankTile label="Público" value={int(s.attendance_avg)} rank={s.attendance_avg != null ? r.attendance_avg : undefined} of={n} />
-      </div>
+      <RankSheet
+        scope={data.competition?.name}
+        groups={[
+          {
+            title: 'Ataque',
+            rows: [
+              { label: 'Puntos', value: num(s.ppg), sub: `${int(s.pts)} en total`, rank: rk('ppg') },
+              { label: 'True shooting', value: pct(s.ts_pct), sub: `eFG ${pct(s.efg_pct)}`, rank: rk('ts_pct') },
+              { label: 'Triples', value: pct(s.fg3_pct), sub: `${s.fg3m}/${s.fg3a}`, rank: rk('fg3_pct') },
+              { label: 'Asistencias', value: num(s.apg), rank: rk('apg') }
+            ]
+          },
+          {
+            title: 'Defensa y rebote',
+            rows: [
+              { label: 'Recibidos', value: num(s.opp_ppg), sub: 'menos es mejor', rank: rk('opp_ppg') },
+              { label: 'Rebotes', value: num(s.rpg), sub: `${num(s.orpg)} of. · ${num(s.drpg)} def.`, rank: rk('rpg') },
+              { label: 'Robos', value: num(s.spg), rank: rk('spg') },
+              { label: 'Tapones', value: num(s.bpg), rank: rk('bpg') }
+            ]
+          },
+          {
+            title: 'Global',
+            rows: [
+              { label: 'Diferencia', value: (s.diff_pg > 0 ? '+' : '') + num(s.diff_pg), sub: 'puntos por partido', rank: rk('diff_pg') },
+              { label: 'Valoración', value: num(s.pirpg), rank: rk('pirpg') },
+              { label: 'Pérdidas', value: num(s.tpg), sub: 'menos es mejor', rank: rk('tpg') },
+              ...(s.attendance_avg != null
+                ? [{ label: 'Público', value: int(s.attendance_avg), sub: 'espectadores de media', rank: rk('attendance_avg') }]
+                : [])
+            ]
+          }
+        ]}
+      />
       <div className="row mt">
         <span className="chip win">
           Balance {s.wins}-{s.losses}

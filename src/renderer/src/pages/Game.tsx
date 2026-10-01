@@ -151,7 +151,7 @@ function BoxTable({ team }: { team: GameDetail['teams'][number] }) {
       actions={team.head_coach ? <span className="muted">Entrenador: {team.head_coach}</span> : undefined}
     >
       <div className="table-wrap">
-        <table className="table">
+        <table className="table box-table">
           <thead>
             <tr>
               <th>#</th>

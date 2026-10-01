@@ -143,6 +143,58 @@ export function CardPhoto({ src, name }: { src?: string | null; name: string }) 
   return <img src={src} alt="" loading="lazy" onError={() => setFailed(true)} />
 }
 
+export interface RankRow {
+  label: string
+  value: string
+  sub?: string
+  rank?: { rank: number; of: number }
+}
+
+/**
+ * Hoja de estadística: grupos de filas con la cifra, su detalle y el puesto en la liga
+ * con una barra de percentil (el top 10 % en el color de marca). Jugador y club.
+ */
+export function RankSheet({ groups, scope }: { groups: { title: string; rows: RankRow[] }[]; scope?: string }) {
+  return (
+    <div className="stat-sheet">
+      {groups.map((g) => (
+        <div key={g.title} className="sheet-group">
+          <h3>{g.title}</h3>
+          {g.rows.map((r) => {
+            const rk = r.rank
+            const share = rk ? (rk.of > 1 ? 1 - (rk.rank - 1) / (rk.of - 1) : 1) : 0
+            return (
+              <div key={r.label} className="sheet-row">
+                <span className="sr-label">
+                  {r.label}
+                  {r.sub && <small>{r.sub}</small>}
+                </span>
+                <span className="sr-val">{r.value}</span>
+                <span
+                  className={`sr-rank${rk && rk.rank <= Math.max(1, Math.round(rk.of * 0.1)) ? ' top' : ''}`}
+                  title={rk ? `${rk.rank}º de ${rk.of}${scope ? ` en ${scope}` : ''}` : undefined}
+                >
+                  {rk ? (
+                    <>
+                      <span className="sr-bar" aria-hidden="true">
+                        <i style={{ width: `${Math.max(4, share * 100)}%` }} />
+                      </span>
+                      <b>{rk.rank}º</b>
+                      <span className="sr-of">/{rk.of}</span>
+                    </>
+                  ) : (
+                    <span className="sr-of">—</span>
+                  )}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function PlayerLink({ refId, name, children }: { refId: string; name: string; children?: ReactNode }) {
   return (
     <a className="player-link" href={href.player(refId, name)}>

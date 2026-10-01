@@ -118,7 +118,16 @@ export function ScoutingPage() {
       )}
       {reports.length === 0 ? (
         <Section>
-          <Empty>Todavía no hay informes.</Empty>
+          <div className="empty-state">
+            <h3>Todavía no hay informes</h3>
+            <p>
+              Un informe recoge tu valoración de un jugador: atributos del 1 al 10, rol, puntos fuertes y débiles y una
+              recomendación (fichar, seguir o descartar). Se crea desde la ficha del jugador.
+            </p>
+            <a className="btn" href={href.players()}>
+              Elegir un jugador
+            </a>
+          </div>
         </Section>
       ) : (
         reports.map((r) => <ReportCard key={r.id} r={r} showPlayer />)
