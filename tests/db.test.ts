@@ -3,7 +3,7 @@ import path from 'node:path'
 import zlib from 'node:zlib'
 import { describe, expect, it } from 'vitest'
 import { openDatabase } from '../src/db/database'
-import { Writer } from '../src/db/writer'
+import { Writer, cleanName } from '../src/db/writer'
 import { parseBoxscore, parseCalendar, parseRoster } from '../src/scraper/acb/parsers'
 
 const fixture = (name: string) =>
@@ -72,5 +72,14 @@ describe('esquema y escritura', () => {
     const lines = db.prepare('SELECT COUNT(*) n FROM player_game_stats WHERE period = 0').get() as any
     expect(lines.n).toBeGreaterThan(20)
     expect(lines.n).toBeLessThan(30)
+  })
+})
+
+describe('nombres publicados', () => {
+  it('quita puntuación suelta y pone mayúscula inicial', () => {
+    expect(cleanName(',alberto Vicente Sabariego')).toBe('Alberto Vicente Sabariego')
+    expect(cleanName('  Jose  Luis  Pérez ')).toBe('Jose Luis Pérez')
+    expect(cleanName('A.J. Slaughter')).toBe('A.J. Slaughter')
+    expect(cleanName("D'Angelo Harrison")).toBe("D'Angelo Harrison")
   })
 })

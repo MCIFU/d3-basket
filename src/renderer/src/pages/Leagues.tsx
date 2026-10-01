@@ -35,14 +35,14 @@ export function LeaguesPage() {
         <h1>Ligas</h1>
         <p>Baloncesto profesional y semiprofesional español.</p>
       </div>
-      <div className="grid grid-4">
+      <div className="league-grid">
         {comps.map((c) => (
           <LeagueCard key={c.code} code={c.code} name={c.name} soon={c.editions === 0}>
-            <div className="muted">Temporada {c.current_label}</div>
-            <div className="row" style={{ marginTop: 12 }}>
-              <span className="chip brand">
-                {c.editions === 0 ? 'Próximamente' : `${c.editions} temporada${c.editions === 1 ? '' : 's'} con datos`}
-              </span>
+            <div className="lc-meta">
+              <span>Temporada {c.current_label}</span>
+            </div>
+            <div className="lc-meta">
+              <span>{c.editions === 0 ? 'Próximamente' : `${c.editions} temporada${c.editions === 1 ? '' : 's'} con datos`}</span>
             </div>
           </LeagueCard>
         ))}
@@ -57,10 +57,10 @@ export function LeagueCard({ code, name, soon, children }: { code: string; name:
   const body = (
     <>
       <span className="league-card-stripe" />
+      <div className="lc-head">{t && <img className="league-card-logo" src={t.logo} alt="" loading="lazy" />}</div>
       <div className="tier">{t?.division}</div>
       <h3>{name}</h3>
       {children}
-      {t && <img className="league-card-logo" src={t.logo} alt="" loading="lazy" />}
     </>
   )
   const style = t ? brandVars(t.color, t.color2) : undefined

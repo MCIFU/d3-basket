@@ -12,7 +12,7 @@ import {
   Trophy,
   useLoad
 } from '../components'
-import { num, teamColor } from '../format'
+import { num } from '../format'
 import { href } from '../router'
 import { LeagueCard, StandingsTable } from './Leagues'
 
@@ -120,8 +120,6 @@ export function HomePage() {
             )}
           </div>
 
-          <LeaderCards leaders={data.leaders} />
-
           <div className="grid grid-main mt">
             <Section
               eyebrow={`Liga Endesa ${edition.season_label}`}
@@ -144,17 +142,29 @@ export function HomePage() {
 
 function LeagueCards({ data }: { data: HomeData }) {
   return (
-    <div className="grid grid-4">
+    <div className="league-grid">
       {data.leagues.map((l) => (
         <LeagueCard key={l.code} code={l.code} name={l.name} soon={!l.edition}>
           {l.edition ? (
             <>
-              <div className="muted">
-                {l.edition.season_label} · {l.edition.finished} de {l.edition.games} partidos jugados
+              <div
+                className="season-progress"
+                role="progressbar"
+                aria-label={`Temporada ${l.edition.season_label}`}
+                aria-valuemin={0}
+                aria-valuemax={l.edition.games}
+                aria-valuenow={l.edition.finished}
+              >
+                <span style={{ width: `${l.edition.games ? (100 * l.edition.finished) / l.edition.games : 0}%` }} />
               </div>
-              <div className="row" style={{ marginTop: 12 }}>
-                <span className="chip brand">{l.edition.teams} equipos</span>
-                {l.code === 'ACB' && <span className="chip">{data.counts.honours} finales históricas</span>}
+              <div className="lc-meta">
+                <span>{l.edition.season_label}</span>
+                <span>
+                  {l.edition.finished}/{l.edition.games} partidos
+                </span>
+              </div>
+              <div className="lc-meta">
+                <span>{l.edition.teams} equipos</span>
               </div>
             </>
           ) : (
@@ -170,41 +180,6 @@ function LeagueCards({ data }: { data: HomeData }) {
 
 export const LEADER_LABELS = { pirpg: 'Valoración', ppg: 'Puntos', rpg: 'Rebotes', apg: 'Asistencias' } as const
 type LeaderKey = keyof typeof LEADER_LABELS
-
-function LeaderCards({ leaders }: { leaders: HomeData['leaders'] }) {
-  const cards = (Object.keys(LEADER_LABELS) as LeaderKey[]).flatMap((k) => (leaders[k][0] ? [{ k, l: leaders[k][0] }] : []))
-  if (!cards.length) return null
-  return (
-    <div className="mt">
-      <div className="card-head">
-        <div>
-          <div className="eyebrow">Líderes de la temporada</div>
-          <h2>Los mejores por partido</h2>
-        </div>
-      </div>
-      <div className="leader-cards">
-        {cards.map(({ k, l }) => {
-          const c = teamColor(l.team.color)
-          return (
-            <a key={k} className="leader-card" href={href.player(l.player_ref, l.display_name)}>
-              <div className="lc-top" style={{ background: `linear-gradient(160deg, ${c}, ${c}bb)` }}>
-                <span className="lc-cat">{LEADER_LABELS[k]}</span>
-                <span className="lc-val">{num(l.value)}</span>
-                {l.photo_nobg ? <img src={l.photo_nobg} alt="" loading="lazy" /> : null}
-              </div>
-              <div className="lc-body">
-                <div style={{ fontWeight: 700 }}>{l.display_name}</div>
-                <div className="row small muted" style={{ gap: 6 }}>
-                  <TeamLogo src={l.team.logo} name={l.team.name} size={16} /> {l.team.name}
-                </div>
-              </div>
-            </a>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
 
 export function LeadersBox({ leaders }: { leaders: Record<LeaderKey, LeaderRow[]> }) {
   const [stat, setStat] = useState<LeaderKey>('pirpg')

@@ -26,6 +26,21 @@ import { CareerChart, CareerTimeline, FullStatsTable, buildCareer, careerLine, c
 
 // ───────────────────────── Índice ─────────────────────────
 
+type SortKey = 'pirpg' | 'ppg' | 'games' | 'name'
+const SORTS: { id: SortKey; label: string }[] = [
+  { id: 'pirpg', label: 'valoración' },
+  { id: 'ppg', label: 'puntos' },
+  { id: 'games', label: 'partidos' },
+  { id: 'name', label: 'nombre' }
+]
+
+/** Primero quien ha jugado esta temporada; dentro, por la estadística elegida. */
+function sortPlayers(list: PlayerIndexRow[], key: SortKey): PlayerIndexRow[] {
+  if (key === 'name') return [...list].sort((a, b) => a.display_name.localeCompare(b.display_name, 'es'))
+  const v = (p: PlayerIndexRow) => (key === 'games' ? p.games : (p[key] ?? -1))
+  return [...list].sort((a, b) => Number(b.games > 0) - Number(a.games > 0) || v(b) - v(a) || a.display_name.localeCompare(b.display_name, 'es'))
+}
+
 export function PlayersPage() {
   const [players, error] = useLoad(() => window.d3.players(), [])
   const [q, setQ] = useState('')
@@ -33,16 +48,17 @@ export function PlayersPage() {
   const [pos, setPos] = useState('')
   const [league, setLeague] = useState('')
   const [view, setView] = useState<'cards' | 'table'>('cards')
+  const [sort, setSort] = useState<SortKey>('pirpg')
   const list = useMemo(
     () =>
-      (players ?? []).filter(
+      sortPlayers((players ?? []).filter(
         (p) =>
           (!q || p.display_name.toLowerCase().includes(q.toLowerCase()) || (p.nationality ?? '').toLowerCase().includes(q.toLowerCase())) &&
           (!team || p.team.club_ref === team) &&
           (!league || p.competition_code === league) &&
           (!pos || p.position === pos)
-      ),
-    [players, q, team, pos, league]
+      ), sort),
+    [players, q, team, pos, league, sort]
   )
   if (!players) return <Loading error={error} />
   const teams = [...new Map(players.map((p) => [p.team.club_ref, p.team])).values()].sort((a, b) => a.name.localeCompare(b.name))
@@ -83,8 +99,8 @@ export function PlayersPage() {
         </p>
       </div>
       <div className="card">
-        <div className="row" style={{ marginBottom: 16 }}>
-          <input className="input" placeholder="Nombre o nacionalidad" value={q} onChange={(e) => setQ(e.target.value)} />
+        <div className="row filter-bar" style={{ marginBottom: 16 }}>
+          <input className="input" placeholder="Nombre o nacionalidad" aria-label="Buscar por nombre o nacionalidad" value={q} onChange={(e) => setQ(e.target.value)} />
           <select className="select" value={league} onChange={(e) => (setLeague(e.target.value), setTeam(''))}>
             <option value="">Todas las ligas</option>
             {[...new Set(players.map((p) => p.competition_code))].map((c) => (
@@ -107,6 +123,13 @@ export function PlayersPage() {
               <option key={p}>{p}</option>
             ))}
           </select>
+          <select className="select" value={sort} onChange={(e) => setSort(e.target.value as SortKey)} aria-label="Ordenar por">
+            {SORTS.map((s) => (
+              <option key={s.id} value={s.id}>
+                Ordenar: {s.label}
+              </option>
+            ))}
+          </select>
           <span className="small muted">{list.length} resultados</span>
           <span className="spacer" />
           <Segmented
@@ -127,7 +150,7 @@ export function PlayersPage() {
               return (
                 <a key={`${p.player_ref}-${p.team.team_id}`} className="roster-card" href={href.player(p.player_ref, p.display_name)}>
                   <div className="rc-top" style={{ background: `linear-gradient(160deg, ${c}, ${c}aa)` }}>
-                    <span className="rc-num">{p.jersey_number}</span>
+                    {/^\d+$/.test(p.jersey_number ?? '') && <span className="rc-num">{p.jersey_number}</span>}
                     {p.photo_nobg ? <img src={p.photo_nobg} alt="" loading="lazy" /> : <span className="rc-initials">{initials(p.display_name)}</span>}
                   </div>
                   <div className="rc-body">
@@ -135,9 +158,12 @@ export function PlayersPage() {
                     <div className="rc-sub row" style={{ gap: 6, flexWrap: 'nowrap' }}>
                       <TeamLogo src={p.team.logo} name={p.team.name} size={16} />
                       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {p.team.short_name ?? p.team.name} · {p.position ?? ''}
+                        {[p.team.short_name ?? p.team.name, p.position].filter(Boolean).join(' · ')}
                       </span>
                     </div>
+                    {!p.games ? (
+                      <div className="rc-stats rc-empty">Sin partidos esta temporada</div>
+                    ) : (
                     <div className="rc-stats">
                       <span>
                         <b>{num(p.ppg)}</b>PTS
@@ -152,6 +178,7 @@ export function PlayersPage() {
                         <b>{num(p.pirpg)}</b>VAL
                       </span>
                     </div>
+                    )}
                   </div>
                 </a>
               )
