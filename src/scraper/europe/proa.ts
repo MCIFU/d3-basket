@@ -63,7 +63,7 @@ export class ProaAdapter implements LeagueAdapter {
     return d
   }
 
-  async load(startYear: number): Promise<LeagueData> {
+  async load(startYear: number, known: Map<string, { home: number; away: number }>): Promise<LeagueData> {
     if (startYear !== currentSeasonStart()) throw new Error('ProA: solo está disponible la temporada en curso')
     const ics = (await this.http.get(CAL)).body.replace(/\r?\n[ \t]/g, '')
     const events = ics.split('BEGIN:VEVENT').slice(1).map((e) => ({
@@ -90,7 +90,12 @@ export class ProaAdapter implements LeagueAdapter {
       let homeScore: number | undefined
       let awayScore: number | undefined
       // Partido ya jugado (más de 3 h desde el inicio): el marcador sale de la estadística final.
-      if (Date.parse(at) + 3 * 3600_000 < Date.now()) {
+      const done = known.get(e.id!)
+      if (done) {
+        homeScore = done.home
+        awayScore = done.away
+        status = 'finished'
+      } else if (Date.parse(at) + 3 * 3600_000 < Date.now()) {
         const live = await this.liveData(e.id!).catch(() => undefined)
         if (live?.stats.length) {
           const pts = (side: number) => live.stats.filter((s) => s[2] === side).reduce((n, s) => n + (s[6] ?? 0), 0)

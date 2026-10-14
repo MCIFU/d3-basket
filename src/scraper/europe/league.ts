@@ -20,7 +20,8 @@ export interface LeagueAdapter {
   source: SourceName
   competition: CompetitionCode
   name: string
-  load(startYear: number): Promise<LeagueData>
+  /** `known`: partidos ya terminados en la base de datos (id → marcador), para no volver a pedirlos. */
+  load(startYear: number, known: Map<string, { home: number; away: number }>): Promise<LeagueData>
   roster?(team: NTeam, startYear: number): Promise<NRosterEntry[]>
   boxscore?(game: NGame, startYear: number): Promise<NBoxscore | undefined>
 }
@@ -44,7 +45,19 @@ export async function syncLeague(db: DB, http: HttpClient, a: LeagueAdapter, opt
   const summary: SyncSummary = { edition: label, competitionSeasonId: 0, teams: 0, games: 0, rosters: 0, players: 0, playerBios: 0, boxscores: 0, careerSeasons: 0, history: false, requests: 0, errors: [] }
 
   log(`▶ ${label}: equipos y calendario`)
-  const data = await a.load(startYear)
+  const known = new Map(
+    (
+      db
+        .prepare(
+          `SELECT x.external_id AS id, g.home_score AS home, g.away_score AS away FROM games g
+           JOIN external_ids x ON x.entity_type = 'game' AND x.entity_id = g.id AND x.source = ?
+           JOIN competition_seasons cs ON cs.id = g.competition_season_id JOIN seasons s ON s.id = cs.season_id
+           WHERE s.start_year = ? AND g.status = 'finished' AND g.boxscore_synced_at IS NOT NULL`
+        )
+        .all(a.source, startYear) as { id: string; home: number; away: number }[]
+    ).map((r) => [r.id, { home: r.home, away: r.away }])
+  )
+  const data = await a.load(startYear, known)
   const csId = w.transaction(() => {
     const csId = w.upsertEdition({ ref: { source: a.source, id: data.editionRef }, competition: a.competition, startYear, name: label, isCurrent: startYear === currentSeasonStart() })
     const ids = new Map<string, number>()
