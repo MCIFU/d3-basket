@@ -101,6 +101,19 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     ink: '#ffffff',
     logo: 'media/leagues/eurocup.svg',
     zones: [{ from: 1, to: 8, kind: 'playoff', label: 'Eliminatorias (por grupo)' }]
+  },
+  // Azul marino y amarillo de la marca Basketball Champions League (FIBA).
+  BCL: {
+    name: 'Champions League',
+    division: 'Europa · FIBA',
+    color: '#1b2a6b',
+    color2: '#f6c400',
+    ink: '#ffffff',
+    logo: 'media/leagues/bcl.svg',
+    zones: [
+      { from: 1, to: 1, kind: 'playoff', label: 'Cuartos de final directos' },
+      { from: 2, to: 3, kind: 'up', label: 'Play-in' }
+    ]
   }
 }
 

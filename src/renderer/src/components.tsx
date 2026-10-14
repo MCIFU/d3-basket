@@ -80,6 +80,7 @@ const COMPETITION_STYLE: { match: RegExp; label?: string; bg: string; fg: string
   { match: /^(LIGA )?EBA$/i, label: 'Tercera FEB', bg: '#ff9f00', fg: '#241600' },
   { match: /^(EUROLEAGUE|EUROLIGA)/i, label: 'EuroLeague', bg: '#f05a22', fg: '#fff' },
   { match: /^EUROCUP/i, label: 'EuroCup', bg: '#1a6fd1', fg: '#fff' },
+  { match: /^(BCL|BASKETBALL CHAMPIONS|CHAMPIONS LEAGUE)/i, label: 'Champions', bg: '#1b2a6b', fg: '#f6c400' },
   { match: /^COPA_ESPANA|COPA ESPA/i, label: 'Copa España', bg: '#c53740', fg: '#fff' },
   { match: /^LIGA U/i, label: 'Liga U', bg: '#7c3aed', fg: '#fff' }
 ]

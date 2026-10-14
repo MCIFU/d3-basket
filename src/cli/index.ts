@@ -24,6 +24,7 @@ import { HttpClient } from '../scraper/core/http'
 import { AcbScraper } from '../scraper/acb/sync'
 import { FebScraper } from '../scraper/feb/sync'
 import { EuroleagueScraper, type EuroCompetition } from '../scraper/euroleague/sync'
+import { FibaScraper } from '../scraper/fiba/sync'
 import type { FebCompetition } from '../scraper/feb/urls'
 
 const { values, positionals } = parseArgs({
@@ -183,7 +184,8 @@ async function main() {
   const febCompetition = league ? FEB_ALIASES[league.toLowerCase()] : undefined
   const EURO_ALIASES: Record<string, EuroCompetition> = { euroleague: 'EUROLEAGUE', euroliga: 'EUROLEAGUE', eurocup: 'EUROCUP' }
   const euroCompetition = league ? EURO_ALIASES[league.toLowerCase()] : undefined
-  if (league !== 'acb' && !febCompetition && !euroCompetition) {
+  const isBcl = !!league && ['bcl', 'champions', 'champions-league'].includes(league.toLowerCase())
+  if (league !== 'acb' && !febCompetition && !euroCompetition && !isBcl) {
     console.error(`Liga no soportada: ${league ?? '(ninguna)'} — usa "acb", "primera-feb", "segunda-feb", "tercera-feb" o "copa-espana".`)
     usage(1)
   }
@@ -217,7 +219,9 @@ async function main() {
       log
     }
     const t0 = Date.now()
-    const summary = euroCompetition
+    const summary = isBcl
+      ? await new FibaScraper(db, http).sync({ ...opts, season: values.season ? Number(values.season) : undefined })
+      : euroCompetition
       ? await new EuroleagueScraper(db, http).sync(euroCompetition, { ...opts, season: values.season ? Number(values.season) : undefined })
       : febCompetition
       ? await new FebScraper(db, http).sync(febCompetition, { ...opts, season: values.season ? Number(values.season) : undefined })

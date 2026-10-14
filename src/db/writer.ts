@@ -623,7 +623,7 @@ export class Writer {
           for (const line of period.players) {
             let playerId = playerIds.get(line.player.ref.id)
             if (playerId == null) {
-              playerId = this.upsertPlayer(line.player, { fillOnly: line.player.ref.source === 'euroleague' })
+              playerId = this.upsertPlayer(line.player, { fillOnly: line.player.ref.source !== 'acb' && line.player.ref.source !== 'feb' })
               playerIds.set(line.player.ref.id, playerId)
               this.ensureRosterEntry(teamId, playerId, line.jerseyNumber)
             }

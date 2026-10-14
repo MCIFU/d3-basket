@@ -607,5 +607,13 @@ INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, cou
   ('EUROLEAGUE', 'EuroLeague', 'EuroLeague', 'Euroleague Basketball', 1, 'EU'),
   ('EUROCUP', 'EuroCup', 'EuroCup', 'Euroleague Basketball', 2, 'EU');
 `
+  },
+  {
+    version: 13,
+    name: 'bcl',
+    sql: /* sql */ `
+INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, country) VALUES
+  ('BCL', 'Basketball Champions League', 'Champions League', 'FIBA', 3, 'EU');
+`
   }
 ]

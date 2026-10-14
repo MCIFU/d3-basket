@@ -23,7 +23,7 @@ describe('esquema y escritura', () => {
   it('aplica migraciones y siembra las ligas españolas, la Copa España y las competiciones europeas', () => {
     const db = openDatabase(':memory:')
     const codes = db.prepare("SELECT code FROM competitions ORDER BY country != 'ES', tier IS NULL, tier").all().map((r: any) => r.code)
-    expect(codes).toEqual(['ACB', 'LEB_ORO', 'LEB_PLATA', 'TERCERA_FEB', 'COPA_ESPANA', 'EUROLEAGUE', 'EUROCUP'])
+    expect(codes).toEqual(['ACB', 'LEB_ORO', 'LEB_PLATA', 'TERCERA_FEB', 'COPA_ESPANA', 'EUROLEAGUE', 'EUROCUP', 'BCL'])
   })
 
   it('guardar el calendario dos veces no duplica nada (idempotente)', () => {

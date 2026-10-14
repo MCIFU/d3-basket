@@ -49,9 +49,9 @@ export class HttpClient {
 
   constructor(private readonly opts: HttpClientOptions = {}) {}
 
-  get(url: string): Promise<FetchResult> {
+  get(url: string, headers?: Record<string, string>): Promise<FetchResult> {
     // Serializamos todas las peticiones: el scraper es deliberadamente secuencial.
-    return this.enqueue(url)
+    return this.enqueue(url, undefined, headers)
   }
 
   /** POST de formulario (postbacks de ASP.NET, p. ej. cambiar de grupo en la FEB). */
@@ -59,8 +59,8 @@ export class HttpClient {
     return this.enqueue(url, new URLSearchParams(form).toString())
   }
 
-  private enqueue(url: string, formBody?: string): Promise<FetchResult> {
-    const run = this.queue.then(() => this.doRequest(url, formBody))
+  private enqueue(url: string, formBody?: string, headers?: Record<string, string>): Promise<FetchResult> {
+    const run = this.queue.then(() => this.doRequest(url, formBody, headers))
     this.queue = run.catch(() => undefined)
     return run
   }
@@ -89,7 +89,7 @@ export class HttpClient {
     fs.writeFileSync(file, body)
   }
 
-  private async doRequest(url: string, formBody?: string): Promise<FetchResult> {
+  private async doRequest(url: string, formBody?: string, headers?: Record<string, string>): Promise<FetchResult> {
     const cacheKey = formBody ? `${url}#${formBody}` : url
     const cached = this.readCache(cacheKey)
     if (cached) return { ...cached, url, finalUrl: url }
@@ -115,7 +115,8 @@ export class HttpClient {
             'User-Agent': this.opts.userAgent ?? DEFAULT_USER_AGENT,
             Accept: 'text/html,application/xhtml+xml',
             'Accept-Language': 'es-ES,es;q=0.9',
-            ...(formBody ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {})
+            ...(formBody ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
+            ...headers
           }
         })
         const body = await res.text()
