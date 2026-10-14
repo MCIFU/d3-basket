@@ -252,6 +252,8 @@ async function main() {
       : values.season
         ? await acb.syncHistoric(Number(values.season), opts)
         : await acb.syncCurrent(opts)
+    const fused = new Writer(db).mergeDuplicateGames()
+    if (fused) console.log(`  ${fused} partidos duplicados fundidos con el original`)
     const merged = new Writer(db).dedupePlayers()
     if (merged) console.log(`  ${merged} jugadores unificados (misma persona en acb.com y en la FEB)`)
     const secs = Math.round((Date.now() - t0) / 1000)

@@ -299,6 +299,41 @@ export class Writer {
    * Criterio: misma fecha de nacimiento, algún apellido en común, fuentes distintas y un único
    * candidato. Se conserva la ficha de acb.com (su ref es la estable).
    */
+  /**
+   * La FEB vuelve a publicar con otro id los partidos de la primera fase cuando arranca la segunda.
+   * La copia no tiene estadística: se funde con el partido original (mismos clubes y marcador en la
+   * misma edición), que toma su jornada y hora del calendario, y el id de la copia pasa a apuntar
+   * al original para que no se vuelva a crear.
+   */
+  mergeDuplicateGames(): number {
+    const pairs = this.db
+      .prepare(
+        `SELECT g.id AS dup, MIN(g2.id) AS keep FROM games g
+         JOIN teams h ON h.id = g.home_team_id JOIN teams a ON a.id = g.away_team_id
+         JOIN games g2 ON g2.competition_season_id = g.competition_season_id AND g2.id != g.id
+           AND g2.boxscore_synced_at IS NOT NULL AND g2.home_score = g.home_score AND g2.away_score = g.away_score
+         JOIN teams h2 ON h2.id = g2.home_team_id AND h2.club_id = h.club_id
+         JOIN teams a2 ON a2.id = g2.away_team_id AND a2.club_id = a.club_id
+         WHERE g.boxscore_synced_at IS NULL AND g.status = 'finished'
+         GROUP BY g.id`
+      )
+      .all() as { dup: number; keep: number }[]
+    if (!pairs.length) return 0
+    this.transaction(() => {
+      for (const { dup, keep } of pairs) {
+        this.db
+          .prepare(
+            `UPDATE games SET round_id = COALESCE((SELECT round_id FROM games WHERE id = @dup), round_id),
+               scheduled_at = COALESCE((SELECT scheduled_at FROM games WHERE id = @dup), scheduled_at) WHERE id = @keep`
+          )
+          .run({ dup, keep })
+        this.db.prepare(`UPDATE external_ids SET entity_id = ? WHERE entity_type = 'game' AND entity_id = ?`).run(keep, dup)
+        this.db.prepare('DELETE FROM games WHERE id = ?').run(dup)
+      }
+    })
+    return pairs.length
+  }
+
   dedupePlayers(): number {
     const words = (s: string) =>
       new Set(
