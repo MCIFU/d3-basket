@@ -615,5 +615,19 @@ INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, cou
 INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, country) VALUES
   ('BCL', 'Basketball Champions League', 'Champions League', 'FIBA', 3, 'EU');
 `
+  },
+  {
+    version: 14,
+    name: 'ligas_europeas',
+    sql: /* sql */ `
+INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, country) VALUES
+  ('LBA', 'Lega Basket Serie A', 'Serie A', 'Lega Basket', 1, 'IT'),
+  ('ITA_A2', 'Serie A2', 'Serie A2', 'Lega Nazionale Pallacanestro', 2, 'IT'),
+  ('LNB_ELITE', 'Betclic Élite', 'Élite', 'LNB', 1, 'FR'),
+  ('LNB_ELITE2', 'Élite 2', 'Élite 2', 'LNB', 2, 'FR'),
+  ('BBL', 'easyCredit BBL', 'BBL', 'Basketball Bundesliga', 1, 'DE'),
+  ('PROA', 'ProA', 'ProA', '2. Basketball-Bundesliga', 2, 'DE'),
+  ('GBL', 'Greek Basketball League', 'GBL', 'ESAKE', 1, 'GR');
+`
   }
 ]

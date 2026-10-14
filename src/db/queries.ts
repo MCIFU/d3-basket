@@ -215,7 +215,7 @@ export class Queries {
               (SELECT COUNT(*) FROM competition_seasons cs WHERE cs.competition_id = c.id) AS editions,
               (SELECT s.label FROM competition_seasons cs JOIN seasons s ON s.id = cs.season_id
                WHERE cs.competition_id = c.id ORDER BY cs.is_current DESC, s.start_year DESC LIMIT 1) AS current_label
-       FROM competitions c ORDER BY c.country != 'ES', c.tier IS NULL, c.tier`
+       FROM competitions c ORDER BY CASE c.country WHEN 'ES' THEN 0 WHEN 'EU' THEN 1 ELSE 2 END, c.country, c.tier IS NULL, c.tier`
     )
   }
 

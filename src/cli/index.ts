@@ -25,6 +25,10 @@ import { AcbScraper } from '../scraper/acb/sync'
 import { FebScraper } from '../scraper/feb/sync'
 import { EuroleagueScraper, type EuroCompetition } from '../scraper/euroleague/sync'
 import { FibaScraper } from '../scraper/fiba/sync'
+import { syncLeague, type LeagueAdapter } from '../scraper/europe/league'
+import { LbaAdapter } from '../scraper/europe/lba'
+import { BblAdapter } from '../scraper/europe/bbl'
+import { LnbAdapter } from '../scraper/europe/lnb'
 import type { FebCompetition } from '../scraper/feb/urls'
 
 const { values, positionals } = parseArgs({
@@ -185,7 +189,17 @@ async function main() {
   const EURO_ALIASES: Record<string, EuroCompetition> = { euroleague: 'EUROLEAGUE', euroliga: 'EUROLEAGUE', eurocup: 'EUROCUP' }
   const euroCompetition = league ? EURO_ALIASES[league.toLowerCase()] : undefined
   const isBcl = !!league && ['bcl', 'champions', 'champions-league'].includes(league.toLowerCase())
-  if (league !== 'acb' && !febCompetition && !euroCompetition && !isBcl) {
+  const NATIONAL: Record<string, (http: HttpClient) => LeagueAdapter> = {
+    lba: (h) => new LbaAdapter(h),
+    'serie-a': (h) => new LbaAdapter(h),
+    bbl: (h) => new BblAdapter(h),
+    'betclic-elite': (h) => new LnbAdapter(h, 1, 'LNB_ELITE'),
+    elite: (h) => new LnbAdapter(h, 1, 'LNB_ELITE'),
+    'elite-2': (h) => new LnbAdapter(h, 2, 'LNB_ELITE2'),
+    'pro-b': (h) => new LnbAdapter(h, 2, 'LNB_ELITE2')
+  }
+  const national = league ? NATIONAL[league.toLowerCase()] : undefined
+  if (league !== 'acb' && !febCompetition && !euroCompetition && !isBcl && !national) {
     console.error(`Liga no soportada: ${league ?? '(ninguna)'} — usa "acb", "primera-feb", "segunda-feb", "tercera-feb" o "copa-espana".`)
     usage(1)
   }
@@ -219,7 +233,9 @@ async function main() {
       log
     }
     const t0 = Date.now()
-    const summary = isBcl
+    const summary = national
+      ? await syncLeague(db, http, national(http), { ...opts, season: values.season ? Number(values.season) : undefined })
+      : isBcl
       ? await new FibaScraper(db, http).sync({ ...opts, season: values.season ? Number(values.season) : undefined })
       : euroCompetition
       ? await new EuroleagueScraper(db, http).sync(euroCompetition, { ...opts, season: values.season ? Number(values.season) : undefined })

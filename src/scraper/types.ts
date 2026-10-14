@@ -4,8 +4,8 @@
  * consiste en escribir un adaptador nuevo que devuelva lo mismo.
  */
 
-export type SourceName = 'acb' | 'feb' | 'euroleague' | 'fiba'
-export type CompetitionCode = 'ACB' | 'LEB_ORO' | 'LEB_PLATA' | 'TERCERA_FEB' | 'COPA_ESPANA' | 'EUROLEAGUE' | 'EUROCUP' | 'BCL'
+export type SourceName = 'acb' | 'feb' | 'euroleague' | 'fiba' | 'lba' | 'lnp' | 'bbl' | 'proa' | 'lnb' | 'esake'
+export type CompetitionCode = 'ACB' | 'LEB_ORO' | 'LEB_PLATA' | 'TERCERA_FEB' | 'COPA_ESPANA' | 'EUROLEAGUE' | 'EUROCUP' | 'BCL' | 'LBA' | 'ITA_A2' | 'BBL' | 'PROA' | 'LNB_ELITE' | 'LNB_ELITE2' | 'GBL'
 
 export interface SourceRef {
   source: SourceName

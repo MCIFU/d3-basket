@@ -102,6 +102,70 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     logo: 'media/leagues/eurocup.svg',
     zones: [{ from: 1, to: 8, kind: 'playoff', label: 'Eliminatorias (por grupo)' }]
   },
+  // Ligas nacionales: colores de la identidad de cada liga.
+  LBA: {
+    name: 'Serie A',
+    division: 'Europa · Italia',
+    color: '#00205b',
+    color2: '#e4002b',
+    ink: '#ffffff',
+    logo: 'media/leagues/lba.svg',
+    zones: [{ from: 1, to: 8, kind: 'playoff', label: 'Playoff por el título' }, { from: -1, to: -1, kind: 'down', label: 'Descenso a Serie A2' }]
+  },
+  ITA_A2: {
+    name: 'Serie A2',
+    division: 'Europa · Italia',
+    color: '#0b3d91',
+    color2: '#f39200',
+    ink: '#ffffff',
+    logo: 'media/leagues/ita_a2.svg',
+    zones: []
+  },
+  LNB_ELITE: {
+    name: 'Betclic Élite',
+    division: 'Europa · Francia',
+    color: '#0d1e3d',
+    color2: '#ff4b1f',
+    ink: '#ffffff',
+    logo: 'media/leagues/lnb_elite.svg',
+    zones: [{ from: 1, to: 6, kind: 'playoff', label: 'Playoff' }, { from: 7, to: 10, kind: 'up', label: 'Play-in' }, { from: -2, to: -1, kind: 'down', label: 'Descenso a Élite 2' }]
+  },
+  LNB_ELITE2: {
+    name: 'Élite 2',
+    division: 'Europa · Francia',
+    color: '#3b1f6b',
+    color2: '#ff4b1f',
+    ink: '#ffffff',
+    logo: 'media/leagues/lnb_elite2.svg',
+    zones: []
+  },
+  BBL: {
+    name: 'BBL',
+    division: 'Europa · Alemania',
+    color: '#002d5a',
+    color2: '#ff6c00',
+    ink: '#ffffff',
+    logo: 'media/leagues/bbl.svg',
+    zones: [{ from: 1, to: 6, kind: 'playoff', label: 'Playoff' }, { from: 7, to: 10, kind: 'up', label: 'Play-in' }, { from: -2, to: -1, kind: 'down', label: 'Descenso a ProA' }]
+  },
+  PROA: {
+    name: 'ProA',
+    division: 'Europa · Alemania',
+    color: '#1d1d1b',
+    color2: '#e30613',
+    ink: '#ffffff',
+    logo: 'media/leagues/proa.svg',
+    zones: []
+  },
+  GBL: {
+    name: 'GBL',
+    division: 'Europa · Grecia',
+    color: '#0d5eaf',
+    color2: '#111111',
+    ink: '#ffffff',
+    logo: 'media/leagues/gbl.svg',
+    zones: [{ from: 1, to: 8, kind: 'playoff', label: 'Playoff' }]
+  },
   // Azul marino y amarillo de la marca Basketball Champions League (FIBA).
   BCL: {
     name: 'Champions League',

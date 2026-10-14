@@ -59,6 +59,11 @@ export class HttpClient {
     return this.enqueue(url, new URLSearchParams(form).toString())
   }
 
+  /** POST con cuerpo JSON (APIs que lo exigen, p. ej. la de la LNB). */
+  postJson(url: string, body: unknown, headers: Record<string, string> = {}): Promise<FetchResult> {
+    return this.enqueue(url, JSON.stringify(body), { ...headers, 'Content-Type': 'application/json' })
+  }
+
   private enqueue(url: string, formBody?: string, headers?: Record<string, string>): Promise<FetchResult> {
     const run = this.queue.then(() => this.doRequest(url, formBody, headers))
     this.queue = run.catch(() => undefined)
