@@ -179,7 +179,7 @@ export class Writer {
   }
 
   // ───────── jugadores / entrenadores ─────────
-  upsertPlayer(p: NPlayer, opts: { bio?: boolean } = {}): number {
+  upsertPlayer(p: NPlayer, opts: { bio?: boolean; fillOnly?: boolean } = {}): number {
     const values = {
       first: p.firstName ?? null,
       last: p.lastName ?? null,
@@ -211,6 +211,19 @@ export class Writer {
           .run(values).lastInsertRowid
       )
       this.link('player', id, p.ref)
+      return id
+    }
+    // Una fuente secundaria (p. ej. Euroleague, sin tildes) solo rellena lo que falte.
+    if (opts.fillOnly) {
+      this.db
+        .prepare(
+          `UPDATE players SET first_name = COALESCE(first_name, @first), last_name = COALESCE(last_name, @last),
+             birth_date = COALESCE(birth_date, @bdate), birth_country = COALESCE(birth_country, @bcountry),
+             nationality = COALESCE(nationality, @nat), height_cm = COALESCE(height_cm, @height),
+             position = COALESCE(position, @pos), position_code = COALESCE(position_code, @poscode),
+             photo_url = COALESCE(photo_url, @photo), updated_at = @now WHERE id = @id`
+        )
+        .run({ ...values, id })
       return id
     }
     // Nunca pisamos un dato conocido con un vacío.
@@ -610,7 +623,7 @@ export class Writer {
           for (const line of period.players) {
             let playerId = playerIds.get(line.player.ref.id)
             if (playerId == null) {
-              playerId = this.upsertPlayer(line.player)
+              playerId = this.upsertPlayer(line.player, { fillOnly: line.player.ref.source === 'euroleague' })
               playerIds.set(line.player.ref.id, playerId)
               this.ensureRosterEntry(teamId, playerId, line.jerseyNumber)
             }

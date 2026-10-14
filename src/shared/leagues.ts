@@ -79,6 +79,28 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     ink: '#241600',
     logo: 'media/leagues/tercera_feb.png',
     zones: []
+  },
+  // Europa: colores de las marcas de Euroleague Basketball (naranja EuroLeague, azul EuroCup).
+  EUROLEAGUE: {
+    name: 'EuroLeague',
+    division: 'Europa · Euroleague Basketball',
+    color: '#f05a22',
+    color2: '#111111',
+    ink: '#ffffff',
+    logo: 'media/leagues/euroleague.svg',
+    zones: [
+      { from: 1, to: 6, kind: 'playoff', label: 'Playoff' },
+      { from: 7, to: 10, kind: 'up', label: 'Play-in' }
+    ]
+  },
+  EUROCUP: {
+    name: 'EuroCup',
+    division: 'Europa · Euroleague Basketball',
+    color: '#1a6fd1',
+    color2: '#0d1b3e',
+    ink: '#ffffff',
+    logo: 'media/leagues/eurocup.svg',
+    zones: [{ from: 1, to: 8, kind: 'playoff', label: 'Eliminatorias (por grupo)' }]
   }
 }
 

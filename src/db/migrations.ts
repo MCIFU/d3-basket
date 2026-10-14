@@ -596,5 +596,16 @@ DELETE FROM teams WHERE competition_season_id IN (SELECT id FROM old_copa);
 DELETE FROM competition_seasons WHERE id IN (SELECT id FROM old_copa);
 DROP TABLE old_copa;
 `
+  },
+  {
+    version: 12,
+    name: 'europa',
+    sql: /* sql */ `
+-- Competiciones internacionales y ligas de otros países: el país distingue las ligas españolas
+-- ('ES') de las europeas ('EU' para las de clubes de toda Europa, o el código del país).
+INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, country) VALUES
+  ('EUROLEAGUE', 'EuroLeague', 'EuroLeague', 'Euroleague Basketball', 1, 'EU'),
+  ('EUROCUP', 'EuroCup', 'EuroCup', 'Euroleague Basketball', 2, 'EU');
+`
   }
 ]

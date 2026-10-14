@@ -79,15 +79,20 @@ export function Layout({ route, children }: { route: Route; children: ReactNode 
             </a>
           ))}
         </nav>
-        <div className="side-leagues">
-          <h4>Ligas en curso</h4>
-          {Object.entries(LEAGUES).map(([code, l]) => (
-            <a key={code} href={href.league(code)} className={route.page === 'league' && 'code' in route && String(route.code).toUpperCase() === code ? 'active' : ''}>
-              <i style={{ background: l.color }} />
-              {l.name}
-            </a>
-          ))}
-        </div>
+        {[
+          ['España', Object.entries(LEAGUES).filter(([, l]) => !l.division.startsWith('Europa'))],
+          ['Europa', Object.entries(LEAGUES).filter(([, l]) => l.division.startsWith('Europa'))]
+        ].map(([title, list]) => (
+          <div key={title as string} className="side-leagues">
+            <h4>{title as string}</h4>
+            {(list as [string, (typeof LEAGUES)[string]][]).map(([code, l]) => (
+              <a key={code} href={href.league(code)} className={route.page === 'league' && 'code' in route && String(route.code).toUpperCase() === code ? 'active' : ''}>
+                <i style={{ background: l.color }} />
+                {l.name}
+              </a>
+            ))}
+          </div>
+        ))}
         <div className="side-foot">
           <ThemeToggle />
           <span>{updated ? `Actualizado ${fmtDateTime(updated)}` : ''}</span>

@@ -77,7 +77,10 @@ const COMPETITION_STYLE: { match: RegExp; label?: string; bg: string; fg: string
   { match: /^(LEB_PLATA|SEGUNDA FEB|LEB PLATA)/i, label: 'Segunda FEB', bg: '#f03039', fg: '#fff' },
   { match: /^(TERCERA_FEB|TERCERA FEB)/i, label: 'Tercera FEB', bg: '#ff9f00', fg: '#241600' },
   { match: /^LEB BRONCE/i, label: 'LEB Bronce', bg: '#9a6b3f', fg: '#fff' },
-  { match: /EBA/i, label: 'Liga EBA', bg: '#0e7490', fg: '#fff' },
+  { match: /^(LIGA )?EBA$/i, label: 'Tercera FEB', bg: '#ff9f00', fg: '#241600' },
+  { match: /^(EUROLEAGUE|EUROLIGA)/i, label: 'EuroLeague', bg: '#f05a22', fg: '#fff' },
+  { match: /^EUROCUP/i, label: 'EuroCup', bg: '#1a6fd1', fg: '#fff' },
+  { match: /^COPA_ESPANA|COPA ESPA/i, label: 'Copa España', bg: '#c53740', fg: '#fff' },
   { match: /^LIGA U/i, label: 'Liga U', bg: '#7c3aed', fg: '#fff' }
 ]
 
