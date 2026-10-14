@@ -579,5 +579,22 @@ INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier) VAL
 -- a partir de public/media/filiales.json.
 ALTER TABLE clubs ADD COLUMN parent_club_id INTEGER REFERENCES clubs(id);
 `
+  },
+  {
+    version: 11,
+    name: 'copa_espana_desde_2024',
+    sql: /* sql */ `
+-- La Copa España (FEB) se juega desde la temporada 2024-25: las ediciones anteriores eran
+-- equipos sueltos sin partidos.
+CREATE TEMP TABLE old_copa AS
+  SELECT cs.id FROM competition_seasons cs JOIN competitions co ON co.id = cs.competition_id
+  JOIN seasons s ON s.id = cs.season_id WHERE co.code = 'COPA_ESPANA' AND s.start_year < 2024;
+DELETE FROM roster_entries WHERE team_id IN (SELECT id FROM teams WHERE competition_season_id IN (SELECT id FROM old_copa));
+DELETE FROM team_staff WHERE team_id IN (SELECT id FROM teams WHERE competition_season_id IN (SELECT id FROM old_copa));
+DELETE FROM rounds WHERE competition_season_id IN (SELECT id FROM old_copa);
+DELETE FROM teams WHERE competition_season_id IN (SELECT id FROM old_copa);
+DELETE FROM competition_seasons WHERE id IN (SELECT id FROM old_copa);
+DROP TABLE old_copa;
+`
   }
 ]
