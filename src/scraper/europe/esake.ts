@@ -14,22 +14,30 @@ const GREEK: Record<string, string> = {
   Α: 'A', Ά: 'A', Β: 'V', Γ: 'G', Δ: 'D', Ε: 'E', Έ: 'E', Ζ: 'Z', Η: 'I', Ή: 'I', Θ: 'TH', Ι: 'I', Ί: 'I', Ϊ: 'I', Κ: 'K', Λ: 'L', Μ: 'M', Ν: 'N', Ξ: 'X', Ο: 'O', Ό: 'O',
   Π: 'P', Ρ: 'R', Σ: 'S', Τ: 'T', Υ: 'Y', Ύ: 'Y', Ϋ: 'Y', Φ: 'F', Χ: 'CH', Ψ: 'PS', Ω: 'O', Ώ: 'O'
 }
+/** Siglas que se mantienen en mayúsculas. */
+const ACRONYMS = new Set(['PAOK', 'AEK', 'BC', 'KAOD'])
 /** ΠΑΝΑΘΗΝΑΪΚΟΣ AKTOR → Panathinaikos Aktor. */
 export const greekToLatin = (s: string) =>
+  latin(s)
+    .split(' ')
+    .map((w) => (ACRONYMS.has(w.toUpperCase()) ? w.toUpperCase() : w))
+    .join(' ')
+const latin = (s: string) =>
   titleCase(
     s
       .toUpperCase()
       .replace(/ΟΥ/g, 'OU')
       .replace(/ΑΥ/g, 'AV')
       .replace(/ΕΥ/g, 'EV')
-      .replace(/ΜΠ/g, 'B')
+      .replace(/(^|\s)ΜΠ/g, '$1B')
+      .replace(/ΜΠ/g, 'MP')
       .replace(/ΝΤ/g, 'NT')
       .replace(/[Ͱ-Ͽ]/g, (c) => GREEK[c] ?? c)
   )
 const strip = (s: string) =>
   s
     .replace(/<br\s*\/?>/gi, ' ')
-    .replace(/<[^>]+>/g, '')
+    .replace(/<[^>]+>/g, ' ')
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
     .replace(/\s+/g, ' ')
@@ -104,9 +112,9 @@ export class EsakeAdapter implements LeagueAdapter {
       const p = await this.page(`EsakeplayerView?idplayer=${id}&mode=2`)
       const name = /<SPAN>([^<]+)<\/SPAN>\s*(?:<BR\/>)?\s*([^<]+)</i.exec(p.slice(p.indexOf('DATE OF BIRTH') - 4000))
       const info = strip(p.slice(p.indexOf('DATE OF BIRTH') - 300, p.indexOf('DATE OF BIRTH') + 300))
-      const dob = /DATE OF BIRTH (\d{2})-(\d{2})-(\d{4})/.exec(info)
-      const height = /HEIGHT (\d)\.(\d{2}) m/.exec(info)
-      const pos = /POST ([A-Z]{1,2})\b/.exec(info)?.[1]
+      const dob = /DATE OF BIRTH\s*(\d{2})-(\d{2})-(\d{4})/.exec(info)
+      const height = /HEIGHT\s*(\d)\.(\d{2})\s*m/.exec(info)
+      const pos = /POST\s*([A-Z]{1,2})\b/.exec(info)?.[1]
       const code = pos ? POS[pos] : undefined
       const last = name ? titleCase(name[1].trim()) : ''
       const first = name ? titleCase(name[2].trim()) : ''
@@ -117,7 +125,7 @@ export class EsakeAdapter implements LeagueAdapter {
           firstName: first,
           lastName: last,
           fullName: `${first} ${last}`.trim(),
-          birthDate: dob ? `${dob[3]}-${dob[2]}-${dob[1]}` : undefined,
+          birthDate: dob && Number(dob[3]) < new Date().getFullYear() - 14 ? `${dob[3]}-${dob[2]}-${dob[1]}` : undefined,
           heightCm: height ? Number(height[1]) * 100 + Number(height[2]) : undefined,
           position: code ? POS_NAME[code] : undefined,
           positionCode: code
