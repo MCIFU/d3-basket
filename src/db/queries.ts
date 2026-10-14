@@ -173,6 +173,19 @@ export function leagueRanks(all: StatBlock[], me: StatBlock): Record<string, { r
   return out
 }
 
+/**
+ * Apartado de la carrera al que pertenece un partido o una temporada: liga con el primer
+ * equipo, con un filial, copa, competiciones europeas o selección (estas dos, para el futuro).
+ */
+export type CareerSection = 'liga' | 'filial' | 'copa' | 'europa' | 'seleccion'
+const EUROPE = /^(EUROLEAGUE|EUROCUP|BCL|FIBA_EUROPE_CUP|CHAMPIONS)/
+export function sectionOf(code: string, parentName: string | null | undefined): CareerSection {
+  if (/^(SELECCION|NATIONAL)/.test(code)) return 'seleccion'
+  if (EUROPE.test(code)) return 'europa'
+  if (/COPA/.test(code)) return 'copa'
+  return parentName ? 'filial' : 'liga'
+}
+
 export class Queries {
   constructor(private readonly db: SqlDb) {}
 
@@ -464,7 +477,8 @@ export class Queries {
     const ids = this.currentEditionIds()
     if (!ids.length) return []
     return this.all(
-      `SELECT ${teamCols('t', '')}, c.arena, c.founded_year, t.group_name, co.code AS competition_code, co.name AS competition_name
+      `SELECT ${teamCols('t', '')}, c.arena, c.founded_year, t.group_name, co.code AS competition_code, co.name AS competition_name,
+              (SELECT name FROM clubs pc WHERE pc.id = c.parent_club_id) AS parent_name
        FROM teams t ${teamJoins('t', '')}
        JOIN competition_seasons cs ON cs.id = t.competition_season_id JOIN competitions co ON co.id = cs.competition_id
        -- Solo ligas: los equipos de copa (tier NULL) son los mismos clubes.
@@ -476,7 +490,8 @@ export class Queries {
       founded_year: r.founded_year as number | null,
       competition_code: r.competition_code as string,
       competition_name: r.competition_name as string,
-      group: (r.group_name as string | null) ?? null
+      group: (r.group_name as string | null) ?? null,
+      parent_name: (r.parent_name as string | null) ?? null
     }))
   }
 
@@ -573,7 +588,22 @@ export class Queries {
       president: c.president,
       socials: json(c.socials, {}),
       history: c.history,
-      history_url: c.history_url
+      history_url: c.history_url,
+      parent: c.parent_club_id
+        ? (this.get(
+            `SELECT pc.name, cr.ref, pc.logo_url AS logo FROM clubs pc JOIN v_club_ref cr ON cr.club_id = pc.id WHERE pc.id = ?`,
+            c.parent_club_id
+          ) as ClubInfo['parent'])
+        : null,
+      // Filiales y vinculados, con la liga de su última temporada.
+      filiales: this.all(
+        `SELECT fc.name, cr.ref, fc.logo_url AS logo,
+                (SELECT co.name || ' ' || se.label FROM teams t JOIN competition_seasons cs ON cs.id = t.competition_season_id
+                   JOIN competitions co ON co.id = cs.competition_id JOIN seasons se ON se.id = cs.season_id
+                 WHERE t.club_id = fc.id AND co.tier IS NOT NULL ORDER BY se.start_year DESC LIMIT 1) AS league
+         FROM clubs fc JOIN v_club_ref cr ON cr.club_id = fc.id WHERE fc.parent_club_id = ? ORDER BY fc.name`,
+        clubId
+      ) as ClubInfo['filiales']
     }
     const standing = csId ? this.standings(csId).find((s) => s.team_id === season!.team_id) : undefined
     const pick = (k: 'ppg' | 'rpg' | 'apg' | 'pirpg') => this.leadersFrom(stats, k, 1)[0]
@@ -674,18 +704,19 @@ export class Queries {
     // Trayectoria: temporadas con boxscores propios + temporadas pasadas agregadas desde acb.com.
     const fromBox = this.all(
       `SELECT se.start_year, se.label, co.code AS competition_code, t.name AS team_name, cr.ref AS club_ref,
-              COALESCE(t.logo_url, c.logo_url) AS logo, ${SUM_COLS},
+              COALESCE(t.logo_url, c.logo_url) AS logo, pc.name AS parent_name, pcr.ref AS parent_ref, ${SUM_COLS},
               SUM(CASE WHEN rd.phase = 'playoff' THEN 1 ELSE 0 END) AS playoff_games,
               SUM(CASE WHEN (g.home_team_id = t.id AND g.home_score > g.away_score)
                          OR (g.away_team_id = t.id AND g.away_score > g.home_score) THEN 1 ELSE 0 END) AS wins
        FROM player_game_stats s JOIN games g ON g.id = s.game_id LEFT JOIN rounds rd ON rd.id = g.round_id
        JOIN teams t ON t.id = s.team_id JOIN clubs c ON c.id = t.club_id JOIN v_club_ref cr ON cr.club_id = c.id
+       LEFT JOIN clubs pc ON pc.id = c.parent_club_id LEFT JOIN v_club_ref pcr ON pcr.club_id = pc.id
        JOIN competition_seasons cs ON cs.id = t.competition_season_id JOIN seasons se ON se.id = cs.season_id
        JOIN competitions co ON co.id = cs.competition_id
        WHERE s.player_id = ? AND s.period = 0 AND s.seconds > 0
        GROUP BY t.id`,
       id
-    ).map((r) => ({ ...withRates(r), source: 'boxscores' }) as TrajectoryRow)
+    ).map((r) => ({ ...withRates(r), section: sectionOf(r.competition_code, r.parent_name), source: 'boxscores' }) as TrajectoryRow)
     const fromLines = this.all(
       `SELECT l.season_start_year AS start_year, l.competition_code, l.team_name, cr.ref AS club_ref, c.logo_url AS logo,
               l.games, l.playoff_games, l.wins, l.seconds, l.points AS pts, l.reb, l.oreb, l.dreb, l.ast, l.stl, l.blk,
@@ -698,6 +729,9 @@ export class Queries {
         ({
           ...withRates(r),
           label: `${r.start_year}-${String(r.start_year + 1).slice(-2)}`,
+          parent_name: null,
+          parent_ref: null,
+          section: sectionOf(r.competition_code, null),
           source: 'acb'
         }) as TrajectoryRow
     )
@@ -715,15 +749,20 @@ export class Queries {
               CASE WHEN g.home_team_id = s.team_id THEN g.home_score ELSE g.away_score END AS team_score,
               CASE WHEN g.home_team_id = s.team_id THEN g.away_score ELSE g.home_score END AS opp_score,
               s.is_starter, s.seconds, s.points, s.fg2m, s.fg2a, s.fg3m, s.fg3a, s.ftm, s.fta, s.reb, s.ast, s.stl,
-              s.blk, s.tov, s.pf, s.plus_minus, s.pir, ${teamCols('o', '')}
+              s.blk, s.tov, s.pf, s.plus_minus, s.pir, ${teamCols('o', '')},
+              co.code AS competition_code, co.name AS competition_name, se.label AS season_label, mt.name AS team_name,
+              pc.name AS parent_name
        FROM player_game_stats s JOIN games g ON g.id = s.game_id
+       JOIN teams mt ON mt.id = s.team_id JOIN clubs mc ON mc.id = mt.club_id LEFT JOIN clubs pc ON pc.id = mc.parent_club_id
+       JOIN competition_seasons cs ON cs.id = g.competition_season_id JOIN seasons se ON se.id = cs.season_id
+       JOIN competitions co ON co.id = cs.competition_id
        JOIN teams o ON o.id = CASE WHEN g.home_team_id = s.team_id THEN g.away_team_id ELSE g.home_team_id END
        ${teamJoins('o', '')}
        LEFT JOIN v_game_ref gr ON gr.game_id = g.id
        WHERE s.player_id = ? AND s.period = 0
-       ORDER BY g.scheduled_at DESC LIMIT 60`,
+       ORDER BY g.scheduled_at DESC LIMIT 500`,
       id
-    ).map((r) => ({ ...r, opponent: team(r) }) as unknown as PlayerGameLog)
+    ).map((r) => ({ ...r, section: sectionOf(r.competition_code, r.parent_name), opponent: team(r) }) as unknown as PlayerGameLog)
 
     const acbRef = this.get<{ external_id: string }>(
       `SELECT external_id FROM external_ids WHERE entity_type = 'player' AND entity_id = ? AND source = 'acb'`,

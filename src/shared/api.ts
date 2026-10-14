@@ -234,6 +234,9 @@ export interface ClubInfo {
   socials: Record<string, string>
   history: string | null
   history_url: string | null
+  /** Club del que es filial o vinculado, y los suyos propios. */
+  parent: { name: string; ref: string; logo: string | null } | null
+  filiales: { name: string; ref: string; logo: string | null; league: string | null }[]
 }
 
 export interface RosterRow {
@@ -329,10 +332,20 @@ export interface TrajectoryRow extends StatBlock {
   logo: string | null
   playoff_games: number
   wins: number
+  /** Club del que es filial el equipo (si lo es). */
+  parent_name: string | null
+  parent_ref: string | null
+  section: 'liga' | 'filial' | 'copa' | 'europa' | 'seleccion'
   source: 'boxscores' | 'acb'
 }
 
 export interface PlayerGameLog {
+  competition_code: string
+  competition_name: string
+  season_label: string
+  team_name: string
+  parent_name: string | null
+  section: TrajectoryRow['section']
   game_id: number
   game_ref: string
   scheduled_at: string | null
@@ -522,7 +535,7 @@ export interface D3Api {
   home(): Promise<HomeData>
   league(code: string, year?: number): Promise<LeagueData | null>
   competitions(): Promise<CompetitionInfo[]>
-  clubs(): Promise<(TeamLite & { arena: string | null; founded_year: number | null; competition_code: string; competition_name: string; group: string | null })[]>
+  clubs(): Promise<(TeamLite & { arena: string | null; founded_year: number | null; competition_code: string; competition_name: string; group: string | null; parent_name: string | null })[]>
   club(ref: string, year?: number): Promise<ClubData | null>
   players(): Promise<PlayerIndexRow[]>
   player(ref: string): Promise<PlayerData | null>

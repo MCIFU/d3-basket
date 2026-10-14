@@ -8,6 +8,7 @@ import type { DB } from './database'
  *   logos/<ref>.png     escudo recortado y centrado en 256×256
  *   colors.json         { "<ref>": { primary, secondary } } sacados del escudo
  *   photos-dead.txt     fotos oficiales vacías o genéricas (tools/media/check_photos.mjs): se quitan
+ *   filiales.json       { "<ref del filial>": { ref: "<ref del primer equipo>" } } (tools/media/filiales.mjs)
  * Se aplican sobre la base de datos después de cada sincronización y al
  * exportar la web: el scraper vuelve a escribir las URL originales, así que
  * esto debe ejecutarse siempre al final.
@@ -28,6 +29,23 @@ export function applyMedia(db: DB, mediaDir: string): { players: number; logos: 
 
   db.transaction(() => {
     fillClubInfo(db)
+    fixBirthDates(db)
+    const filialesFile = path.join(mediaDir, 'filiales.json')
+    if (fs.existsSync(filialesFile)) {
+      const byRef = db.prepare(
+        `SELECT COALESCE((SELECT club_id FROM v_club_ref WHERE ref = @ref),
+           (SELECT entity_id FROM external_ids WHERE entity_type = 'club' AND source = 'feb' AND 'f' || external_id = @ref),
+           (SELECT entity_id FROM external_ids WHERE entity_type = 'club' AND source = 'acb' AND external_id = @ref)) AS id`
+      )
+      const setParent = db.prepare('UPDATE clubs SET parent_club_id = ? WHERE id = ? AND id != ?')
+      db.prepare('UPDATE clubs SET parent_club_id = NULL').run()
+      const list = JSON.parse(fs.readFileSync(filialesFile, 'utf8')) as Record<string, { ref: string }>
+      for (const [child, { ref }] of Object.entries(list)) {
+        const c = (byRef.get({ ref: child }) as { id: number | null }).id
+        const p = (byRef.get({ ref }) as { id: number | null }).id
+        if (c && p) setParent.run(p, c, p)
+      }
+    }
     // Sin foto oficial válida en acb.com o la FEB, sin foto.
     const deadFile = path.join(mediaDir, 'photos-dead.txt')
     if (fs.existsSync(deadFile)) {
@@ -91,4 +109,16 @@ function fillClubInfo(db: DB) {
     set.run(town === province ? town : `${town} (${province})`, r.id)
   }
   db.prepare(`UPDATE clubs SET website = NULL WHERE website IS NOT NULL AND (website NOT LIKE '%.%' OR website LIKE '% %')`).run()
+}
+
+/**
+ * Fechas de nacimiento imposibles (la FEB publica algunas como 2022): un jugador con partidos
+ * oficiales no puede tener menos de 13 años. Sin una fecha creíble, mejor en blanco.
+ */
+function fixBirthDates(db: DB) {
+  db.prepare(
+    `UPDATE players SET birth_date = NULL WHERE birth_date IS NOT NULL AND (
+       CAST(substr(birth_date, 1, 4) AS INTEGER) > CAST(strftime('%Y', 'now') AS INTEGER) - 13
+       OR CAST(substr(birth_date, 1, 4) AS INTEGER) < 1940)`
+  ).run()
 }

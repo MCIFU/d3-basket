@@ -570,5 +570,14 @@ CREATE VIEW v_player_ref AS
 INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier) VALUES
   ('COPA_ESPANA', 'Copa España', 'Copa España', 'FEB', NULL);
 `
+  },
+  {
+    version: 10,
+    name: 'club_parent',
+    sql: /* sql */ `
+-- Filiales: el club del que depende (equipo B, vinculado o fundación). Lo rellena src/db/media.ts
+-- a partir de public/media/filiales.json.
+ALTER TABLE clubs ADD COLUMN parent_club_id INTEGER REFERENCES clubs(id);
+`
   }
 ]

@@ -56,6 +56,7 @@ export function ClubsPage() {
                             <TeamLogo src={c.logo} name={c.name} size={52} />
                             <div style={{ minWidth: 0 }}>
                               <div className="name">{c.name}</div>
+                              {c.parent_name && <div className="sub filial-tag">Filial de {c.parent_name}</div>}
                               <div className="sub">{c.arena ?? ''}</div>
                               {c.founded_year && <div className="sub">Fundado en {c.founded_year}</div>}
                             </div>
@@ -108,6 +109,12 @@ export function ClubPage({ refId, tab = 'resumen', year }: { refId: string; tab?
           <div style={{ minWidth: 0 }}>
             <div className="eyebrow">{data.team ? `${data.competition?.name ?? ''} ${season?.label ?? ''}` : 'Club histórico'}</div>
             <h1>{data.team?.name ?? club.name}</h1>
+            {club.parent && (
+              <a className="filial-of" href={href.club(club.parent.ref, club.parent.name)}>
+                <span className="chip brand">Filial</span>
+                de <TeamLogo src={club.parent.logo} name={club.parent.name} size={20} /> <b>{club.parent.name}</b> →
+              </a>
+            )}
             <div className="hero-facts">
               {club.city && (
                 <div className="hero-fact">
@@ -801,6 +808,25 @@ function ClubInfoTab({ data }: { data: ClubData }) {
             <Fact k="Ciudad">{club.city}</Fact>
             <Fact k="Fundación">{club.founded_year && `${club.founded_year} · ${now - club.founded_year} años`}</Fact>
             <Fact k="Competición">{data.competition && `${data.competition.name} ${data.season?.label ?? ''}`}</Fact>
+            <Fact k="Filial de">
+              {club.parent && (
+                <a className="link" href={href.club(club.parent.ref, club.parent.name)}>
+                  {club.parent.name} →
+                </a>
+              )}
+            </Fact>
+            <Fact k="Filiales y vinculados">
+              {club.filiales.length > 0 && (
+                <span style={{ display: 'grid', gap: 4 }}>
+                  {club.filiales.map((f) => (
+                    <a key={f.ref} className="link" href={href.club(f.ref, f.name)}>
+                      {f.name}
+                      {f.league ? <span className="muted" style={{ fontWeight: 500 }}> · {f.league}</span> : null}
+                    </a>
+                  ))}
+                </span>
+              )}
+            </Fact>
             <Fact k="Presidente">{club.president}</Fact>
             {staff.map((s, i) => (
               <Fact key={i} k={STAFF_LABEL[s.role] ?? 'Cuerpo técnico'}>

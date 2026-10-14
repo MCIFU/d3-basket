@@ -638,6 +638,7 @@ function TrajectoryTable({ rows, mode }: { rows: TrajectoryRow[]; mode: StatMode
           <a className="team-link" href={href.club(r.club_ref, r.team_name, undefined, r.start_year)}>
             <TeamLogo src={r.logo} name={r.team_name} size={22} />
             <span>{r.team_name}</span>
+            {r.parent_name && <span className="chip brand" title={`Filial de ${r.parent_name}`}>Filial</span>}
           </a>
         ) : (
           r.team_name
@@ -725,12 +726,83 @@ function Trajectory({ data }: { data: PlayerData }) {
           (categorías FEB inferiores) proceden del historial de licencias de la FEB.
         </p>
       </Section>
-      {data.trajectory.length > 0 && (
-        <Section title="Estadísticas por temporada" actions={<ModeToggle mode={mode} onChange={setMode} />}>
-          <TrajectoryTable rows={data.trajectory} mode={mode} />
-        </Section>
-      )}
+      <SeasonBreakdown rows={data.trajectory} />
+      {SECTIONS.map(([key, title, sub]) => {
+        const rows = data.trajectory.filter((r) => r.section === key)
+        if (!rows.length) return null
+        return (
+          <Section key={key} title={title} eyebrow={sub} actions={<ModeToggle mode={mode} onChange={setMode} />}>
+            <TrajectoryTable rows={rows} mode={mode} />
+          </Section>
+        )
+      })}
+      <SectionsPending rows={data.trajectory} />
     </div>
+  )
+}
+
+/** Apartados de la carrera: primer equipo, filial, copa, Europa y selección. */
+const SECTIONS: [TrajectoryRow['section'], string, string][] = [
+  ['liga', 'Liga · primer equipo', 'Por temporada'],
+  ['filial', 'Filial y equipos vinculados', 'Minutos en el filial o el equipo vinculado'],
+  ['copa', 'Copa', 'Copa España (FEB)'],
+  ['europa', 'Competiciones europeas', 'EuroLeague, EuroCup, Basketball Champions League…'],
+  ['seleccion', 'Selección', 'Partidos con su selección']
+]
+
+/** Apartados que todavía no tienen datos en D3 Basket (Europa y selección). */
+function SectionsPending({ rows }: { rows: TrajectoryRow[] }) {
+  const pending = SECTIONS.filter(([k]) => (k === 'europa' || k === 'seleccion') && !rows.some((r) => r.section === k))
+  if (!pending.length) return null
+  return <p className="note">{pending.map(([, t]) => t).join(' y ')}: se añadirán cuando D3 Basket incluya esas competiciones.</p>
+}
+
+/** Cada temporada desglosada: en qué equipos y competiciones jugó y con qué números. */
+function SeasonBreakdown({ rows }: { rows: TrajectoryRow[] }) {
+  const seasons = [...new Set(rows.map((r) => r.start_year))].sort((a, b) => b - a)
+  if (!seasons.length) return null
+  const label = Object.fromEntries(SECTIONS.map(([k, t]) => [k, t.split(' · ')[0]]))
+  return (
+    <Section title="Desglose por temporada" eyebrow="Primer equipo, filial y copa por separado">
+      <div className="season-breakdown">
+        {seasons.map((y) => {
+          const list = rows.filter((r) => r.start_year === y)
+          const games = list.reduce((a, r) => a + r.games, 0)
+          return (
+            <div key={y} className="sb-season">
+              <div className="sb-head">
+                <b>{list[0].label}</b>
+                <span className="muted">
+                  {games} partidos · {list.length} {list.length === 1 ? 'equipo/competición' : 'equipos/competiciones'}
+                </span>
+              </div>
+              {list.map((r) => (
+                <div key={`${r.team_name}-${r.competition_code}`} className={`sb-row sec-${r.section}`}>
+                  <span className="sb-sec">{label[r.section]}</span>
+                  <span className="sb-team">
+                    {r.club_ref ? (
+                      <a className="team-link" href={href.club(r.club_ref, r.team_name, undefined, r.start_year)}>
+                        <TeamLogo src={r.logo} name={r.team_name} size={20} />
+                        <span>{r.team_name}</span>
+                      </a>
+                    ) : (
+                      r.team_name
+                    )}
+                    {r.parent_name && <span className="small muted"> · filial de {r.parent_name}</span>}
+                  </span>
+                  <CompetitionBadge name={r.competition_code} />
+                  <span className="sb-stat"><b>{r.games}</b> PJ</span>
+                  <span className="sb-stat"><b>{num(r.ppg)}</b> PTS</span>
+                  <span className="sb-stat"><b>{num(r.rpg)}</b> REB</span>
+                  <span className="sb-stat"><b>{num(r.apg)}</b> AST</span>
+                  <span className="sb-stat"><b>{num(r.pirpg)}</b> VAL</span>
+                </div>
+              ))}
+            </div>
+          )
+        })}
+      </div>
+    </Section>
   )
 }
 
@@ -787,10 +859,64 @@ function GameLogTable({ rows, compact }: { rows: PlayerData['gameLog']; compact?
 }
 
 function GameLog({ data }: { data: PlayerData }) {
+  const all = data.gameLog
+  const [sec, setSec] = useState<'todos' | TrajectoryRow['section']>('todos')
+  const [season, setSeason] = useState<string>('todas')
+  if (!all.length) return <Empty>Sin partidos registrados todavía.</Empty>
+  const seasons = [...new Set(all.map((g) => g.season_label))]
+  const shown = all.filter((g) => (sec === 'todos' || g.section === sec) && (season === 'todas' || g.season_label === season))
+  // Grupos: temporada → competición y equipo, con su resumen.
+  const groups = new Map<string, typeof all>()
+  for (const g of shown) {
+    const k = `${g.season_label}|${g.competition_name}|${g.team_name}`
+    groups.set(k, [...(groups.get(k) ?? []), g])
+  }
   return (
-    <Section title="Partido a partido" eyebrow="Temporadas con estadística completa">
-      {data.gameLog.length ? <GameLogTable rows={data.gameLog} /> : <Empty>Sin partidos registrados todavía.</Empty>}
-    </Section>
+    <div className="stack">
+      <div className="row log-filters">
+        <div className="segmented">
+          <button className={sec === 'todos' ? 'active' : ''} onClick={() => setSec('todos')}>
+            Todos · {all.length}
+          </button>
+          {SECTIONS.map(([k, t]) => {
+            const n = all.filter((g) => g.section === k).length
+            return (
+              <button key={k} className={sec === k ? 'active' : ''} disabled={!n} onClick={() => setSec(k)} title={n ? undefined : 'Próximamente'}>
+                {t.split(' · ')[0]} · {n}
+              </button>
+            )
+          })}
+        </div>
+        <select className="select" value={season} onChange={(e) => setSeason(e.target.value)} aria-label="Temporada">
+          <option value="todas">Todas las temporadas</option>
+          {seasons.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+      </div>
+      {[...groups.entries()].map(([k, rows]) => {
+        const [label, comp, teamName] = k.split('|')
+        const n = rows.length
+        const avg = (f: (g: (typeof rows)[number]) => number) => num(rows.reduce((a, g) => a + f(g), 0) / n)
+        const won = rows.filter((g) => (g.team_score ?? 0) > (g.opp_score ?? 0)).length
+        return (
+          <Section
+            key={k}
+            eyebrow={`${label} · ${comp}`}
+            title={teamName + (rows[0].parent_name ? ` (filial de ${rows[0].parent_name})` : '')}
+            actions={
+              <span className="small muted">
+                {n} PJ · {won}-{n - won} · {avg((g) => g.points)} pts · {avg((g) => g.reb)} reb · {avg((g) => g.ast)} ast · {avg((g) => g.pir ?? 0)} val
+              </span>
+            }
+          >
+            <GameLogTable rows={rows} />
+          </Section>
+        )
+      })}
+    </div>
   )
 }
 
