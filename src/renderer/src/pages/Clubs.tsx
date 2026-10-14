@@ -76,8 +76,8 @@ const TABS = [
   { id: 'plantilla', label: 'Plantilla' },
   { id: 'estadisticas', label: 'Estadísticas' },
   { id: 'partidos', label: 'Partidos' },
-  { id: 'palmares', label: 'Palmarés' },
-  { id: 'historia', label: 'Historia' }
+  { id: 'info', label: 'Info' },
+  { id: 'palmares', label: 'Palmarés' }
 ]
 
 export function ClubPage({ refId, tab = 'resumen', year }: { refId: string; tab?: string; year?: number }) {
@@ -109,6 +109,12 @@ export function ClubPage({ refId, tab = 'resumen', year }: { refId: string; tab?
             <div className="eyebrow">{data.team ? `${data.competition?.name ?? ''} ${season?.label ?? ''}` : 'Club histórico'}</div>
             <h1>{data.team?.name ?? club.name}</h1>
             <div className="hero-facts">
+              {club.city && (
+                <div className="hero-fact">
+                  <div className="k">Ciudad</div>
+                  <div className="v">{club.city}</div>
+                </div>
+              )}
               {club.founded_year && (
                 <div className="hero-fact">
                   <div className="k">Fundación</div>
@@ -198,7 +204,7 @@ export function ClubPage({ refId, tab = 'resumen', year }: { refId: string; tab?
         </Section>
       )}
       {tab === 'palmares' && <Cabinet data={data} />}
-      {tab === 'historia' && <History data={data} />}
+      {(tab === 'info' || tab === 'historia') && <ClubInfoTab data={data} />}
     </div>
   )
 }
@@ -574,88 +580,130 @@ function CabinetMini({ data }: { data: ClubData }) {
   )
 }
 
+const COMPS = ['liga', 'copa', 'supercopa'] as const
+
+/** Década → 10 casillas (una por temporada) con el resultado del club en esa competición. */
+function HonourGrid({ list, from }: { list: ClubHonour[]; from: number }) {
+  const by = new Map(list.map((h) => [h.season_start_year, h]))
+  const now = new Date().getFullYear()
+  const decades: number[] = []
+  for (let d = Math.floor(from / 10) * 10; d <= now; d += 10) decades.push(d)
+  return (
+    <div className="honour-grid">
+      {decades.map((d) => (
+        <div key={d} className="hg-row">
+          <span className="hg-dec">{d}s</span>
+          {Array.from({ length: 10 }, (_, i) => {
+            const y = d + i
+            const h = by.get(y)
+            return (
+              <span
+                key={y}
+                className={`hg-cell${h ? (h.role === 'champion' ? ' gold' : ' silver') : ''}${y > now ? ' future' : ''}`}
+                title={h ? `${h.label} · ${h.role === 'champion' ? 'Campeón' : 'Subcampeón'}${h.opponent ? ` ante ${h.opponent}` : ''}${h.result && h.result !== 'N/A' ? ` (${h.result})` : ''}` : `${y}-${String((y + 1) % 100).padStart(2, '0')}`}
+              >
+                {h ? String(y % 100).padStart(2, '0') : ''}
+              </span>
+            )
+          })}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function FinalsList({ list }: { list: ClubHonour[] }) {
+  const [all, setAll] = useState(false)
+  const shown = all ? list : list.slice(0, 8)
+  return (
+    <div className="finals-list mt">
+      {shown.map((h) => (
+        <div key={h.season_start_year} className={`final-row ${h.role === 'champion' ? 'won' : 'lost'}`}>
+          <span className="fr-season">{h.label}</span>
+          <span className={`chip ${h.role === 'champion' ? 'gold' : ''}`}>{h.role === 'champion' ? '🏆 Campeón' : 'Subcampeón'}</span>
+          <span className="fr-opp">{h.opponent ? `${h.role === 'champion' ? 'ante' : 'perdió ante'} ${h.opponent}` : '—'}</span>
+          <span className="fr-res">{h.result && h.result !== 'N/A' ? h.result : ''}</span>
+        </div>
+      ))}
+      {list.length > 8 && (
+        <button className="btn mt" style={{ justifySelf: 'start' }} onClick={() => setAll(!all)}>
+          {all ? 'Ver menos' : `Ver las ${list.length} finales`}
+        </button>
+      )}
+    </div>
+  )
+}
+
 function Cabinet({ data }: { data: ClubData }) {
-  if (!data.honours.length) return <Empty>Este club no tiene títulos ni finales en Liga, Copa del Rey o Supercopa.</Empty>
+  if (!data.honours.length)
+    return <Empty>Este club no tiene títulos ni finales de Liga, Copa del Rey o Supercopa (la FEB no publica palmarés histórico).</Empty>
+  const won = data.honours.filter((h) => h.role === 'champion')
+  const finals = data.honours.length
+  const first = [...won].sort((a, b) => a.season_start_year - b.season_start_year)[0]
+  const last = won[0]
   return (
     <div className="stack">
+      <div className="honour-summary">
+        <div>
+          <b>{won.length}</b>
+          <span>títulos</span>
+        </div>
+        <div>
+          <b>{finals}</b>
+          <span>finales</span>
+        </div>
+        <div>
+          <b>{pct((100 * won.length) / finals)}</b>
+          <span>finales ganadas</span>
+        </div>
+        {first && (
+          <div>
+            <b>{first.label}</b>
+            <span>primer título · {TROPHIES[first.competition].name}</span>
+          </div>
+        )}
+        {last && (
+          <div>
+            <b>{last.label}</b>
+            <span>último título · {TROPHIES[last.competition].name}</span>
+          </div>
+        )}
+      </div>
+
       <div className="cabinet">
-        {(['liga', 'copa', 'supercopa'] as const).map((c) => {
-          const won = data.honours.filter((h) => h.competition === c && h.role === 'champion')
-          const lost = data.honours.filter((h) => h.competition === c && h.role === 'runner_up')
+        {COMPS.map((c) => {
+          const w = data.honours.filter((h) => h.competition === c && h.role === 'champion')
+          const l = data.honours.filter((h) => h.competition === c && h.role === 'runner_up')
           return (
-            <div key={c} className="cabinet-item">
+            <div key={c} className={`cabinet-item${w.length ? '' : ' empty'}`}>
               <Trophy competition={c} size={c === 'liga' ? 110 : 90} />
               <div>
-                <div className="small muted" style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em' }}>
-                  {TROPHIES[c].name}
-                </div>
+                <div className="cab-name">{TROPHIES[c].name}</div>
                 <div className="count">
-                  {won.length}
-                  <small>{won.length === 1 ? 'título' : 'títulos'}</small>
+                  {w.length}
+                  <small>{w.length === 1 ? 'título' : 'títulos'}</small>
                 </div>
-                <div className="runner">{lost.length} subcampeonatos</div>
+                <div className="runner">
+                  {l.length} {l.length === 1 ? 'subcampeonato' : 'subcampeonatos'}
+                  {w[0] ? ` · último ${w[0].label}` : ''}
+                </div>
               </div>
             </div>
           )
         })}
       </div>
-      {(['liga', 'copa', 'supercopa'] as const).map((c) => {
+
+      {COMPS.map((c) => {
         const list = data.honours.filter((h) => h.competition === c)
         if (!list.length) return null
         return (
-          <Section key={c} title={TROPHIES[c].name}>
-            <div className="small muted" style={{ fontWeight: 700, marginBottom: 6 }}>
-              Campeón
+          <Section key={c} title={TROPHIES[c].name} eyebrow={`${list.filter((h) => h.role === 'champion').length} títulos · ${list.length} finales`}>
+            <HonourGrid list={list} from={Math.min(...list.map((h) => h.season_start_year))} />
+            <div className="row small muted mt" style={{ gap: 14 }}>
+              <span className="legend-dot gold" /> Campeón
+              <span className="legend-dot silver" /> Subcampeón
             </div>
-            <div className="years">
-              {list
-                .filter((h) => h.role === 'champion')
-                .map((h) => (
-                  <span key={h.season_start_year} className="chip gold" title={h.opponent ? `Final ante ${h.opponent} ${h.result ?? ''}` : undefined}>
-                    🏆 {h.label}
-                  </span>
-                ))}
-            </div>
-            {list.some((h) => h.role === 'runner_up') && (
-              <>
-                <div className="small muted" style={{ fontWeight: 700, margin: '14px 0 6px' }}>
-                  Subcampeón
-                </div>
-                <div className="years">
-                  {list
-                    .filter((h) => h.role === 'runner_up')
-                    .map((h) => (
-                      <span key={h.season_start_year} className="chip" title={h.opponent ? `Final ante ${h.opponent} ${h.result ?? ''}` : undefined}>
-                        {h.label}
-                      </span>
-                    ))}
-                </div>
-              </>
-            )}
-            <div className="table-wrap mt">
-              <table className="table compact">
-                <thead>
-                  <tr>
-                    <th>Temporada</th>
-                    <th>Resultado</th>
-                    <th>Rival en la final</th>
-                    <th>Marcador / serie</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {list.map((h) => (
-                    <tr key={h.season_start_year}>
-                      <td>
-                        <b>{h.label}</b>
-                      </td>
-                      <td>{h.role === 'champion' ? <span className="chip gold">Campeón</span> : <span className="chip">Subcampeón</span>}</td>
-                      <td>{h.opponent ?? '—'}</td>
-                      <td>{h.result && h.result !== 'N/A' ? h.result : '—'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <FinalsList list={list} />
           </Section>
         )
       })}
@@ -664,8 +712,32 @@ function Cabinet({ data }: { data: ClubData }) {
   )
 }
 
-function History({ data }: { data: ClubData }) {
+const SOCIAL_LABEL: Record<string, string> = { instagram: 'Instagram', twitter: 'X', facebook: 'Facebook', youtube: 'YouTube', tiktok: 'TikTok' }
+const STAFF_LABEL: Record<string, string> = { head_coach: 'Entrenador', assistant_coach: 'Ayudante', assistant: 'Ayudante' }
+
+function Fact({ k, children }: { k: string; children: React.ReactNode }) {
+  if (children == null || children === false || children === '') return null
+  return (
+    <div className="fact">
+      <div className="fact-k">{k}</div>
+      <div className="fact-v">{children}</div>
+    </div>
+  )
+}
+
+function ClubInfoTab({ data }: { data: ClubData }) {
   const { club, records } = data
+  const now = new Date().getFullYear()
+  const web = club.website && (/^https?:/.test(club.website) ? club.website : `https://${club.website}`)
+  const socials = Object.entries(club.socials).filter(([k]) => SOCIAL_LABEL[k])
+  const staff = data.staff.filter((s) => s.name)
+  // Temporadas agrupadas en tramos consecutivos de la misma competición.
+  const spans: { code: string; from: string; to: string; n: number }[] = []
+  for (const s of [...data.seasons].sort((a, b) => a.start_year - b.start_year)) {
+    const last = spans[spans.length - 1]
+    if (last && last.code === s.competition_code) (last.to = s.label), last.n++
+    else spans.push({ code: s.competition_code, from: s.label, to: s.label, n: 1 })
+  }
   const rec = (r?: typeof records.acb, label?: string) =>
     r && (
       <Section title={label}>
@@ -684,7 +756,72 @@ function History({ data }: { data: ClubData }) {
   return (
     <div className="grid grid-main">
       <div className="stack">
-        <Section title={club.name} eyebrow="Historia">
+        <Section title="Ficha del club">
+          <div className="facts">
+            <Fact k="Nombre">{data.team?.name ?? club.name}</Fact>
+            <Fact k="Club">{data.team && data.team.name !== club.name ? club.name : null}</Fact>
+            <Fact k="Ciudad">{club.city}</Fact>
+            <Fact k="Fundación">{club.founded_year && `${club.founded_year} · ${now - club.founded_year} años`}</Fact>
+            <Fact k="Competición">{data.competition && `${data.competition.name} ${data.season?.label ?? ''}`}</Fact>
+            <Fact k="Presidente">{club.president}</Fact>
+            {staff.map((s, i) => (
+              <Fact key={i} k={STAFF_LABEL[s.role] ?? 'Cuerpo técnico'}>
+                {s.name}
+              </Fact>
+            ))}
+            <Fact k="Colores">
+              {club.color && (
+                <span className="row" style={{ gap: 6 }}>
+                  <span className="swatch" style={{ background: club.color }} />
+                  {club.color2 && <span className="swatch" style={{ background: club.color2 }} />}
+                </span>
+              )}
+            </Fact>
+            <Fact k="Web">
+              {web && (
+                <ExternalLink url={web}>
+                  <span className="link">{web.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')} ↗</span>
+                </ExternalLink>
+              )}
+            </Fact>
+            <Fact k="Redes">
+              {socials.length > 0 && (
+                <span className="row" style={{ gap: 6, flexWrap: 'wrap' }}>
+                  {socials.map(([k, url]) => (
+                    <ExternalLink key={k} url={url}>
+                      <span className="chip">{SOCIAL_LABEL[k]} ↗</span>
+                    </ExternalLink>
+                  ))}
+                </span>
+              )}
+            </Fact>
+          </div>
+        </Section>
+
+        {club.arena && (
+          <Section title="Pabellón">
+            <div className={`arena${club.arena_photo_url ? ' has-photo' : ''}`}>
+              {club.arena_photo_url && <img src={club.arena_photo_url} alt="" loading="lazy" />}
+              <div className="facts">
+                <Fact k="Nombre">{club.arena}</Fact>
+                <Fact k="Aforo">{club.arena_capacity ? `${int(club.arena_capacity)} espectadores` : null}</Fact>
+                <Fact k="Dirección">
+                  {club.arena_address && (
+                    <ExternalLink url={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${club.arena}, ${club.arena_address}`)}`}>
+                      <span className="link">{club.arena_address} ↗</span>
+                    </ExternalLink>
+                  )}
+                </Fact>
+                <Fact k="Público esta temporada">
+                  {data.stats?.attendance_avg != null &&
+                    `${int(data.stats.attendance_avg)} de media${club.arena_capacity ? ` · ${pct((100 * data.stats.attendance_avg) / club.arena_capacity)} de ocupación` : ''}`}
+                </Fact>
+              </div>
+            </div>
+          </Section>
+        )}
+
+        <Section title="Historia">
           {club.history ? (
             <>
               <p className="history-text">{club.history}</p>
@@ -695,32 +832,26 @@ function History({ data }: { data: ClubData }) {
           ) : (
             <p className="muted">Sin resumen histórico disponible.</p>
           )}
-          <dl className="kv mt">
-            {club.founded_year && (
-              <>
-                <dt>Fundación</dt>
-                <dd>{club.founded_year}</dd>
-              </>
-            )}
-            {club.president && (
-              <>
-                <dt>Presidente</dt>
-                <dd>{club.president}</dd>
-              </>
-            )}
-            {club.arena && (
-              <>
-                <dt>Pabellón</dt>
-                <dd>{club.arena}</dd>
-              </>
-            )}
-          </dl>
         </Section>
         {rec(records.acb, 'En la era ACB (desde 1983-84)')}
         {rec(records.total, 'Liga Nacional + ACB (desde 1956-57)')}
       </div>
       <div className="stack">
         <CabinetMini data={data} />
+        {spans.length > 0 && (
+          <Section title="Trayectoria">
+            <ol className="trajectory">
+              {[...spans].reverse().map((t, i) => (
+                <li key={i}>
+                  <b>{t.from === t.to ? t.from : `${t.from} → ${t.to}`}</b>
+                  <span>
+                    {leagueTheme(t.code)?.name ?? t.code} · {t.n} {t.n === 1 ? 'temporada' : 'temporadas'}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </Section>
+        )}
         {data.seasons.length > 0 && (
           <Section title="Temporadas con datos">
             {data.seasons.map((s) => (

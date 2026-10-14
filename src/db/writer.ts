@@ -668,7 +668,7 @@ export class Writer {
            arena_address = COALESCE(@address, arena_address), arena_capacity = COALESCE(@capacity, arena_capacity),
            arena_photo_url = COALESCE(@photo, arena_photo_url), website = COALESCE(@web, website),
            president = COALESCE(@president, president), logo_url = COALESCE(@logo, logo_url),
-           primary_color = COALESCE(@color, primary_color), socials = @socials, updated_at = @now
+           primary_color = COALESCE(@color, primary_color), socials = COALESCE(@socials, socials), updated_at = @now
          WHERE id = @id`
       )
       .run({

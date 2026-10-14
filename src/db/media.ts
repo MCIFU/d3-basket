@@ -7,6 +7,7 @@ import type { DB } from './database'
  *   players/f<id>.webp  foto en primer plano con fondo transparente (id de la FEB)
  *   logos/<ref>.png     escudo recortado y centrado en 256×256
  *   colors.json         { "<ref>": { primary, secondary } } sacados del escudo
+ *   photos-dead.txt     fotos oficiales vacías o genéricas (tools/media/check_photos.mjs): se quitan
  * Se aplican sobre la base de datos después de cada sincronización y al
  * exportar la web: el scraper vuelve a escribir las URL originales, así que
  * esto debe ejecutarse siempre al final.
@@ -26,6 +27,13 @@ export function applyMedia(db: DB, mediaDir: string): { players: number; logos: 
   const current = `club_id = ? AND competition_season_id IN (SELECT id FROM competition_seasons WHERE is_current = 1)`
 
   db.transaction(() => {
+    fillClubInfo(db)
+    // Sin foto oficial válida en acb.com o la FEB, sin foto.
+    const deadFile = path.join(mediaDir, 'photos-dead.txt')
+    if (fs.existsSync(deadFile)) {
+      const clear = ['photo_url', 'photo_nobg_url', 'body_photo_url'].map((c) => db.prepare(`UPDATE players SET ${c} = NULL WHERE ${c} = ?`))
+      for (const url of fs.readFileSync(deadFile, 'utf8').split('\n')) if (url) for (const q of clear) q.run(url)
+    }
     // Sin pisar la foto oficial de acb.com de quien también tiene ficha en la ACB.
     const setPhoto = db.prepare(
       `UPDATE players SET photo_nobg_url = ? WHERE id = ? AND (photo_nobg_url IS NULL OR photo_nobg_url LIKE '%feb.es%' OR photo_nobg_url LIKE 'media/%')`
@@ -63,4 +71,24 @@ export function applyMedia(db: DB, mediaDir: string): { players: number; logos: 
     }
   })()
   return done
+}
+
+/**
+ * Ciudad y provincia del club a partir de la dirección del pabellón que publica la FEB
+ * ('… 28522 Rivas-Vaciamadrid (Madrid)'), y webs que no son una dirección ('WEB', 'Nº Reg. …').
+ */
+function fillClubInfo(db: DB) {
+  const rows = db.prepare('SELECT id, arena_address AS addr FROM clubs WHERE arena_address IS NOT NULL').all() as { id: number; addr: string }[]
+  const set = db.prepare('UPDATE clubs SET city = ? WHERE id = ?')
+  // 'Palmas de Gran Canaria, Las' → 'Las Palmas de Gran Canaria'
+  const flip = (s: string) => s.trim().replace(/^(.+),\s*(el|la|los|las|l'|els|les|es|sa|o|a|as|os)$/i, (_, a, b) => `${b[0].toUpperCase()}${b.slice(1)}${b.endsWith("'") ? '' : ' '}${a}`)
+  for (const r of rows) {
+    const m = /^.*\b\d{5}\s+(.+?)\s*\(([^)]+)\)\s*$/.exec(r.addr)
+    if (!m) continue
+    const title = (x: string) => (x === x.toUpperCase() ? x.toLowerCase().replace(/(^|[\s-])\p{L}/gu, (c) => c.toUpperCase()) : x)
+    const town = title(flip(m[1]))
+    const province = flip(m[2])
+    set.run(town === province ? town : `${town} (${province})`, r.id)
+  }
+  db.prepare(`UPDATE clubs SET website = NULL WHERE website IS NOT NULL AND (website NOT LIKE '%.%' OR website LIKE '% %')`).run()
 }

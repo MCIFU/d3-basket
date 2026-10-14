@@ -93,23 +93,39 @@ async function main() {
 
   if (command === 'import-club-wiki') {
     // Emparejamientos club ↔ Wikipedia revisados (tools/media/club_wiki.py): solo rellena lo que falte.
-    type Entry = { ok: boolean; match: { founded: number | null; extract: string | null; url: string | null } | null }
+    type Extra = { website?: string; socials?: Record<string, string>; city?: string; arena?: string; arena_capacity?: number }
+    type Entry = { ok: boolean; match: { founded: number | null; extract: string | null; url: string | null; extra?: Extra } | null }
     const entries = JSON.parse(fs.readFileSync(path.resolve(positionals[1] ?? 'tools/media/club-wiki.json'), 'utf8')) as Record<string, Entry>
+    const clubId = db.prepare(
+      `SELECT COALESCE((SELECT club_id FROM v_club_ref WHERE ref = @ref),
+         -- El club puede haber cambiado de ref al unirse a su ficha ACB: se busca por su id FEB.
+         (SELECT entity_id FROM external_ids WHERE entity_type = 'club' AND source = 'feb' AND 'f' || external_id = @ref)) AS id`
+    )
     const update = db.prepare(
       `UPDATE clubs SET founded_year = COALESCE(founded_year, @founded), history = COALESCE(history, @history),
-         history_url = COALESCE(history_url, @url)
-       WHERE id = COALESCE((SELECT club_id FROM v_club_ref WHERE ref = @ref),
-         -- El club puede haber cambiado de ref al unirse a su ficha ACB: se busca por su id FEB.
-         (SELECT entity_id FROM external_ids WHERE entity_type = 'club' AND source = 'feb' AND 'f' || external_id = @ref))`
+         history_url = COALESCE(history_url, @url), city = COALESCE(city, @city),
+         website = CASE WHEN website LIKE '%.%' AND website NOT LIKE '% %' THEN website ELSE COALESCE(@website, website) END
+       WHERE id = @id`
     )
+    const getClub = db.prepare('SELECT arena, arena_capacity, socials FROM clubs WHERE id = ?')
+    const setSocials = db.prepare('UPDATE clubs SET socials = ? WHERE id = ?')
+    const setCapacity = db.prepare('UPDATE clubs SET arena_capacity = ? WHERE id = ? AND arena_capacity IS NULL')
+    const words = (s: string) => new Set(s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length >= 4 && !/^(pabellon|palacio|deportes|municipal|polideportivo|pavello)$/.test(w)))
     let n = 0
     db.transaction(() => {
       for (const [ref, e] of Object.entries(entries)) {
         if (!e.ok || !e.match) continue
-        n += update.run({ ref, founded: e.match.founded, history: e.match.extract, url: e.match.url }).changes
+        const id = (clubId.get({ ref }) as { id: number | null }).id
+        if (!id) continue
+        const x = e.match.extra ?? {}
+        n += update.run({ id, founded: e.match.founded, history: e.match.extract, url: e.match.url, city: x.city ?? null, website: x.website ?? null }).changes
+        const club = getClub.get(id) as { arena: string | null; arena_capacity: number | null; socials: string | null }
+        if (x.socials) setSocials.run(JSON.stringify({ ...x.socials, ...(club.socials ? JSON.parse(club.socials) : {}) }), id)
+        // El aforo de Wikidata solo si es el mismo pabellón en el que juega ahora.
+        if (x.arena_capacity && x.arena && club.arena && [...words(x.arena)].some((w) => words(club.arena!).has(w))) setCapacity.run(x.arena_capacity, id)
       }
     })()
-    console.log(`✔ ${n} clubes con fundación e historia de Wikipedia`)
+    console.log(`✔ ${n} clubes completados con Wikipedia/Wikidata (fundación, historia, ciudad, web, redes y aforo)`)
     return
   }
 

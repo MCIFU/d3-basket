@@ -709,3 +709,49 @@ h2 { font-stretch: 84%; word-spacing: .04em; }
   .main-nav a { padding: 0 6px; font-size: 13.5px; flex: 0 0 auto; }
 }
 @media (min-width: 380px) and (max-width: 760px) { .main-nav { mask-image: none; } }
+
+/* ── Ficha del club (pestaña Info) ── */
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
+.fact { padding: 10px 0; border-bottom: 1px solid var(--line-2); min-width: 0; }
+.fact-k { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); font-stretch: var(--label-stretch); letter-spacing: .08em; }
+.fact-v { font-weight: 600; margin-top: 2px; overflow-wrap: anywhere; }
+.swatch { width: 22px; height: 22px; border-radius: 6px; border: 1px solid var(--line); display: inline-block; }
+.arena.has-photo { display: grid; grid-template-columns: minmax(0, 220px) 1fr; gap: 18px; align-items: start; }
+.arena img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius-sm); }
+.arena .facts { grid-template-columns: 1fr; }
+.trajectory { list-style: none; margin: 0; padding: 0 0 0 14px; border-left: 2px solid var(--line); }
+.trajectory li { position: relative; padding: 0 0 14px 12px; display: grid; }
+.trajectory li::before { content: ''; position: absolute; left: -21px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 0 3px var(--surface); }
+.trajectory li span { color: var(--muted); font-size: 13px; }
+
+/* ── Palmarés ── */
+.honour-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.honour-summary > div { background: var(--surface); padding: 14px 16px; display: grid; gap: 2px; }
+.honour-summary b { font-size: 26px; font-weight: 900; font-stretch: var(--display-stretch); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.honour-summary span { font-size: 12px; color: var(--muted); }
+.cabinet-item .cab-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.cabinet-item.empty { filter: grayscale(1); opacity: .55; }
+.honour-grid { display: grid; gap: 4px; overflow-x: auto; }
+.hg-row { display: grid; grid-template-columns: 44px repeat(10, minmax(26px, 1fr)); gap: 4px; align-items: center; }
+.hg-dec { font-size: 12px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.hg-cell { height: 26px; border-radius: 5px; background: var(--line-2); font-size: 11px; font-weight: 800; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.hg-cell.gold { background: linear-gradient(160deg, #fcd34d, #f59e0b); color: #5b3104; }
+.hg-cell.silver { background: linear-gradient(160deg, #e5e7eb, #9ca3af); color: #1f2937; }
+.hg-cell.future { opacity: .35; }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; vertical-align: -2px; }
+.legend-dot.gold { background: #f59e0b; }
+.legend-dot.silver { background: #9ca3af; }
+.finals-list { display: grid; }
+.final-row { display: grid; grid-template-columns: 80px 120px 1fr auto; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line-2); }
+.final-row .fr-season { font-weight: 800; font-variant-numeric: tabular-nums; }
+.final-row .fr-opp { color: var(--ink-2); min-width: 0; }
+.final-row.lost .fr-opp { color: var(--muted); }
+.final-row .fr-res { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
+@media (max-width: 760px) {
+  .facts { grid-template-columns: 1fr; }
+  .arena.has-photo { grid-template-columns: 1fr; }
+  .final-row { grid-template-columns: 70px 1fr; }
+  .final-row .fr-opp, .final-row .fr-res { grid-column: 2; }
+}
+:root[data-theme="dark"] .hg-cell.silver { background: linear-gradient(160deg, #6b7280, #4b5563); color: #f3f4f6; }
+:root[data-theme="dark"] .cabinet-item { background: linear-gradient(160deg, #2a2213, var(--surface)); border-color: #3a2d10; }

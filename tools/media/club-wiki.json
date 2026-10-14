@@ -13,7 +13,13 @@
    "url": "https://es.wikipedia.org/wiki/Oviedo_Club_Baloncesto",
    "shared": [
     "oviedo"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.oviedobaloncesto.com/",
+    "city": "Oviedo",
+    "arena": "Palacio de los Deportes de Oviedo",
+    "arena_capacity": 3713
+   }
   },
   "ok": true
  },
@@ -31,7 +37,15 @@
    "url": "https://es.wikipedia.org/wiki/Albacete_Basket",
    "shared": [
     "albacete"
-   ]
+   ],
+   "extra": {
+    "website": "http://abbasket2012.com/",
+    "socials": {
+     "twitter": "https://x.com/albacetebasket"
+    },
+    "city": "Albacete",
+    "arena": "Pabellón del Parque"
+   }
   },
   "ok": true
  },
@@ -49,7 +63,10 @@
    "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Menorca",
    "shared": [
     "menorca"
-   ]
+   ],
+   "extra": {
+    "city": "Mahón"
+   }
   },
   "ok": true
  },
@@ -67,7 +84,10 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Zamora",
    "shared": [
     "zamora"
-   ]
+   ],
+   "extra": {
+    "city": "Zamora"
+   }
   },
   "ok": true
  },
@@ -86,7 +106,19 @@
    "shared": [
     "canaria",
     "gran"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cbgrancanaria.com",
+    "socials": {
+     "instagram": "https://www.instagram.com/grancanariacb",
+     "twitter": "https://x.com/cbgranca",
+     "facebook": "https://www.facebook.com/CBGranca",
+     "youtube": "https://www.youtube.com/channel/UCa9aPR6yFFLA4Ow5YhPB6qg"
+    },
+    "city": "Las Palmas de Gran Canaria",
+    "arena": "Gran Canaria Arena",
+    "arena_capacity": 11500
+   }
   },
   "ok": true
  },
@@ -104,7 +136,11 @@
    "url": "https://es.wikipedia.org/wiki/C%C3%B3rdoba_Club_de_Baloncesto",
    "shared": [
     "cordoba"
-   ]
+   ],
+   "extra": {
+    "website": "https://www.cordobacb.es",
+    "city": "Córdoba"
+   }
   },
   "ok": true
  },
@@ -122,7 +158,16 @@
    "url": "https://es.wikipedia.org/wiki/Club_Ourense_Baloncesto",
    "shared": [
     "ourense"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.clubourensebaloncesto.com/",
+    "socials": {
+     "twitter": "https://x.com/cobsad"
+    },
+    "city": "Orense",
+    "arena": "Palacio Provincial de los Deportes Paco Paz",
+    "arena_capacity": 6000
+   }
   },
   "ok": true
  },
@@ -140,7 +185,13 @@
    "url": "https://es.wikipedia.org/wiki/Fundaci%C3%B3n_Club_Baloncesto_Granada",
    "shared": [
     "granada"
-   ]
+   ],
+   "extra": {
+    "website": "http://fundacioncbgranada.es",
+    "city": "Granada",
+    "arena": "Palacio de Deportes de Granada",
+    "arena_capacity": 7358
+   }
   },
   "ok": true
  },
@@ -166,7 +217,11 @@
    "shared": [
     "alega",
     "cantabria"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cdestela.com/",
+    "city": "Santander"
+   }
   },
   "ok": true
  },
@@ -184,7 +239,13 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Tizona",
    "shared": [
     "tizona"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cbtizona.es/",
+    "city": "Burgos",
+    "arena": "Polideportivo Municipal El Plantío",
+    "arena_capacity": 2432
+   }
   },
   "ok": true
  },
@@ -202,7 +263,13 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Lucentum_Alicante",
    "shared": [
     "alicante"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cblucentum.com/",
+    "city": "Alicante",
+    "arena": "Pabellón Pedro Ferrandiz",
+    "arena_capacity": 5425
+   }
   },
   "ok": true
  },
@@ -220,7 +287,18 @@
    "url": "https://es.wikipedia.org/wiki/Palencia_Baloncesto",
    "shared": [
     "palencia"
-   ]
+   ],
+   "extra": {
+    "website": "https://www.palenciabasket.com",
+    "socials": {
+     "instagram": "https://www.instagram.com/zunderpalencia",
+     "twitter": "https://x.com/zunderpalencia",
+     "facebook": "https://www.facebook.com/zunderpalencia"
+    },
+    "city": "Palencia",
+    "arena": "Pabellón Municipal de Palencia",
+    "arena_capacity": 1223
+   }
   },
   "ok": true
  },
@@ -245,7 +323,12 @@
    "url": "https://es.wikipedia.org/wiki/San_Sebasti%C3%A1n_Gipuzkoa_Basket_Club",
    "shared": [
     "gipuzkoa"
-   ]
+   ],
+   "extra": {
+    "website": "https://www.gipuzkoabasket.com/",
+    "city": "San Sebastián",
+    "arena": "Polideportivo Municipal Jose Antonio Gasca"
+   }
   },
   "ok": true
  },
@@ -263,7 +346,13 @@
    "url": "https://es.wikipedia.org/wiki/Club_Estudiantes_de_Baloncesto",
    "shared": [
     "estudiantes"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.clubestudiantes.com",
+    "city": "Madrid",
+    "arena": "Palacio de Deportes de la Comunidad de Madrid",
+    "arena_capacity": 17453
+   }
   },
   "ok": true
  },
@@ -288,7 +377,13 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Fuenlabrada",
    "shared": [
     "fuenlabrada"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.baloncestofuenlabrada.com/",
+    "city": "Fuenlabrada",
+    "arena": "Polideportivo Fernando Martín",
+    "arena_capacity": 5700
+   }
   },
   "ok": true
  },
@@ -307,7 +402,14 @@
    "shared": [
     "amics",
     "castello"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.amicscastello.com",
+    "socials": {
+     "twitter": "https://x.com/TAUcastello"
+    },
+    "city": "Castellón de la Plana"
+   }
   },
   "ok": true
  },
@@ -325,7 +427,10 @@
    "url": "https://es.wikipedia.org/wiki/Club_Basket_Cartagena",
    "shared": [
     "cartagena"
-   ]
+   ],
+   "extra": {
+    "city": "Cartagena"
+   }
   },
   "ok": true
  },
@@ -350,7 +455,11 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Getafe",
    "shared": [
     "getafe"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cbgetafe.es/",
+    "city": "Getafe"
+   }
   },
   "ok": true
  },
@@ -368,7 +477,11 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Mor%C3%B3n",
    "shared": [
     "moron"
-   ]
+   ],
+   "extra": {
+    "website": "http://clubbaloncestomoron.blogspot.com.es/",
+    "city": "Morón de la Frontera"
+   }
   },
   "ok": true
  },
@@ -393,7 +506,11 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Zaragoza",
    "shared": [
     "zaragoza"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cbzaragoza.com/",
+    "city": "Zaragoza"
+   }
   },
   "ok": true
  },
@@ -411,7 +528,13 @@
    "url": "https://es.wikipedia.org/wiki/C%C3%A1ceres_Ciudad_del_Baloncesto",
    "shared": [
     "caceres"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.caceresbasket.com/",
+    "city": "Cáceres",
+    "arena": "Pabellón Multiusos Ciudad de Cáceres",
+    "arena_capacity": 6500
+   }
   },
   "ok": true
  },
@@ -429,7 +552,13 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Ciudad_de_Algeciras",
    "shared": [
     "algeciras"
-   ]
+   ],
+   "extra": {
+    "website": "http://baloncestoalgeciras.blogspot.com.es/",
+    "city": "Algeciras",
+    "arena": "Pabellón Ciudad de Algeciras",
+    "arena_capacity": 2700
+   }
   },
   "ok": true
  },
@@ -448,7 +577,11 @@
    "shared": [
     "antoni",
     "sant"
-   ]
+   ],
+   "extra": {
+    "website": "https://www.basquetsantantoni.org/",
+    "city": "San Antonio Abad"
+   }
   },
   "ok": true
  },
@@ -466,7 +599,10 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Toledo_Basket",
    "shared": [
     "toledo"
-   ]
+   ],
+   "extra": {
+    "city": "Toledo"
+   }
   },
   "ok": true
  },
@@ -484,7 +620,11 @@
    "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Ll%C3%ADria",
    "shared": [
     "lliria"
-   ]
+   ],
+   "extra": {
+    "city": "Liria",
+    "arena": "Pabellón Pla de l'Arc"
+   }
   },
   "ok": true
  },
@@ -502,7 +642,10 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Ciudad_de_Ponferrada",
    "shared": [
     "ponferrada"
-   ]
+   ],
+   "extra": {
+    "city": "Ponferrada"
+   }
   },
   "ok": true
  },
@@ -521,7 +664,12 @@
    "shared": [
     "cultural",
     "leonesa"
-   ]
+   ],
+   "extra": {
+    "city": "León",
+    "arena": "Palacio de los Deportes de León",
+    "arena_capacity": 5188
+   }
   },
   "ok": true
  },
@@ -539,7 +687,11 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Benicarl%C3%B3",
    "shared": [
     "benicarlo"
-   ]
+   ],
+   "extra": {
+    "website": "https://cbbenicarlo.com/",
+    "city": "Benicarló"
+   }
   },
   "ok": true
  },
@@ -571,7 +723,13 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Pe%C3%B1as_Huesca",
    "shared": [
     "huesca"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cbphuesca.net/",
+    "city": "Huesca",
+    "arena": "Palacio Municipal de Deportes (Huesca)",
+    "arena_capacity": 4906
+   }
   },
   "ok": true
  },
@@ -589,7 +747,10 @@
    "url": "https://es.wikipedia.org/wiki/LogroBasket_Club",
    "shared": [
     "logrobasket"
-   ]
+   ],
+   "extra": {
+    "city": "Logroño"
+   }
   },
   "ok": true
  },
@@ -607,7 +768,13 @@
    "url": "https://es.wikipedia.org/wiki/Club_Melilla_Baloncesto",
    "shared": [
     "melilla"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.clubmelillabaloncesto.org/",
+    "city": "Melilla",
+    "arena": "Pabellón Javier Imbroda Ortiz",
+    "arena_capacity": 2900
+   }
   },
   "ok": true
  },
@@ -625,7 +792,13 @@
    "url": "https://es.wikipedia.org/wiki/Club_Estudiantes_de_Baloncesto",
    "shared": [
     "estudiantes"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.clubestudiantes.com",
+    "city": "Madrid",
+    "arena": "Palacio de Deportes de la Comunidad de Madrid",
+    "arena_capacity": 17453
+   }
   },
   "ok": true
  },
@@ -643,7 +816,11 @@
    "url": "https://es.wikipedia.org/wiki/Units_Pel_B%C3%A0squet_Gand%C3%ADa",
    "shared": [
     "gandia"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.basquetgandia.com",
+    "city": "Gandía"
+   }
   },
   "ok": true
  },
@@ -661,7 +838,13 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Clavijo",
    "shared": [
     "clavijo"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cbclavijo.es/",
+    "city": "Logroño",
+    "arena": "Palacio de los Deportes de La Rioja",
+    "arena_capacity": 3851
+   }
   },
   "ok": true
  },
@@ -679,7 +862,16 @@
    "url": "https://es.wikipedia.org/wiki/Club_Esportiu_Bisbal_B%C3%A0squet",
    "shared": [
     "bisbal"
-   ]
+   ],
+   "extra": {
+    "website": "https://bisbalbasquet.cat/",
+    "socials": {
+     "instagram": "https://www.instagram.com/bisbalbasquet",
+     "twitter": "https://x.com/bisbalbasquet",
+     "facebook": "https://www.facebook.com/cebisbalbasquet"
+    },
+    "city": "La Bisbal del Ampurdán"
+   }
   },
   "ok": true
  },
@@ -704,7 +896,17 @@
    "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Prat",
    "shared": [
     "prat"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cbprat.cat",
+    "socials": {
+     "twitter": "https://x.com/cbprat",
+     "facebook": "https://www.facebook.com/cbprat"
+    },
+    "city": "El Prat de Llobregat",
+    "arena": "Pavelló Joan Busquets",
+    "arena_capacity": 500
+   }
   },
   "ok": true
  },
@@ -722,7 +924,13 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Ciudad_de_Valladolid",
    "shared": [
     "valladolid"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cbcvalladolid.es/",
+    "city": "Valladolid",
+    "arena": "Polideportivo Pisuerga",
+    "arena_capacity": 6800
+   }
   },
   "ok": true
  },
@@ -740,7 +948,10 @@
    "url": "https://es.wikipedia.org/wiki/Ciudad_Molina_Basket",
    "shared": [
     "molina"
-   ]
+   ],
+   "extra": {
+    "city": "Molina de Segura"
+   }
   },
   "ok": true
  },
@@ -773,7 +984,14 @@
    "shared": [
     "amics",
     "castello"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.amicscastello.com",
+    "socials": {
+     "twitter": "https://x.com/TAUcastello"
+    },
+    "city": "Castellón de la Plana"
+   }
   },
   "ok": true
  },
@@ -812,7 +1030,11 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Axarqu%C3%ADa",
    "shared": [
     "axarquia"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cbclinicasrincon.com",
+    "city": "Málaga"
+   }
   },
   "ok": true
  },
@@ -865,7 +1087,11 @@
    "url": "https://es.wikipedia.org/wiki/CB_L'Horta_Godella",
    "shared": [
     "godella"
-   ]
+   ],
+   "extra": {
+    "website": "https://cblhortagodella.es/",
+    "city": "Godella"
+   }
   },
   "ok": true
  },
@@ -951,7 +1177,15 @@
    "url": "https://es.wikipedia.org/wiki/Granollers_Esportiu_B%C3%A0squet",
    "shared": [
     "granollers"
-   ]
+   ],
+   "extra": {
+    "website": "https://cbgranollers.cat/",
+    "socials": {
+     "twitter": "https://x.com/cb_granollers",
+     "facebook": "https://www.facebook.com/cbgranollers"
+    },
+    "city": "Granollers"
+   }
   },
   "ok": true
  },
@@ -990,7 +1224,11 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Las_Rozas",
    "shared": [
     "rozas"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cblasrozas.es",
+    "city": "Las Rozas de Madrid"
+   }
   },
   "ok": true
  },
@@ -1015,7 +1253,14 @@
    "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Valls",
    "shared": [
     "valls"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cbvalls.com/",
+    "socials": {
+     "twitter": "https://x.com/cbvalls"
+    },
+    "city": "Valls"
+   }
   },
   "ok": true
  },
@@ -1061,7 +1306,11 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Aridane",
    "shared": [
     "aridane"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cbaridane.com/",
+    "city": "Los Llanos de Aridane"
+   }
   },
   "ok": true
  },
@@ -1094,7 +1343,10 @@
    "shared": [
     "calpe",
     "ifach"
-   ]
+   ],
+   "extra": {
+    "city": "Calpe"
+   }
   },
   "ok": true
  },
@@ -1288,7 +1540,10 @@
    "shared": [
     "egues",
     "valle"
-   ]
+   ],
+   "extra": {
+    "city": "Valle de Egüés"
+   }
   },
   "ok": true
  },
@@ -1313,7 +1568,16 @@
    "url": "https://es.wikipedia.org/wiki/Uni%C3%B3_Esportiva_Matar%C3%B3",
    "shared": [
     "mataro"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.uemataro.com/",
+    "socials": {
+     "twitter": "https://x.com/uemataro",
+     "facebook": "https://www.facebook.com/uemataro"
+    },
+    "city": "Mataró",
+    "arena": null
+   }
   },
   "ok": true
  },
@@ -1331,7 +1595,10 @@
    "url": "https://es.wikipedia.org/wiki/Club_Polideportivo_La_Roda",
    "shared": [
     "roda"
-   ]
+   ],
+   "extra": {
+    "city": "La Roda"
+   }
   },
   "ok": true
  },
@@ -1378,7 +1645,19 @@
    "shared": [
     "canaria",
     "gran"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cbgrancanaria.com",
+    "socials": {
+     "instagram": "https://www.instagram.com/grancanariacb",
+     "twitter": "https://x.com/cbgranca",
+     "facebook": "https://www.facebook.com/CBGranca",
+     "youtube": "https://www.youtube.com/channel/UCa9aPR6yFFLA4Ow5YhPB6qg"
+    },
+    "city": "Las Palmas de Gran Canaria",
+    "arena": "Gran Canaria Arena",
+    "arena_capacity": 11500
+   }
   },
   "ok": true
  },
@@ -1410,7 +1689,10 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Marbella",
    "shared": [
     "marbella"
-   ]
+   ],
+   "extra": {
+    "city": "Marbella"
+   }
   },
   "ok": true
  },
@@ -1435,7 +1717,15 @@
    "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Tarragona",
    "shared": [
     "tarragona"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cbtarragona.com",
+    "socials": {
+     "twitter": "https://x.com/cbtarragona",
+     "facebook": "https://www.facebook.com/CBTarragona"
+    },
+    "city": "Tarragona"
+   }
   },
   "ok": true
  },
@@ -1461,7 +1751,11 @@
    "shared": [
     "canoe",
     "real"
-   ]
+   ],
+   "extra": {
+    "website": "https://www.realcanoe.es/baloncesto-canoe.html",
+    "city": "Madrid"
+   }
   },
   "ok": true
  },
@@ -1481,7 +1775,14 @@
     "betanzos",
     "domingo",
     "santo"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.santodomingobetanzos.com/",
+    "socials": {
+     "twitter": "https://x.com/santodomingobet"
+    },
+    "city": "Betanzos"
+   }
   },
   "ok": true
  },
@@ -1576,7 +1877,11 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Peixefresco_Mar%C3%ADn",
    "shared": [
     "marin"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.peixegalego.com/",
+    "city": "Marín"
+   }
   },
   "ok": true
  },
@@ -1603,7 +1908,10 @@
     "enrique",
     "melilla",
     "soler"
-   ]
+   ],
+   "extra": {
+    "city": "Melilla"
+   }
   },
   "ok": true
  },
@@ -1643,7 +1951,10 @@
    "shared": [
     "nautico",
     "tenerife"
-   ]
+   ],
+   "extra": {
+    "city": "Santa Cruz de Tenerife"
+   }
   },
   "ok": true
  },
@@ -1661,7 +1972,11 @@
    "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Salou",
    "shared": [
     "salou"
-   ]
+   ],
+   "extra": {
+    "website": "https://cbsalou.com/",
+    "city": "Salou"
+   }
   },
   "ok": true
  },
@@ -1687,7 +2002,13 @@
    "shared": [
     "circulo",
     "gijon"
-   ]
+   ],
+   "extra": {
+    "website": "https://circulogijon.es/",
+    "city": "Gijón",
+    "arena": "Palacio de Deportes de Gijón",
+    "arena_capacity": 5058
+   }
   },
   "ok": true
  },
@@ -1801,7 +2122,16 @@
    "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Cornell%C3%A0",
    "shared": [
     "cornella"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.cbcornella.com/",
+    "socials": {
+     "instagram": "https://www.instagram.com/cbcornella",
+     "twitter": "https://x.com/BasquetCornella",
+     "facebook": "https://www.facebook.com/basquet.cornella"
+    },
+    "city": "Cornellá de Llobregat"
+   }
   },
   "ok": true
  },
@@ -1833,7 +2163,15 @@
    "url": "https://es.wikipedia.org/wiki/Club_B%C3%A0squet_Mollet",
    "shared": [
     "mollet"
-   ]
+   ],
+   "extra": {
+    "website": "http://cbmollet.com/",
+    "socials": {
+     "twitter": "https://x.com/cbmollet",
+     "facebook": "https://www.facebook.com/basquetmollet"
+    },
+    "city": "Mollet del Vallés"
+   }
   },
   "ok": true
  },
@@ -1886,7 +2224,11 @@
    "url": "https://es.wikipedia.org/wiki/Zornotza_Saskibaloi_Taldea",
    "shared": [
     "zornotza"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.zornotzast.eu/",
+    "city": "Amorebieta-Echano"
+   }
   },
   "ok": true
  },
@@ -1912,7 +2254,11 @@
    "shared": [
     "mieres",
     "villa"
-   ]
+   ],
+   "extra": {
+    "website": "http://www.bvm2012.com/",
+    "city": "Mieres"
+   }
   },
   "ok": true
  },
@@ -1972,7 +2318,10 @@
    "url": "https://es.wikipedia.org/wiki/Uni%C3%B3_Esportiva_Montgat",
    "shared": [
     "montgat"
-   ]
+   ],
+   "extra": {
+    "city": "Montgat"
+   }
   },
   "ok": true
  },
@@ -1997,7 +2346,11 @@
    "url": "https://es.wikipedia.org/wiki/Club_Baloncesto_Rosal%C3%ADa_de_Castro",
    "shared": [
     "rosalia"
-   ]
+   ],
+   "extra": {
+    "website": "http://baloncesto-fedesa.blogspot.com.es/p/eba_21.html",
+    "city": "Santiago de Compostela"
+   }
   },
   "ok": true
  },
@@ -2023,7 +2376,11 @@
    "shared": [
     "oviedo",
     "universidad"
-   ]
+   ],
+   "extra": {
+    "website": "https://deportes.uniovi.es/competicion/deportefederado/-/asset_publisher/0044/content/deporte_federado_baloncesto_femenino?redirect=%2Fcompeticion%2Fdeportefederado/",
+    "city": "Oviedo"
+   }
   },
   "ok": true
  },
@@ -2063,7 +2420,10 @@
    "shared": [
     "madrid",
     "zentro"
-   ]
+   ],
+   "extra": {
+    "city": "Madrid"
+   }
   },
   "ok": true
  }

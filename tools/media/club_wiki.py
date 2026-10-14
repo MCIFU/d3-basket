@@ -7,6 +7,8 @@ su elemento de Wikidata es un club/equipo de baloncesto de España. Del elemento
 toma la fecha de fundación (P571) y del artículo, el primer párrafo.
 
   python tools/media/club_wiki.py candidates   → tools/media/club-wiki.json (para revisar)
+  python tools/media/club_wiki.py enrich       → añade a cada emparejamiento aceptado ciudad,
+                                                 web, redes sociales y pabellón con su aforo
   (revisión manual: "ok": false descarta un emparejamiento)
   npm run scrape -- import-club-wiki tools/media/club-wiki.json
 
@@ -116,12 +118,57 @@ def candidates(db: str, leagues: list[str]):
         OUT.write_text(json.dumps(out, indent=1, ensure_ascii=False) + '\n')
 
 
+def label(qid: str):
+    e = get(f'https://www.wikidata.org/wiki/Special:EntityData/{qid}.json')['entities'][qid]
+    return e, (e.get('labels', {}).get('es') or e.get('labels', {}).get('en') or {}).get('value')
+
+
+def enrich():
+    """Datos de ficha desde Wikidata para los emparejamientos aceptados (ok: true)."""
+    out = json.loads(OUT.read_text())
+    for ref, entry in out.items():
+        m = entry.get('match')
+        if not entry.get('ok') or not m or 'extra' in m:
+            continue
+        e, _ = label(m['qid'])
+        claims = e.get('claims', {})
+        val = lambda p: [c['mainsnak'].get('datavalue', {}).get('value') for c in claims.get(p, []) if c.get('rank') != 'deprecated']
+        first = lambda p: next((v for v in val(p) if v), None)
+        extra = {}
+        if first('P856'):
+            extra['website'] = first('P856')
+        socials = {}
+        for prop, key, fmt in [('P2003', 'instagram', 'https://www.instagram.com/{}'), ('P2002', 'twitter', 'https://x.com/{}'),
+                               ('P2013', 'facebook', 'https://www.facebook.com/{}'), ('P2397', 'youtube', 'https://www.youtube.com/channel/{}'),
+                               ('P7085', 'tiktok', 'https://www.tiktok.com/@{}')]:
+            if first(prop):
+                socials[key] = fmt.format(first(prop))
+        if socials:
+            extra['socials'] = socials
+        for prop in ('P159', 'P131'):  # sede; si no, entidad administrativa
+            if first(prop):
+                extra['city'] = label(first(prop)['id'])[1]
+                break
+        if first('P115'):
+            venue, name = label(first('P115')['id'])
+            cap = next((c['mainsnak'].get('datavalue', {}).get('value', {}).get('amount')
+                        for c in venue.get('claims', {}).get('P1083', [])), None)
+            extra['arena'] = name
+            if cap:
+                extra['arena_capacity'] = int(float(cap))
+        m['extra'] = extra
+        print(f"✓ {entry['name']}: {', '.join(extra) or '-'}", flush=True)
+        OUT.write_text(json.dumps(out, indent=1, ensure_ascii=False) + '\n')
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('command', choices=['candidates'])
+    ap.add_argument('command', choices=['candidates', 'enrich'])
     ap.add_argument('--db', default=str(ROOT / 'data' / 'd3basket.db'))
     ap.add_argument('--leagues', default='LEB_ORO,LEB_PLATA')
     args = ap.parse_args()
+    if args.command == 'enrich':
+        return enrich()
     candidates(args.db, args.leagues.split(','))
 
 

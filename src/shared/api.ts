@@ -223,6 +223,8 @@ export interface ClubInfo {
   /** Segundo color del club (del escudo). */
   color2: string | null
   founded_year: number | null
+  /** Localidad (y provincia) del club. */
+  city: string | null
   arena: string | null
   arena_address: string | null
   arena_capacity: number | null

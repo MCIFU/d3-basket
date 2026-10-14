@@ -559,6 +559,7 @@ export class Queries {
       color: c.primary_color ?? teamRow?.color ?? null,
       color2: c.secondary_color ?? null,
       founded_year: c.founded_year,
+      city: c.city,
       arena: c.arena,
       arena_address: c.arena_address,
       arena_capacity: c.arena_capacity,
