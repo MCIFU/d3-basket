@@ -15,12 +15,19 @@
   --navy-2: #13294d;
   --win: #16a34a;
   --loss: #dc2626;
-  --radius: 14px;
-  --radius-sm: 10px;
-  --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.05);
-  --shadow-lg: 0 10px 40px rgba(15, 23, 42, 0.12);
+  /* Identidad "acta de partido": superficies planas separadas por filetes (como una hoja
+     de estadística), esquinas contenidas y una sola voz tipográfica con dos anchuras:
+     Archivo normal para leer y Archivo condensada para cifras, marcadores y titulares. */
+  --radius: 10px;
+  --radius-sm: 7px;
+  --shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 36px rgba(15, 23, 42, 0.16);
   --maxw: 1320px;
-  font-family: 'Inter Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font: 'Archivo Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --display-stretch: 70%;
+  --label-stretch: 88%;
+  font-family: var(--font);
+  font-stretch: 100%;
   font-size: 14px;
   line-height: 1.5;
   color: var(--ink);
@@ -33,10 +40,24 @@ html, body { margin: 0; background: var(--bg); }
 button, input, select, textarea { font: inherit; color: inherit; }
 a { color: inherit; text-decoration: none; }
 img { display: block; }
-h1, h2, h3 { margin: 0; letter-spacing: -0.02em; }
-h1 { font-size: 30px; font-weight: 800; }
-h2 { font-size: 17px; font-weight: 700; }
+h1, h2, h3 { margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+h1 { font-size: 34px; font-weight: 800; }
+h2 { font-size: 18px; font-weight: 700; }
 h3 { font-size: 15px; font-weight: 700; }
+
+/* Voz de marcador: condensada y con cifras tabulares (titulares, números grandes). */
+h1, .stat-value, .scoreboard .score, .scoreboard .team, .gc-score, .lc-val, .rc-num, .player-hero .jersey,
+.cabinet-item .count, .champion-card .v, .league-card h3, .tl-year, .tl-stats b, .leader .val, .cmp-name,
+.table.standings .pos-badge, .result-chip .score, .stage-title, .brand {
+  font-stretch: var(--display-stretch);
+}
+h1, .stat-value, .scoreboard .score, .gc-score, .lc-val, .rc-num, .cabinet-item .count, .leader .val { font-variant-numeric: tabular-nums; }
+/* Etiquetas en versalitas: algo estrechas y espaciadas, como las cabeceras de un acta. */
+.eyebrow, .table th, .stat-label, .gc-meta, .hero-fact .k, .champion-card .k, .league-card .tier, .lc-cat,
+.rc-stats, .tl-stats span, .report .label, .position-group h3, .cmp-tag, .cmp-group h3, .search-results .sr-kind {
+  font-stretch: var(--label-stretch);
+  letter-spacing: .08em;
+}
 
 /* ─────────── Cabecera ─────────── */
 .site-header { position: sticky; top: 0; z-index: 30; background: var(--navy); color: #fff; }
@@ -186,7 +207,7 @@ tr.dim td { opacity: .5; }
   radial-gradient(circle at 90% 50%, transparent 0 42px, rgba(255,255,255,.07) 43px 45px, transparent 46px),
   linear-gradient(90deg, transparent calc(90% - 1px), rgba(255,255,255,.06) calc(90% - 1px) calc(90% + 1px), transparent calc(90% + 1px)); }
 .hero > * { position: relative; z-index: 1; }
-.hero h1 { font-size: 36px; line-height: 1.1; }
+.hero h1 { font-size: 48px; line-height: .98; font-weight: 800; letter-spacing: 0; }
 .hero p { color: rgba(255,255,255,.82); }
 .hero .eyebrow { color: var(--brand-2); }
 .hero a.link { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
@@ -200,7 +221,7 @@ tr.dim td { opacity: .5; }
 .hero-side .stat-tiles { grid-template-columns: repeat(2, minmax(110px, 1fr)); }
 
 .home-hero { padding: 44px; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 32px; align-items: center; }
-.home-hero h1 { font-size: 44px; letter-spacing: -0.03em; }
+.home-hero h1 { font-size: 62px; line-height: .95; letter-spacing: 0; }
 .home-hero .lead { font-size: 17px; margin: 14px 0 24px; max-width: 560px; }
 .champion-card { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); border-radius: 18px; padding: 20px 22px; }
 .champion-card .k { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--brand-2); font-weight: 800; }
@@ -250,7 +271,6 @@ a.league-card:hover { border-color: var(--brand); }
 .leader .rank { color: var(--muted); font-weight: 700; text-align: center; }
 .leader .val { font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .leader.first .val { color: var(--brand); }
-
 .leader-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
 .leader-card { display: block; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); overflow: hidden; box-shadow: var(--shadow); transition: transform .12s; }
 .leader-card:hover { transform: translateY(-2px); border-color: var(--brand); }
@@ -259,6 +279,7 @@ a.league-card:hover { border-color: var(--brand); }
 .lc-cat { position: absolute; left: 12px; top: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: rgba(255,255,255,.9); }
 .lc-val { position: absolute; right: 12px; top: 4px; font-size: 30px; font-weight: 900; color: #fff; }
 .lc-body { padding: 10px 14px 12px; }
+
 
 /* ─────────── Palmarés ─────────── */
 .cabinet { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
@@ -329,7 +350,7 @@ a.league-card:hover { border-color: var(--brand); }
 .champion-card { grid-template-columns: auto minmax(0, 1fr); }
 .champion-card .chip { white-space: normal; height: auto; min-height: 26px; padding: 4px 10px; }
 .stat-tile { min-width: 0; }
-.stat-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stat-label { overflow-wrap: anywhere; line-height: 1.25; }
 .main-nav { scrollbar-width: none; }
 .main-nav::-webkit-scrollbar, .tabs::-webkit-scrollbar { display: none; }
 
@@ -347,7 +368,7 @@ a.league-card:hover { border-color: var(--brand); }
   .page { padding: 16px 16px 48px; }
   .grid-2, .grid-main, .grid-3, .grid-4, .cabinet, .leader-cards, .form-grid, .ratings { grid-template-columns: 1fr; }
   .hero, .home-hero { padding: 22px; border-radius: 16px; }
-  .home-hero h1, .hero h1 { font-size: 26px; }
+  .home-hero h1, .hero h1 { font-size: 36px; }
   .hero-grid, .player-hero .hero-grid { grid-template-columns: 1fr; }
   .hero-logo { width: 84px; height: 84px; }
   .player-hero .portrait { height: 190px; }
@@ -592,3 +613,99 @@ img.logo { filter: drop-shadow(0 0 1px rgba(15, 23, 42, .28)); }
   .race-legend { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
   .race-chip { flex: none; }
 }
+
+/* Competiciones de la portada: todas en una fila en escritorio (sin tarjetas huérfanas). */
+.league-grid { display: grid; gap: 16px; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+@media (max-width: 1180px) { .league-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .league-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } }
+@media (max-width: 420px) { .league-grid { grid-template-columns: 1fr; } }
+.rc-empty { display: block; text-transform: none; letter-spacing: 0; font-stretch: 100%; font-weight: 500; }
+
+/* Tarjeta de competición: logo arriba, división, nombre y avance de la temporada. */
+.league-card { min-height: 0; padding: 20px 18px 16px; display: flex; flex-direction: column; gap: 4px; }
+.league-card > :not(.league-card-logo):not(.league-card-stripe) { margin-right: 0; }
+.league-card .lc-head { height: 44px; display: flex; align-items: center; margin-bottom: 8px; }
+.league-card-logo { position: static; height: 44px; width: auto; max-width: 110px; max-height: none; object-fit: contain; object-position: left center; }
+.league-card h3 { font-size: 24px; line-height: 1.05; margin: 0 0 10px; }
+.season-progress { height: 4px; border-radius: 2px; background: var(--line-2); overflow: hidden; margin-top: auto; }
+.season-progress span { display: block; height: 100%; background: var(--brand); border-radius: 2px; min-width: 2px; }
+.lc-meta { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.lc-meta:first-of-type { margin-top: 6px; }
+/* Logos oficiales en oscuro: sobre una placa clara para no perder sus colores. */
+:root[data-theme="dark"] .league-card-logo { background: #f4f6f9; border-radius: 6px; padding: 4px 8px; box-sizing: content-box; height: 36px; }
+
+/* Títulos de sección: menos condensados que los grandes, para que las palabras respiren. */
+h2 { font-stretch: 84%; word-spacing: .04em; }
+.select, .input { border-radius: var(--radius-sm); max-width: 100%; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+@media (max-width: 760px) {
+  /* Filtros: rejilla de dos columnas a lo ancho, sin desbordar la pantalla. */
+  .filter-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .filter-bar .input, .filter-bar .select { width: 100%; min-width: 0; }
+  .filter-bar .input { grid-column: 1 / -1; }
+  .filter-bar .spacer { display: none; }
+  .filter-bar > .small { align-self: center; }
+  /* Fichas de jugador: dos por fila en el móvil. */
+  .roster-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .rc-top { height: 128px; }
+  .rc-top img { height: 120px; }
+  .rc-num { font-size: 24px; }
+  .rc-body { padding: 8px 10px 10px; }
+  .rc-stats { gap: 8px; }
+  .league-card h3 { font-size: 20px; }
+  .league-card .lc-head { height: 34px; }
+  .league-card-logo { height: 34px; max-width: 90px; }
+}
+@media (max-width: 420px) { .league-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .league-card { padding: 16px 12px 12px; } .lc-meta { font-size: 11px; } }
+@media (max-width: 760px) {
+  .league-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .rc-stats b { font-size: 14px; }
+}
+
+/* ───────── Hoja de estadística del jugador (con puesto en la liga) ───────── */
+.stat-sheet { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 36px; }
+.sheet-group h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; font-stretch: var(--label-stretch); color: var(--muted); padding-bottom: 8px; border-bottom: 2px solid var(--ink); margin-bottom: 2px; }
+.sheet-row { display: grid; grid-template-columns: minmax(0, 1fr) auto 92px; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line-2); }
+.sr-label { font-weight: 600; min-width: 0; }
+.sr-label small { display: block; font-weight: 400; font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sr-val { font-size: 22px; font-weight: 800; font-stretch: var(--display-stretch); font-variant-numeric: tabular-nums; text-align: right; }
+.sr-rank { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 0 2px; font-size: 12px; font-variant-numeric: tabular-nums; }
+.sr-rank b { font-weight: 800; margin-left: 6px; }
+.sr-of { color: var(--muted); }
+.sr-bar { height: 4px; border-radius: 2px; background: var(--line-2); overflow: hidden; }
+.sr-bar i { display: block; height: 100%; background: var(--muted); border-radius: 2px; }
+.sr-rank.top .sr-bar i { background: var(--brand); }
+.sr-rank.top b { color: var(--brand); }
+@media (max-width: 980px) { .stat-sheet { grid-template-columns: 1fr; } }
+
+@media (max-width: 760px) {
+  /* Cabecera del jugador en el móvil: retrato y dorsal compactos, cifras legibles. */
+  .player-hero { padding: 20px 18px 0; }
+  .player-hero .portrait { height: 150px; }
+  .player-hero .portrait img { max-height: 150px; }
+  .player-hero .ph-fallback { width: 110px; height: 110px; font-size: 38px; margin-bottom: 12px; }
+  .player-hero .jersey { font-size: 40px; }
+  .player-hero .info { padding-bottom: 18px; }
+  .player-hero .stats { padding-bottom: 20px; }
+  .hero .stat-tile { padding: 10px 12px; }
+  .hero .stat-label { letter-spacing: .03em; font-size: 10px; white-space: normal; overflow-wrap: anywhere; }
+  .hero-actions .btn { height: 34px; padding: 0 12px; font-size: 13px; }
+}
+
+/* Acta de partido: en pantallas estrechas el dorsal y el nombre se quedan fijos al desplazar. */
+@media (max-width: 900px) {
+  .box-table th:nth-child(-n+2), .box-table td:nth-child(-n+2) { position: sticky; z-index: 1; background: var(--surface); }
+  .box-table th:nth-child(1), .box-table td:nth-child(1) { left: 0; min-width: 34px; }
+  .box-table th:nth-child(2), .box-table td:nth-child(2) { left: 34px; max-width: 132px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 1px 0 0 var(--line); }
+  .box-table tfoot td { background: var(--surface-2); }
+}
+.table-wrap { -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+.empty-state { display: grid; justify-items: start; gap: 10px; max-width: 60ch; padding: 8px 4px; }
+.empty-state p { margin: 0; color: var(--ink-2); }
+@media (max-width: 760px) {
+  /* Las seis secciones caben en la barra del móvil; si aun así no caben, un degradado lo indica. */
+  .main-nav { justify-content: space-between; gap: 0; mask-image: linear-gradient(90deg, #000 92%, transparent); }
+  .main-nav a { padding: 0 6px; font-size: 13.5px; flex: 0 0 auto; }
+}
+@media (min-width: 380px) and (max-width: 760px) { .main-nav { mask-image: none; } }

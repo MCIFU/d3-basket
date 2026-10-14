@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import '@fontsource-variable/inter'
+import '@fontsource-variable/archivo/wdth.css'
 import { App } from './App'
 import './styles.css'
 import { initTheme } from './theme'
@@ -16,6 +16,10 @@ async function boot() {
   if (!window.d3) {
     const { createWebApi } = await import('./web/webApi')
     window.d3 = await createWebApi()
+    if (import.meta.env.VITE_ARTIFACT) {
+      const { withMediaPack } = await import('./web/mediaPack')
+      window.d3 = await withMediaPack(window.d3)
+    }
   }
   createRoot(root).render(
     <StrictMode>

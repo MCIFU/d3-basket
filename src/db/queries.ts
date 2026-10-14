@@ -145,6 +145,34 @@ const json = <T>(v: unknown, fallback: T): T => {
   }
 }
 
+/**
+ * Puesto del jugador en su liga en cada estadística (1 = mejor), contra los jugadores con
+ * al menos el 40 % de los partidos del que más ha jugado; los porcentajes exigen además
+ * un mínimo de intentos por partido. Si el jugador no llega al mínimo no tiene puesto.
+ */
+export const RANKED: { key: keyof StatBlock; lower?: boolean; min?: (r: StatBlock) => boolean }[] = [
+  { key: 'ppg' }, { key: 'rpg' }, { key: 'orpg' }, { key: 'drpg' }, { key: 'apg' }, { key: 'spg' }, { key: 'bpg' },
+  { key: 'tpg', lower: true }, { key: 'pirpg' }, { key: 'mpg' }, { key: 'pmpg' },
+  { key: 'ts_pct', min: (r) => r.fg2a + r.fg3a >= 2 * r.games },
+  { key: 'fg2_pct', min: (r) => r.fg2a >= 1.5 * r.games },
+  { key: 'fg3_pct', min: (r) => r.fg3a >= r.games },
+  { key: 'ft_pct', min: (r) => r.fta >= 0.7 * r.games }
+]
+export function leagueRanks(all: StatBlock[], me: StatBlock): Record<string, { rank: number; of: number }> {
+  const maxGames = Math.max(0, ...all.map((r) => r.games))
+  const qualified = all.filter((r) => r.games >= Math.max(1, Math.ceil(0.4 * maxGames)))
+  if (!qualified.includes(me)) return {}
+  const out: Record<string, { rank: number; of: number }> = {}
+  for (const { key, lower, min } of RANKED) {
+    const pool = qualified.filter((r) => r[key] != null && (!min || min(r)))
+    const v = me[key] as number | null
+    if (v == null || !pool.includes(me)) continue
+    const better = pool.filter((r) => (lower ? (r[key] as number) < v : (r[key] as number) > v)).length
+    out[key] = { rank: better + 1, of: pool.length }
+  }
+  return out
+}
+
 export class Queries {
   constructor(private readonly db: SqlDb) {}
 
@@ -632,9 +660,10 @@ export class Queries {
        WHERE r.player_id = ? ORDER BY s.start_year DESC, r.is_active DESC LIMIT 1`,
       id
     )
-    const season = current
-      ? this.playerStats(current.competition_season_id, current.team_id).find((s) => s.player_id === id)
-      : undefined
+    // Una sola consulta de la liga: la línea del jugador y el resto para su puesto.
+    const leagueStats = current ? this.playerStats(current.competition_season_id) : []
+    const season = current ? leagueStats.find((s) => s.player_id === id && s.team.team_id === current.team_id) : undefined
+    const ranks = season ? leagueRanks(leagueStats, season) : {}
 
     // Trayectoria: temporadas con boxscores propios + temporadas pasadas agregadas desde acb.com.
     const fromBox = this.all(
@@ -695,6 +724,7 @@ export class Queries {
       id
     )?.external_id
     return {
+      ranks,
       player: {
         id,
         ref,

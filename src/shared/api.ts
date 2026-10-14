@@ -408,6 +408,8 @@ export interface PlayerData {
   trajectory: TrajectoryRow[]
   gameLog: PlayerGameLog[]
   reports: ScoutingReport[]
+  /** Puesto en su liga esta temporada por estadística (clave de StatBlock → puesto y total). */
+  ranks: Record<string, { rank: number; of: number }>
 }
 
 export interface PlayerIndexRow {

@@ -38,7 +38,7 @@ La base de datos se guarda en la caché de GitHub Actions entre ejecuciones, as�
 | ✅ Histórico ACB | temporadas 2025-26 y 2024-25 completas, y trayectoria de todos los jugadores actuales desde su debut |
 | ✅ Segunda y Tercera FEB | mismas páginas y datos que la Primera FEB; ligas divididas en grupos (Segunda: A y B; Tercera: 10 grupos) con clasificación y calendario por grupo |
 | ✅ Eliminatorias y Copa España | playoffs de ascenso, finales y permanencia de las ligas FEB (desde la página de resultados de la FEB), rondas de playoff de la ACB deducidas del cuadro, y la Copa España de la FEB |
-| ✅ Histórico | ACB 2021-22 a 2026-27; FEB (Primera, Segunda, Tercera y Copa) 2023-24 a 2026-27; un mismo club queda unido entre temporadas y ligas |
+| ✅ Histórico | ACB 2020-21 a 2026-27; FEB (Primera, Segunda, Tercera y Copa) 2022-23 a 2026-27; un mismo club queda unido entre temporadas y ligas |
 | ✅ Auditoría | `npm run scrape -- check`: marcadores contra estadísticas, partidos sin estadística, calendarios incompletos, clubes y jugadores duplicados |
 | ✅ Identidad visual | modo claro/oscuro (sigue al sistema o se fija en la cabecera); colores y logos oficiales de cada liga; escudos homogéneos y colores de cada club; fotos FEB en primer plano como las de la ACB (ver *Fotos, escudos y colores*) |
 

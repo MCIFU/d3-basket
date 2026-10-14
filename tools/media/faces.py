@@ -210,7 +210,7 @@ def main():
     ap.add_argument('--refs', help='fichero con referencias (una por línea) que se rehacen')
     ap.add_argument('--limit', type=int, default=0)
     ap.add_argument('--delay', type=float, default=0.3)
-    ap.add_argument('--shard', default='0/1', help='k/n: procesa solo una de n partes (para lanzar varios en paralelo)')
+    ap.add_argument('--shard', default='0/1', help='k/n: procesa solo la parte k (de 0 a n-1) de n, para lanzar varios en paralelo')
     args = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     if args.clean:
@@ -238,6 +238,8 @@ def main():
 
     todo = [(ref, url) for ref, url in targets(args.db) if pending(ref)]
     k, n = map(int, args.shard.split('/'))
+    if not 0 <= k < n:
+        sys.exit(f'--shard {k}/{n}: la parte va de 0 a {n - 1}')
     todo = [t for i, t in enumerate(todo) if i % n == k]
     if args.limit:
         todo = todo[: args.limit]

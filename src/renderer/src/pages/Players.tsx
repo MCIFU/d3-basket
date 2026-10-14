@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react'
-import type { PlayerData, PlayerIndexRow, TrajectoryRow } from '../../../shared/api'
+import { useEffect, useMemo, useState } from 'react'
+import type { PlayerData, PlayerIndexRow, PlayerStatRow, TrajectoryRow } from '../../../shared/api'
 import {
+  CardPhoto,
   CompetitionBadge,
   DataTable,
   Empty,
@@ -8,6 +9,7 @@ import {
   Loading,
   Minutes,
   PlayerPhoto,
+  RankSheet,
   Section,
   Segmented,
   StatTile,
@@ -26,6 +28,21 @@ import { CareerChart, CareerTimeline, FullStatsTable, buildCareer, careerLine, c
 
 // ───────────────────────── Índice ─────────────────────────
 
+type SortKey = 'pirpg' | 'ppg' | 'games' | 'name'
+const SORTS: { id: SortKey; label: string }[] = [
+  { id: 'pirpg', label: 'valoración' },
+  { id: 'ppg', label: 'puntos' },
+  { id: 'games', label: 'partidos' },
+  { id: 'name', label: 'nombre' }
+]
+
+/** Primero quien ha jugado esta temporada; dentro, por la estadística elegida. */
+function sortPlayers(list: PlayerIndexRow[], key: SortKey): PlayerIndexRow[] {
+  if (key === 'name') return [...list].sort((a, b) => a.display_name.localeCompare(b.display_name, 'es'))
+  const v = (p: PlayerIndexRow) => (key === 'games' ? p.games : (p[key] ?? -1))
+  return [...list].sort((a, b) => Number(b.games > 0) - Number(a.games > 0) || v(b) - v(a) || a.display_name.localeCompare(b.display_name, 'es'))
+}
+
 export function PlayersPage() {
   const [players, error] = useLoad(() => window.d3.players(), [])
   const [q, setQ] = useState('')
@@ -33,16 +50,17 @@ export function PlayersPage() {
   const [pos, setPos] = useState('')
   const [league, setLeague] = useState('')
   const [view, setView] = useState<'cards' | 'table'>('cards')
+  const [sort, setSort] = useState<SortKey>('pirpg')
   const list = useMemo(
     () =>
-      (players ?? []).filter(
+      sortPlayers((players ?? []).filter(
         (p) =>
           (!q || p.display_name.toLowerCase().includes(q.toLowerCase()) || (p.nationality ?? '').toLowerCase().includes(q.toLowerCase())) &&
           (!team || p.team.club_ref === team) &&
           (!league || p.competition_code === league) &&
           (!pos || p.position === pos)
-      ),
-    [players, q, team, pos, league]
+      ), sort),
+    [players, q, team, pos, league, sort]
   )
   if (!players) return <Loading error={error} />
   const teams = [...new Map(players.map((p) => [p.team.club_ref, p.team])).values()].sort((a, b) => a.name.localeCompare(b.name))
@@ -83,8 +101,8 @@ export function PlayersPage() {
         </p>
       </div>
       <div className="card">
-        <div className="row" style={{ marginBottom: 16 }}>
-          <input className="input" placeholder="Nombre o nacionalidad" value={q} onChange={(e) => setQ(e.target.value)} />
+        <div className="row filter-bar" style={{ marginBottom: 16 }}>
+          <input className="input" placeholder="Nombre o nacionalidad" aria-label="Buscar por nombre o nacionalidad" value={q} onChange={(e) => setQ(e.target.value)} />
           <select className="select" value={league} onChange={(e) => (setLeague(e.target.value), setTeam(''))}>
             <option value="">Todas las ligas</option>
             {[...new Set(players.map((p) => p.competition_code))].map((c) => (
@@ -107,6 +125,13 @@ export function PlayersPage() {
               <option key={p}>{p}</option>
             ))}
           </select>
+          <select className="select" value={sort} onChange={(e) => setSort(e.target.value as SortKey)} aria-label="Ordenar por">
+            {SORTS.map((s) => (
+              <option key={s.id} value={s.id}>
+                Ordenar: {s.label}
+              </option>
+            ))}
+          </select>
           <span className="small muted">{list.length} resultados</span>
           <span className="spacer" />
           <Segmented
@@ -127,17 +152,20 @@ export function PlayersPage() {
               return (
                 <a key={`${p.player_ref}-${p.team.team_id}`} className="roster-card" href={href.player(p.player_ref, p.display_name)}>
                   <div className="rc-top" style={{ background: `linear-gradient(160deg, ${c}, ${c}aa)` }}>
-                    <span className="rc-num">{p.jersey_number}</span>
-                    {p.photo_nobg ? <img src={p.photo_nobg} alt="" loading="lazy" /> : <span className="rc-initials">{initials(p.display_name)}</span>}
+                    {/^\d+$/.test(p.jersey_number ?? '') && <span className="rc-num">{p.jersey_number}</span>}
+                    <CardPhoto src={p.photo_nobg} name={p.display_name} />
                   </div>
                   <div className="rc-body">
                     <div className="rc-name">{p.display_name}</div>
                     <div className="rc-sub row" style={{ gap: 6, flexWrap: 'nowrap' }}>
                       <TeamLogo src={p.team.logo} name={p.team.name} size={16} />
                       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {p.team.short_name ?? p.team.name} · {p.position ?? ''}
+                        {[p.team.short_name ?? p.team.name, p.position].filter(Boolean).join(' · ')}
                       </span>
                     </div>
+                    {!p.games ? (
+                      <div className="rc-stats rc-empty">Sin partidos esta temporada</div>
+                    ) : (
                     <div className="rc-stats">
                       <span>
                         <b>{num(p.ppg)}</b>PTS
@@ -152,6 +180,7 @@ export function PlayersPage() {
                         <b>{num(p.pirpg)}</b>VAL
                       </span>
                     </div>
+                    )}
                   </div>
                 </a>
               )
@@ -195,7 +224,7 @@ export function PlayerPage({ refId, tab = 'resumen' }: { refId: string; tab?: st
       <section className="hero player-hero" style={{ background: `linear-gradient(120deg, ${color} 0%, #0b1a33 80%)` }}>
         <div className="hero-grid">
           <div className="portrait">
-            {p.photo_nobg || p.photo ? <img src={p.photo_nobg ?? p.photo!} alt={p.display_name} /> : <div className="ph-fallback">{initials(p.display_name)}</div>}
+            <HeroPortrait srcs={[p.photo_nobg, p.photo]} name={p.display_name} />
           </div>
           <div className="info">
             <div className="row" style={{ gap: 16, alignItems: 'flex-end' }}>
@@ -294,6 +323,65 @@ function CareerHeader({ data }: { data: PlayerData }) {
   )
 }
 
+/** Retrato de la cabecera: prueba cada foto y, si ninguna carga, muestra las iniciales. */
+function HeroPortrait({ srcs, name }: { srcs: (string | null | undefined)[]; name: string }) {
+  const list = srcs.filter((s): s is string => !!s)
+  const [i, setI] = useState(0)
+  useEffect(() => setI(0), [list[0]])
+  if (i >= list.length) return <div className="ph-fallback">{initials(name)}</div>
+  return <img key={list[i]} src={list[i]} alt={name} onError={() => setI((n) => n + 1)} />
+}
+
+type SheetRow = { key: keyof PlayerStatRow; label: string; value: (s: PlayerStatRow) => string; sub?: (s: PlayerStatRow) => string }
+const SHEET: { title: string; rows: SheetRow[] }[] = [
+  {
+    title: 'Anotación',
+    rows: [
+      { key: 'ppg', label: 'Puntos', value: (s) => num(s.ppg), sub: (s) => `${int(s.pts)} en total` },
+      { key: 'ts_pct', label: 'True shooting', value: (s) => pct(s.ts_pct), sub: (s) => `${s.fg2a + s.fg3a} tiros · ${s.fta} TL` },
+      { key: 'fg2_pct', label: 'Tiros de 2', value: (s) => pct(s.fg2_pct), sub: (s) => `${s.fg2m}/${s.fg2a}` },
+      { key: 'fg3_pct', label: 'Triples', value: (s) => pct(s.fg3_pct), sub: (s) => `${s.fg3m}/${s.fg3a}` },
+      { key: 'ft_pct', label: 'Tiros libres', value: (s) => pct(s.ft_pct), sub: (s) => `${s.ftm}/${s.fta}` }
+    ]
+  },
+  {
+    title: 'Juego',
+    rows: [
+      { key: 'rpg', label: 'Rebotes', value: (s) => num(s.rpg), sub: (s) => `${num(s.orpg)} of. · ${num(s.drpg)} def.` },
+      { key: 'apg', label: 'Asistencias', value: (s) => num(s.apg), sub: (s) => `${int(s.ast)} en total` },
+      { key: 'spg', label: 'Robos', value: (s) => num(s.spg) },
+      { key: 'bpg', label: 'Tapones', value: (s) => num(s.bpg) },
+      { key: 'tpg', label: 'Pérdidas', value: (s) => num(s.tpg), sub: () => 'menos es mejor' }
+    ]
+  },
+  {
+    title: 'Impacto',
+    rows: [
+      { key: 'pirpg', label: 'Valoración', value: (s) => num(s.pirpg), sub: (s) => `${int(s.pir)} en total` },
+      { key: 'mpg', label: 'Minutos', value: (s) => num(s.mpg), sub: (s) => `${s.games} partidos · ${s.starts} de titular` },
+      { key: 'pmpg', label: 'Más/menos', value: (s) => (s.pmpg > 0 ? '+' : '') + num(s.pmpg), sub: (s) => `${signed(s.pm)} en total` }
+    ]
+  }
+]
+
+/** Hoja de estadística de la temporada con el puesto del jugador en su liga en cada fila. */
+function StatSheet({ s, ranks, league }: { s: PlayerStatRow; ranks: PlayerData['ranks']; league?: string }) {
+  const groups = SHEET.map((g) => ({
+    title: g.title,
+    rows: g.rows.map((r) => ({ label: r.label, value: r.value(s), sub: r.sub?.(s), rank: ranks[r.key as string] }))
+  }))
+  return (
+    <>
+      <RankSheet groups={groups} scope={league} />
+      <p className="note">
+        {Object.keys(ranks).length
+          ? `Puesto entre los jugadores de ${league ?? 'su liga'} que han disputado al menos el 40 % de los partidos (los porcentajes exigen además un mínimo de intentos).`
+          : 'Todavía no ha jugado el 40 % de los partidos de su liga: sin puesto en la clasificación de estadísticas.'}
+      </p>
+    </>
+  )
+}
+
 function PlayerSummary({ data }: { data: PlayerData }) {
   const { season, career } = data
   const acb = career?.acbTotals
@@ -307,20 +395,7 @@ function PlayerSummary({ data }: { data: PlayerData }) {
           eyebrow={`Por partido · ${data.current?.competition_name ?? ''}`}
           actions={<a className="link" href={href.player(p.ref, p.display_name, 'estadisticas')}>Todas las estadísticas →</a>}
         >
-          <div className="stat-tiles">
-            <StatTile label="Puntos" value={num(season.ppg)} sub={`${int(season.pts)} en total`} />
-            <StatTile label="Rebotes" value={num(season.rpg)} sub={`${num(season.orpg)} of. · ${num(season.drpg)} def.`} />
-            <StatTile label="Asistencias" value={num(season.apg)} sub={`${int(season.ast)} en total`} />
-            <StatTile label="Robos" value={num(season.spg)} />
-            <StatTile label="Tapones" value={num(season.bpg)} />
-            <StatTile label="Pérdidas" value={num(season.tpg)} />
-            <StatTile label="Valoración" value={num(season.pirpg)} sub={`${int(season.pir)} en total`} />
-            <StatTile label="Minutos" value={num(season.mpg)} sub={`${season.starts} de titular`} />
-            <StatTile label="T2%" value={pct(season.fg2_pct)} sub={`${season.fg2m}/${season.fg2a}`} />
-            <StatTile label="T3%" value={pct(season.fg3_pct)} sub={`${season.fg3m}/${season.fg3a}`} />
-            <StatTile label="TL%" value={pct(season.ft_pct)} sub={`${season.ftm}/${season.fta}`} />
-            <StatTile label="TS%" value={pct(season.ts_pct)} sub="True Shooting" />
-          </div>
+          <StatSheet s={season} ranks={data.ranks} league={data.current?.competition_name} />
         </Section>
       )}
 

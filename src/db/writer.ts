@@ -27,6 +27,13 @@ type EntityType = 'competition_season' | 'club' | 'team' | 'player' | 'coach' | 
 
 const nowIso = () => new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
 
+/** Nombre tal y como se publica, sin puntuación suelta en los extremos (la FEB tiene
+" ,alberto Vicente…") y con la primera letra en mayúscula. */
+export function cleanName(name: string): string {
+  const s = name.replace(/^[^\p{L}]+|[^\p{L}.)]+$/gu, '').replace(/\s+/g, ' ')
+  return s ? s[0].toLocaleUpperCase('es') + s.slice(1) : name.trim()
+}
+
 export class Writer {
   constructor(private readonly db: DB) {}
 
@@ -176,8 +183,8 @@ export class Writer {
     const values = {
       first: p.firstName ?? null,
       last: p.lastName ?? null,
-      full: p.fullName,
-      known: p.knownAs ?? null,
+      full: cleanName(p.fullName),
+      known: p.knownAs ? cleanName(p.knownAs) : null,
       bdate: p.birthDate ?? null,
       bplace: p.birthPlace ?? null,
       bcountry: p.birthCountry ?? null,
