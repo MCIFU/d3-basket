@@ -112,7 +112,9 @@ const PHASE: Record<string, string> = {
   F: 'final_four',
   '3PG': 'final_four'
 }
-const finished = (g: ApiGame) => g.teamAScore != null && g.teamBScore != null && (g.currentPeriodStatus === 'E' || g.liveGameStatus === 999)
+// Los partidos antiguos no traen el estado del directo: basta con marcador y fecha ya pasada.
+const finished = (g: ApiGame) =>
+  g.teamAScore != null && g.teamBScore != null && g.teamAScore + g.teamBScore > 0 && (g.currentPeriodStatus === 'E' || g.liveGameStatus === 999 || Date.parse(`${g.gameDateTimeUTC ?? ''}Z`) < Date.now() - 86400_000)
 
 /** Extrae un objeto JSON de la carga RSC de Next.js a partir de una clave (`"playByPlay":{...}`). */
 export function extractRscObject(html: string, key: string, firstField?: string): any {
