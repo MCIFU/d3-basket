@@ -1,5 +1,5 @@
 # Web pública en Cloudflare Pages (gratis, sin límite de tráfico), sin depender de Netlify.
-# Cada día descarga los datos nuevos, exporta la base de datos para el navegador y publica.
+# Viernes, sábado y domingo a las 08:00 (hora española) descarga los datos nuevos, exporta la base de datos para el navegador y publica.
 #
 # Configuración (una sola vez), en GitHub → Settings → Secrets and variables → Actions:
 #   CLOUDFLARE_API_TOKEN   token con permiso "Cloudflare Pages: Edit"
@@ -9,7 +9,10 @@ name: Web (Cloudflare Pages)
 
 on:
   schedule:
-    - cron: '17 5 * * *' # cada día a las 05:17 UTC (07:17 en Gijón en verano)
+    # Viernes, sábado y domingo a las 08:00 en España. El cron va en UTC, así que se
+    # programan las dos horas posibles y el primer paso descarta la que no toca.
+    - cron: '0 6 * * 5,6,0' # 08:00 en horario de verano (CEST)
+    - cron: '0 7 * * 5,6,0' # 08:00 en horario de invierno (CET)
   workflow_dispatch:
   push:
     branches: [main]
@@ -19,7 +22,29 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  hora:
+    runs-on: ubuntu-latest
+    outputs:
+      seguir: ${{ steps.hora.outputs.seguir }}
+    steps:
+      - name: Comprobar el horario español
+        id: hora
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "seguir=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          offset=$(TZ=Europe/Madrid date +%z)
+          if { [ "$offset" = "+0200" ] && [ "${{ github.event.schedule }}" = "0 6 * * 5,6,0" ]; } ||
+             { [ "$offset" = "+0100" ] && [ "${{ github.event.schedule }}" = "0 7 * * 5,6,0" ]; }; then
+            echo "seguir=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No son las 08:00 en España con este horario: se omite."
+            echo "seguir=false" >> "$GITHUB_OUTPUT"
+          fi
+
   build-deploy:
+    needs: hora
+    if: needs.hora.outputs.seguir == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
