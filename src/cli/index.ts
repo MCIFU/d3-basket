@@ -29,6 +29,9 @@ import { syncLeague, type LeagueAdapter } from '../scraper/europe/league'
 import { LbaAdapter } from '../scraper/europe/lba'
 import { BblAdapter } from '../scraper/europe/bbl'
 import { LnbAdapter } from '../scraper/europe/lnb'
+import { LnpAdapter } from '../scraper/europe/lnp'
+import { EsakeAdapter } from '../scraper/europe/esake'
+import { ProaAdapter } from '../scraper/europe/proa'
 import type { FebCompetition } from '../scraper/feb/urls'
 
 const { values, positionals } = parseArgs({
@@ -193,6 +196,11 @@ async function main() {
     lba: (h) => new LbaAdapter(h),
     'serie-a': (h) => new LbaAdapter(h),
     bbl: (h) => new BblAdapter(h),
+    'serie-a2': (h) => new LnpAdapter(h),
+    gbl: (h) => new EsakeAdapter(h),
+    proa: (h) => new ProaAdapter(h),
+    grecia: (h) => new EsakeAdapter(h),
+    a2: (h) => new LnpAdapter(h),
     'betclic-elite': (h) => new LnbAdapter(h, 1, 'LNB_ELITE'),
     elite: (h) => new LnbAdapter(h, 1, 'LNB_ELITE'),
     'elite-2': (h) => new LnbAdapter(h, 2, 'LNB_ELITE2'),
