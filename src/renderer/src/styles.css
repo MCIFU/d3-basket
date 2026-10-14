@@ -965,3 +965,22 @@ a.link { color: var(--brand-ink); }
 @media (max-width: 900px) { .shell { background: none; } .side { border-bottom: 1px solid var(--line); } }
 @media (max-width: 900px) { .side .main-nav { min-width: 0; } .side > * { flex-shrink: 0; } .side .main-nav { flex-shrink: 1; } }
 :root[data-theme="dark"] [style*="--brand-dark"] { --brand: var(--brand-dark) !important; --brand-2: var(--brand-dark) !important; --brand-ink: var(--brand-dark) !important; --brand-soft: var(--brand-soft-dark) !important; }
+
+/* Ancho completo: el contenido ocupa todo el espacio a la derecha de la barra lateral. */
+.page { max-width: none; padding-left: clamp(16px, 2.2vw, 40px); padding-right: clamp(16px, 2.2vw, 40px); }
+.footer-inner { max-width: none; padding-left: clamp(16px, 2.2vw, 40px); padding-right: clamp(16px, 2.2vw, 40px); }
+.topbar { padding-left: clamp(16px, 2.2vw, 40px); padding-right: clamp(16px, 2.2vw, 40px); }
+/* En pantallas anchas la pista no crece sin límite: el texto se lleva el espacio sobrante. */
+@media (min-width: 1500px) {
+  .board { grid-template-columns: minmax(0, 1.5fr) minmax(420px, 1fr); }
+  .board > .court, .board > .stack > .court { max-width: 760px; justify-self: end; }
+  .home-board { grid-template-columns: minmax(0, 1.4fr) minmax(460px, 1fr); }
+  .games-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+}
+@media (min-width: 2100px) { .board { grid-template-columns: minmax(0, 2fr) minmax(480px, 1fr); } }
+@media (min-width: 1500px) {
+  .board { grid-template-columns: minmax(420px, 720px) minmax(0, 1fr); }
+  .board > .court, .board > .stack > .court { max-width: none; justify-self: stretch; }
+  .home-board { grid-template-columns: minmax(0, 1fr) minmax(460px, 720px); }
+}
+.career-chart { max-height: 340px; }
