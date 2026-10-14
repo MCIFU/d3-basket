@@ -2,6 +2,8 @@ import { useState } from 'react'
 import type { ClubData, ClubHonour } from '../../../shared/api'
 import {
   CardPhoto,
+  CourtPlayer,
+  HalfCourt,
   RankSheet,
   DataTable,
   Empty,
@@ -97,10 +99,8 @@ export function ClubPage({ refId, tab = 'resumen', year }: { refId: string; tab?
     <div style={brandVars(accent, second)}>
       <section
         className="hero team-hero"
-        style={{ background: `linear-gradient(120deg, ${color} 0%, ${mix(color, '#000000', 0.55)} 62%, ${mix(color, '#000000', 0.75)} 100%)` }}
+        style={{ ['--club' as string]: color, ['--club2' as string]: second }}
       >
-        <span className="team-stripe" style={{ background: second }} />
-        <span className="team-stripe thin" style={{ background: second }} />
         <div className="hero-grid">
           <div className="hero-logo">
             <TeamLogo src={club.logo} name={club.name} size={88} />
@@ -345,11 +345,49 @@ function RecentResults({ data }: { data: ClubData }) {
   )
 }
 
+// Puestos de la pista y posiciones oficiales que caben en cada uno (ACB y FEB).
+const FIVE: ['PG' | 'SG' | 'SF' | 'PF' | 'C', RegExp][] = [
+  ['PG', /^base/i],
+  ['SG', /escolta/i],
+  ['SF', /^alero/i],
+  ['PF', /ala-?p[ií]vot/i],
+  ['C', /^p[ií]vot/i]
+]
+
+/** El mejor jugador de cada puesto por valoración, dibujado sobre la pista. */
+function BestFive({ data }: { data: ClubData }) {
+  const pool = data.roster.filter((r) => r.games > 0).sort((a, b) => (b.pirpg ?? 0) - (a.pirpg ?? 0))
+  const used = new Set<number>()
+  const five = FIVE.map(([spot, re]) => {
+    const r = pool.find((x) => !used.has(x.player_id) && re.test(x.position ?? '')) ?? pool.find((x) => !used.has(x.player_id))
+    if (r) used.add(r.player_id)
+    return r && { spot, r }
+  }).filter(Boolean) as { spot: 'PG' | 'SG' | 'SF' | 'PF' | 'C'; r: (typeof pool)[number] }[]
+  const rank = data.ranks.pirpg
+  const surname = (n: string) => n.split(' ').filter((w) => !/^(jr\.?|sr\.?|ii|iii)$/i.test(w)).slice(-1)[0] ?? n
+  return (
+    <HalfCourt label="Mejor quinteto por valoración" note={rank === 1 ? `${num(data.stats?.pirpg)} de valoración: 1º de la liga` : undefined}>
+      {five.map(({ spot, r }) => (
+        <CourtPlayer key={r.player_id} spot={spot} to={href.player(r.player_ref, r.display_name)} photo={r.photo_nobg ?? r.photo} name={surname(r.display_name)} tag={`${num(r.pirpg)} val`} color={data.club.color} />
+      ))}
+    </HalfCourt>
+  )
+}
+
 function ClubSummary({ data }: { data: ClubData }) {
   const { club } = data
   return (
     <div className="stack">
       <Performance data={data} />
+      {data.roster.some((r) => r.games > 0) && (
+        <div className="board">
+          <BestFive data={data} />
+          <div className="stack">
+            <RecentResults data={data} />
+            <CabinetMini data={data} />
+          </div>
+        </div>
+      )}
       {data.stats && (
         <div>
           <div className="card-head">
@@ -366,7 +404,7 @@ function ClubSummary({ data }: { data: ClubData }) {
       )}
       <div className="grid grid-main">
         <div className="stack">
-          <RecentResults data={data} />
+          {!data.roster.some((r) => r.games > 0) && <RecentResults data={data} />}
           {club.history && (
             <Section title="Historia" eyebrow="El club">
               <p className="history-text">{club.history}</p>
@@ -377,7 +415,7 @@ function ClubSummary({ data }: { data: ClubData }) {
           )}
         </div>
         <div className="stack">
-          <CabinetMini data={data} />
+          {!data.roster.some((r) => r.games > 0) && <CabinetMini data={data} />}
           <Section title="Pabellón">
             {club.arena_photo_url && <img className="arena-photo" src={club.arena_photo_url} alt={club.arena ?? ''} loading="lazy" onError={(e) => (e.currentTarget.style.display = 'none')} />}
             <dl className="kv">

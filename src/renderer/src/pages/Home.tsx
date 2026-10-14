@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import type { HomeData, LeaderRow } from '../../../shared/api'
 import {
+  CourtPlayer,
   Empty,
+  HalfCourt,
   GameCard,
   Loading,
   PlayerPhoto,
@@ -12,7 +14,7 @@ import {
   Trophy,
   useLoad
 } from '../components'
-import { num } from '../format'
+import { int, num } from '../format'
 import { href } from '../router'
 import { LeagueCard, StandingsTable } from './Leagues'
 
@@ -24,55 +26,38 @@ export function HomePage() {
 
   return (
     <>
-      <section className="hero home-hero">
-        <div>
-          <div className="eyebrow">Scouting y estadística</div>
-          <h1>El baloncesto español, en datos.</h1>
-          <p className="lead">
-            Clasificaciones, estadísticas avanzadas, trayectorias y palmarés de la Liga Endesa y la Primera, Segunda y Tercera FEB, con fichas de equipo y jugador
-            e informes de scouting propios.
-          </p>
-          <div className="hero-actions">
-            <a className="btn" href={href.league('ACB')}>
-              Liga Endesa {edition?.season_label}
-            </a>
-            <a className="btn btn-light" href={href.players()}>
-              Jugadores
-            </a>
-            <a className="btn btn-light" href={href.scouting()}>
-              Scouting
-            </a>
+      {edition && data.lastRound ? (
+        <HomeBoard data={data} />
+      ) : (
+        <section className="hero home-hero">
+          <div>
+            <div className="eyebrow">Scouting y estadística</div>
+            <h1>El baloncesto español, en datos.</h1>
           </div>
-        </div>
-        {liga && (
-          <div className="champion-card">
-            <Trophy competition="liga" size={120} />
-            <div>
-              <div className="k">Vigente campeón de Liga · {liga.label}</div>
-              <div className="v">
-                <TeamLogo src={liga.champion_logo} name={liga.champion_name} size={34} />
-                {liga.champion_ref ? (
-                  <a href={href.club(liga.champion_ref, liga.champion_name, 'palmares')}>{liga.champion_name}</a>
-                ) : (
-                  liga.champion_name
-                )}
-              </div>
-              <p className="small" style={{ margin: 0 }}>
-                {liga.runner_up_name && `Final ${liga.result ?? ''} ante ${liga.runner_up_name}`}
-              </p>
-              <div className="row" style={{ marginTop: 12 }}>
-                {champions
-                  .filter((c) => c.competition !== 'liga')
-                  .map((c) => (
-                    <span key={c.competition} className="chip">
-                      {TROPHIES[c.competition].name} {c.label}: {c.champion_name}
-                    </span>
-                  ))}
-              </div>
+        </section>
+      )}
+      {liga && (
+        <div className="champion-strip">
+          <Trophy competition="liga" size={54} />
+          <div>
+            <div className="eyebrow">Vigente campeón de Liga · {liga.label}</div>
+            <div className="row" style={{ gap: 8, fontWeight: 700 }}>
+              <TeamLogo src={liga.champion_logo} name={liga.champion_name} size={24} />
+              {liga.champion_ref ? <a href={href.club(liga.champion_ref, liga.champion_name, 'palmares')}>{liga.champion_name}</a> : liga.champion_name}
+              {liga.runner_up_name && <span className="muted" style={{ fontWeight: 500 }}>· final {liga.result ?? ''} ante {liga.runner_up_name}</span>}
             </div>
           </div>
-        )}
-      </section>
+          <div className="row" style={{ marginLeft: 'auto' }}>
+            {champions
+              .filter((c) => c.competition !== 'liga')
+              .map((c) => (
+                <span key={c.competition} className="chip">
+                  {TROPHIES[c.competition].name} {c.label}: {c.champion_name}
+                </span>
+              ))}
+          </div>
+        </div>
+      )}
 
       <LeagueCards data={data} />
 
@@ -137,6 +122,94 @@ export function HomePage() {
         </>
       )}
     </>
+  )
+}
+
+const COURT_LEADERS: [keyof HomeData['leaders'], 'PG' | 'SG' | 'SF' | 'C', string][] = [
+  ['apg', 'PG', 'ast'],
+  ['ppg', 'SG', 'pts'],
+  ['pirpg', 'SF', 'val'],
+  ['rpg', 'C', 'reb']
+]
+const surname = (n: string) => {
+  const w = n.split(' ').filter((x) => !/^(jr\.?|sr\.?|ii|iii)$/i.test(x))
+  return w[w.length - 1] ?? n
+}
+
+/** Portada: la jornada en titular y los líderes colocados en su posición sobre la pista. */
+function HomeBoard({ data }: { data: HomeData }) {
+  const { edition, lastRound, standings, leaders } = data
+  const played = lastRound!.games.filter((g) => g.status === 'finished' && g.home_score != null)
+  const pts = played.reduce((a, g) => a + g.home_score! + g.away_score!, 0)
+  const top = played.flatMap((g) => [
+    { v: g.home_score!, t: g.home },
+    { v: g.away_score!, t: g.away }
+  ]).sort((a, b) => b.v - a.v)[0]
+  const att = played.filter((g) => g.attendance)
+  const leader = standings[0]
+  const unbeaten = standings.filter((t) => t.played > 0 && t.lost === 0)
+  const used = new Set<string>()
+  const five = COURT_LEADERS.map(([k, spot, unit]) => {
+    const l = leaders[k].find((x) => !used.has(x.player_ref))
+    if (l) used.add(l.player_ref)
+    return l && { l, spot, tag: `${num(l.value)} ${unit}` }
+  }).filter(Boolean) as { l: LeaderRow; spot: 'PG' | 'SG' | 'SF' | 'PF' | 'C'; tag: string }[]
+  const extra = leaders.ppg.find((x) => !used.has(x.player_ref))
+  if (extra) five.push({ l: extra, spot: 'PF', tag: `${num(extra.value)} pts` })
+  const title = leader?.played
+    ? `${leader.name}, ${unbeaten.length === 1 && unbeaten[0].team_id === leader.team_id ? 'único invicto' : 'líder'} con ${leader.diff > 0 ? '+' : ''}${leader.diff}`
+    : `Arranca la Liga Endesa ${edition!.season_label}`
+  return (
+    <section className="board home-board">
+      <div className="stack">
+        <div>
+          <div className="eyebrow">
+            Liga Endesa {edition!.season_label} · {lastRound!.name} · {played.length} partidos · {int(pts)} puntos
+          </div>
+          <h1 className="board-title">{title}</h1>
+        </div>
+        {played.length > 0 && (
+          <div className="kpi-strip">
+            <div>
+              <b>{leader ? `${leader.won}-${leader.lost}` : '—'}</b>
+              <span>líder</span>
+              <em>{leader?.abbr ?? leader?.short_name}</em>
+            </div>
+            <div>
+              <b>{num(pts / played.length / 2)}</b>
+              <span>puntos por equipo</span>
+              <em>{lastRound!.name.toLowerCase()}</em>
+            </div>
+            <div>
+              <b>{top?.v ?? '—'}</b>
+              <span>máxima anotación</span>
+              <em>{top?.t.short_name ?? top?.t.name}</em>
+            </div>
+            <div>
+              <b>{att.length ? int(att.reduce((a, g) => a + g.attendance!, 0) / att.length) : '—'}</b>
+              <span>espectadores</span>
+              <em>media por partido</em>
+            </div>
+          </div>
+        )}
+        <div className="row">
+          <a className="btn" href={href.league('ACB')}>
+            Liga Endesa {edition!.season_label}
+          </a>
+          <a className="btn btn-ghost" href={href.players()}>
+            Jugadores
+          </a>
+          <a className="btn btn-ghost" href={href.scouting()}>
+            Scouting
+          </a>
+        </div>
+      </div>
+      <HalfCourt label="Quinteto de líderes · por partido" note={five.length ? 'cada uno en su sitio' : undefined}>
+        {five.map(({ l, spot, tag }) => (
+          <CourtPlayer key={l.player_ref} spot={spot} to={href.player(l.player_ref, l.display_name)} photo={l.photo_nobg ?? l.photo} name={surname(l.display_name)} tag={tag} color={l.team.color} />
+        ))}
+      </HalfCourt>
+    </section>
   )
 }
 

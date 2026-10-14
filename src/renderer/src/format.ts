@@ -17,7 +17,9 @@ export const fmtBirth = (iso?: string | null) =>
 export const num = (v: number | null | undefined, digits = 1) =>
   v == null || Number.isNaN(v) ? '—' : v.toLocaleString('es-ES', { minimumFractionDigits: digits, maximumFractionDigits: digits })
 
-export const int = (v: number | null | undefined) => (v == null ? '—' : Math.round(v).toLocaleString('es-ES'))
+// Con separador de miles también en cifras de 4 dígitos (7.619), que es-ES omite por defecto.
+const intFmt = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 0, useGrouping: 'always' } as Intl.NumberFormatOptions)
+export const int = (v: number | null | undefined) => (v == null ? '—' : intFmt.format(Math.round(v)))
 
 export const pct = (v: number | null | undefined) => (v == null ? '—' : `${num(v)}%`)
 

@@ -4,13 +4,14 @@ import { PlayerPhoto, TeamLogo } from './components'
 import { fmtDateTime } from './format'
 import { href, navigate, type Route } from './router'
 import { getThemePref, setThemePref, type ThemePref } from './theme'
+import { LEAGUES } from './leagues'
 
 export function BrandMark({ className = 'brand-mark' }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 64 64" aria-hidden="true">
-      <circle cx="32" cy="32" r="30" fill="#ff6b00" />
-      <path d="M2 32h60M32 2v60" stroke="#0b1a33" strokeWidth="3" fill="none" />
-      <path d="M11 11c9 7 13 14 13 21s-4 14-13 21M53 11c-9 7-13 14-13 21s4 14 13 21" stroke="#0b1a33" strokeWidth="3" fill="none" />
+      <circle cx="32" cy="32" r="30" fill="#e1342a" />
+      <path d="M2 32h60M32 2v60" stroke="#fff" strokeWidth="3.4" fill="none" />
+      <path d="M11 11c9 7 13 14 13 21s-4 14-13 21M53 11c-9 7-13 14-13 21s4 14 13 21" stroke="#fff" strokeWidth="3.4" fill="none" />
     </svg>
   )
 }
@@ -62,51 +63,57 @@ export function Layout({ route, children }: { route: Route; children: ReactNode 
     void window.d3.dbInfo().then((i) => setUpdated(i.updated_at))
   }, [])
   return (
-    <>
-      <header className="site-header">
-        <div className="header-inner">
-          <a className="brand" href={href.home()}>
-            <BrandMark />
-            <span>
-              D3 BASKET
-              <small>Scouting · Baloncesto español</small>
-            </span>
-          </a>
-          <nav className="main-nav">
-            {NAV.map((n) => (
-              <a key={n.page} href={n.to} className={n.page === route.page || n.also?.includes(route.page) ? 'active' : ''}>
-                {n.label}
-              </a>
-            ))}
-          </nav>
-          <Search />
-          <ThemeToggle />
+    <div className="shell">
+      <aside className="side">
+        <a className="brand" href={href.home()}>
+          <BrandMark />
+          <span>
+            D3 Basket
+            <small>Pizarra del baloncesto español</small>
+          </span>
+        </a>
+        <nav className="main-nav" aria-label="Secciones">
+          {NAV.map((n) => (
+            <a key={n.page} href={n.to} className={n.page === route.page || n.also?.includes(route.page) ? 'active' : ''}>
+              {n.label}
+            </a>
+          ))}
+        </nav>
+        <div className="side-leagues">
+          <h4>Ligas en curso</h4>
+          {Object.entries(LEAGUES).map(([code, l]) => (
+            <a key={code} href={href.league(code)} className={route.page === 'league' && 'code' in route && String(route.code).toUpperCase() === code ? 'active' : ''}>
+              <i style={{ background: l.color }} />
+              {l.name}
+            </a>
+          ))}
         </div>
-      </header>
-      <main className="page">{children}</main>
-      <footer className="site-footer">
-        <div className="footer-inner">
-          <div>
+        <div className="side-foot">
+          <ThemeToggle />
+          <span>{updated ? `Actualizado ${fmtDateTime(updated)}` : ''}</span>
+        </div>
+      </aside>
+      <div className="shell-main">
+        <header className="topbar">
+          <Search />
+        </header>
+        <main className="page">{children}</main>
+        <footer className="site-footer">
+          <div className="footer-inner">
             <p>
-              <b>D3 Basket</b> · Datos de <a href="https://acb.com" target="_blank" rel="noreferrer">acb.com</a> (estadísticas,
-              plantillas, clasificación histórica), de{' '}
-              <a href="https://baloncestoenvivo.feb.es" target="_blank" rel="noreferrer">baloncestoenvivo.feb.es</a> (Primera, Segunda y
-              Tercera FEB) y de{' '}
-              <a href="https://es.wikipedia.org" target="_blank" rel="noreferrer">Wikipedia</a> (palmarés por temporadas e historia
-              de los clubes, CC BY-SA 4.0).
-            </p>
-            <p>
-              Fotos de trofeos: Brgesto,{' '}
+              <b>D3 Basket</b> · Datos de <a href="https://acb.com" target="_blank" rel="noreferrer">acb.com</a> (estadísticas, plantillas,
+              clasificación histórica), de <a href="https://baloncestoenvivo.feb.es" target="_blank" rel="noreferrer">baloncestoenvivo.feb.es</a>{' '}
+              (Primera, Segunda y Tercera FEB) y de <a href="https://es.wikipedia.org" target="_blank" rel="noreferrer">Wikipedia</a> (palmarés e
+              historia de los clubes, CC BY-SA 4.0). Fotos de trofeos: Brgesto,{' '}
               <a href="https://commons.wikimedia.org/wiki/File:ACB_Trophy.png" target="_blank" rel="noreferrer">
                 Wikimedia Commons
               </a>
               , CC BY-SA 4.0. Uso personal de análisis; los datos pertenecen a sus titulares.
             </p>
           </div>
-          <div>{updated ? `Datos actualizados: ${fmtDateTime(updated)}` : ''}</div>
-        </div>
-      </footer>
-    </>
+        </footer>
+      </div>
+    </div>
   )
 }
 
@@ -116,6 +123,16 @@ function Search() {
   const [open, setOpen] = useState(false)
   const [focus, setFocus] = useState(0)
   const box = useRef<HTMLDivElement>(null)
+  const input = useRef<HTMLInputElement>(null)
+  // Atajo «/» para buscar desde cualquier página.
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement
+      if (e.key === '/' && !/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) (e.preventDefault(), input.current?.focus())
+    }
+    document.addEventListener('keydown', key)
+    return () => document.removeEventListener('keydown', key)
+  }, [])
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -143,7 +160,9 @@ function Search() {
         <path d="m20 20-3.5-3.5" />
       </svg>
       <input
-        placeholder="Buscar jugador o equipo…"
+        ref={input}
+        aria-label="Buscar jugador o equipo"
+        placeholder="Buscar jugador o equipo…  ( / )"
         value={q}
         onChange={(e) => (setQ(e.target.value), setOpen(true))}
         onFocus={() => setOpen(true)}

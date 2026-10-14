@@ -18,7 +18,7 @@ import {
   useLoad,
   type Column
 } from '../components'
-import { int, mix, num, pct, signed } from '../format'
+import { int, num, pct, signed } from '../format'
 import { brandVars, leagueTheme, zoneOf } from '../leagues'
 import { href, navigate } from '../router'
 import { LeadersBox } from './Home'
@@ -94,14 +94,10 @@ export function LeaguePage({ code, tab = 'resumen', year }: { code: string; tab?
   const selectedYear = year ?? edition?.start_year
   const attendance = data.teamStats.reduce((a, t) => a + t.attendance_total, 0)
   const theme = leagueTheme(code)
-  // Cabecera con la paleta oficial: del color complementario (oscurecido) al color de la liga.
-  const heroBg = theme
-    ? `linear-gradient(115deg, ${mix(theme.color2, '#000000', 0.7)} 0%, ${mix(theme.color2, '#000000', 0.5)} 52%, ${theme.color} 145%)`
-    : undefined
 
   return (
     <div style={theme ? brandVars(theme.color, theme.color2) : undefined}>
-      <section className="hero league-hero" style={{ background: heroBg }}>
+      <section className="hero league-hero" style={{ ['--club' as string]: theme?.color ?? 'var(--brand)', ['--club2' as string]: theme?.color2 ?? 'var(--ink)' }}>
         <div className="hero-grid">
           <div className="hero-logo">{theme ? <img className="league-logo" src={theme.logo} alt={competition.name} /> : <Trophy competition="liga" size={96} />}</div>
           <div>

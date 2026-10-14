@@ -442,3 +442,50 @@ export function ExternalLink({ url, children }: { url: string; children: ReactNo
     </a>
   )
 }
+
+/**
+ * Medio campo FIBA a escala (decímetros: 150 × 140). Aro a 1,575 m de la línea de fondo,
+ * zona de 4,90 × 5,80 m y línea de triple a 6,75 m (0,90 m en las esquinas).
+ * `zones` tiñe las zonas de tiro (dentro del triple / fuera) con una intensidad de 0 a 1.
+ */
+export function HalfCourt({ zones, children, label, note }: { zones?: { two: number; three: number }; children?: ReactNode; label?: string; note?: ReactNode }) {
+  return (
+    <div className="court">
+      {label && <div className="court-label">{label}</div>}
+      <svg className="court-lines" viewBox="0 0 150 140" aria-hidden="true">
+        {zones && (
+          <>
+            <path className="z-three" style={{ opacity: 0.05 + 0.2 * zones.three }} d="M1 1 H9 V29.9 A67.5 67.5 0 0 0 141 29.9 V1 H149 V139 H1 Z" />
+            <path className="z-two" style={{ opacity: 0.05 + 0.2 * zones.two }} d="M9 1 V29.9 A67.5 67.5 0 0 0 141 29.9 V1 Z" />
+          </>
+        )}
+        <rect x="1" y="1" width="148" height="138" rx="1" />
+        <path className="paint" d="M50.5 1 V59 H99.5 V1" />
+        <circle cx="75" cy="59" r="18" />
+        <path d="M9 1 V29.9 A67.5 67.5 0 0 0 141 29.9 V1" />
+        <path d="M57 139 A18 18 0 0 1 93 139" />
+        <path d="M66 13 H84" />
+        <circle className="rim" cx="75" cy="15.75" r="2.25" />
+        <path d="M62.5 15.75 A12.5 12.5 0 0 0 87.5 15.75" />
+      </svg>
+      {children}
+      {note && <span className="court-note">{note}</span>}
+    </div>
+  )
+}
+
+/** Posiciones de un quinteto sobre el medio campo, en % del ancho y del alto. */
+export const COURT_SPOTS = { PG: [50, 78], SG: [84, 54], SF: [16, 54], PF: [70, 25], C: [31, 25] } as const
+
+/** Jugador colocado sobre la pista: foto en círculo con el color de su equipo, apellido y dato. */
+export function CourtPlayer({ spot, to, photo, name, tag, color }: { spot: keyof typeof COURT_SPOTS; to: string; photo?: string | null; name: string; tag: string; color?: string | null }) {
+  const [x, y] = COURT_SPOTS[spot]
+  const [failed, setFailed] = useState(false)
+  return (
+    <a className="court-player" href={to} style={{ left: `${x}%`, top: `${y}%`, ['--c' as string]: teamColor(color, '#15181d') }}>
+      <span className="cp-photo">{photo && !failed ? <img src={photo} alt="" loading="lazy" onError={() => setFailed(true)} /> : <span>{initials(name)}</span>}</span>
+      <b>{name}</b>
+      <span className="cp-tag">{tag}</span>
+    </a>
+  )
+}

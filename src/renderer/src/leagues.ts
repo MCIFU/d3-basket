@@ -10,6 +10,9 @@ export function brandVars(color: string, color2?: string): CSSProperties {
     ['--brand-2' as string]: mix(color, '#ffffff', 0.25),
     ['--brand-soft' as string]: mix(color, '#ffffff', 0.9),
     ['--brand-ink' as string]: mix(color, '#000000', 0.25),
-    ['--accent-2' as string]: color2 ?? color
+    ['--accent-2' as string]: color2 ?? color,
+    // En modo oscuro (styles.css) el acento se aclara para que se lea sobre fondo oscuro.
+    ['--brand-dark' as string]: mix(color, '#ffffff', 0.5),
+    ['--brand-soft-dark' as string]: mix(color, '#000000', 0.72)
   }
 }

@@ -410,7 +410,12 @@ export class Queries {
     }
     const rounds = [...byRound.entries()]
     const last = [...rounds].reverse().find(([, gs]) => gs.some((g) => g.status === 'finished'))
-    const next = rounds.find(([, gs]) => gs.some((g) => g.status !== 'finished'))
+    // La próxima jornada es la primera posterior a la última jugada (un partido aplazado de una
+    // jornada antigua no la convierte en "próxima"); si no hay ninguna, la primera con partidos pendientes.
+    const lastIdx = last ? rounds.indexOf(last) : -1
+    const next =
+      rounds.slice(lastIdx + 1).find(([, gs]) => gs.some((g) => g.status !== 'finished')) ??
+      rounds.find(([, gs]) => gs.some((g) => g.status !== 'finished'))
     const stats = this.playerStats(edition.id)
     return {
       competition,

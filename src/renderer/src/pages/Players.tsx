@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import type { PlayerData, PlayerIndexRow, PlayerStatRow, TrajectoryRow } from '../../../shared/api'
+import type { PlayerData, PlayerIndexRow, PlayerStatRow, StatBlock, TrajectoryRow } from '../../../shared/api'
 import {
   CardPhoto,
+  HalfCourt,
   CompetitionBadge,
   DataTable,
   Empty,
@@ -221,7 +222,7 @@ export function PlayerPage({ refId, tab = 'resumen' }: { refId: string; tab?: st
 
   return (
     <>
-      <section className="hero player-hero" style={{ background: `linear-gradient(120deg, ${color} 0%, #0b1a33 80%)` }}>
+      <section className="hero player-hero" style={{ ['--club' as string]: color }}>
         <div className="hero-grid">
           <div className="portrait">
             <HeroPortrait srcs={[p.photo_nobg, p.photo]} name={p.display_name} />
@@ -382,6 +383,79 @@ function StatSheet({ s, ranks, league }: { s: PlayerStatRow; ranks: PlayerData['
   )
 }
 
+const pctTxt = (v: number | null) => (v == null ? '—' : `${Math.round(v)}%`)
+
+/** Acierto por zonas sobre la pista: dentro del triple, fuera y desde la línea de tiros libres. */
+function ShotMap({ s, label }: { s: StatBlock; label: string }) {
+  const z = (m: number, a: number) => (a ? m / a : 0)
+  const spots: [number, number, string, number | null, number, number][] = [
+    [50, 33, 'Tiros de 2', s.fg2_pct, s.fg2m, s.fg2a],
+    [50, 52, 'Tiros libres', s.ft_pct, s.ftm, s.fta],
+    [50, 80, 'Triples', s.fg3_pct, s.fg3m, s.fg3a]
+  ]
+  return (
+    <HalfCourt label={label} zones={{ two: z(s.fg2m, s.fg2a), three: z(s.fg3m, s.fg3a) }}>
+      {spots.map(([x, y, k, v, m, a]) => (
+        <div key={k} className="court-shot" style={{ left: `${x}%`, top: `${y}%` }}>
+          <b>{a ? pctTxt(v) : '—'}</b>
+          <span>
+            {k} · {m}/{a}
+          </span>
+        </div>
+      ))}
+    </HalfCourt>
+  )
+}
+
+/** De dónde salen sus puntos: tiros de 2, triples y tiros libres. */
+function PointsMix({ s }: { s: StatBlock }) {
+  const parts = [
+    { k: 'Tiros de 2', v: s.fg2m * 2, c: 'var(--brand)' },
+    { k: 'Triples', v: s.fg3m * 3, c: 'var(--marker)' },
+    { k: 'Tiros libres', v: s.ftm, c: 'var(--win)' }
+  ]
+  const total = parts.reduce((a, p) => a + p.v, 0) || 1
+  return (
+    <Section title="De dónde salen sus puntos" eyebrow={`${s.pts} puntos en ${s.games} partidos`}>
+      <div className="mix-bar">
+        {parts.map((p) => (
+          <span key={p.k} style={{ width: `${(100 * p.v) / total}%`, background: p.c }} title={`${p.k}: ${p.v}`} />
+        ))}
+      </div>
+      <div className="mix-rows">
+        {parts.map((p) => (
+          <div key={p.k}>
+            <i style={{ background: p.c }} />
+            <span>{p.k}</span>
+            <b>{p.v}</b>
+            <em>{Math.round((100 * p.v) / total)}%</em>
+          </div>
+        ))}
+      </div>
+      <div className="mix-rows" style={{ marginTop: 14 }}>
+        <div>
+          <i style={{ background: 'var(--court)' }} />
+          <span>True shooting</span>
+          <b>{pctTxt(s.ts_pct)}</b>
+          <em>eFG {pctTxt(s.efg_pct)}</em>
+        </div>
+        <div>
+          <i style={{ background: 'var(--court)' }} />
+          <span>Faltas recibidas</span>
+          <b>{s.fd}</b>
+          <em>{s.games ? num(s.fd / s.games) : '—'} por partido</em>
+        </div>
+        <div>
+          <i style={{ background: 'var(--court)' }} />
+          <span>Mates</span>
+          <b>{s.dunks}</b>
+          <em>{s.games ? num(s.dunks / s.games) : '—'} por partido</em>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
 function PlayerSummary({ data }: { data: PlayerData }) {
   const { season, career } = data
   const acb = career?.acbTotals
@@ -397,6 +471,12 @@ function PlayerSummary({ data }: { data: PlayerData }) {
         >
           <StatSheet s={season} ranks={data.ranks} league={data.current?.competition_name} />
         </Section>
+      )}
+      {season && season.fg2a + season.fg3a + season.fta > 0 && (
+        <div className="board">
+          <ShotMap s={season} label={`Mapa de tiro · ${data.current?.season_label ?? ''}`} />
+          <PointsMix s={season} />
+        </div>
       )}
 
       {entries.length > 0 && (
