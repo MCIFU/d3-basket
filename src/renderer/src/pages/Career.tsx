@@ -2,7 +2,7 @@
  * Trayectoria del jugador: une las temporadas con estadística (ACB y FEB) con las
  * etapas de la FEB (todas las categorías) y las muestra como línea de tiempo y gráfica.
  */
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import type { CareerLine, PlayerData, PlayerStatRow, TrajectoryRow } from '../../../shared/api'
 import { CompetitionBadge, TeamLogo, competitionStyle } from '../components'
 import { int, num, pct } from '../format'
@@ -22,12 +22,14 @@ export interface CareerEntry {
   license?: string | null
 }
 
-const compKey = (c: string) => {
-  const u = c.toUpperCase()
+// Nombres antiguos de las categorías FEB: LEB Oro = Primera FEB, LEB Plata (LEB 2) = Segunda FEB
+// y Liga EBA = Tercera FEB. Las licencias de la FEB usan el nombre de cada época.
+export const compKey = (c: string) => {
+  const u = c.toUpperCase().trim()
   if (/^(ACB|LIGA ENDESA)/.test(u)) return 'ACB'
-  if (/^(LEB_ORO|PRIMERA FEB|LEB ORO)/.test(u)) return 'LEB_ORO'
-  if (/^(LEB_PLATA|SEGUNDA FEB|LEB PLATA)/.test(u)) return 'LEB_PLATA'
-  if (/^(TERCERA_FEB|TERCERA FEB)/.test(u)) return 'TERCERA_FEB'
+  if (/^(LEB_ORO|PRIMERA FEB|LEB ORO|LEB)$/.test(u)) return 'LEB_ORO'
+  if (/^(LEB_PLATA|SEGUNDA FEB|LEB PLATA|LEB 2)$/.test(u)) return 'LEB_PLATA'
+  if (/^(TERCERA_FEB|TERCERA FEB|LIGA EBA|EBA)$/.test(u)) return 'TERCERA_FEB'
   return u
 }
 const COMP_NAME: Record<string, string> = { ACB: 'LIGA ENDESA', LEB_ORO: 'PRIMERA FEB', LEB_PLATA: 'SEGUNDA FEB', TERCERA_FEB: 'TERCERA FEB' }
@@ -55,7 +57,7 @@ export function buildCareer(data: PlayerData): CareerEntry[] {
     entries.push({
       year: s.season_start_year,
       label: seasonLabel(s.season_start_year),
-      competition: s.competition,
+      competition: COMP_NAME[compKey(s.competition)] ?? s.competition,
       club: s.club_name,
       team: s.team_name,
       license: s.license
@@ -387,6 +389,147 @@ export function FullStatsTable({ rows }: { rows: FullLine[] }) {
             )
           })}
         </tbody>
+      </table>
+    </div>
+  )
+}
+
+// ───────────────────────── Tabla de carrera ─────────────────────────
+
+const SECTION_LABEL: Record<string, string> = { liga: 'Liga', filial: 'Filial', copa: 'Copa', europa: 'Europa', seleccion: 'Selección' }
+
+/**
+ * La carrera temporada a temporada: lo básico de un vistazo (partidos, puntos, rebotes,
+ * asistencias y valoración) y, al desplegar una fila, el resto de su estadística.
+ */
+export function CareerTable({ entries, limit }: { entries: CareerEntry[]; limit?: number }) {
+  const [open, setOpen] = useState<string | null>(null)
+  const years = [...new Set(entries.map((e) => e.year))].slice(0, limit)
+  const shown = entries.filter((e) => years.includes(e.year))
+  const withStats = shown.filter((e) => e.stats)
+  const tot = withStats.reduce(
+    (a, e) => ({ g: a.g + e.stats!.games, pts: a.pts + e.stats!.pts, reb: a.reb + e.stats!.reb, ast: a.ast + e.stats!.ast, pir: a.pir + e.stats!.pir }),
+    { g: 0, pts: 0, reb: 0, ast: 0, pir: 0 }
+  )
+  const per = (v: number) => (tot.g ? num(v / tot.g) : '—')
+  return (
+    <div className="table-wrap">
+      <table className="table career-table">
+        <thead>
+          <tr>
+            <th>Temporada</th>
+            <th>Equipo</th>
+            <th>Liga</th>
+            <th className="num">PJ</th>
+            <th className="num">PTS</th>
+            <th className="num">REB</th>
+            <th className="num">AST</th>
+            <th className="num">VAL</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {years.flatMap((y) => {
+            const list = shown.filter((e) => e.year === y)
+            return list.flatMap((e, i) => {
+              const key = `${y}-${i}-${e.team ?? e.club}-${e.competition}`
+              const st = e.stats
+              const isOpen = open === key
+              const team = e.clubRef ? (
+                <a className="team-link" href={href.club(e.clubRef, e.team ?? e.club, undefined, e.year)}>
+                  <TeamLogo src={e.logo} name={e.team ?? e.club} size={24} />
+                  <span>{e.team ?? e.club}</span>
+                </a>
+              ) : (
+                <span className="team-link">
+                  <TeamLogo src={e.logo} name={e.team ?? e.club} size={24} />
+                  <span>{e.team ?? e.club}</span>
+                </span>
+              )
+              const rows = [
+                <tr key={key} className={`${i === 0 ? 'season-first' : ''} ${st ? 'has-stats' : 'no-stats'}`} onClick={() => st && setOpen(isOpen ? null : key)}>
+                  <td className="ct-season">{i === 0 ? <b>{seasonLabel(y)}</b> : null}</td>
+                  <td>
+                    <span className="row" style={{ gap: 8, flexWrap: 'nowrap' }}>
+                      {team}
+                      {st && st.section !== 'liga' && <span className={`chip ct-sec sec-${st.section}`}>{SECTION_LABEL[st.section]}</span>}
+                    </span>
+                  </td>
+                  <td>
+                    <CompetitionBadge name={e.competition} />
+                  </td>
+                  {st ? (
+                    <>
+                      <td className="num">
+                        <b>{st.games}</b>
+                      </td>
+                      <td className="num ct-main">{num(st.ppg)}</td>
+                      <td className="num ct-main">{num(st.rpg)}</td>
+                      <td className="num ct-main">{num(st.apg)}</td>
+                      <td className="num ct-main ct-val">{num(st.pirpg)}</td>
+                      <td className="num">
+                        <button className="ct-more" aria-expanded={isOpen} aria-label="Más estadísticas">
+                          {isOpen ? '−' : '+'}
+                        </button>
+                      </td>
+                    </>
+                  ) : (
+                    <td colSpan={6} className="muted small">
+                      Licencia sin estadística publicada
+                    </td>
+                  )}
+                </tr>
+              ]
+              if (st && isOpen)
+                rows.push(
+                  <tr key={key + '-x'} className="ct-extra">
+                    <td />
+                    <td colSpan={8}>
+                      <div className="ct-extra-grid">
+                        {[
+                          ['Minutos', num(st.mpg)],
+                          ['Tiros de 2', `${pct(st.fg2_pct)} · ${st.fg2m}/${st.fg2a}`],
+                          ['Triples', `${pct(st.fg3_pct)} · ${st.fg3m}/${st.fg3a}`],
+                          ['Tiros libres', `${pct(st.ft_pct)} · ${st.ftm}/${st.fta}`],
+                          ['True shooting', pct(st.ts_pct)],
+                          ['Reb. ofensivos', num(st.orpg)],
+                          ['Reb. defensivos', num(st.drpg)],
+                          ['Robos', num(st.spg)],
+                          ['Tapones', num(st.bpg)],
+                          ['Pérdidas', num(st.tpg)],
+                          ['Faltas', num(st.pfpg)],
+                          ['Victorias', `${st.wins} de ${st.games}`],
+                          ...(st.playoff_games ? [['Playoff', `${st.playoff_games} partidos`]] : []),
+                          ['Totales', `${int(st.pts)} pts · ${int(st.reb)} reb · ${int(st.ast)} ast`]
+                        ].map(([k, v]) => (
+                          <div key={k}>
+                            <span>{k}</span>
+                            <b>{v}</b>
+                          </div>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                )
+              return rows
+            })
+          })}
+        </tbody>
+        {tot.g > 0 && (
+          <tfoot>
+            <tr>
+              <td colSpan={3}>
+                <b>Carrera</b> <span className="muted small">· {years.length} temporadas con datos · media por partido</span>
+              </td>
+              <td className="num">{int(tot.g)}</td>
+              <td className="num">{per(tot.pts)}</td>
+              <td className="num">{per(tot.reb)}</td>
+              <td className="num">{per(tot.ast)}</td>
+              <td className="num">{per(tot.pir)}</td>
+              <td />
+            </tr>
+          </tfoot>
+        )}
       </table>
     </div>
   )

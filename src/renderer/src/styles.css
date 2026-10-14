@@ -1002,3 +1002,22 @@ a.link { color: var(--brand-ink); }
 .log-filters { justify-content: space-between; }
 .segmented button:disabled { opacity: .45; cursor: default; }
 @media (max-width: 900px) { .sb-row { grid-template-columns: 1fr auto; } .sb-sec { grid-column: 1 / -1; } .sb-stat { text-align: left; } }
+/* ── Tabla de carrera ── */
+.career-table td, .career-table th { cursor: default; }
+.career-table tbody tr.season-first td { border-top: 2px solid var(--line); }
+.career-table tbody tr:first-child td { border-top: 0; }
+.career-table tr.has-stats { cursor: pointer; }
+.career-table .ct-season b { font: 800 16px var(--display); }
+.career-table .ct-main { font: 700 16px var(--display); }
+.career-table .ct-val { color: var(--brand-ink); font-weight: 800; }
+.career-table tr.no-stats td { color: var(--muted); }
+.ct-more { width: 26px; height: 26px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); font-weight: 800; cursor: pointer; }
+.ct-more:hover { border-color: var(--ink); }
+.ct-sec { height: 20px; font-size: 10.5px; padding: 0 8px; }
+.ct-sec.sec-filial { background: color-mix(in srgb, var(--marker) 14%, transparent); color: var(--marker); }
+.ct-sec.sec-copa { background: color-mix(in srgb, var(--win) 14%, transparent); color: var(--win); }
+.career-table tr.ct-extra td { background: var(--surface-2); white-space: normal; }
+.ct-extra-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px 18px; padding: 4px 0; }
+.ct-extra-grid div { display: grid; }
+.ct-extra-grid span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.ct-extra-grid b { font-weight: 700; font-variant-numeric: tabular-nums; }

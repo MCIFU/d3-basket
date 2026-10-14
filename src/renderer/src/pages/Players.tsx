@@ -25,7 +25,7 @@ import { leagueTheme } from '../leagues'
 import { href } from '../router'
 import { ModeToggle, type StatMode } from './StatTables'
 import { ReportCard } from './Scouting'
-import { CareerChart, CareerTimeline, FullStatsTable, buildCareer, careerLine, careerSummary, seasonLine } from './Career'
+import { CareerTable, FullStatsTable, buildCareer, careerLine, careerSummary, seasonLine } from './Career'
 
 // ───────────────────────── Índice ─────────────────────────
 
@@ -486,10 +486,7 @@ function PlayerSummary({ data }: { data: PlayerData }) {
           actions={<a className="link" href={href.player(p.ref, p.display_name, 'trayectoria')}>Trayectoria completa →</a>}
         >
           <CareerHeader data={data} />
-          <CareerChart rows={data.trajectory} />
-          <div className="mt">
-            <CareerTimeline entries={entries} limit={6} />
-          </div>
+          <CareerTable entries={entries} limit={6} />
         </Section>
       )}
 
@@ -717,16 +714,12 @@ function Trajectory({ data }: { data: PlayerData }) {
     <div className="stack">
       <Section title="Trayectoria completa" eyebrow="Todas las temporadas y categorías">
         <CareerHeader data={data} />
-        <CareerChart rows={data.trajectory} />
-        <div className="mt">
-          <CareerTimeline entries={entries} />
-        </div>
+        <CareerTable entries={entries} />
         <p className="note">
           Estadísticas por temporada de la Liga Endesa (acb.com) y de las competiciones FEB con estadística completa; el resto de etapas
           (categorías FEB inferiores) proceden del historial de licencias de la FEB.
         </p>
       </Section>
-      <SeasonBreakdown rows={data.trajectory} />
       {SECTIONS.map(([key, title, sub]) => {
         const rows = data.trajectory.filter((r) => r.section === key)
         if (!rows.length) return null
@@ -755,55 +748,6 @@ function SectionsPending({ rows }: { rows: TrajectoryRow[] }) {
   const pending = SECTIONS.filter(([k]) => (k === 'europa' || k === 'seleccion') && !rows.some((r) => r.section === k))
   if (!pending.length) return null
   return <p className="note">{pending.map(([, t]) => t).join(' y ')}: se añadirán cuando D3 Basket incluya esas competiciones.</p>
-}
-
-/** Cada temporada desglosada: en qué equipos y competiciones jugó y con qué números. */
-function SeasonBreakdown({ rows }: { rows: TrajectoryRow[] }) {
-  const seasons = [...new Set(rows.map((r) => r.start_year))].sort((a, b) => b - a)
-  if (!seasons.length) return null
-  const label = Object.fromEntries(SECTIONS.map(([k, t]) => [k, t.split(' · ')[0]]))
-  return (
-    <Section title="Desglose por temporada" eyebrow="Primer equipo, filial y copa por separado">
-      <div className="season-breakdown">
-        {seasons.map((y) => {
-          const list = rows.filter((r) => r.start_year === y)
-          const games = list.reduce((a, r) => a + r.games, 0)
-          return (
-            <div key={y} className="sb-season">
-              <div className="sb-head">
-                <b>{list[0].label}</b>
-                <span className="muted">
-                  {games} partidos · {list.length} {list.length === 1 ? 'equipo/competición' : 'equipos/competiciones'}
-                </span>
-              </div>
-              {list.map((r) => (
-                <div key={`${r.team_name}-${r.competition_code}`} className={`sb-row sec-${r.section}`}>
-                  <span className="sb-sec">{label[r.section]}</span>
-                  <span className="sb-team">
-                    {r.club_ref ? (
-                      <a className="team-link" href={href.club(r.club_ref, r.team_name, undefined, r.start_year)}>
-                        <TeamLogo src={r.logo} name={r.team_name} size={20} />
-                        <span>{r.team_name}</span>
-                      </a>
-                    ) : (
-                      r.team_name
-                    )}
-                    {r.parent_name && <span className="small muted"> · filial de {r.parent_name}</span>}
-                  </span>
-                  <CompetitionBadge name={r.competition_code} />
-                  <span className="sb-stat"><b>{r.games}</b> PJ</span>
-                  <span className="sb-stat"><b>{num(r.ppg)}</b> PTS</span>
-                  <span className="sb-stat"><b>{num(r.rpg)}</b> REB</span>
-                  <span className="sb-stat"><b>{num(r.apg)}</b> AST</span>
-                  <span className="sb-stat"><b>{num(r.pirpg)}</b> VAL</span>
-                </div>
-              ))}
-            </div>
-          )
-        })}
-      </div>
-    </Section>
-  )
 }
 
 function GameLogTable({ rows, compact }: { rows: PlayerData['gameLog']; compact?: boolean }) {
