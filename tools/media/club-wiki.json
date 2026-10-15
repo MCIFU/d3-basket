@@ -2439,7 +2439,19 @@
    "title": "ALBA Berlín",
    "extract": "El ALBA Berlin es un club de baloncesto que juega en la BBL y en la Basketball Champions League. El equipo, con sede en Berlín, es también conocido como los Berlin Albatrosses. Disputa sus partidos en el Uber Arena, con capacidad para 16 000 espectadores.",
    "url": "https://es.wikipedia.org/wiki/ALBA_Berl%C3%ADn",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.albaberlin.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/albaberlin",
+     "twitter": "https://x.com/albaberlin",
+     "facebook": "https://www.facebook.com/albaberlin",
+     "youtube": "https://www.youtube.com/channel/UCNAj17FO6CxUU5v6wO7kPfQ"
+    },
+    "city": "Berlín",
+    "arena": "O2 World",
+    "arena_capacity": 17000
+   }
   },
   "ok": true
  },
@@ -2462,7 +2474,18 @@
    "title": "Basketball Löwen Braunschweig",
    "extract": "El Basketball Löwen Braunschweig es un equipo de baloncesto profesional de la ciudad de Braunschweig (Alemania) que milita en la máxima categoría del baloncesto teutón: la BBL. Disputa sus partidos en el Volkswagen-Halle, con capacidad para 6.600 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Basketball_L%C3%B6wen_Braunschweig",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.basketball-loewen.de",
+    "socials": {
+     "instagram": "https://www.instagram.com/basketballloewen",
+     "twitter": "https://x.com/bbloewenbs",
+     "facebook": "https://www.facebook.com/basketballloewen"
+    },
+    "city": "Brunswick",
+    "arena": "Volkswagen Halle",
+    "arena_capacity": 6500
+   }
   },
   "ok": true
  },
@@ -2478,7 +2501,16 @@
    "title": "EWE Baskets Oldemburgo",
    "extract": "El EWE Baskets Oldenburg también conocido anteriormente como Oldenburger TB es un equipo de baloncesto alemán con sede en la ciudad de Oldenburg, Baja Sajonia, que compite en la BBL y en la segunda competición europea, la Eurocup. Disputa sus partidos en el Large EWE Arena, con capacidad para 6.069 espectadores. El club es patrocinado por EWE AG, una compañía eléctrica.",
    "url": "https://es.wikipedia.org/wiki/EWE_Baskets_Oldemburgo",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://ewe-baskets.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/ewebaskets"
+    },
+    "city": "Oldemburgo",
+    "arena": "Large EWE Arena",
+    "arena_capacity": 8000
+   }
   },
   "ok": true
  },
@@ -2494,7 +2526,20 @@
    "title": "Bayern de Múnich (baloncesto)",
    "extract": "El FC Bayern de Múnich es una sección deportiva de baloncesto profesional del club de fútbol Bayern de Múnich. Tiene sede en la ciudad de Múnich, Alemania, y milita en la BBL, máxima categoría del baloncesto alemán y en la Euroliga, máxima categoría continental. Disputa sus partidos en el BMW Park, con capacidad para 6500 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Bayern_de_M%C3%BAnich_(baloncesto)",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.fcb-basketball.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/fcbayernbasketball",
+     "twitter": "https://x.com/fcbbasketball",
+     "facebook": "https://www.facebook.com/fcbayernbasketball",
+     "youtube": "https://www.youtube.com/channel/UCqxyVk5fkD0YAUegb9RM-8A",
+     "tiktok": "https://www.tiktok.com/@fcbayernbasketball"
+    },
+    "city": "Múnich",
+    "arena": "Audi Dome",
+    "arena_capacity": 7200
+   }
   },
   "ok": true
  },
@@ -2517,7 +2562,16 @@
    "title": "MHP Riesen Ludwigsburg",
    "extract": "El MHP RIESEN Ludwigsburg es un equipo de baloncesto alemán con sede en la ciudad de Ludwigsburg, Baden-Wurtemberg, que compite en la BBL y en la segunda competición europea, la Eurocup. Disputa sus partidos en el Arena Ludwigsburg, con capacidad para 5.325 espectadores.",
    "url": "https://es.wikipedia.org/wiki/MHP_Riesen_Ludwigsburg",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.mhp-riesen-ludwigsburg.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/mhp_riesen"
+    },
+    "city": "Ludwigsburg",
+    "arena": "Arena Ludwigsburg",
+    "arena_capacity": 7201
+   }
   },
   "ok": true
  },
@@ -2533,7 +2587,17 @@
    "title": "Niners Chemnitz",
    "extract": "El Niners Chemnitz es un equipo de baloncesto alemán con sede en la ciudad de Chemnitz, que compite en la Basketball Bundesliga, la primera división de su país, tras ascender en 2020. Disputa sus partidos en el Chemnitz Arena, con capacidad para 5400 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Niners_Chemnitz",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.chemnitz99.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/bv_chemnitz_99",
+     "twitter": "https://x.com/chemnitz99ers",
+     "facebook": "https://www.facebook.com/ninerschemnitz"
+    },
+    "city": "Chemnitz",
+    "arena": "Chemnitz Arena"
+   }
   },
   "ok": true
  },
@@ -2549,7 +2613,16 @@
    "title": "Phoenix Hagen",
    "extract": "El Phoenix Hagen es un club de baloncesto profesional de la ciudad de Hagen, que milita en la BBL, máxima categoría del baloncesto alemán. disputa sus partidos en el ENERVIE Arena, con capacidad para 3.035 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Phoenix_Hagen",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.phoenix-hagen.de",
+    "socials": {
+     "instagram": "https://www.instagram.com/feuervogeltv",
+     "facebook": "https://www.facebook.com/phoenixhagen"
+    },
+    "city": "Hagen",
+    "arena": "Ischelandhalle"
+   }
   },
   "ok": true
  },
@@ -2565,7 +2638,15 @@
    "title": "RASTA Vechta II",
    "extract": null,
    "url": null,
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.rasta-vechta.de/",
+    "socials": {
+     "facebook": "https://www.facebook.com/rastavechta2"
+    },
+    "arena": "Rasta-Dome",
+    "arena_capacity": 3140
+   }
   },
   "ok": true
  },
@@ -2581,7 +2662,19 @@
    "title": "Rostock Seawolves",
    "extract": "El Rostock Seawolves es un equipo de baloncesto alemán con sede en la ciudad de Rostock, Mecklemburgo-Pomerania Occidental, que compite en la Basketball Bundesliga, la primera categoría del baloncesto alemán. Disputa sus partidos en el Stadthalle Rostock, con capacidad para 4.550 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Rostock_Seawolves",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://seawolves.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/rostockseawolves",
+     "twitter": "https://x.com/HRO_Seawolves",
+     "facebook": "https://www.facebook.com/RostockSeawolves",
+     "youtube": "https://www.youtube.com/channel/UC--HhEb0S0Cz0GZ4-ljkMIQ",
+     "tiktok": "https://www.tiktok.com/@rostock_seawolves"
+    },
+    "city": "Rostock",
+    "arena": "Stadthalle Rostock"
+   }
   },
   "ok": true
  },
@@ -2597,7 +2690,16 @@
    "title": "Skyliners Fráncfort",
    "extract": "El Skyliners Fráncfort, también conocido por motivos de patrocinio como Fraport Skyliners Frankfurt, es un equipo de baloncesto alemán con sede en la ciudad de Fráncfort, Hesse, que compite en la BBL y en la tercera competición europea, la FIBA European Cup. Disputa sus partidos en el Ballsporthalle, con capacidad para 5000 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Skyliners_Fr%C3%A1ncfort",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.frankfurt-skyliners.de",
+    "socials": {
+     "instagram": "https://www.instagram.com/skyliners_frankfurt"
+    },
+    "city": "Fráncfort del Meno",
+    "arena": "Fraport Arena",
+    "arena_capacity": 5002
+   }
   },
   "ok": true
  },
@@ -2613,7 +2715,17 @@
    "title": "Mitteldeutscher BC Weißenfels",
    "extract": "El Mitteldeutscher Basketball Club, conocido por motivos de patrocinio como SYNTAINICS MBC, es un equipo de baloncesto alemán con sede en la ciudad de Weißenfels, que compite en la Basketball Bundesliga, la primera división de su país. Disputa sus partidos en el Stadthalle Weißenfels, con capacidad para 3000 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Mitteldeutscher_BC_Wei%C3%9Fenfels",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://syntainics-mbc.de",
+    "socials": {
+     "instagram": "https://www.instagram.com/syntainics_mbc",
+     "twitter": "https://x.com/syntainicsmbc",
+     "facebook": "https://www.facebook.com/syntainicsmbc"
+    },
+    "city": "Weißenfels",
+    "arena": "Stadthalle Weißenfels"
+   }
   },
   "ok": true
  },
@@ -2629,7 +2741,17 @@
    "title": "Science City Jena",
    "extract": "El Science City Jena es un club de baloncesto profesional de la ciudad de Jena, que milita en la Basketball Bundesliga, la primera categoría del baloncesto alemán. Disputa sus partidos en el Sparkassen-Arena Jena, con capacidad para 2.750 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Science_City_Jena",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.baskets-jena.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/basketsjena",
+     "facebook": "https://www.facebook.com/basketsjena"
+    },
+    "city": "Jena",
+    "arena": "Sparkassen-Arena, Jena",
+    "arena_capacity": 3076
+   }
   },
   "ok": true
  },
@@ -2645,7 +2767,16 @@
    "title": "Telekom Baskets Bonn",
    "extract": "El Telekom Baskets Bonn, comúnmente conocido como Baskets Bonn, es un equipo de baloncesto profesional de la ciudad de Bonn (Alemania) que militá en la máxima categoría del baloncesto teutón: la BBL y en la tercera competición europea, la BCL. El patrocinador del club es la compañía alemana Deutsche Telekom, una gran empresa de telefonía e internet, que también vende móviles (T-Mobile) en Estados Unidos. Disputa sus encuentros como local en el Telekom-Dome, pabellón con capacidad para 6000 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Telekom_Baskets_Bonn",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.telekom-baskets-bonn.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/telekombaskets"
+    },
+    "city": "Bonn",
+    "arena": "Telekom Dome",
+    "arena_capacity": 6000
+   }
   },
   "ok": true
  },
@@ -2661,7 +2792,17 @@
    "title": "Römerstrom Gladiators Trier",
    "extract": "El Gladiators Trier, cono cido por motivos de patrocinio como Römerstrom Gladiators Trier, es un equipo de baloncesto alemán con sede en la ciudad de Tréveris, que compite en la ProA, la segunda división de su país. Disputa sus partidos en el Arena Trier, con capacidad para 5900 espectadores. El club se fundó en 2015, tras la desaparición del TBB Trier.",
    "url": "https://es.wikipedia.org/wiki/R%C3%B6merstrom_Gladiators_Trier",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://römerstrom-gladiators.de",
+    "socials": {
+     "instagram": "https://www.instagram.com/vetconceptgladiatorstrier",
+     "facebook": "https://www.facebook.com/VetConceptGladiatorsTrier"
+    },
+    "city": "Tréveris",
+    "arena": "SWT-Arena",
+    "arena_capacity": 5900
+   }
   },
   "ok": true
  },
@@ -2677,7 +2818,18 @@
    "title": "Hamburg Towers",
    "extract": "El Hamburg Towers, conocido por motivos de patrocinio como Veolia Towers, es un equipo de baloncesto alemán con sede en la ciudad de Hamburgo, que compite en la Basketball Bundesliga, la primera división de su país. Disputa sus partidos en el InselPark-Halle, con capacidad para 3400 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Hamburg_Towers",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.hamburgtowers.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/hamburgtowers",
+     "twitter": "https://x.com/hamburgtowers",
+     "facebook": "https://www.facebook.com/hamburgtowers",
+     "youtube": "https://www.youtube.com/channel/UC3qHAMJQdQixvJmTWbnMSRw"
+    },
+    "city": "Hamburgo",
+    "arena": "Inselpark Arena"
+   }
   },
   "ok": true
  },
@@ -2693,7 +2845,19 @@
    "title": "Ratiopharm Ulm",
    "extract": "El Ratiopharm Ulm es un club de baloncesto profesional de la ciudad de Ulm, que milita en la BBL, máxima categoría del baloncesto alemán y en la Eurocup, la segunda competición europea. Disputa sus partidos en el Ratiopharm arena, con capacidad para 6000 espectadores. El club es patrocinado por la compañía farmacéutica Ratiopharm.",
    "url": "https://es.wikipedia.org/wiki/Ratiopharm_Ulm",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://ratiopharmulm.com/",
+    "socials": {
+     "instagram": "https://www.instagram.com/ratiopharmulm",
+     "twitter": "https://x.com/ratiopharmulm",
+     "facebook": "https://www.facebook.com/ratiopharmulm",
+     "youtube": "https://www.youtube.com/channel/UCn2eccIey2cbJYwK58wFYHQ"
+    },
+    "city": "Ulm",
+    "arena": "ratiopharm arena",
+    "arena_capacity": 6100
+   }
   },
   "ok": true
  },
@@ -2709,7 +2873,18 @@
    "title": "AEK (baloncesto)",
    "extract": "La sección de baloncesto del A. E. K., conocido simplemente por sus siglas A. E. K. o su transliteralización de A. E. K. de Atenas, es un club de baloncesto con base en Atenas, Grecia. Forma parte de la sociedad polideportiva Athlitikí Énosis Konstantinoupóleos. Al igual que todos los clubes profesionales deportivos del país, debe anteponer a su denominación la referencia a su actividad deportiva y fiscal con las siglas K. Α. Ε. por lo que es referido como el K. Α. Ε. Αθλητική Ένωσις Κωνσταντινουπόλεως, o literalizado en su conjunto como Sociedad Anónima de Baloncesto Unión Atlética de Constantinopla..",
    "url": "https://es.wikipedia.org/wiki/AEK_(baloncesto)",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.aekbc.gr",
+    "socials": {
+     "instagram": "https://www.instagram.com/aekbc",
+     "twitter": "https://x.com/aekbcgr",
+     "facebook": "https://www.facebook.com/aekbasketballclub",
+     "youtube": "https://www.youtube.com/channel/UC7pgxTKt5ER_5B6Eab-vffQ"
+    },
+    "city": "Atenas",
+    "arena": "Centro Olímpico Ano Liossia"
+   }
   },
   "ok": true
  },
@@ -2725,7 +2900,19 @@
    "title": "ALBA Berlín",
    "extract": "El ALBA Berlin es un club de baloncesto que juega en la BBL y en la Basketball Champions League. El equipo, con sede en Berlín, es también conocido como los Berlin Albatrosses. Disputa sus partidos en el Uber Arena, con capacidad para 16 000 espectadores.",
    "url": "https://es.wikipedia.org/wiki/ALBA_Berl%C3%ADn",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.albaberlin.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/albaberlin",
+     "twitter": "https://x.com/albaberlin",
+     "facebook": "https://www.facebook.com/albaberlin",
+     "youtube": "https://www.youtube.com/channel/UCNAj17FO6CxUU5v6wO7kPfQ"
+    },
+    "city": "Berlín",
+    "arena": "O2 World",
+    "arena_capacity": 17000
+   }
   },
   "ok": true
  },
@@ -2748,7 +2935,17 @@
    "title": "BK Pardubice",
    "extract": "El BK JIP Pardubice es un equipo de baloncesto checo que compite en la Národní Basketbalová Liga, la primera división del país. Tiene su sede en Pardubice. Disputa sus partidos en el ČEZ Arena, con capacidad para 10.300 espectadores y en la Hala Dukla, con capacidad para 800 espectadores",
    "url": "https://es.wikipedia.org/wiki/BK_Pardubice",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.bkpardubice.cz",
+    "socials": {
+     "instagram": "https://www.instagram.com/beksapardubice",
+     "facebook": "https://www.facebook.com/BeksaPardubice"
+    },
+    "city": "Pardubice",
+    "arena": "Enteria arena",
+    "arena_capacity": 10000
+   }
   },
   "ok": true
  },
@@ -2778,7 +2975,16 @@
    "title": "Cholet Basket",
    "extract": "Cholet Basket es un club de baloncesto francés, con sede en la ciudad de Cholet y fundado en 1975, que compite en la Liga Francesa. Disputa sus partidos en el pabellón de La Meilleraie, con capacidad para 5.191 personas.",
    "url": "https://es.wikipedia.org/wiki/Cholet_Basket",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.cholet-basket.com/",
+    "socials": {
+     "youtube": "https://www.youtube.com/channel/UChz9rsqnddgaos8buQiks8A"
+    },
+    "city": "Cholet",
+    "arena": "La Meilleraie",
+    "arena_capacity": 5191
+   }
   },
   "ok": true
  },
@@ -2794,7 +3000,13 @@
    "title": "Cibona Zagreb",
    "extract": "El Cibona de Zagreb, denominado oficialmente KK Cibona, es un club de baloncesto croata de la ciudad de Zagreb. Actualmente participa en la Liga de Croacia, en la Liga Adriática y en la Eurocup. Su cancha de juego es el Dražen Petrović Basketball Hall, con capacidad para 5.400 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Cibona_Zagreb",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.cibona.com",
+    "city": "Zagreb",
+    "arena": "Centro de Baloncesto Dražen Petrović",
+    "arena_capacity": 5400
+   }
   },
   "ok": true
  },
@@ -2810,7 +3022,13 @@
    "title": "FC Porto (baloncesto)",
    "extract": "El Futebol Clube do Porto es un equipo de baloncesto portugués con sede en la ciudad de Oporto, que compite en la LPB, la máxima categoría del baloncesto portugués y en la tercera competición europea, la FIBA European Cup. Es la sección de baloncesto del F.C. Porto. Disputa sus partidos en el Dragão Caixa, con capacidad para 2200 espectadores.",
    "url": "https://es.wikipedia.org/wiki/FC_Porto_(baloncesto)",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.fcporto.pt/pt/modalidades/basquetebol/Pages/basquetebol.aspx",
+    "city": "Oporto",
+    "arena": "Dragão Arena",
+    "arena_capacity": 2179
+   }
   },
   "ok": true
  },
@@ -2861,7 +3079,11 @@
    "title": "Legia Warsaw (sports club)",
    "extract": null,
    "url": "https://en.wikipedia.org/wiki/Legia_Warsaw_(sports_club)",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "arena": "Estadio del Ejército Polaco",
+    "arena_capacity": 31103
+   }
   },
   "ok": true
  },
@@ -2877,7 +3099,19 @@
    "title": "Nanterre 92",
    "extract": "El Nanterre 92, conocido hasta 2016 como Jeunesse Sportive des Fontenelles de Nanterre o JSF Nanterre es una asociación deportiva francesa de baloncesto situado en la ciudad de Nanterre, que juega en la LNB, la máxima categoría del baloncesto francés y en la Eurocup, la segunda competición europea más importante.",
    "url": "https://es.wikipedia.org/wiki/Nanterre_92",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.jsfnanterre.com/",
+    "socials": {
+     "instagram": "https://www.instagram.com/nanterre_92basket",
+     "twitter": "https://x.com/nanterre92",
+     "facebook": "https://www.facebook.com/Nanterre92Basket",
+     "youtube": "https://www.youtube.com/channel/UCeJcTrJ0KdJV_TnRfCmDa1A"
+    },
+    "city": "Nanterre",
+    "arena": "Palais des Sports Maurice Thorez",
+    "arena_capacity": 3000
+   }
   },
   "ok": true
  },
@@ -2893,7 +3127,18 @@
    "title": "Pallacanestro Reggiana",
    "extract": "Pallacanestro Reggiana, denominado también por cuestiones de patrocinio UnaHotels Reggio Emilia, es un club de baloncesto italiano con sede en la ciudad de Reggio Emilia, que actualmente compite en la Serie A, la máxima división del baloncesto en Italia y en la competición europea, Basketball Champions League. Disputa sus partidos de liga en el PalaBigi, con capacidad para 4.600 espectadores y a menudo los partidos de competición europea los disputa en el PalaDozza, con capacidad para 5.600 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Pallacanestro_Reggiana",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.pallacanestroreggiana.it",
+    "socials": {
+     "instagram": "https://www.instagram.com/pallacanestroreggiana",
+     "twitter": "https://x.com/pallacreggiana",
+     "youtube": "https://www.youtube.com/channel/UCSWK9ximwWQ56itm56CBT7A"
+    },
+    "city": "Reggio Emilia",
+    "arena": "PalaBigi",
+    "arena_capacity": 3800
+   }
   },
   "ok": true
  },
@@ -2909,7 +3154,19 @@
    "title": "Peristeri BC",
    "extract": "Peristeri BC, o Gymnastikos Syllogos Peristeriou KAE, es un equipo de baloncesto griego con sede en Peristeri, una ciudad de Atenas Occidental, que disputa la competición de la A1 Ethniki. Fue fundado en 1971.",
    "url": "https://es.wikipedia.org/wiki/Peristeri_BC",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.peristeribc.gr",
+    "socials": {
+     "instagram": "https://www.instagram.com/peristeribc",
+     "twitter": "https://x.com/peristeribc",
+     "facebook": "https://www.facebook.com/bcperisteri",
+     "youtube": "https://www.youtube.com/channel/UCUZ1gkJ-pgfBbhVGiL1KHZA"
+    },
+    "city": "Peristeri",
+    "arena": "Peristeri Indoor Hall",
+    "arena_capacity": 4000
+   }
   },
   "ok": true
  },
@@ -2925,7 +3182,15 @@
    "title": "RASTA Vechta II",
    "extract": null,
    "url": null,
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.rasta-vechta.de/",
+    "socials": {
+     "facebook": "https://www.facebook.com/rastavechta2"
+    },
+    "arena": "Rasta-Dome",
+    "arena_capacity": 3140
+   }
   },
   "ok": true
  },
@@ -2941,7 +3206,18 @@
    "title": "BC Rytas",
    "extract": "El Vilnius Rytas es un club profesional de baloncesto con base en Vilna, Lituania fundado en 1997 y que participa en la LKL, en la BBL, VTB United League y en la Basketball Champions League (BCL).",
    "url": "https://es.wikipedia.org/wiki/BC_Rytas",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.rytasvilnius.lt/",
+    "socials": {
+     "instagram": "https://www.instagram.com/bclietuvosrytas",
+     "twitter": "https://x.com/RytasVilnius",
+     "facebook": "https://www.facebook.com/116509335027310"
+    },
+    "city": "Vilna",
+    "arena": "Siemens Arena",
+    "arena_capacity": 11000
+   }
   },
   "ok": true
  },
@@ -2957,7 +3233,13 @@
    "title": "Strasbourg IG",
    "extract": "Strasbourg Illkirch-Graffenstaden Basket, más conocido como SIG o Strasbourg IG es un club de baloncesto francés, con sede en la comuna de Illkirch-Graffenstaden dentro de la Eurometrópoli de Estrasburgo, fundado en 1929 que compite en la Liga Francesa y en la segunda competición europea, la Eurocup. Disputa sus partidos en el pabellón Rhenus Sport, con capacidad para 6.200 personas.",
    "url": "https://es.wikipedia.org/wiki/Strasbourg_IG",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://sigstrasbourg.fr",
+    "city": "Estrasburgo",
+    "arena": "Rhenus Sport",
+    "arena_capacity": 6200
+   }
   },
   "ok": true
  },
@@ -2973,7 +3255,8 @@
    "title": "SK Slavia Prague ERA NBK",
    "extract": null,
    "url": "https://en.wikipedia.org/wiki/SK_Slavia_Prague_ERA_NBK",
-   "shared": []
+   "shared": [],
+   "extra": {}
   },
   "ok": true
  },
@@ -2989,7 +3272,15 @@
    "title": "Sabah BC",
    "extract": null,
    "url": "https://en.wikipedia.org/wiki/Sabah_BC",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://sabahpsc.az",
+    "socials": {
+     "instagram": "https://www.instagram.com/sabahbc",
+     "facebook": "https://www.facebook.com/104362512451061"
+    },
+    "city": "Bakú"
+   }
   },
   "ok": true
  },
@@ -3005,7 +3296,14 @@
    "title": "Salon Vilpas",
    "extract": null,
    "url": null,
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://salonvilpas.fi/",
+    "socials": {
+     "instagram": "https://www.instagram.com/salonvilpas"
+    },
+    "city": "Salo"
+   }
   },
   "ok": true
  },
@@ -3028,7 +3326,16 @@
    "title": "Telekom Baskets Bonn",
    "extract": "El Telekom Baskets Bonn, comúnmente conocido como Baskets Bonn, es un equipo de baloncesto profesional de la ciudad de Bonn (Alemania) que militá en la máxima categoría del baloncesto teutón: la BBL y en la tercera competición europea, la BCL. El patrocinador del club es la compañía alemana Deutsche Telekom, una gran empresa de telefonía e internet, que también vende móviles (T-Mobile) en Estados Unidos. Disputa sus encuentros como local en el Telekom-Dome, pabellón con capacidad para 6000 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Telekom_Baskets_Bonn",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.telekom-baskets-bonn.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/telekombaskets"
+    },
+    "city": "Bonn",
+    "arena": "Telekom Dome",
+    "arena_capacity": 6000
+   }
   },
   "ok": true
  },
@@ -3044,7 +3351,13 @@
    "title": "Trabzonspor Basketbol Kulübü",
    "extract": "El Trabzonspor Basketbol Kulübü, también conocido como Trabzonspor Medical Park Basketbol Kulübü por razones de patrocinio, es un club de baloncesto profesional de la ciudad de Trebisonda, que milita en la BSL, la máxima categoría del baloncesto turco. Disputa sus partidos en el Hayri Gür Arena, con capacidad para 7,500 espectadores. Es la sección de baloncesto del Trabzonspor.",
    "url": "https://es.wikipedia.org/wiki/Trabzonspor_Basketbol_Kul%C3%BCb%C3%BC",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.trabzonsporbasket.com/",
+    "city": "Trebisonda",
+    "arena": "Hayri Gür Arena",
+    "arena_capacity": 7500
+   }
   },
   "ok": true
  },
@@ -3060,7 +3373,19 @@
    "title": "Antwerp Giants",
    "extract": "El Antwerp Giants, conocido por motivos de patrocinio como Telenet Giants Antwerp, es un club de baloncesto profesional de la ciudad de Amberes, que milita en la BNXT League, la nueva liga fruto de la fusión de la Dutch Basketball League neerlandesa y la Pro Basketball League belga. Disputa sus partidos en el Lotto Arena, con capacidad para 5218 espectadores. El club fue creado a partir de la fusión de Sobabee y Racing Mechelen BC. Entonces llamado Racing Basket Antwerpen, fue rebautizado a Antwerp Giants en 2005",
    "url": "https://es.wikipedia.org/wiki/Antwerp_Giants",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.antwerpgiants.be/",
+    "socials": {
+     "instagram": "https://www.instagram.com/antwerpgiants",
+     "twitter": "https://x.com/antwerpgiants",
+     "facebook": "https://www.facebook.com/antwerpgiants",
+     "youtube": "https://www.youtube.com/channel/UC33a8OvsFTcbK-YaZbuCCiQ"
+    },
+    "city": "Amberes",
+    "arena": "Lotto Arena",
+    "arena_capacity": 5218
+   }
   },
   "ok": true
  },
@@ -3076,7 +3401,19 @@
    "title": "Aris Salónica BC",
    "extract": "El Aris de Tesalónica BC, o también Aris de Salónica BC, es la sección de baloncesto de la sociedad polideportiva Aris Tesalónica creada en 1922. Es el primer club de baloncesto de Salónica, anterior al PAOK Salónica BC, y el tercer club de baloncesto de Grecia en número de títulos, tras el Panathinaikos B. C. de Atenas y el Olympiakos B. C. de El Pireo.",
    "url": "https://es.wikipedia.org/wiki/Aris_Sal%C3%B3nica_BC",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://arisbasketball.com",
+    "socials": {
+     "instagram": "https://www.instagram.com/aris.bc.official",
+     "twitter": "https://x.com/ARISBCgr",
+     "facebook": "https://www.facebook.com/arisbc.gr",
+     "youtube": "https://www.youtube.com/channel/UCdy6d1krgRXDpvfiJbQfKHQ"
+    },
+    "city": "Salónica",
+    "arena": "Alexandreio Melathron",
+    "arena_capacity": 4800
+   }
   },
   "ok": true
  },
@@ -3113,7 +3450,15 @@
    "title": "BC Balkan Botevgrad",
    "extract": "El BC Balkan Botevgrad es un equipo de baloncesto búlgaro que compite en la NBL, la primera división del país y en la Balkan League. Tiene su sede en la ciudad de Botevgrad. Disputa sus partidos en el Arena Botevgrad, con capacidad para 4500 espectadores.",
    "url": "https://es.wikipedia.org/wiki/BC_Balkan_Botevgrad",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "socials": {
+     "instagram": "https://www.instagram.com/balkanbotevgrad",
+     "facebook": "https://www.facebook.com/Balkan.Botevgrad"
+    },
+    "city": "Botevgrad",
+    "arena": "Arena Botevgrad"
+   }
   },
   "ok": true
  },
@@ -3150,7 +3495,17 @@
    "title": "Aquila Basket Trento",
    "extract": "El Aquila Basket Trento, conocido también por motivos de patrocinio como Dolomiti Energia Trento es un equipo de baloncesto italiano con sede en la ciudad de Trento, que compite en la Serie A, la máxima división del baloncesto italiano y en la segunda competición europea, la Eurocup. Disputa sus partidos en el PalaTrento, con capacidad para 4000 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Aquila_Basket_Trento",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.aquilabasket.it/",
+    "socials": {
+     "facebook": "https://www.facebook.com/AquilaBasketTN",
+     "youtube": "https://www.youtube.com/channel/UCWNHi_jWMY3tDoF5vWTsMHA"
+    },
+    "city": "Trento",
+    "arena": "PalaTrento",
+    "arena_capacity": 4800
+   }
   },
   "ok": true
  },
@@ -3173,7 +3528,16 @@
    "title": "Le Mans Sarthe Basket",
    "extract": "Le Mans Sarthe Basket, conocido a menudo como MSB. es un club de baloncesto francés, de la ciudad de Le Mans. Aunque la sección de baloncesto fue creada en 1939.",
    "url": "https://es.wikipedia.org/wiki/Le_Mans_Sarthe_Basket",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.msb.fr/",
+    "socials": {
+     "youtube": "https://www.youtube.com/channel/UC-ypjItMhZ0mLxyILK8yNkg"
+    },
+    "city": "Le Mans",
+    "arena": "Antarès",
+    "arena_capacity": 6023
+   }
   },
   "ok": true
  },
@@ -3189,7 +3553,16 @@
    "title": "Krepšinio klubas Lietkabelis",
    "extract": "El Krepšinio klubas Lietkabelis es un club profesional de baloncesto basado en Panevėžys, Lituania fundado en 1964 y que participa en la LKL y en la BBL. Disputa sus encuentros como local en el Cido Arena, con capacidad para 5.656 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Krep%C5%A1inio_klubas_Lietkabelis",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.kklietkabelis.lt/",
+    "socials": {
+     "instagram": "https://www.instagram.com/bclietkabelis"
+    },
+    "city": "Panevėžys",
+    "arena": "Kalnapilio Arena",
+    "arena_capacity": 5656
+   }
   },
   "ok": true
  },
@@ -3205,7 +3578,10 @@
    "title": "London Lions (women)",
    "extract": null,
    "url": "https://en.wikipedia.org/wiki/London_Lions_(women)",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "city": "Londres"
+   }
   },
   "ok": true
  },
@@ -3221,7 +3597,17 @@
    "title": "Maxima Roma",
    "extract": "El Maxima Roma es un equipo de baloncesto italiano con sede en la ciudad de Roma, Lacio. Compite en la Serie A, la máxima división del baloncesto en Italia, y en la EuroCup. Disputa sus partidos en el PalaEUR, con capacidad para 11.200 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Maxima_Roma",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.maximaroma.it/",
+    "socials": {
+     "instagram": "https://www.instagram.com/maximaromaofficial",
+     "twitter": "https://x.com/maxima_roma",
+     "facebook": "https://www.facebook.com/Maxima-Roma"
+    },
+    "arena": "Palazzo dello Sport",
+    "arena_capacity": 11200
+   }
   },
   "ok": true
  },
@@ -3237,7 +3623,17 @@
    "title": "Niners Chemnitz",
    "extract": "El Niners Chemnitz es un equipo de baloncesto alemán con sede en la ciudad de Chemnitz, que compite en la Basketball Bundesliga, la primera división de su país, tras ascender en 2020. Disputa sus partidos en el Chemnitz Arena, con capacidad para 5400 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Niners_Chemnitz",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.chemnitz99.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/bv_chemnitz_99",
+     "twitter": "https://x.com/chemnitz99ers",
+     "facebook": "https://www.facebook.com/ninerschemnitz"
+    },
+    "city": "Chemnitz",
+    "arena": "Chemnitz Arena"
+   }
   },
   "ok": true
  },
@@ -3260,7 +3656,13 @@
    "title": "BC Neptūnas Klaipėda",
    "extract": "BC Neptūnas es un club de baloncesto lituano, con sede en la ciudad de Klaipėda. Fundado en 1964, y compite en la Lietuvos Krepšinio Lyga, la primera competición de su país, la ULEB Eurocup, la segunda competición europea y la liga VTB. Disputan sus partidos como local en el Švyturio Arena, con capacidad para 6.200 espectadores.",
    "url": "https://es.wikipedia.org/wiki/BC_Nept%C5%ABnas_Klaip%C4%97da",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.kkneptunas.lt/",
+    "city": "Prienai",
+    "arena": "Švyturio Arena",
+    "arena_capacity": 5880
+   }
   },
   "ok": true
  },
@@ -3297,7 +3699,19 @@
    "title": "Rostock Seawolves",
    "extract": "El Rostock Seawolves es un equipo de baloncesto alemán con sede en la ciudad de Rostock, Mecklemburgo-Pomerania Occidental, que compite en la Basketball Bundesliga, la primera categoría del baloncesto alemán. Disputa sus partidos en el Stadthalle Rostock, con capacidad para 4.550 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Rostock_Seawolves",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://seawolves.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/rostockseawolves",
+     "twitter": "https://x.com/HRO_Seawolves",
+     "facebook": "https://www.facebook.com/RostockSeawolves",
+     "youtube": "https://www.youtube.com/channel/UC--HhEb0S0Cz0GZ4-ljkMIQ",
+     "tiktok": "https://www.tiktok.com/@rostock_seawolves"
+    },
+    "city": "Rostock",
+    "arena": "Stadthalle Rostock"
+   }
   },
   "ok": true
  },
@@ -3320,7 +3734,16 @@
    "title": "Skyliners Fráncfort",
    "extract": "El Skyliners Fráncfort, también conocido por motivos de patrocinio como Fraport Skyliners Frankfurt, es un equipo de baloncesto alemán con sede en la ciudad de Fráncfort, Hesse, que compite en la BBL y en la tercera competición europea, la FIBA European Cup. Disputa sus partidos en el Ballsporthalle, con capacidad para 5000 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Skyliners_Fr%C3%A1ncfort",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.frankfurt-skyliners.de",
+    "socials": {
+     "instagram": "https://www.instagram.com/skyliners_frankfurt"
+    },
+    "city": "Fráncfort del Meno",
+    "arena": "Fraport Arena",
+    "arena_capacity": 5002
+   }
   },
   "ok": true
  },
@@ -3336,7 +3759,16 @@
    "title": "Śląsk Wrocław (baloncesto)",
    "extract": "El WKS Śląsk Wrocław es un equipo de baloncesto polaco que compite en la TBL, la primera división del país y en la tercera competición europea, la FIBA European Cup. Tiene su sede en la ciudad de Breslavia. Disputa sus partidos en el Hala Orbita, con capacidad para 3000 espectadores.",
    "url": "https://es.wikipedia.org/wiki/%C5%9Al%C4%85sk_Wroc%C5%82aw_(baloncesto)",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://slask.wroclaw.pl",
+    "socials": {
+     "instagram": "https://www.instagram.com/wks_slaskbasket"
+    },
+    "city": "Breslavia",
+    "arena": "Centro del Centenario de Wrocław",
+    "arena_capacity": 7200
+   }
   },
   "ok": true
  },
@@ -3352,7 +3784,12 @@
    "title": "Tofaş Spor Kulübü",
    "extract": "El Tofaş Spor Kulübü, más conocido como Tofaş Bursa, es un equipo de baloncesto turco con sede en la ciudad de Bursa, que compite en la BSL, la máxima división de su país. Disputa sus partidos en el Bursa Atatürk Spor Salonu, con capacidad para 3,500 espectadores. El equipo está patrocinado por TOFAŞ, que es un fabricante turco de automóviles.",
    "url": "https://es.wikipedia.org/wiki/Tofa%C5%9F_Spor_Kul%C3%BCb%C3%BC",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.tofasspor.com",
+    "city": "Bursa",
+    "arena": "Tofaş Nilüfer Spor Salonu"
+   }
   },
   "ok": true
  },
@@ -3368,7 +3805,13 @@
    "title": "Türk Telekom Basketbol Kulubü",
    "extract": "El Türk Telekom Basketbol Kulubü es un equipo de baloncesto turco que compite en la BSL, la primera división de su país. Tiene su sede en Ankara y pertenece a la sociedad deportiva Türk Telekom Gençlik Spor Kulübü. Disputa sus partidos en el Ankara Arena, con capacidad para 10,400 espectadores.",
    "url": "https://es.wikipedia.org/wiki/T%C3%BCrk_Telekom_Basketbol_Kulub%C3%BC",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.turktelekomspor.com.tr/Basketbol",
+    "city": "Ankara",
+    "arena": "Ankara Spor Salonu",
+    "arena_capacity": 10400
+   }
   },
   "ok": true
  },
@@ -3384,7 +3827,20 @@
    "title": "U-BT Cluj-Napoca",
    "extract": "El U-BT Cluj-Napoca es un equipo de baloncesto rumano con sede en la ciudad de Cluj-Napoca, que compite en la Liga Națională, la máxima competición de su país y en la Basketball Champions League, la tercera competición europea. Disputa sus partidos en la Sala Polivalentă, con capacidad para 10,000 espectadores y en la Sala Sporturilor Horia Demian, con capacidad para 2,525 espectadores.",
    "url": "https://es.wikipedia.org/wiki/U-BT_Cluj-Napoca",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.u-bt.ro",
+    "socials": {
+     "instagram": "https://www.instagram.com/ubancatransilvania",
+     "twitter": "https://x.com/UBTCluj",
+     "facebook": "https://www.facebook.com/ubtcluj",
+     "youtube": "https://www.youtube.com/channel/UCFdMgZaZKChC__a2hMqGQrQ",
+     "tiktok": "https://www.tiktok.com/@ubtcluj"
+    },
+    "city": "Cluj-Napoca",
+    "arena": "BTarena",
+    "arena_capacity": 9777
+   }
   },
   "ok": true
  },
@@ -3407,7 +3863,19 @@
    "title": "Ratiopharm Ulm",
    "extract": "El Ratiopharm Ulm es un club de baloncesto profesional de la ciudad de Ulm, que milita en la BBL, máxima categoría del baloncesto alemán y en la Eurocup, la segunda competición europea. Disputa sus partidos en el Ratiopharm arena, con capacidad para 6000 espectadores. El club es patrocinado por la compañía farmacéutica Ratiopharm.",
    "url": "https://es.wikipedia.org/wiki/Ratiopharm_Ulm",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://ratiopharmulm.com/",
+    "socials": {
+     "instagram": "https://www.instagram.com/ratiopharmulm",
+     "twitter": "https://x.com/ratiopharmulm",
+     "facebook": "https://www.facebook.com/ratiopharmulm",
+     "youtube": "https://www.youtube.com/channel/UCn2eccIey2cbJYwK58wFYHQ"
+    },
+    "city": "Ulm",
+    "arena": "ratiopharm arena",
+    "arena_capacity": 6100
+   }
   },
   "ok": true
  },
@@ -3423,7 +3891,19 @@
    "title": "Anadolu Efes S.K.",
    "extract": "El Anadolu Efes Spor Kulübü es un equipo de baloncesto de la ciudad de Estambul que, por palmarés, es considerado como uno de los equipos más importantes en la historia del baloncesto turco, ya que ha ganado el título de Liga en 15 ocasiones. También ha conseguido ganar la Euroliga en las temporadas 2020-2021 y 2021-2022, siendo el segundo equipo turco que lo consigue, después del Fenerbahce S.K..",
    "url": "https://es.wikipedia.org/wiki/Anadolu_Efes_S.K.",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.anadoluefessk.org/",
+    "socials": {
+     "instagram": "https://www.instagram.com/anadoluefessk",
+     "twitter": "https://x.com/AnadoluEfesSK",
+     "facebook": "https://www.facebook.com/AnadoluEfesSK",
+     "youtube": "https://www.youtube.com/channel/UCFqBZPaDEfX87fo52nTUTLw"
+    },
+    "city": "Estambul",
+    "arena": "Basketbol Gelişim Merkezi",
+    "arena_capacity": 10000
+   }
   },
   "ok": true
  },
@@ -3446,7 +3926,16 @@
    "title": "Beşiktaş Jimnastik Kulübü (baloncesto)",
    "extract": "El Beşiktaş Jimnastik Kulübü, conocido por motivos de patrocinio como Beşiktaş Fibabanka, es un equipo de baloncesto turco que compite en la Türkiye Basketbol Ligi, la primera división del país y en la competición europea, EuroLeague. Tiene su sede en Estambul, y pertenece a la sociedad deportiva Beşiktaş Jimnastik Kulübü, que se formó en 1903. Disputa sus partidos en el BJK Akatlar Arena, también llamado por motivos de patrocinio BJK Integral Arena, con capacidad para 3.200 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Be%C5%9Fikta%C5%9F_Jimnastik_Kul%C3%BCb%C3%BC_(baloncesto)",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.bjk.com.tr/tr/brans/2/basketbol.html",
+    "socials": {
+     "twitter": "https://x.com/bjk_basketbol"
+    },
+    "city": "Estambul",
+    "arena": "BJK Akatlar Arena",
+    "arena_capacity": 3200
+   }
   },
   "ok": true
  },
@@ -3469,7 +3958,18 @@
    "title": "Dubai Basketball",
    "extract": "El Dubai Basketball Club es un equipo de baloncesto emiratí con sede en la ciudad de Dubái, que compite en la ABA Liga. Disputa sus partidos en el Coca-Cola Arena, con capacidad para 17000 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Dubai_Basketball",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://dubaibasketball.com/",
+    "socials": {
+     "instagram": "https://www.instagram.com/dubaibasketballclub",
+     "twitter": "https://x.com/dubaibasket",
+     "facebook": "https://www.facebook.com/dubaibasketballclub"
+    },
+    "city": "Dubái",
+    "arena": "Coca-Cola Arena",
+    "arena_capacity": 17000
+   }
   },
   "ok": true
  },
@@ -3485,7 +3985,20 @@
    "title": "Bayern de Múnich (baloncesto)",
    "extract": "El FC Bayern de Múnich es una sección deportiva de baloncesto profesional del club de fútbol Bayern de Múnich. Tiene sede en la ciudad de Múnich, Alemania, y milita en la BBL, máxima categoría del baloncesto alemán y en la Euroliga, máxima categoría continental. Disputa sus partidos en el BMW Park, con capacidad para 6500 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Bayern_de_M%C3%BAnich_(baloncesto)",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.fcb-basketball.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/fcbayernbasketball",
+     "twitter": "https://x.com/fcbbasketball",
+     "facebook": "https://www.facebook.com/fcbayernbasketball",
+     "youtube": "https://www.youtube.com/channel/UCqxyVk5fkD0YAUegb9RM-8A",
+     "tiktok": "https://www.tiktok.com/@fcbayernbasketball"
+    },
+    "city": "Múnich",
+    "arena": "Audi Dome",
+    "arena_capacity": 7200
+   }
   },
   "ok": true
  },
@@ -3529,7 +4042,19 @@
    "title": "Olympiacos B. C.",
    "extract": "Olympiacos Basketball Club es la transliteración anglicada de la sección profesional de baloncesto del Olympiakós Syndesmos Filathlon Peiraiós, entidad polideportiva sita en la ciudad de El Pireo, Grecia. Al igual que todos los clubes profesionales deportivos de baloncesto del país, debe anteponer a su denominación la referencia a su actividad deportiva y fiscal con las siglas K. Α. Ε. por lo que es referido como el Κ. Α. Ε. Ολυμπιακός, o literalizado en su conjunto como Sociedad Anónima de Baloncesto Olímpico..",
    "url": "https://es.wikipedia.org/wiki/Olympiacos_B._C.",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://olympiacosbc.gr/el",
+    "socials": {
+     "instagram": "https://www.instagram.com/olympiacosbc",
+     "twitter": "https://x.com/Olympiacos_BC",
+     "facebook": "https://www.facebook.com/olympiacosbc",
+     "youtube": "https://www.youtube.com/channel/UCbv8oofgvLZ1B24N6uJ9q6g"
+    },
+    "city": "El Pireo",
+    "arena": "Estadio de la Paz y la Amistad",
+    "arena_capacity": 11554
+   }
   },
   "ok": true
  },
@@ -3552,7 +4077,16 @@
    "title": "Paris Basketball",
    "extract": "El Paris Basketball es un club de baloncesto francés, con sede en la ciudad de París que compite en la Betclic Élite, la máxima competición de Francia y en la Euroliga, la máxima competición a nivel europeo. Disputa los partidos como local en la Halle Georges-Carpentier, con capacidad para 5,009 espectadores o en el Arena Porte de La Chapelle, con capacidad para 8,000 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Paris_Basketball",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://parisbasketball.com",
+    "socials": {
+     "instagram": "https://www.instagram.com/parisbasketball",
+     "twitter": "https://x.com/parisbasketball"
+    },
+    "city": "París",
+    "arena": "Arena Porte de La Chapelle"
+   }
   },
   "ok": true
  },
@@ -3575,7 +4109,15 @@
    "title": "Virtus Bolonia",
    "extract": "El Virtus Pallacanestro Bologna es el nombre oficial de un histórico club de baloncesto italiano, conocido como Virtus Bologna, fue fundado en 1929 en la ciudad de Bolonia. Actualmente compite en la Serie A, la primera división del baloncesto en Italia, de la cual ha resultado campeón en diecisiete ocasiones. Disputa sus partidos como local en el Virtus Arena, con capacidad para 9.980 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Virtus_Bolonia",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.virtus.it",
+    "socials": {
+     "facebook": "https://www.facebook.com/VirtusSegafredoBologna"
+    },
+    "city": "Bolonia",
+    "arena": "Virtus Arena"
+   }
   },
   "ok": true
  },
@@ -3591,7 +4133,17 @@
    "title": "Žalgiris Kaunas",
    "extract": "El Žalgiris Kaunas es el nombre con que se conoce al Basketball Club Žalgiris, club de baloncesto lituano de la ciudad de Kaunas, que participa en la Lietuvos Krepšinio Lyga (LKL) y en la Euroliga.",
    "url": "https://es.wikipedia.org/wiki/%C5%BDalgiris_Kaunas",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://zalgiris.lt/",
+    "socials": {
+     "facebook": "https://www.facebook.com/bczalgiris",
+     "youtube": "https://www.youtube.com/channel/UCTonHhrZgVHg8HCMFcQvtEA"
+    },
+    "city": "Kaunas",
+    "arena": "Žalgiris Arena",
+    "arena_capacity": 15688
+   }
   },
   "ok": true
  },
@@ -3607,7 +4159,17 @@
    "title": "AEK Atenas",
    "extract": "El Athlitikí Énosis Konstantinoupóleos, conocido simplemente por sus siglas A. E. K. o su transliteralización de A. E. K. de Atenas, es una entidad polideportiva con sede en Atenas, Grecia. Posee numerosas disciplinas deportivas diferentes, tanto a nivel amateur como profesional, merced a las cuales es considerada como una de las mayores organizaciones deportivas de Grecia y entre las que destacan sus secciones de fútbol y baloncesto.",
    "url": "https://es.wikipedia.org/wiki/AEK_Atenas",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.aek.gr",
+    "socials": {
+     "instagram": "https://www.instagram.com/aek_athleticclub",
+     "twitter": "https://x.com/aek_official",
+     "facebook": "https://www.facebook.com/AEKAthleticClub",
+     "youtube": "https://www.youtube.com/channel/UCyyadVdL-2O1aULjnYBzaew"
+    },
+    "city": "Nea Filadelfeia"
+   }
   },
   "ok": true
  },
@@ -3693,7 +4255,19 @@
    "title": "Peristeri BC",
    "extract": "Peristeri BC, o Gymnastikos Syllogos Peristeriou KAE, es un equipo de baloncesto griego con sede en Peristeri, una ciudad de Atenas Occidental, que disputa la competición de la A1 Ethniki. Fue fundado en 1971.",
    "url": "https://es.wikipedia.org/wiki/Peristeri_BC",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.peristeribc.gr",
+    "socials": {
+     "instagram": "https://www.instagram.com/peristeribc",
+     "twitter": "https://x.com/peristeribc",
+     "facebook": "https://www.facebook.com/bcperisteri",
+     "youtube": "https://www.youtube.com/channel/UCUZ1gkJ-pgfBbhVGiL1KHZA"
+    },
+    "city": "Peristeri",
+    "arena": "Peristeri Indoor Hall",
+    "arena_capacity": 4000
+   }
   },
   "ok": true
  },
@@ -3723,7 +4297,19 @@
    "title": "Dinamo Basket Sassari",
    "extract": "La Polisportiva Dinamo, conocido también por motivos de patrocinio como Banco di Sardegna Sassari, es un equipo de baloncesto italiano con sede en la ciudad de Sassari, que compite en la Serie A, la primera división del baloncesto en Italia y en la Basketball Champions League, la máxima competición continental. Disputa sus partidos en el Palasport Roberta Serradimigni, con capacidad para 5000 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Dinamo_Basket_Sassari",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.dinamobasket.com/",
+    "socials": {
+     "instagram": "https://www.instagram.com/dinamo_sassari",
+     "twitter": "https://x.com/dinamo_sassari",
+     "facebook": "https://www.facebook.com/dinamosassariofficial",
+     "youtube": "https://www.youtube.com/channel/UCvrE_CVvoh--qoB_1rrOZgA"
+    },
+    "city": "Sassari​",
+    "arena": "palasport Roberta Serradimigni",
+    "arena_capacity": 4532
+   }
   },
   "ok": true
  },
@@ -3781,7 +4367,13 @@
    "title": "Basket Mestre 1958",
    "extract": null,
    "url": "https://en.wikipedia.org/wiki/Basket_Mestre_1958",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.basketmestre.it/",
+    "city": "Mestre",
+    "arena": "Vitrifrigo Arena",
+    "arena_capacity": 10323
+   }
   },
   "ok": true
  },
@@ -3811,7 +4403,10 @@
    "title": "Libertas Livorno",
    "extract": "A.D. Libertas Liburnia Basket Livorno, también conocido por motivos de patrocinio como Only One Libertas Livorno, es un club de baloncesto italiano con sede en la ciudad de Livorno, en Toscana, que actualmente juega en la Serie C Silver, el segundo grupo de la cuarta categoría del baloncesto en Italia. Fue fundada en 1947, y tras su desaparición en 1994, se refundó en 2004.",
    "url": "https://es.wikipedia.org/wiki/Libertas_Livorno",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "city": "Livorno"
+   }
   },
   "ok": true
  },
@@ -3869,7 +4464,18 @@
    "title": "Pallacanestro Forlì 2.015",
    "extract": "El Pallacanestro Forlì 2.015, también conocido como Unieuro Forlì por motivos de patrocinio, es un equipo de baloncesto italiano con sede en la ciudad de Forlì, en Emilia-Romaña. Fue fundado en 2015 y actualmente compite en la Serie A2 Este, la segunda división del baloncesto en Italia. Disputa sus partidos en el PalaGalassi de Forlì, con capacidad para 5.611 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Pallacanestro_Forl%C3%AC_2.015",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.pallacanestroforli2015.it",
+    "socials": {
+     "instagram": "https://www.instagram.com/pallforli",
+     "twitter": "https://x.com/pallforli",
+     "facebook": "https://www.facebook.com/PallForli"
+    },
+    "city": "Forlì",
+    "arena": "Unieuro Arena",
+    "arena_capacity": 5676
+   }
   },
   "ok": true
  },
@@ -3899,7 +4505,16 @@
    "title": "Amici Pallacanestro Udinese",
    "extract": "El Amici Pallacanestro Udinese, conocido por motivos de patrocinio como Apu Old Wild West Udine, es un equipo de baloncesto italiano con sede en la ciudad de Udine, Friuli-Venecia Julia. Compite en la Serie A, la máxima división del baloncesto en Italia. Disputa sus partidos en el PalaCarnera, con capacidad para 3.509 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Amici_Pallacanestro_Udinese",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.apudine.it/",
+    "socials": {
+     "instagram": "https://www.instagram.com/apu.udine",
+     "twitter": "https://x.com/apudine",
+     "facebook": "https://www.facebook.com/1523982341182811"
+    },
+    "city": "Údine"
+   }
   },
   "ok": true
  },
@@ -3929,7 +4544,15 @@
    "title": "BC Roma SPQR",
    "extract": "El Basketball Club Roma, inicialmente conocido como BC Roma SPQR, es un equipo de baloncesto italiano con sede en la ciudad de Roma, Lacio. Compite en la Serie A, la máxima división del baloncesto en Italia, y en la EuroCup. Disputa sus partidos en el Palazzetto dello Sport, con capacidad para 3.500 espectadores.",
    "url": "https://es.wikipedia.org/wiki/BC_Roma_SPQR",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.bcrome.com/",
+    "socials": {
+     "instagram": "https://www.instagram.com/basketballclubromaspqr"
+    },
+    "arena": "Palazzetto dello Sport",
+    "arena_capacity": 3500
+   }
   },
   "ok": true
  },
@@ -3966,7 +4589,17 @@
    "title": "Maxima Roma",
    "extract": "El Maxima Roma es un equipo de baloncesto italiano con sede en la ciudad de Roma, Lacio. Compite en la Serie A, la máxima división del baloncesto en Italia, y en la EuroCup. Disputa sus partidos en el PalaEUR, con capacidad para 11.200 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Maxima_Roma",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.maximaroma.it/",
+    "socials": {
+     "instagram": "https://www.instagram.com/maximaromaofficial",
+     "twitter": "https://x.com/maxima_roma",
+     "facebook": "https://www.facebook.com/Maxima-Roma"
+    },
+    "arena": "Palazzo dello Sport",
+    "arena_capacity": 11200
+   }
   },
   "ok": true
  },
@@ -3996,7 +4629,18 @@
    "title": "Pallacanestro Varese",
    "extract": "El Pallacanestro Varese, conocido como Openjobmetis Varese por motivos de patrocinio, es un club de baloncesto italiano de la ciudad de Varese, en la región de la Lombardía. Actualmente compite en la Serie A, la máxima división del baloncesto en Italia y en la tercera competición europea, la FIBA European Cup.",
    "url": "https://es.wikipedia.org/wiki/Pallacanestro_Varese",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.pallacanestrovarese.it",
+    "socials": {
+     "instagram": "https://www.instagram.com/pallvarese",
+     "twitter": "https://x.com/pallvarese",
+     "facebook": "https://www.facebook.com/pallvarese"
+    },
+    "city": "Varese",
+    "arena": "PalaWhirlpool",
+    "arena_capacity": 5300
+   }
   },
   "ok": true
  },
@@ -4012,7 +4656,17 @@
    "title": "Pallacanestro Trieste",
    "extract": "El Pallacanestro Trieste 2004, conocido por motivos de patrocinio como Allianz Pallacanestro Trieste, es un equipo italiano de baloncesto que compite en la Serie A, la primera división del baloncesto en Italia. Tiene su sede en Trieste, en la región de Friuli-Venecia Julia. Disputa sus partidos en el PalaTrieste, con capacidad para 6.943 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Pallacanestro_Trieste",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.pallacanestrotrieste2004.it",
+    "socials": {
+     "instagram": "https://www.instagram.com/alma_pallacanestro_trieste",
+     "facebook": "https://www.facebook.com/almapallacanestrotrieste"
+    },
+    "city": "Trieste",
+    "arena": "Palatrieste",
+    "arena_capacity": 6943
+   }
   },
   "ok": true
  },
@@ -4056,7 +4710,11 @@
    "title": "Boulazac Basket Dordogne",
    "extract": "El Boulazac Basket Dordogne (BBD) es un equipo de baloncesto francés con sede en la ciudad de Boulazac, que compite en la LNB Élite, primera competición del país. Disputa sus partidos en Le Palio, con capacidad para 5.069 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Boulazac_Basket_Dordogne",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.boulazacbasket.com/",
+    "city": "Boulazac"
+   }
   },
   "ok": true
  },
@@ -4100,7 +4758,16 @@
    "title": "BCM Gravelines",
    "extract": "Basket Club Maritime Gravelines Dunkerque Grand Littoral, más conocido como BCM Gravelines es un club de baloncesto francés, con sede en la ciudad de Gravelinas, fundado en 1984 que compite en la Liga Francesa. Disputa sus partidos en el pabellón Gravelines Sportica, con capacidad para 3.043 personas.",
    "url": "https://es.wikipedia.org/wiki/BCM_Gravelines",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.bcmbasket.com/",
+    "socials": {
+     "youtube": "https://www.youtube.com/channel/UC5kk9eSe5v39pmXr7mV1AiA"
+    },
+    "city": "Gravelinas",
+    "arena": "Gravelines Sportica",
+    "arena_capacity": 3043
+   }
   },
   "ok": true
  },
@@ -4116,7 +4783,16 @@
    "title": "Le Mans Sarthe Basket",
    "extract": "Le Mans Sarthe Basket, conocido a menudo como MSB. es un club de baloncesto francés, de la ciudad de Le Mans. Aunque la sección de baloncesto fue creada en 1939.",
    "url": "https://es.wikipedia.org/wiki/Le_Mans_Sarthe_Basket",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.msb.fr/",
+    "socials": {
+     "youtube": "https://www.youtube.com/channel/UC-ypjItMhZ0mLxyILK8yNkg"
+    },
+    "city": "Le Mans",
+    "arena": "Antarès",
+    "arena_capacity": 6023
+   }
   },
   "ok": true
  },
@@ -4132,7 +4808,17 @@
    "title": "CSP Limoges",
    "extract": "El Cercle Saint-Pierre de Limoges es el nombre de un club de baloncesto francés con sede en la ciudad de Limoges. Fundado en 1929, vivió sus mejores momentos en los años 1980 y 90, cuando conquistó los más importantes títulos de Francia en diversas ocasiones, así como diversos títulos europeos, incluida la Euroliga conquistada en 1993. En la temporada 1981-1982 y 1982-83 ganó la Copa Korac contra el Sibenka Sibenik. La primera fue en Pádova y la segunda en Berlín. En la temporada 1987-1988 ganó la Recopa en Grenoble contra el Joventut de Badalona (96-89). Actualmente compite en la Pro A.",
    "url": "https://es.wikipedia.org/wiki/CSP_Limoges",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.limogescsp.fr",
+    "socials": {
+     "twitter": "https://x.com/limogescsp",
+     "youtube": "https://www.youtube.com/channel/UCHErSOyLaCEJG-yxkIkRzcg"
+    },
+    "city": "Limoges",
+    "arena": "Palais des Sports de Beaublanc",
+    "arena_capacity": 5516
+   }
   },
   "ok": true
  },
@@ -4162,7 +4848,19 @@
    "title": "Nanterre 92",
    "extract": "El Nanterre 92, conocido hasta 2016 como Jeunesse Sportive des Fontenelles de Nanterre o JSF Nanterre es una asociación deportiva francesa de baloncesto situado en la ciudad de Nanterre, que juega en la LNB, la máxima categoría del baloncesto francés y en la Eurocup, la segunda competición europea más importante.",
    "url": "https://es.wikipedia.org/wiki/Nanterre_92",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.jsfnanterre.com/",
+    "socials": {
+     "instagram": "https://www.instagram.com/nanterre_92basket",
+     "twitter": "https://x.com/nanterre92",
+     "facebook": "https://www.facebook.com/Nanterre92Basket",
+     "youtube": "https://www.youtube.com/channel/UCeJcTrJ0KdJV_TnRfCmDa1A"
+    },
+    "city": "Nanterre",
+    "arena": "Palais des Sports Maurice Thorez",
+    "arena_capacity": 3000
+   }
   },
   "ok": true
  },
@@ -4185,7 +4883,18 @@
    "title": "ÉB Pau-Orthez",
    "extract": "El Élan Béarnais Pau-Lacq-Orthez (ÉBPLO) es un club profesional de baloncesto francés con sede en Pau, capital del Bearne en el suroeste de Francia. El equipo ha tenido un impacto significativo en la escena del baloncesto francés, destacando por sus logros y rivalidades a lo largo de las décadas. El club bearnes milita en la LNB Élite, primera categoría del país galo.",
    "url": "https://es.wikipedia.org/wiki/%C3%89B_Pau-Orthez",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.elan-bearnais.fr/",
+    "socials": {
+     "instagram": "https://www.instagram.com/ebplo",
+     "twitter": "https://x.com/EBPLO",
+     "facebook": "https://www.facebook.com/ebplo"
+    },
+    "city": "Pau",
+    "arena": "Palais des Sports de Pau",
+    "arena_capacity": 7707
+   }
   },
   "ok": true
  },
@@ -4222,7 +4931,12 @@
    "title": "Aix Maurienne Savoie Basket",
    "extract": "El Aix Maurienne Savoie Basket (AMSB) es un equipo de baloncesto francés con sede en la ciudad de Aix-les-Bains, que compite en la Pro B, la segunda competición de su país. Disputa sus partidos en la Halle Marlioz, con capacidad para 1.900 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Aix_Maurienne_Savoie_Basket",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.amsbasket.com/",
+    "city": "Aix-les-Bains",
+    "arena": "Halle Marlioz"
+   }
   },
   "ok": true
  },
@@ -4294,7 +5008,15 @@
    "title": "Hyères-Toulon Var Basket",
    "extract": "Hyères-Toulon Var Basket, más conocido como Hyères-Toulon o, simplemente HTV, es un club de baloncesto francés, con sede en la ciudad de Toulon. Compite en la NM1, la tercera división del país. Disputa sus partidos en el Palais des sports Jauréguiberry, con capacidad para 4.217 personas,y en el Espace 3000, con capacidad para 2200 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Hy%C3%A8res-Toulon_Var_Basket",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.htv-basket.fr/",
+    "socials": {
+     "instagram": "https://www.instagram.com/htv_basket",
+     "facebook": "https://www.facebook.com/HTV-Basket-76369481520"
+    },
+    "city": "Tolón"
+   }
   },
   "ok": true
  },
@@ -4366,7 +5088,10 @@
    "title": "Saint-Chamond Andrézieux-Bouthéon Basket",
    "extract": "El Saint-Chamond Andrézieux-Bouthéon Basket, también conocido como SCABB, es un equipo de baloncesto francés con sede en la ciudad de Saint-Chamond, que compite en la Pro B, la segunda competición de su país. Tiene un equipo con el mismo nombre que compite en la NM1, la tercera competición de su país. El equipo Pro B disputa sus partidos en la Arena Saint-Étienne Métropole, situada en Saint-Chamond y con capacidad para 4.200 espectadores y el equipo NM1 disputa sus partidos en el Palais des Sports, situado en Andrézieux-Bouthéon y con capacidad para 2.730 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Saint-Chamond_Andr%C3%A9zieux-Bouth%C3%A9on_Basket",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.scabbasket.fr/"
+   }
   },
   "ok": true
  },
@@ -4389,7 +5114,16 @@
    "title": "Artland Dragons",
    "extract": "El Artland Dragons es un equipo de baloncesto alemán con sede en la ciudad de Quakenbrück, Baja Sajonia, que compite en la ProA, la segunda categoría del baloncesto alemán. Disputa sus partidos en el Artland Arena, con capacidad para 3.000 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Artland_Dragons",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.artland-dragons.de",
+    "socials": {
+     "facebook": "https://www.facebook.com/ArtlandDragons"
+    },
+    "city": "Quakenbrück",
+    "arena": "Artland-Arena",
+    "arena_capacity": 2992
+   }
   },
   "ok": true
  },
@@ -4405,7 +5139,15 @@
    "title": "BG 74 Göttingen",
    "extract": "El BG Göttingen es un club de baloncesto profesional de la ciudad de Gotinga, que milita en la BBL, máxima categoría del baloncesto alemán. Disputa sus encuentros en el Sparkassen Arena, pabellón con capacidad para 3.447 espectadores.",
    "url": "https://es.wikipedia.org/wiki/BG_74_G%C3%B6ttingen",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.bggoettingen.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/bggoe"
+    },
+    "city": "Gotinga",
+    "arena": "Sparkassen-Arena, Göttingen"
+   }
   },
   "ok": true
  },
@@ -4421,7 +5163,14 @@
    "title": "SG Lützel-Post Koblenz",
    "extract": null,
    "url": null,
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.basketskoblenz.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/epgguardianskoblenz",
+     "facebook": "https://www.facebook.com/epgguardians"
+    }
+   }
   },
   "ok": true
  },
@@ -4437,7 +5186,13 @@
    "title": "ETB Wohnbau Baskets Essen",
    "extract": "El ETB Wohnbau Baskets Essen es un equipo de baloncesto alemán con sede en la ciudad de Essen, que compite en la ProB, la tercera división de su país. Disputa sus partidos en el Sportpark Am Hallo, con capacidad para 2578 espectadores.",
    "url": "https://es.wikipedia.org/wiki/ETB_Wohnbau_Baskets_Essen",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://miners.ruhr/",
+    "city": "Essen",
+    "arena": "Sportpark am Hallo",
+    "arena_capacity": 3800
+   }
   },
   "ok": true
  },
@@ -4453,7 +5208,17 @@
    "title": "Eisbären Bremerhaven",
    "extract": "El Eisbären Bremerhaven es un equipo de baloncesto alemán que compite en la ProA, la segunda división del país. Tiene su sede en la ciudad de Bremerhaven, en el estado de Bremen. Disputa sus partidos en el Bremerhaven Stadthalle, con capacidad para 4200 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Eisb%C3%A4ren_Bremerhaven",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.dieeisbaeren.de",
+    "socials": {
+     "instagram": "https://www.instagram.com/die_eisbaeren",
+     "facebook": "https://www.facebook.com/Die.Eisbaeren"
+    },
+    "city": "Bremerhaven",
+    "arena": "Stadthalle Bremerhaven",
+    "arena_capacity": 4200
+   }
   },
   "ok": true
  },
@@ -4469,7 +5234,17 @@
    "title": "Gießen 46ers",
    "extract": "El Gießen 46ers es un equipo de baloncesto alemán con sede en la ciudad de Gießen, Hesse, que compite en la ProA, la segunda categoría del baloncesto alemán. Disputa sus partidos en el Sporthalle Giessen-Ost, con capacidad para 4.003 espectadores.",
    "url": "https://es.wikipedia.org/wiki/Gie%C3%9Fen_46ers",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.giessen46ers.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/giessen_46ers",
+     "facebook": "https://www.facebook.com/GIESSEN46ers"
+    },
+    "city": "Gießen",
+    "arena": "Sporthalle Gießen-Ost",
+    "arena_capacity": 4003
+   }
   },
   "ok": true
  },
@@ -4485,7 +5260,17 @@
    "title": "Crailsheim Merlins",
    "extract": "El Crailsheim Merlins, conocido por motivos de patrocinio como Hakro Merlins Crailsheim, es un equipo de baloncesto alemán con sede en la ciudad de Crailsheim, que compite en la ProA, la segunda división de su país. Disputa sus partidos en el Arena Hohenlohe, con capacidad para 3000 espectadores. El club es parte de la asociación deportiva TSV Crailsheim.",
    "url": "https://es.wikipedia.org/wiki/Crailsheim_Merlins",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://www.crailsheim-merlins.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/cr_merlins",
+     "facebook": "https://www.facebook.com/HAKROMerlinsCrailsheim"
+    },
+    "city": "Crailsheim",
+    "arena": "Arena Hohenlohe",
+    "arena_capacity": 3200
+   }
   },
   "ok": true
  },
@@ -4508,7 +5293,16 @@
    "title": "USC Heidelberg",
    "extract": "El USC Heidelberg, conocido por motivos de patrocinio como MLP Academics Heidelberg, es un equipo de baloncesto alemán con sede en la ciudad de Heidelberg, que compite en la Basketball Bundesliga, la máxima división de su país. Disputa sus partidos en el Halle des Olympiastützpunktes, con capacidad para 1512 espectadores.",
    "url": "https://es.wikipedia.org/wiki/USC_Heidelberg",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "http://usc-hd.de",
+    "socials": {
+     "instagram": "https://www.instagram.com/mlpacademics"
+    },
+    "city": "Heidelberg",
+    "arena": "SNP Dome",
+    "arena_capacity": 5000
+   }
   },
   "ok": true
  },
@@ -4531,7 +5325,170 @@
    "title": "Nürnberg Falcons BC",
    "extract": "El Nürnberg Falcons BC, antes llamado Nürnberger BC, es un equipo de baloncesto alemán con sede en la ciudad de Núremberg, que compite en la ProA, la segunda división de su país. Disputa sus partidos en el Halle im Berufsbildungszentrum, con capacidad para 2140 espectadores.",
    "url": "https://es.wikipedia.org/wiki/N%C3%BCrnberg_Falcons_BC",
-   "shared": []
+   "shared": [],
+   "extra": {
+    "website": "https://www.nuernberg-falcons.de",
+    "socials": {
+     "instagram": "https://www.instagram.com/nue_falcons",
+     "facebook": "https://www.facebook.com/falconsNBC"
+    },
+    "city": "Núremberg"
+   }
+  },
+  "ok": true
+ },
+ "i1920": {
+  "name": "OrangeAcademy",
+  "league": "PROA",
+  "arena": null,
+  "match": {
+   "qid": "Q15853902",
+   "basket": true,
+   "spain": false,
+   "founded": 1949,
+   "title": "OrangeAcademy",
+   "extract": "La OrangeAcademy, conocida hasta 2017 como Weißenhorn Youngstars es un equipo de baloncesto alemán con sede en la ciudad de Weißenhorn, que compite en la ProB, la tercera división de su país. Disputa sus partidos en el Dreifachturnhalle, con capacidad para 800 espectadores. Es el filial del ratiopharm Ulm.",
+   "url": "https://es.wikipedia.org/wiki/OrangeAcademy",
+   "shared": [],
+   "extra": {
+    "website": "http://www.weissenhorn-youngstars.de/",
+    "socials": {
+     "facebook": "https://www.facebook.com/orangeacademy.one"
+    },
+    "city": "Weißenhorn",
+    "arena": "OrangeCampus"
+   }
+  },
+  "ok": true
+ },
+ "i1915": {
+  "name": "PS Karlsruhe LIONS",
+  "league": "PROA",
+  "arena": null,
+  "match": {
+   "qid": "Q27031319",
+   "basket": true,
+   "spain": false,
+   "founded": 1961,
+   "title": "PS Karlsruhe Lions",
+   "extract": "El PS Karlsruhe Lions es un equipo de baloncesto alemán con sede en la ciudad de Karlsruhe, que compite en la ProA, la segunda división de su país. Disputa sus partidos en el Friedrich-List-Schule, con capacidad para 862 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/PS_Karlsruhe_Lions",
+   "shared": [],
+   "extra": {
+    "website": "https://www.psk-lions.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/psklions",
+     "facebook": "https://www.facebook.com/PSKLions"
+    },
+    "city": "Karlsruhe",
+    "arena": "Europahalle",
+    "arena_capacity": 4809
+   }
+  },
+  "ok": true
+ },
+ "i1913": {
+  "name": "Paderborn Baskets",
+  "league": "PROA",
+  "arena": null,
+  "match": {
+   "qid": "Q466084",
+   "basket": true,
+   "spain": false,
+   "founded": 1969,
+   "title": "Paderborn Baskets",
+   "extract": "El Uni Baskets Paderborn es un equipo de baloncesto alemán con sede en la ciudad de Paderborn, que compite en la ProA, la segunda división de su país. Disputa sus partidos en el Sportzentrum Maspernplatz, con capacidad para 3000 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Paderborn_Baskets",
+   "shared": [],
+   "extra": {
+    "website": "http://www.paderborn-baskets.de/",
+    "city": "Paderborn",
+    "arena": "Sportzentrum Maspernplatz"
+   }
+  },
+  "ok": true
+ },
+ "i1910": {
+  "name": "RheinStars Köln",
+  "league": "PROA",
+  "arena": null,
+  "match": {
+   "qid": "Q700381",
+   "basket": true,
+   "spain": false,
+   "founded": 1999,
+   "title": "Köln 99ers",
+   "extract": "El Köln 99ers fue un equipo de baloncesto alemán con sede en la ciudad de Colonia, que compitió hasta 2009 en la BBL, la máxima división de su país. Disputaba sus partidos en el GEW Energy Dome, con capacidad para 3,200 espectadores, y ocasionalmente en el Kölnarena, con capacidad para 18,000 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/K%C3%B6ln_99ers",
+   "shared": [],
+   "extra": {
+    "website": "http://www.koeln99ers.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/rheinstarskoeln",
+     "twitter": "https://x.com/rheinstarskoeln",
+     "facebook": "https://www.facebook.com/RheinstarsKoeln"
+    },
+    "city": "Colonia",
+    "arena": "Lanxess Arena",
+    "arena_capacity": 20000
+   }
+  },
+  "ok": true
+ },
+ "i1908": {
+  "name": "SBB Börde Baskets",
+  "league": "PROA",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1917": {
+  "name": "Tigers Tübingen",
+  "league": "PROA",
+  "arena": null,
+  "match": {
+   "qid": "Q461647",
+   "basket": true,
+   "spain": false,
+   "founded": 1903,
+   "title": "Tigers Tübingen",
+   "extract": "El Walter Tigers Tübingen es un club de baloncesto profesional de la ciudad de Tübingen, que milita en la ProA, la segunda categoría del baloncesto alemán. Disputa sus partidos en el Paul Horn-Arena, con capacidad para 3.132 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Tigers_T%C3%BCbingen",
+   "shared": [],
+   "extra": {
+    "website": "https://tigers-tuebingen.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/tigers_tuebingen",
+     "facebook": "https://www.facebook.com/TigersTuebingen"
+    },
+    "city": "Tubinga",
+    "arena": "Paul Horn-Arena",
+    "arena_capacity": 3180
+   }
+  },
+  "ok": true
+ },
+ "i1914": {
+  "name": "VfL SparkassenStars Bochum",
+  "league": "PROA",
+  "arena": null,
+  "match": {
+   "qid": "Q1431793",
+   "basket": true,
+   "spain": false,
+   "founded": 1957,
+   "title": "VfL AstroStars Bochum",
+   "extract": "El Verein für Leibesübungen AstroStars Bochum 1848 e. V, abreviado VfL AstroStars Bochum y, por motivos de patrocinio,VfL SparkassenStars Bochum, es un equipo de baloncesto alemán con sede en la ciudad de Bochum, que compite en la ProA, la segunda división de su país. Disputa sus partidos en el Rundsporthalle Bochum, con capacidad para 1068 espectadores. Es la sección de baloncesto del club polideportivo VfL Bochum.",
+   "url": "https://es.wikipedia.org/wiki/VfL_AstroStars_Bochum",
+   "shared": [],
+   "extra": {
+    "website": "http://www.vflastrostars.de/",
+    "socials": {
+     "instagram": "https://www.instagram.com/sparkassenstars",
+     "facebook": "https://www.facebook.com/SparkassenStars"
+    },
+    "city": "Bochum"
+   }
   },
   "ok": true
  }
