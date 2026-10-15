@@ -3594,5 +3594,514 @@
    "shared": []
   },
   "ok": true
+ },
+ "i1895": {
+  "name": "AEK",
+  "league": "GBL",
+  "arena": null,
+  "match": {
+   "qid": "Q2819143",
+   "basket": true,
+   "spain": false,
+   "founded": 1924,
+   "title": "AEK Atenas",
+   "extract": "El Athlitikí Énosis Konstantinoupóleos, conocido simplemente por sus siglas A. E. K. o su transliteralización de A. E. K. de Atenas, es una entidad polideportiva con sede en Atenas, Grecia. Posee numerosas disciplinas deportivas diferentes, tanto a nivel amateur como profesional, merced a las cuales es considerada como una de las mayores organizaciones deportivas de Grecia y entre las que destacan sus secciones de fútbol y baloncesto.",
+   "url": "https://es.wikipedia.org/wiki/AEK_Atenas",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1900": {
+  "name": "Aris",
+  "league": "GBL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1894": {
+  "name": "Doxa Levkadas Elabet",
+  "league": "GBL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1903": {
+  "name": "Iraklis",
+  "league": "GBL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1899": {
+  "name": "Karditsa Iaponiki",
+  "league": "GBL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1893": {
+  "name": "Kolossos H Hotels Collection",
+  "league": "GBL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1896": {
+  "name": "Marousi",
+  "league": "GBL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1891": {
+  "name": "Mykonos Betsson BC",
+  "league": "GBL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1904": {
+  "name": "Olympiakos",
+  "league": "GBL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1892": {
+  "name": "PAOK",
+  "league": "GBL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1901": {
+  "name": "Panathinaikos Aktor",
+  "league": "GBL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1898": {
+  "name": "Peristeri Betsson",
+  "league": "GBL",
+  "arena": null,
+  "match": {
+   "qid": "Q19862455",
+   "basket": true,
+   "spain": false,
+   "founded": 1971,
+   "title": "Peristeri BC",
+   "extract": "Peristeri BC, o Gymnastikos Syllogos Peristeriou KAE, es un equipo de baloncesto griego con sede en Peristeri, una ciudad de Atenas Occidental, que disputa la competición de la A1 Ethniki. Fue fundado en 1971.",
+   "url": "https://es.wikipedia.org/wiki/Peristeri_BC",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1897": {
+  "name": "Promitheas Patras Vikos Cola",
+  "league": "GBL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1902": {
+  "name": "Vikos Falcons",
+  "league": "GBL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1830": {
+  "name": "Banco di Sardegna Sassari",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": {
+   "qid": "Q36482",
+   "basket": true,
+   "spain": false,
+   "founded": 1960,
+   "title": "Dinamo Basket Sassari",
+   "extract": "La Polisportiva Dinamo, conocido también por motivos de patrocinio como Banco di Sardegna Sassari, es un equipo de baloncesto italiano con sede en la ciudad de Sassari, que compite en la Serie A, la primera división del baloncesto en Italia y en la Basketball Champions League, la máxima competición continental. Disputa sus partidos en el Palasport Roberta Serradimigni, con capacidad para 5000 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Dinamo_Basket_Sassari",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1824": {
+  "name": "CMT Orange Tools Pesaro",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1820": {
+  "name": "Crifo Wines Ruvo di Puglia",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1832": {
+  "name": "Dole Basket Rimini",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1822": {
+  "name": "Elachem Vigevano 1955",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1825": {
+  "name": "Ferraroni Juvi Cremona 1952",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1819": {
+  "name": "Flats Service Fortitudo Bologna",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1836": {
+  "name": "Gemini Mestre",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": {
+   "qid": "Q3635911",
+   "basket": true,
+   "spain": false,
+   "founded": 1958,
+   "title": "Basket Mestre 1958",
+   "extract": null,
+   "url": "https://en.wikipedia.org/wiki/Basket_Mestre_1958",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1821": {
+  "name": "Halley Campania Avellino Basket",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1831": {
+  "name": "La T Tecnica Gema Montecatini",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1827": {
+  "name": "Libertas Livorno 1947",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": {
+   "qid": "Q3831719",
+   "basket": true,
+   "spain": false,
+   "founded": 1947,
+   "title": "Libertas Livorno",
+   "extract": "A.D. Libertas Liburnia Basket Livorno, también conocido por motivos de patrocinio como Only One Libertas Livorno, es un club de baloncesto italiano con sede en la ciudad de Livorno, en Toscana, que actualmente juega en la Serie C Silver, el segundo grupo de la cuarta categoría del baloncesto en Italia. Fue fundada en 1947, y tras su desaparición en 1994, se refundó en 2004.",
+   "url": "https://es.wikipedia.org/wiki/Libertas_Livorno",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1828": {
+  "name": "Lumos Pistoia Basket",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1834": {
+  "name": "ProValue Juvecaserta 2021",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1833": {
+  "name": "RSR Sebastiani Rieti",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1835": {
+  "name": "Reale Mutua Torino",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1823": {
+  "name": "Sella Cento",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1817": {
+  "name": "UEB Gesteco Cividale",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1818": {
+  "name": "Unieuro Forlì",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": {
+   "qid": "Q24942233",
+   "basket": true,
+   "spain": false,
+   "founded": 2015,
+   "title": "Pallacanestro Forlì 2.015",
+   "extract": "El Pallacanestro Forlì 2.015, también conocido como Unieuro Forlì por motivos de patrocinio, es un equipo de baloncesto italiano con sede en la ciudad de Forlì, en Emilia-Romaña. Fue fundado en 2015 y actualmente compite en la Serie A2 Este, la segunda división del baloncesto en Italia. Disputa sus partidos en el PalaGalassi de Forlì, con capacidad para 5.611 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Pallacanestro_Forl%C3%AC_2.015",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1826": {
+  "name": "Valtur Brindisi",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1829": {
+  "name": "Wegreenit Urania Milano",
+  "league": "ITA_A2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1811": {
+  "name": "APU Old Wild West Udine",
+  "league": "LBA",
+  "arena": null,
+  "match": {
+   "qid": "Q3626683",
+   "basket": true,
+   "spain": false,
+   "founded": 1944,
+   "title": "Amici Pallacanestro Udinese",
+   "extract": "El Amici Pallacanestro Udinese, conocido por motivos de patrocinio como Apu Old Wild West Udine, es un equipo de baloncesto italiano con sede en la ciudad de Udine, Friuli-Venecia Julia. Compite en la Serie A, la máxima división del baloncesto en Italia. Disputa sus partidos en el PalaCarnera, con capacidad para 3.509 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Amici_Pallacanestro_Udinese",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1804": {
+  "name": "Acqua S.Bernardo Cantù",
+  "league": "LBA",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1807": {
+  "name": "Armani Olimpia Milano",
+  "league": "LBA",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1802": {
+  "name": "BC Roma",
+  "league": "LBA",
+  "arena": null,
+  "match": {
+   "qid": "Q140465826",
+   "basket": true,
+   "spain": false,
+   "founded": 2026,
+   "title": "BC Roma SPQR",
+   "extract": "El Basketball Club Roma, inicialmente conocido como BC Roma SPQR, es un equipo de baloncesto italiano con sede en la ciudad de Roma, Lacio. Compite en la Serie A, la máxima división del baloncesto en Italia, y en la EuroCup. Disputa sus partidos en el Palazzetto dello Sport, con capacidad para 3.500 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/BC_Roma_SPQR",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1809": {
+  "name": "Bertram Derthona Tortona",
+  "league": "LBA",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1806": {
+  "name": "Dolomiti Energia Trentino",
+  "league": "LBA",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1812": {
+  "name": "Longobardi Scafati Basket",
+  "league": "LBA",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1813": {
+  "name": "Maxima Roma",
+  "league": "LBA",
+  "arena": null,
+  "match": {
+   "qid": "Q140465833",
+   "basket": true,
+   "spain": false,
+   "founded": 2026,
+   "title": "Maxima Roma",
+   "extract": "El Maxima Roma es un equipo de baloncesto italiano con sede en la ciudad de Roma, Lacio. Compite en la Serie A, la máxima división del baloncesto en Italia, y en la EuroCup. Disputa sus partidos en el PalaEUR, con capacidad para 11.200 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Maxima_Roma",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1814": {
+  "name": "Napoli Basketball",
+  "league": "LBA",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1801": {
+  "name": "Nutribullet Treviso Basket",
+  "league": "LBA",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1815": {
+  "name": "Openjobmetis Varese",
+  "league": "LBA",
+  "arena": null,
+  "match": {
+   "qid": "Q36551",
+   "basket": true,
+   "spain": false,
+   "founded": 1945,
+   "title": "Pallacanestro Varese",
+   "extract": "El Pallacanestro Varese, conocido como Openjobmetis Varese por motivos de patrocinio, es un club de baloncesto italiano de la ciudad de Varese, en la región de la Lombardía. Actualmente compite en la Serie A, la máxima división del baloncesto en Italia y en la tercera competición europea, la FIBA European Cup.",
+   "url": "https://es.wikipedia.org/wiki/Pallacanestro_Varese",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1808": {
+  "name": "Pallacanestro Trieste",
+  "league": "LBA",
+  "arena": null,
+  "match": {
+   "qid": "Q50884",
+   "basket": true,
+   "spain": false,
+   "founded": 1975,
+   "title": "Pallacanestro Trieste",
+   "extract": "El Pallacanestro Trieste 2004, conocido por motivos de patrocinio como Allianz Pallacanestro Trieste, es un equipo italiano de baloncesto que compite en la Serie A, la primera división del baloncesto en Italia. Tiene su sede en Trieste, en la región de Friuli-Venecia Julia. Disputa sus partidos en el PalaTrieste, con capacidad para 6.943 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Pallacanestro_Trieste",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1810": {
+  "name": "Tezenis Verona",
+  "league": "LBA",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1805": {
+  "name": "UNA Hotels Reggio Emilia",
+  "league": "LBA",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1803": {
+  "name": "Umana Reyer Venezia",
+  "league": "LBA",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1816": {
+  "name": "Virtus Costa Bologna",
+  "league": "LBA",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1857": {
+  "name": "Boulazac",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": {
+   "qid": "Q785442",
+   "basket": true,
+   "spain": false,
+   "founded": 1992,
+   "title": "Boulazac Basket Dordogne",
+   "extract": "El Boulazac Basket Dordogne (BBD) es un equipo de baloncesto francés con sede en la ciudad de Boulazac, que compite en la LNB Élite, primera competición del país. Disputa sus partidos en Le Palio, con capacidad para 5.069 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Boulazac_Basket_Dordogne",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1864": {
+  "name": "Bourg-en-Bresse",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1859": {
+  "name": "Chalon/Saône",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1869": {
+  "name": "Cholet",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1855": {
+  "name": "Dijon",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1861": {
+  "name": "Gravelines-Dunkerque",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": {
+   "qid": "Q795707",
+   "basket": true,
+   "spain": false,
+   "founded": 1984,
+   "title": "BCM Gravelines",
+   "extract": "Basket Club Maritime Gravelines Dunkerque Grand Littoral, más conocido como BCM Gravelines es un club de baloncesto francés, con sede en la ciudad de Gravelinas, fundado en 1984 que compite en la Liga Francesa. Disputa sus partidos en el pabellón Gravelines Sportica, con capacidad para 3.043 personas.",
+   "url": "https://es.wikipedia.org/wiki/BCM_Gravelines",
+   "shared": []
+  },
+  "ok": true
  }
 }
