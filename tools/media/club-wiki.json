@@ -3394,5 +3394,205 @@
   "arena": null,
   "match": null,
   "ok": false
+ },
+ "i1689": {
+  "name": "ratiopharm ulm",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q266588",
+   "basket": true,
+   "spain": false,
+   "founded": 2001,
+   "title": "Ratiopharm Ulm",
+   "extract": "El Ratiopharm Ulm es un club de baloncesto profesional de la ciudad de Ulm, que milita en la BBL, máxima categoría del baloncesto alemán y en la Eurocup, la segunda competición europea. Disputa sus partidos en el Ratiopharm arena, con capacidad para 6000 espectadores. El club es patrocinado por la compañía farmacéutica Ratiopharm.",
+   "url": "https://es.wikipedia.org/wiki/Ratiopharm_Ulm",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1655": {
+  "name": "Anadolu Efes Istanbul",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": {
+   "qid": "Q483738",
+   "basket": true,
+   "spain": false,
+   "founded": 1976,
+   "title": "Anadolu Efes S.K.",
+   "extract": "El Anadolu Efes Spor Kulübü es un equipo de baloncesto de la ciudad de Estambul que, por palmarés, es considerado como uno de los equipos más importantes en la historia del baloncesto turco, ya que ha ganado el título de Liga en 15 ocasiones. También ha conseguido ganar la Euroliga en las temporadas 2020-2021 y 2021-2022, siendo el segundo equipo turco que lo consigue, después del Fenerbahce S.K..",
+   "url": "https://es.wikipedia.org/wiki/Anadolu_Efes_S.K.",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1656": {
+  "name": "Armani Olimpia Milan",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1657": {
+  "name": "Besiktas Istanbul",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": {
+   "qid": "Q854669",
+   "basket": true,
+   "spain": false,
+   "founded": 1933,
+   "title": "Beşiktaş Jimnastik Kulübü (baloncesto)",
+   "extract": "El Beşiktaş Jimnastik Kulübü, conocido por motivos de patrocinio como Beşiktaş Fibabanka, es un equipo de baloncesto turco que compite en la Türkiye Basketbol Ligi, la primera división del país y en la competición europea, EuroLeague. Tiene su sede en Estambul, y pertenece a la sociedad deportiva Beşiktaş Jimnastik Kulübü, que se formó en 1903. Disputa sus partidos en el BJK Akatlar Arena, también llamado por motivos de patrocinio BJK Integral Arena, con capacidad para 3.200 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Be%C5%9Fikta%C5%9F_Jimnastik_Kul%C3%BCb%C3%BC_(baloncesto)",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1658": {
+  "name": "Crvena Zvezda Meridianbet Belgrade",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1659": {
+  "name": "Dubai Basketball",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": {
+   "qid": "Q125293758",
+   "basket": true,
+   "spain": false,
+   "founded": 2024,
+   "title": "Dubai Basketball",
+   "extract": "El Dubai Basketball Club es un equipo de baloncesto emiratí con sede en la ciudad de Dubái, que compite en la ABA Liga. Disputa sus partidos en el Coca-Cola Arena, con capacidad para 17000 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Dubai_Basketball",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1660": {
+  "name": "FC Bayern Munich",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": {
+   "qid": "Q600149",
+   "basket": true,
+   "spain": false,
+   "founded": 1946,
+   "title": "Bayern de Múnich (baloncesto)",
+   "extract": "El FC Bayern de Múnich es una sección deportiva de baloncesto profesional del club de fútbol Bayern de Múnich. Tiene sede en la ciudad de Múnich, Alemania, y milita en la BBL, máxima categoría del baloncesto alemán y en la Euroliga, máxima categoría continental. Disputa sus partidos en el BMW Park, con capacidad para 6500 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Bayern_de_M%C3%BAnich_(baloncesto)",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1661": {
+  "name": "Fenerbahce Tarfin Istanbul",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1662": {
+  "name": "Hapoel IBI Tel Aviv",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1663": {
+  "name": "LDLC ASVEL Villeurbanne",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1664": {
+  "name": "Maccabi Rapyd Tel Aviv",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1665": {
+  "name": "Olympiacos Piraeus",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": {
+   "qid": "Q847701",
+   "basket": true,
+   "spain": false,
+   "founded": 1931,
+   "title": "Olympiacos B. C.",
+   "extract": "Olympiacos Basketball Club es la transliteración anglicada de la sección profesional de baloncesto del Olympiakós Syndesmos Filathlon Peiraiós, entidad polideportiva sita en la ciudad de El Pireo, Grecia. Al igual que todos los clubes profesionales deportivos de baloncesto del país, debe anteponer a su denominación la referencia a su actividad deportiva y fiscal con las siglas K. Α. Ε. por lo que es referido como el Κ. Α. Ε. Ολυμπιακός, o literalizado en su conjunto como Sociedad Anónima de Baloncesto Olímpico..",
+   "url": "https://es.wikipedia.org/wiki/Olympiacos_B._C.",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1666": {
+  "name": "Panathinaikos AKTOR Athens",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1667": {
+  "name": "Paris Basketball",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": {
+   "qid": "Q56291131",
+   "basket": true,
+   "spain": false,
+   "founded": 2018,
+   "title": "Paris Basketball",
+   "extract": "El Paris Basketball es un club de baloncesto francés, con sede en la ciudad de París que compite en la Betclic Élite, la máxima competición de Francia y en la Euroliga, la máxima competición a nivel europeo. Disputa los partidos como local en la Halle Georges-Carpentier, con capacidad para 5,009 espectadores o en el Arena Porte de La Chapelle, con capacidad para 8,000 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Paris_Basketball",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1668": {
+  "name": "Partizan Mozzart Bet Belgrade",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1669": {
+  "name": "Virtus Bologna",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": {
+   "qid": "Q36264",
+   "basket": true,
+   "spain": false,
+   "founded": 1927,
+   "title": "Virtus Bolonia",
+   "extract": "El Virtus Pallacanestro Bologna es el nombre oficial de un histórico club de baloncesto italiano, conocido como Virtus Bologna, fue fundado en 1929 en la ciudad de Bolonia. Actualmente compite en la Serie A, la primera división del baloncesto en Italia, de la cual ha resultado campeón en diecisiete ocasiones. Disputa sus partidos como local en el Virtus Arena, con capacidad para 9.980 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Virtus_Bolonia",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1670": {
+  "name": "Zalgiris Kaunas",
+  "league": "EUROLEAGUE",
+  "arena": null,
+  "match": {
+   "qid": "Q393357",
+   "basket": true,
+   "spain": false,
+   "founded": 1944,
+   "title": "Žalgiris Kaunas",
+   "extract": "El Žalgiris Kaunas es el nombre con que se conoce al Basketball Club Žalgiris, club de baloncesto lituano de la ciudad de Kaunas, que participa en la Lietuvos Krepšinio Lyga (LKL) y en la Euroliga.",
+   "url": "https://es.wikipedia.org/wiki/%C5%BDalgiris_Kaunas",
+   "shared": []
+  },
+  "ok": true
  }
 }
