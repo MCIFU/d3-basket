@@ -123,7 +123,8 @@ export class LnbAdapter implements LeagueAdapter {
           nationality: p.nationality,
           heightCm: p.height || undefined,
           position: code ? POS_NAME[code] : undefined,
-          positionCode: code
+          positionCode: code,
+          photoUrl: p.photo?.lg ?? p.photo?.md
         },
         jerseyNumber: r.player_role?.shirt_number || undefined,
         position: code ? POS_NAME[code] : undefined,

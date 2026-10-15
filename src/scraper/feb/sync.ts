@@ -53,6 +53,9 @@ export class FebScraper {
       log(`▶ ${label}: calendario`)
       opts.onProgress?.({ stage: 'calendar', done: 0, total: 1 })
       const cup = competition === 'COPA_ESPANA'
+      // Campeonatos de formación: menores de edad, sin foto.
+      const minors = /^CES?A?_/.test(competition)
+      const noPhoto = <T extends { photoUrl?: string; photoNobgUrl?: string }>(p: T): T => (minors ? { ...p, photoUrl: undefined, photoNobgUrl: undefined } : p)
       // Copa: la FEB usa el mismo id de equipo que en la liga. El club es el mismo, pero el equipo de
       // copa lleva su propia ref para no pisar el enlace del equipo de liga. Sin plantillas ni fichas
       // (los jugadores son los de la liga) ni enlace de clubes (ya son los de la liga).
@@ -99,7 +102,7 @@ export class FebScraper {
               const teamId = this.w.upsertTeam(csId, team)
               const seen: number[] = []
               for (const e of roster.players) {
-                const playerId = this.w.upsertPlayer(e.player)
+                const playerId = this.w.upsertPlayer(noPhoto(e.player))
                 this.w.upsertRosterEntry(teamId, playerId, e)
                 seen.push(playerId)
               }
@@ -139,7 +142,7 @@ export class FebScraper {
           const url = febUrls.player(p.team, p.person)
           try {
             const { player, stints } = parseFebPlayer((await this.http.get(url)).body, p.person)
-            const id = this.w.upsertPlayer(player, { bio: true })
+            const id = this.w.upsertPlayer(noPhoto(player), { bio: true })
             this.w.savePlayerStints(id, 'feb', stints)
             summary.playerBios++
           } catch (err) {
@@ -169,6 +172,7 @@ export class FebScraper {
           const url = febUrls.game(g2.feb_id)
           try {
             const box = parseFebBoxscore((await this.http.get(url)).body, g2.feb_id)
+            if (minors) for (const t of box.teams) for (const per of t.periods) per.players = per.players.map((l) => ({ ...l, player: noPhoto(l.player) }))
             if (cup) {
               box.homeTeam = own(box.homeTeam)
               box.awayTeam = own(box.awayTeam)

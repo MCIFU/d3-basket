@@ -98,6 +98,7 @@ export class LnpAdapter implements LeagueAdapter {
     for (const tr of table.split(/<tr[\s>]/).slice(2)) {
       const cells = [...tr.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((m) => m[1])
       const id = /player\/x\d+\/(A\d+)\./.exec(tr)?.[1]
+      const photo = /src="https?:\/\/(lnp\.webpont\.com\/team\/images\/player\/[^"]+)"/.exec(tr)?.[1]
       if (!id || cells.length < 7) continue
       const name = text(cells[1])
       const parts = name.split(/\s+/)
@@ -116,7 +117,8 @@ export class LnpAdapter implements LeagueAdapter {
           heightCm: Number(text(cells[4])) || undefined,
           nationality: text(cells[6]) || undefined,
           position: code ? POS_NAME[code] : role || undefined,
-          positionCode: code
+          positionCode: code,
+          photoUrl: photo ? `https://${photo}` : undefined
         },
         jerseyNumber: text(cells[0]) || undefined,
         position: code ? POS_NAME[code] : role || undefined,

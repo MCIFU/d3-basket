@@ -130,6 +130,7 @@ export class ProaAdapter implements LeagueAdapter {
       const height = /Größe:\s*(\d),(\d{2})\s*m/.exec(text)
       const pos = /Position:\s*([A-Z]{1,2})\b/.exec(text)?.[1]
       const code = pos ? (({ PG: 'PG', SG: 'SG', G: 'SG', SF: 'SF', F: 'SF', PF: 'PF', C: 'C' }) as Record<string, PositionCode>)[pos] : undefined
+      const photo = /https:\/\/api\.2basketballbundesliga\.de\/pics2\/[0-9_]+\/ls\/\d+/.exec(html)?.[0]
       const nat = /Nationalität:\s*([^:]+?)\s+(?:Im Verein|Nummer|$)/.exec(text)?.[1]
       const last = p.sname
       const first = p.name.endsWith(last) ? p.name.slice(0, -last.length).trim() : p.name.split(' ')[0]
@@ -143,7 +144,8 @@ export class ProaAdapter implements LeagueAdapter {
           heightCm: height ? Number(height[1]) * 100 + Number(height[2]) : undefined,
           nationality: nat,
           position: code ? POS_NAME[code] : undefined,
-          positionCode: code
+          positionCode: code,
+          photoUrl: photo
         },
         jerseyNumber: p.num || undefined,
         position: code ? POS_NAME[code] : undefined,

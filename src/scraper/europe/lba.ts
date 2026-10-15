@@ -108,7 +108,8 @@ export class LbaAdapter implements LeagueAdapter {
         nationality: p.country || undefined,
         heightCm: p.height || undefined,
         position: code ? POS_NAME[code] : p.player_role,
-        positionCode: code
+        positionCode: code,
+        photoUrl: p.player_picture_key ? `https://lba-media.s3.eu-south-1.amazonaws.com/variants/${p.player_picture_key}/large` : undefined
       }
       return { player, jerseyNumber: p.player_number ?? undefined, position: player.position, positionCode: code, isActive: true }
     })

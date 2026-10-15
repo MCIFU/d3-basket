@@ -117,6 +117,7 @@ export class EsakeAdapter implements LeagueAdapter {
       const dob = /DATE OF BIRTH\s*(\d{2})-(\d{2})-(\d{4})/.exec(info)
       const height = /HEIGHT\s*(\d)\.(\d{2})\s*m/.exec(info)
       const pos = /POST\s*([A-Z]{1,2})\b/.exec(info)?.[1]
+      const photo = /\/dat\/esakeplayer\/[0-9A-F]{8}\/photo_new_[^'"]+\.(?:png|jpg)/.exec(p)?.[0]
       const code = pos ? POS[pos] : undefined
       const last = name ? titleCase(name[1].trim()) : ''
       const first = name ? titleCase(name[2].trim()) : ''
@@ -130,7 +131,8 @@ export class EsakeAdapter implements LeagueAdapter {
           birthDate: dob && Number(dob[3]) < new Date().getFullYear() - 14 ? `${dob[3]}-${dob[2]}-${dob[1]}` : undefined,
           heightCm: height ? Number(height[1]) * 100 + Number(height[2]) : undefined,
           position: code ? POS_NAME[code] : undefined,
-          positionCode: code
+          positionCode: code,
+          photoUrl: photo ? `https://www.esake.gr${photo}` : undefined
         },
         position: code ? POS_NAME[code] : undefined,
         positionCode: code,

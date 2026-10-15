@@ -100,7 +100,8 @@ export class BblAdapter implements LeagueAdapter {
           nationality: p.nationalities?.[0],
           heightCm: p.height ? Math.round(p.height * 100) : undefined,
           position: code ? POS_NAME[code] : undefined,
-          positionCode: code
+          positionCode: code,
+          photoUrl: p.imageUrl || undefined
         },
         jerseyNumber: p.shirtNumber || undefined,
         position: code ? POS_NAME[code] : undefined,

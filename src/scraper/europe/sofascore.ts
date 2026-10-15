@@ -81,7 +81,8 @@ export class SofascoreAdapter implements LeagueAdapter {
       nationality: p.country?.name,
       heightCm: p.height || undefined,
       position: code ? POS_NAME[code] : undefined,
-      positionCode: code
+      positionCode: code,
+      photoUrl: `${IMG}/player/${p.id}/image`
     }
   }
 

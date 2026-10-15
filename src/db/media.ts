@@ -87,6 +87,8 @@ export function applyMedia(db: DB, mediaDir: string): { players: number; logos: 
         setTeam.run(c.primary ?? null, row.id)
       }
     }
+    // Al final, para que no la devuelvan las fotos locales.
+    hideMinorsPhotos(db)
   })()
   return done
 }
@@ -115,6 +117,23 @@ function fillClubInfo(db: DB) {
  * Fechas de nacimiento imposibles (la FEB publica algunas como 2022): un jugador con partidos
  * oficiales no puede tener menos de 13 años. Sin una fecha creíble, mejor en blanco.
  */
+/**
+ * Sin foto para quien solo ha jugado campeonatos de España de formación (menores de edad). En
+ * cuanto juega con un equipo de una liga sénior, su foto vuelve en la siguiente sincronización.
+ */
+function hideMinorsPhotos(db: DB) {
+  db.prepare(
+    `UPDATE players SET photo_url = NULL, photo_nobg_url = NULL, body_photo_url = NULL
+     WHERE (photo_url IS NOT NULL OR photo_nobg_url IS NOT NULL OR body_photo_url IS NOT NULL)
+       AND id IN (SELECT r.player_id FROM roster_entries r JOIN teams t ON t.id = r.team_id
+                  JOIN competition_seasons cs ON cs.id = t.competition_season_id JOIN competitions c ON c.id = cs.competition_id
+                  WHERE c.code LIKE 'CE\\_%' ESCAPE '\\' OR c.code LIKE 'CESA\\_%' ESCAPE '\\')
+       AND id NOT IN (SELECT r.player_id FROM roster_entries r JOIN teams t ON t.id = r.team_id
+                  JOIN competition_seasons cs ON cs.id = t.competition_season_id JOIN competitions c ON c.id = cs.competition_id
+                  WHERE c.code NOT LIKE 'CE\\_%' ESCAPE '\\' AND c.code NOT LIKE 'CESA\\_%' ESCAPE '\\')`
+  ).run()
+}
+
 function fixBirthDates(db: DB) {
   db.prepare(
     `UPDATE players SET birth_date = NULL WHERE birth_date IS NOT NULL AND (
