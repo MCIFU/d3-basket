@@ -4339,5 +4339,200 @@
   "arena": null,
   "match": null,
   "ok": false
+ },
+ "i1883": {
+  "name": "Quimper",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1877": {
+  "name": "Rouen",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1874": {
+  "name": "Saint-Chamond-Andrezieux-Bouthéon",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": {
+   "qid": "Q129566780",
+   "basket": true,
+   "spain": false,
+   "founded": 2022,
+   "title": "Saint-Chamond Andrézieux-Bouthéon Basket",
+   "extract": "El Saint-Chamond Andrézieux-Bouthéon Basket, también conocido como SCABB, es un equipo de baloncesto francés con sede en la ciudad de Saint-Chamond, que compite en la Pro B, la segunda competición de su país. Tiene un equipo con el mismo nombre que compite en la NM1, la tercera competición de su país. El equipo Pro B disputa sus partidos en la Arena Saint-Étienne Métropole, situada en Saint-Chamond y con capacidad para 4.200 espectadores y el equipo NM1 disputa sus partidos en el Palais des Sports, situado en Andrézieux-Bouthéon y con capacidad para 2.730 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Saint-Chamond_Andr%C3%A9zieux-Bouth%C3%A9on_Basket",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1878": {
+  "name": "Vichy",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1906": {
+  "name": "Artland Dragons",
+  "league": "PROA",
+  "arena": null,
+  "match": {
+   "qid": "Q684077",
+   "basket": true,
+   "spain": false,
+   "founded": 1955,
+   "title": "Artland Dragons",
+   "extract": "El Artland Dragons es un equipo de baloncesto alemán con sede en la ciudad de Quakenbrück, Baja Sajonia, que compite en la ProA, la segunda categoría del baloncesto alemán. Disputa sus partidos en el Artland Arena, con capacidad para 3.000 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Artland_Dragons",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1909": {
+  "name": "BG Göttingen",
+  "league": "PROA",
+  "arena": null,
+  "match": {
+   "qid": "Q34376",
+   "basket": true,
+   "spain": false,
+   "founded": 1974,
+   "title": "BG 74 Göttingen",
+   "extract": "El BG Göttingen es un club de baloncesto profesional de la ciudad de Gotinga, que milita en la BBL, máxima categoría del baloncesto alemán. Disputa sus encuentros en el Sparkassen Arena, pabellón con capacidad para 3.447 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/BG_74_G%C3%B6ttingen",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1921": {
+  "name": "EPG Baskets Koblenz",
+  "league": "PROA",
+  "arena": null,
+  "match": {
+   "qid": "Q96889200",
+   "basket": true,
+   "spain": false,
+   "founded": 2011,
+   "title": "SG Lützel-Post Koblenz",
+   "extract": null,
+   "url": null,
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1911": {
+  "name": "ETB Miners",
+  "league": "PROA",
+  "arena": null,
+  "match": {
+   "qid": "Q1276074",
+   "basket": true,
+   "spain": false,
+   "founded": 1960,
+   "title": "ETB Wohnbau Baskets Essen",
+   "extract": "El ETB Wohnbau Baskets Essen es un equipo de baloncesto alemán con sede en la ciudad de Essen, que compite en la ProB, la tercera división de su país. Disputa sus partidos en el Sportpark Am Hallo, con capacidad para 2578 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/ETB_Wohnbau_Baskets_Essen",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1919": {
+  "name": "Eisbären Bremerhaven",
+  "league": "PROA",
+  "arena": null,
+  "match": {
+   "qid": "Q469053",
+   "basket": true,
+   "spain": false,
+   "founded": 2001,
+   "title": "Eisbären Bremerhaven",
+   "extract": "El Eisbären Bremerhaven es un equipo de baloncesto alemán que compite en la ProA, la segunda división del país. Tiene su sede en la ciudad de Bremerhaven, en el estado de Bremen. Disputa sus partidos en el Bremerhaven Stadthalle, con capacidad para 4200 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Eisb%C3%A4ren_Bremerhaven",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1905": {
+  "name": "GIESSEN 46ers",
+  "league": "PROA",
+  "arena": null,
+  "match": {
+   "qid": "Q679877",
+   "basket": true,
+   "spain": false,
+   "founded": 1846,
+   "title": "Gießen 46ers",
+   "extract": "El Gießen 46ers es un equipo de baloncesto alemán con sede en la ciudad de Gießen, Hesse, que compite en la ProA, la segunda categoría del baloncesto alemán. Disputa sus partidos en el Sporthalle Giessen-Ost, con capacidad para 4.003 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Gie%C3%9Fen_46ers",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1912": {
+  "name": "HAKRO Merlins Crailsheim",
+  "league": "PROA",
+  "arena": null,
+  "match": {
+   "qid": "Q1138755",
+   "basket": true,
+   "spain": false,
+   "founded": 1986,
+   "title": "Crailsheim Merlins",
+   "extract": "El Crailsheim Merlins, conocido por motivos de patrocinio como Hakro Merlins Crailsheim, es un equipo de baloncesto alemán con sede en la ciudad de Crailsheim, que compite en la ProA, la segunda división de su país. Disputa sus partidos en el Arena Hohenlohe, con capacidad para 3000 espectadores. El club es parte de la asociación deportiva TSV Crailsheim.",
+   "url": "https://es.wikipedia.org/wiki/Crailsheim_Merlins",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1907": {
+  "name": "Kreisbau Kirchheim Knights",
+  "league": "PROA",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1918": {
+  "name": "MLP Academics Heidelberg",
+  "league": "PROA",
+  "arena": null,
+  "match": {
+   "qid": "Q466143",
+   "basket": true,
+   "spain": false,
+   "founded": 1899,
+   "title": "USC Heidelberg",
+   "extract": "El USC Heidelberg, conocido por motivos de patrocinio como MLP Academics Heidelberg, es un equipo de baloncesto alemán con sede en la ciudad de Heidelberg, que compite en la Basketball Bundesliga, la máxima división de su país. Disputa sus partidos en el Halle des Olympiastützpunktes, con capacidad para 1512 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/USC_Heidelberg",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1922": {
+  "name": "Medikamente per Klick Bayreuth",
+  "league": "PROA",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1916": {
+  "name": "Nürnberg Falcons",
+  "league": "PROA",
+  "arena": null,
+  "match": {
+   "qid": "Q325847",
+   "basket": true,
+   "spain": false,
+   "founded": 2009,
+   "title": "Nürnberg Falcons BC",
+   "extract": "El Nürnberg Falcons BC, antes llamado Nürnberger BC, es un equipo de baloncesto alemán con sede en la ciudad de Núremberg, que compite en la ProA, la segunda división de su país. Disputa sus partidos en el Halle im Berufsbildungszentrum, con capacidad para 2140 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/N%C3%BCrnberg_Falcons_BC",
+   "shared": []
+  },
+  "ok": true
  }
 }
