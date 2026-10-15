@@ -5,10 +5,10 @@
  *   live.2basketballbundesliga.de/socket.io     estadística en directo; el historial de un partido
  *                                               terminado trae la línea final de cada jugador
  */
-import type { GameStatus, NBoxscore, NGame, NPlayerLine, NStatLine, NTeam } from '../types'
+import type { GameStatus, NBoxscore, NGame, NPlayerLine, NRosterEntry, NStatLine, NTeam, PositionCode } from '../types'
 import type { HttpClient } from '../core/http'
 import { currentSeasonStart } from '../feb/sync'
-import { sumLines, zeroLine, type LeagueAdapter, type LeagueData } from './league'
+import { POS_NAME, sumLines, zeroLine, type LeagueAdapter, type LeagueData } from './league'
 
 const CAL = 'https://api.2basketballbundesliga.de/cal/proa'
 const LIVE = 'https://live.2basketballbundesliga.de'
@@ -25,6 +25,8 @@ export class ProaAdapter implements LeagueAdapter {
   competition = 'PROA' as const
   name = 'ProA'
   private live = new Map<string, Live>()
+  /** Último partido jugado de cada equipo (para sacar su plantilla) y si jugaba en casa. */
+  private lastGame = new Map<string, { id: string; home: boolean }>()
   constructor(private readonly http: HttpClient) {}
 
   /** Historial del partido por socket.io (transporte de sondeo HTTP). */
@@ -104,9 +106,52 @@ export class ProaAdapter implements LeagueAdapter {
           status = 'finished'
         }
       }
-      games.push({ ref: { source: 'proa', id: e.id! }, round: { phase: 'regular', number: round, name: `Jornada ${round}` }, homeTeam: team(h.trim()), awayTeam: team(a.trim()), scheduledAt: at, status, homeScore, awayScore })
+      const home = team(h.trim())
+      const away = team(a.trim())
+      if (status === 'finished') (this.lastGame.set(home.ref.id, { id: e.id!, home: true }), this.lastGame.set(away.ref.id, { id: e.id!, home: false }))
+      games.push({ ref: { source: 'proa', id: e.id! }, round: { phase: 'regular', number: round, name: `Jornada ${round}` }, homeTeam: home, awayTeam: away, scheduledAt: at, status, homeScore, awayScore })
     }
     return { editionRef: String(startYear), teams: [...teams.values()], games }
+  }
+
+  /** Plantilla: jugadores del último partido del equipo, con su ficha (nacimiento, altura, posición). */
+  async roster(team: NTeam): Promise<NRosterEntry[]> {
+    const last = this.lastGame.get(team.ref.id)
+    if (!last) return []
+    const init = JSON.parse((await this.http.get(`${LIVE}/init/${last.id}`, { Accept: 'application/json' })).body) as Live['init']
+    const side = (last.home ? init.teamA : init.teamB) as { id: string; coach?: string }
+    const teamId = side.id
+    const out: NRosterEntry[] = []
+    for (const [id, p] of Object.entries(init.player)) {
+      if (p.team_id !== teamId || id === '0' || id === side.coach) continue
+      const html = (await this.http.get(`https://www.2basketballbundesliga.de/spieler_liveticker/${id}/`).catch(() => undefined))?.body ?? ''
+      const text = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ')
+      const dob = /Geburtstag:\s*(\d{2})\.(\d{2})\.(\d{4})/.exec(text)
+      const height = /Größe:\s*(\d),(\d{2})\s*m/.exec(text)
+      const pos = /Position:\s*([A-Z]{1,2})\b/.exec(text)?.[1]
+      const code = pos ? (({ PG: 'PG', SG: 'SG', G: 'SG', SF: 'SF', F: 'SF', PF: 'PF', C: 'C' }) as Record<string, PositionCode>)[pos] : undefined
+      const nat = /Nationalität:\s*([^:]+?)\s+(?:Im Verein|Nummer|$)/.exec(text)?.[1]
+      const last = p.sname
+      const first = p.name.endsWith(last) ? p.name.slice(0, -last.length).trim() : p.name.split(' ')[0]
+      out.push({
+        player: {
+          ref: { source: 'proa', id },
+          firstName: first,
+          lastName: last,
+          fullName: p.name,
+          birthDate: dob ? `${dob[3]}-${dob[2]}-${dob[1]}` : undefined,
+          heightCm: height ? Number(height[1]) * 100 + Number(height[2]) : undefined,
+          nationality: nat,
+          position: code ? POS_NAME[code] : undefined,
+          positionCode: code
+        },
+        jerseyNumber: p.num || undefined,
+        position: code ? POS_NAME[code] : undefined,
+        positionCode: code,
+        isActive: true
+      })
+    }
+    return out
   }
 
   async boxscore(game: NGame): Promise<NBoxscore | undefined> {
