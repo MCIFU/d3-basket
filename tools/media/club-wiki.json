@@ -2928,5 +2928,37 @@
    "shared": []
   },
   "ok": true
+ },
+ "i1700": {
+  "name": "Rytas Vilnius",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q46942",
+   "basket": true,
+   "spain": false,
+   "founded": 1997,
+   "title": "BC Rytas",
+   "extract": "El Vilnius Rytas es un club profesional de baloncesto con base en Vilna, Lituania fundado en 1997 y que participa en la LKL, en la BBL, VTB United League y en la Basketball Champions League (BCL).",
+   "url": "https://es.wikipedia.org/wiki/BC_Rytas",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1706": {
+  "name": "SIG Strasbourg",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q2737338",
+   "basket": true,
+   "spain": false,
+   "founded": 1928,
+   "title": "Strasbourg IG",
+   "extract": "Strasbourg Illkirch-Graffenstaden Basket, más conocido como SIG o Strasbourg IG es un club de baloncesto francés, con sede en la comuna de Illkirch-Graffenstaden dentro de la Eurometrópoli de Estrasburgo, fundado en 1929 que compite en la Liga Francesa y en la segunda competición europea, la Eurocup. Disputa sus partidos en el pabellón Rhenus Sport, con capacidad para 6.200 personas.",
+   "url": "https://es.wikipedia.org/wiki/Strasbourg_IG",
+   "shared": []
+  },
+  "ok": true
  }
 }
