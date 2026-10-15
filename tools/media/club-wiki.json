@@ -2520,5 +2520,37 @@
    "shared": []
   },
   "ok": true
+ },
+ "i1851": {
+  "name": "NINERS Chemnitz",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q797164",
+   "basket": true,
+   "spain": false,
+   "founded": 1999,
+   "title": "Niners Chemnitz",
+   "extract": "El Niners Chemnitz es un equipo de baloncesto alemán con sede en la ciudad de Chemnitz, que compite en la Basketball Bundesliga, la primera división de su país, tras ascender en 2020. Disputa sus partidos en el Chemnitz Arena, con capacidad para 5400 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Niners_Chemnitz",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1844": {
+  "name": "Phoenix Hagen",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q463349",
+   "basket": true,
+   "spain": false,
+   "founded": 2004,
+   "title": "Phoenix Hagen",
+   "extract": "El Phoenix Hagen es un club de baloncesto profesional de la ciudad de Hagen, que milita en la BBL, máxima categoría del baloncesto alemán. disputa sus partidos en el ENERVIE Arena, con capacidad para 3.035 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Phoenix_Hagen",
+   "shared": []
+  },
+  "ok": true
  }
 }
