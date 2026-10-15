@@ -2864,5 +2864,37 @@
    "shared": []
   },
   "ok": true
+ },
+ "i1703": {
+  "name": "Nanterre 92",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q1630671",
+   "basket": true,
+   "spain": false,
+   "founded": 1927,
+   "title": "Nanterre 92",
+   "extract": "El Nanterre 92, conocido hasta 2016 como Jeunesse Sportive des Fontenelles de Nanterre o JSF Nanterre es una asociación deportiva francesa de baloncesto situado en la ciudad de Nanterre, que juega en la LNB, la máxima categoría del baloncesto francés y en la Eurocup, la segunda competición europea más importante.",
+   "url": "https://es.wikipedia.org/wiki/Nanterre_92",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1715": {
+  "name": "Pallacanestro Reggiana",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q36419",
+   "basket": true,
+   "spain": false,
+   "founded": 1974,
+   "title": "Pallacanestro Reggiana",
+   "extract": "Pallacanestro Reggiana, denominado también por cuestiones de patrocinio UnaHotels Reggio Emilia, es un club de baloncesto italiano con sede en la ciudad de Reggio Emilia, que actualmente compite en la Serie A, la máxima división del baloncesto en Italia y en la competición europea, Basketball Champions League. Disputa sus partidos de liga en el PalaBigi, con capacidad para 4.600 espectadores y a menudo los partidos de competición europea los disputa en el PalaDozza, con capacidad para 5.600 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Pallacanestro_Reggiana",
+   "shared": []
+  },
+  "ok": true
  }
 }
