@@ -257,6 +257,18 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     logo: 'media/leagues/gbl.svg',
     zones: [{ from: 1, to: 8, kind: 'playoff', label: 'Playoff' }]
   },
+  BSL: {
+    name: 'Süper Lig',
+    division: 'Europa · Turquía',
+    color: '#c8102e',
+    color2: '#0b1f3a',
+    ink: '#ffffff',
+    logo: 'media/leagues/bsl.png',
+    zones: [
+      { from: 1, to: 8, kind: 'playoff', label: 'Playoff' },
+      { from: -2, to: -1, kind: 'down', label: 'Descenso' }
+    ]
+  },
   // Azul marino y amarillo de la marca Basketball Champions League (FIBA).
   BCL: {
     name: 'Champions League',

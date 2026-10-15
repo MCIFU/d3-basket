@@ -32,7 +32,7 @@ export class LnpAdapter implements LeagueAdapter {
     const teams = new Map<string, NTeam>()
     const games: NGame[] = []
     const team = (id: string, name: string, group?: string): NTeam => {
-      const t: NTeam = { ref: { source: 'lnp', id: `${startYear}:${id}` }, clubRef: { source: 'lnp', id }, name, group, logoUrl: `https://static.legapallacanestro.com/sites/default/files/styles/255_x/public/team_logo/${id}.png` }
+      const t: NTeam = { ref: { source: 'lnp', id: `${startYear}:${id}` }, clubRef: { source: 'lnp', id }, name, group }
       teams.set(t.ref.id, t)
       return t
     }
@@ -75,6 +75,17 @@ export class LnpAdapter implements LeagueAdapter {
       if (league === 'ita2' && games.length) break
     }
     if (!games.length) throw new Error(`Serie A2 ${startYear}: sin calendario`)
+    // Escudo: el archivo puede ser .png o .jpg según el equipo.
+    for (const t of teams.values()) {
+      for (const ext of ['png', 'jpg']) {
+        const url = `https://static.legapallacanestro.com/sites/default/files/team_logo/${t.clubRef.id}.${ext}`
+        if (await this.http.get(url).then(() => true, () => false)) {
+          t.logoUrl = url
+          break
+        }
+      }
+    }
+    for (const g of games) (g.homeTeam.logoUrl = teams.get(g.homeTeam.ref.id)?.logoUrl), (g.awayTeam.logoUrl = teams.get(g.awayTeam.ref.id)?.logoUrl)
     return { editionRef: this.year, teams: [...teams.values()], games }
   }
 

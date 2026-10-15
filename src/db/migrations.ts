@@ -647,5 +647,13 @@ INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, cou
   ('CE_INF_M', 'Cto. España Infantil masculino', 'Infantil masculino', 'FEB', NULL, 'ES'),
   ('CE_INF_F', 'Cto. España Infantil femenino', 'Infantil femenino', 'FEB', NULL, 'ES');
 `
+  },
+  {
+    version: 16,
+    name: 'bsl',
+    sql: /* sql */ `
+INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, country) VALUES
+  ('BSL', 'Basketbol Süper Ligi', 'BSL', 'TBF', 1, 'TR');
+`
   }
 ]

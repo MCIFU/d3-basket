@@ -4,8 +4,8 @@
  * consiste en escribir un adaptador nuevo que devuelva lo mismo.
  */
 
-export type SourceName = 'acb' | 'feb' | 'euroleague' | 'fiba' | 'lba' | 'lnp' | 'bbl' | 'proa' | 'lnb' | 'esake'
-export type CompetitionCode = 'ACB' | 'LEB_ORO' | 'LEB_PLATA' | 'TERCERA_FEB' | 'COPA_ESPANA' | 'CESA_INF_M' | 'CESA_INF_F' | 'CESA_CAD_M' | 'CESA_CAD_F' | 'CE_JUN_M' | 'CE_JUN_F' | 'CE_CAD_M' | 'CE_CAD_F' | 'CE_INF_M' | 'CE_INF_F' | 'EUROLEAGUE' | 'EUROCUP' | 'BCL' | 'LBA' | 'ITA_A2' | 'BBL' | 'PROA' | 'LNB_ELITE' | 'LNB_ELITE2' | 'GBL'
+export type SourceName = 'acb' | 'feb' | 'euroleague' | 'fiba' | 'lba' | 'lnp' | 'bbl' | 'proa' | 'lnb' | 'esake' | 'sofascore'
+export type CompetitionCode = 'ACB' | 'LEB_ORO' | 'LEB_PLATA' | 'TERCERA_FEB' | 'COPA_ESPANA' | 'CESA_INF_M' | 'CESA_INF_F' | 'CESA_CAD_M' | 'CESA_CAD_F' | 'CE_JUN_M' | 'CE_JUN_F' | 'CE_CAD_M' | 'CE_CAD_F' | 'CE_INF_M' | 'CE_INF_F' | 'EUROLEAGUE' | 'EUROCUP' | 'BCL' | 'LBA' | 'ITA_A2' | 'BBL' | 'PROA' | 'LNB_ELITE' | 'LNB_ELITE2' | 'GBL' | 'BSL'
 
 export interface SourceRef {
   source: SourceName

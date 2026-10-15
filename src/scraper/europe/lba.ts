@@ -24,6 +24,8 @@ interface LbaMatch {
   day_serial: number
   day_name: string
   plant_name?: string
+  home_logo_key?: string | null
+  v_logo_key?: string | null
 }
 interface LbaChamp { id: number; year: number; ctype_code: string }
 
@@ -38,9 +40,15 @@ export class LbaAdapter implements LeagueAdapter {
     return JSON.parse((await this.http.get(`${API}/${path}`, { Accept: 'application/json' })).body) as T
   }
 
-  private team(id: number, name: string, code: string, startYear: number): NTeam {
+  private team(id: number, name: string, code: string, startYear: number, logoKey?: string | null): NTeam {
     this.teamIds.set(code, id)
-    return { ref: { source: 'lba', id: `${startYear}:${code}` }, clubRef: { source: 'lba', id: code }, name, abbreviation: code }
+    return {
+      ref: { source: 'lba', id: `${startYear}:${code}` },
+      clubRef: { source: 'lba', id: code },
+      name,
+      abbreviation: code,
+      logoUrl: logoKey ? `https://lba-media.s3.eu-south-1.amazonaws.com/variants/${logoKey}/large` : undefined
+    }
   }
 
   /** Fase regular y playoff de la temporada (ids de "championship"). */
@@ -63,8 +71,8 @@ export class LbaAdapter implements LeagueAdapter {
       for (const day of days) {
         const d = await this.json<{ matches: LbaMatch[] }>(`championships/get-championships-calendar-by-id?id=${c.id}&d=${day.code}`)
         for (const m of d.matches ?? []) {
-          const home = this.team(m.h_team_id, m.h_team_name, m.h_club_code, startYear)
-          const away = this.team(m.v_team_id, m.v_team_name, m.v_club_code, startYear)
+          const home = this.team(m.h_team_id, m.h_team_name, m.h_club_code, startYear, m.home_logo_key)
+          const away = this.team(m.v_team_id, m.v_team_name, m.v_club_code, startYear, m.v_logo_key)
           if (!c.playoff) (teams.set(home.ref.id, home), teams.set(away.ref.id, away))
           const finished = m.game_status === '2' && m.home_final_score != null
           const status: GameStatus = finished ? 'finished' : 'scheduled'

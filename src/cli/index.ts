@@ -32,6 +32,7 @@ import { LnbAdapter } from '../scraper/europe/lnb'
 import { LnpAdapter } from '../scraper/europe/lnp'
 import { EsakeAdapter } from '../scraper/europe/esake'
 import { ProaAdapter } from '../scraper/europe/proa'
+import { SofascoreAdapter } from '../scraper/europe/sofascore'
 import type { FebCompetition } from '../scraper/feb/urls'
 
 const { values, positionals } = parseArgs({
@@ -209,6 +210,8 @@ async function main() {
     'serie-a2': (h) => new LnpAdapter(h),
     gbl: (h) => new EsakeAdapter(h),
     proa: (h) => new ProaAdapter(h),
+    bsl: (h) => new SofascoreAdapter(h, 519, 'BSL', 'Basketbol Süper Ligi'),
+    turquia: (h) => new SofascoreAdapter(h, 519, 'BSL', 'Basketbol Süper Ligi'),
     grecia: (h) => new EsakeAdapter(h),
     a2: (h) => new LnpAdapter(h),
     'betclic-elite': (h) => new LnbAdapter(h, 1, 'LNB_ELITE'),
