@@ -32,7 +32,7 @@ export class LnpAdapter implements LeagueAdapter {
     const teams = new Map<string, NTeam>()
     const games: NGame[] = []
     const team = (id: string, name: string, group?: string): NTeam => {
-      const t: NTeam = { ref: { source: 'lnp', id: `${startYear}:${id}` }, clubRef: { source: 'lnp', id }, name, group }
+      const t: NTeam = { ref: { source: 'lnp', id: `${startYear}:${id}` }, clubRef: { source: 'lnp', id }, name, group, logoUrl: `https://static.legapallacanestro.com/sites/default/files/styles/255_x/public/team_logo/${id}.png` }
       teams.set(t.ref.id, t)
       return t
     }

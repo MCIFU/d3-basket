@@ -48,6 +48,7 @@ export class EsakeAdapter implements LeagueAdapter {
   competition = 'GBL' as const
   name = 'Greek Basketball League'
   private teamIdByName = new Map<string, string>()
+  private logoById = new Map<string, string>()
   constructor(private readonly http: HttpClient) {}
 
   private async page(path: string) {
@@ -61,12 +62,13 @@ export class EsakeAdapter implements LeagueAdapter {
     if (!champ) throw new Error(`esake.gr no tiene la temporada ${startYear}`)
     const r1 = await this.page(`EsakeResults?idchampionship=${champ}&idteam=&idseason=00000001&series=01`)
     for (const m of r1.matchAll(/EsaketeamView\?idteam=([0-9A-F]{8})&mode=1" title="([^"]+)"/g)) this.teamIdByName.set(strip(m[2]), m[1])
+    for (const m of r1.matchAll(/idteam=([0-9A-F]{8})&mode=1"[^>]*><img[^>]*background:url\('([^']+)'\)/g)) this.logoById.set(m[1], `https://www.esake.gr${m[2]}`)
     const series = [...new Set([...r1.matchAll(/new Option\('[^']*', '(\d+)'\)/g)].map((m) => m[1]))]
     const teams = new Map<string, NTeam>()
     const games: NGame[] = []
     const team = (greek: string): NTeam => {
       const id = this.teamIdByName.get(greek) ?? greek
-      const t: NTeam = { ref: { source: 'esake', id: `${startYear}:${id}` }, clubRef: { source: 'esake', id }, name: greekToLatin(greek) }
+      const t: NTeam = { ref: { source: 'esake', id: `${startYear}:${id}` }, clubRef: { source: 'esake', id }, name: greekToLatin(greek), logoUrl: this.logoById.get(id) }
       teams.set(t.ref.id, t)
       return t
     }
