@@ -178,7 +178,7 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     color: '#f05a22',
     color2: '#111111',
     ink: '#ffffff',
-    logo: 'media/leagues/euroleague.svg',
+    logo: 'media/leagues/euroleague.png',
     zones: [
       { from: 1, to: 6, kind: 'playoff', label: 'Playoff' },
       { from: 7, to: 10, kind: 'up', label: 'Play-in' }
@@ -190,7 +190,7 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     color: '#1a6fd1',
     color2: '#0d1b3e',
     ink: '#ffffff',
-    logo: 'media/leagues/eurocup.svg',
+    logo: 'media/leagues/eurocup.png',
     zones: [{ from: 1, to: 8, kind: 'playoff', label: 'Eliminatorias (por grupo)' }]
   },
   // Ligas nacionales: colores de la identidad de cada liga.
@@ -200,7 +200,7 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     color: '#00205b',
     color2: '#e4002b',
     ink: '#ffffff',
-    logo: 'media/leagues/lba.svg',
+    logo: 'media/leagues/lba.png',
     zones: [{ from: 1, to: 8, kind: 'playoff', label: 'Playoff por el título' }, { from: -1, to: -1, kind: 'down', label: 'Descenso a Serie A2' }]
   },
   ITA_A2: {
@@ -218,7 +218,7 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     color: '#0d1e3d',
     color2: '#ff4b1f',
     ink: '#ffffff',
-    logo: 'media/leagues/lnb_elite.svg',
+    logo: 'media/leagues/lnb_elite.png',
     zones: [{ from: 1, to: 6, kind: 'playoff', label: 'Playoff' }, { from: 7, to: 10, kind: 'up', label: 'Play-in' }, { from: -2, to: -1, kind: 'down', label: 'Descenso a Élite 2' }]
   },
   LNB_ELITE2: {
@@ -227,7 +227,7 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     color: '#3b1f6b',
     color2: '#ff4b1f',
     ink: '#ffffff',
-    logo: 'media/leagues/lnb_elite2.svg',
+    logo: 'media/leagues/lnb_elite2.png',
     zones: []
   },
   BBL: {
@@ -245,7 +245,7 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     color: '#1d1d1b',
     color2: '#e30613',
     ink: '#ffffff',
-    logo: 'media/leagues/proa.svg',
+    logo: 'media/leagues/proa.png',
     zones: []
   },
   GBL: {
@@ -254,7 +254,7 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     color: '#0d5eaf',
     color2: '#111111',
     ink: '#ffffff',
-    logo: 'media/leagues/gbl.svg',
+    logo: 'media/leagues/gbl.png',
     zones: [{ from: 1, to: 8, kind: 'playoff', label: 'Playoff' }]
   },
   BSL: {
@@ -276,7 +276,7 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     color: '#1b2a6b',
     color2: '#f6c400',
     ink: '#ffffff',
-    logo: 'media/leagues/bcl.svg',
+    logo: 'media/leagues/bcl.png',
     zones: [
       { from: 1, to: 1, kind: 'playoff', label: 'Cuartos de final directos' },
       { from: 2, to: 3, kind: 'up', label: 'Play-in' }

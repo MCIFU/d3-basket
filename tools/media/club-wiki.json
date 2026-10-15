@@ -2552,5 +2552,317 @@
    "shared": []
   },
   "ok": true
+ },
+ "i1841": {
+  "name": "RASTA Vechta",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q123555063",
+   "basket": true,
+   "spain": false,
+   "founded": null,
+   "title": "RASTA Vechta II",
+   "extract": null,
+   "url": null,
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1847": {
+  "name": "ROSTOCK SEAWOLVES",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q18009233",
+   "basket": true,
+   "spain": false,
+   "founded": 1994,
+   "title": "Rostock Seawolves",
+   "extract": "El Rostock Seawolves es un equipo de baloncesto alemán con sede en la ciudad de Rostock, Mecklemburgo-Pomerania Occidental, que compite en la Basketball Bundesliga, la primera categoría del baloncesto alemán. Disputa sus partidos en el Stadthalle Rostock, con capacidad para 4.550 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Rostock_Seawolves",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1837": {
+  "name": "SKYLINERS",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q836109",
+   "basket": true,
+   "spain": false,
+   "founded": 1999,
+   "title": "Skyliners Fráncfort",
+   "extract": "El Skyliners Fráncfort, también conocido por motivos de patrocinio como Fraport Skyliners Frankfurt, es un equipo de baloncesto alemán con sede en la ciudad de Fráncfort, Hesse, que compite en la BBL y en la tercera competición europea, la FIBA European Cup. Disputa sus partidos en el Ballsporthalle, con capacidad para 5000 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Skyliners_Fr%C3%A1ncfort",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1850": {
+  "name": "SYNTAINICS MBC",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q521663",
+   "basket": true,
+   "spain": false,
+   "founded": 1958,
+   "title": "Mitteldeutscher BC Weißenfels",
+   "extract": "El Mitteldeutscher Basketball Club, conocido por motivos de patrocinio como SYNTAINICS MBC, es un equipo de baloncesto alemán con sede en la ciudad de Weißenfels, que compite en la Basketball Bundesliga, la primera división de su país. Disputa sus partidos en el Stadthalle Weißenfels, con capacidad para 3000 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Mitteldeutscher_BC_Wei%C3%9Fenfels",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1854": {
+  "name": "Science City Jena",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q265244",
+   "basket": true,
+   "spain": false,
+   "founded": 1994,
+   "title": "Science City Jena",
+   "extract": "El Science City Jena es un club de baloncesto profesional de la ciudad de Jena, que milita en la Basketball Bundesliga, la primera categoría del baloncesto alemán. Disputa sus partidos en el Sparkassen-Arena Jena, con capacidad para 2.750 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Science_City_Jena",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1853": {
+  "name": "Telekom Baskets Bonn",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q704072",
+   "basket": true,
+   "spain": false,
+   "founded": 1995,
+   "title": "Telekom Baskets Bonn",
+   "extract": "El Telekom Baskets Bonn, comúnmente conocido como Baskets Bonn, es un equipo de baloncesto profesional de la ciudad de Bonn (Alemania) que militá en la máxima categoría del baloncesto teutón: la BBL y en la tercera competición europea, la BCL. El patrocinador del club es la compañía alemana Deutsche Telekom, una gran empresa de telefonía e internet, que también vende móviles (T-Mobile) en Estados Unidos. Disputa sus encuentros como local en el Telekom-Dome, pabellón con capacidad para 6000 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Telekom_Baskets_Bonn",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1845": {
+  "name": "VET-CONCEPT Gladiators Trier",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q22340607",
+   "basket": true,
+   "spain": false,
+   "founded": 2015,
+   "title": "Römerstrom Gladiators Trier",
+   "extract": "El Gladiators Trier, cono cido por motivos de patrocinio como Römerstrom Gladiators Trier, es un equipo de baloncesto alemán con sede en la ciudad de Tréveris, que compite en la ProA, la segunda división de su país. Disputa sus partidos en el Arena Trier, con capacidad para 5900 espectadores. El club se fundó en 2015, tras la desaparición del TBB Trier.",
+   "url": "https://es.wikipedia.org/wiki/R%C3%B6merstrom_Gladiators_Trier",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1838": {
+  "name": "Veolia Towers Hamburg",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q17324838",
+   "basket": true,
+   "spain": false,
+   "founded": 2013,
+   "title": "Hamburg Towers",
+   "extract": "El Hamburg Towers, conocido por motivos de patrocinio como Veolia Towers, es un equipo de baloncesto alemán con sede en la ciudad de Hamburgo, que compite en la Basketball Bundesliga, la primera división de su país. Disputa sus partidos en el InselPark-Halle, con capacidad para 3400 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Hamburg_Towers",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1842": {
+  "name": "ratiopharm ulm",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q266588",
+   "basket": true,
+   "spain": false,
+   "founded": 2001,
+   "title": "Ratiopharm Ulm",
+   "extract": "El Ratiopharm Ulm es un club de baloncesto profesional de la ciudad de Ulm, que milita en la BBL, máxima categoría del baloncesto alemán y en la Eurocup, la segunda competición europea. Disputa sus partidos en el Ratiopharm arena, con capacidad para 6000 espectadores. El club es patrocinado por la compañía farmacéutica Ratiopharm.",
+   "url": "https://es.wikipedia.org/wiki/Ratiopharm_Ulm",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1708": {
+  "name": "AEK BC",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q1982491",
+   "basket": true,
+   "spain": false,
+   "founded": 1924,
+   "title": "AEK (baloncesto)",
+   "extract": "La sección de baloncesto del A. E. K., conocido simplemente por sus siglas A. E. K. o su transliteralización de A. E. K. de Atenas, es un club de baloncesto con base en Atenas, Grecia. Forma parte de la sociedad polideportiva Athlitikí Énosis Konstantinoupóleos. Al igual que todos los clubes profesionales deportivos del país, debe anteponer a su denominación la referencia a su actividad deportiva y fiscal con las siglas K. Α. Ε. por lo que es referido como el K. Α. Ε. Αθλητική Ένωσις Κωνσταντινουπόλεως, o literalizado en su conjunto como Sociedad Anónima de Baloncesto Unión Atlética de Constantinopla..",
+   "url": "https://es.wikipedia.org/wiki/AEK_(baloncesto)",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1724": {
+  "name": "ALBA BERLIN",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q643795",
+   "basket": true,
+   "spain": false,
+   "founded": 1991,
+   "title": "ALBA Berlín",
+   "extract": "El ALBA Berlin es un club de baloncesto que juega en la BBL y en la Basketball Champions League. El equipo, con sede en Berlín, es también conocido como los Berlin Albatrosses. Disputa sus partidos en el Uber Arena, con capacidad para 16 000 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/ALBA_Berl%C3%ADn",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1717": {
+  "name": "BC Juventus Utena",
+  "league": "BCL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1716": {
+  "name": "BK KVIS Pardubice",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q2614588",
+   "basket": true,
+   "spain": false,
+   "founded": 1956,
+   "title": "BK Pardubice",
+   "extract": "El BK JIP Pardubice es un equipo de baloncesto checo que compite en la Národní Basketbalová Liga, la primera división del país. Tiene su sede en Pardubice. Disputa sus partidos en el ČEZ Arena, con capacidad para 10.300 espectadores y en la Hala Dukla, con capacidad para 800 espectadores",
+   "url": "https://es.wikipedia.org/wiki/BK_Pardubice",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1713": {
+  "name": "BMA365 Bamberg Baskets",
+  "league": "BCL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1725": {
+  "name": "Bnei Penlink Herzliya",
+  "league": "BCL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1719": {
+  "name": "Cholet Basket",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q1075934",
+   "basket": true,
+   "spain": false,
+   "founded": 1975,
+   "title": "Cholet Basket",
+   "extract": "Cholet Basket es un club de baloncesto francés, con sede en la ciudad de Cholet y fundado en 1975, que compite en la Liga Francesa. Disputa sus partidos en el pabellón de La Meilleraie, con capacidad para 5.191 personas.",
+   "url": "https://es.wikipedia.org/wiki/Cholet_Basket",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1704": {
+  "name": "Cibona",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q916967",
+   "basket": true,
+   "spain": false,
+   "founded": 1946,
+   "title": "Cibona Zagreb",
+   "extract": "El Cibona de Zagreb, denominado oficialmente KK Cibona, es un club de baloncesto croata de la ciudad de Zagreb. Actualmente participa en la Liga de Croacia, en la Liga Adriática y en la Eurocup. Su cancha de juego es el Dražen Petrović Basketball Hall, con capacidad para 5.400 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Cibona_Zagreb",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1727": {
+  "name": "FC Porto",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q1387505",
+   "basket": true,
+   "spain": false,
+   "founded": 1926,
+   "title": "FC Porto (baloncesto)",
+   "extract": "El Futebol Clube do Porto es un equipo de baloncesto portugués con sede en la ciudad de Oporto, que compite en la LPB, la máxima categoría del baloncesto portugués y en la tercera competición europea, la FIBA European Cup. Es la sección de baloncesto del F.C. Porto. Disputa sus partidos en el Dragão Caixa, con capacidad para 2200 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/FC_Porto_(baloncesto)",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1711": {
+  "name": "Falco-Vulcano Szombathely",
+  "league": "BCL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1705": {
+  "name": "Galatasaray MCT Technic",
+  "league": "BCL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1718": {
+  "name": "Hapoel Maoz Daniel Holon",
+  "league": "BCL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1722": {
+  "name": "Igokea m:tel",
+  "league": "BCL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1714": {
+  "name": "Itelyum Varese",
+  "league": "BCL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1707": {
+  "name": "Legia Warszawa",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q1812607",
+   "basket": true,
+   "spain": false,
+   "founded": 1916,
+   "title": "Legia Warsaw (sports club)",
+   "extract": null,
+   "url": "https://en.wikipedia.org/wiki/Legia_Warsaw_(sports_club)",
+   "shared": []
+  },
+  "ok": true
  }
 }

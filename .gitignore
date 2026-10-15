@@ -16,3 +16,4 @@ public/data/
 .netlify/
 __pycache__/
 dist-artifact/
+capturas/

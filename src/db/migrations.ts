@@ -655,5 +655,36 @@ INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, cou
 INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, country) VALUES
   ('BSL', 'Basketbol Süper Ligi', 'BSL', 'TBF', 1, 'TR');
 `
+  },
+  {
+    version: 17,
+    name: 'clasificacion_campeonatos',
+    sql: /* sql */ `
+-- Los campeonatos (sin liga regular) clasifican por su fase de grupos ('final' en la FEB).
+DROP VIEW v_standings;
+CREATE VIEW v_standings AS
+WITH regular AS (
+  SELECT g.* FROM games g LEFT JOIN rounds rd ON rd.id = g.round_id
+  WHERE g.status = 'finished' AND (COALESCE(rd.phase, 'regular') = 'regular'
+    OR (rd.phase = 'final' AND NOT EXISTS (
+      SELECT 1 FROM games g2 JOIN rounds r2 ON r2.id = g2.round_id
+      WHERE g2.competition_season_id = g.competition_season_id AND r2.phase = 'regular')))
+),
+results AS (
+  SELECT competition_season_id, home_team_id AS team_id,
+         (home_score > away_score) AS won, home_score AS pf, away_score AS pa
+  FROM regular
+  UNION ALL
+  SELECT competition_season_id, away_team_id,
+         (away_score > home_score), away_score, home_score
+  FROM regular
+)
+SELECT r.competition_season_id, r.team_id, t.name AS team_name, t.logo_url,
+       COUNT(*) AS played, SUM(r.won) AS won, COUNT(*) - SUM(r.won) AS lost,
+       SUM(r.pf) AS points_for, SUM(r.pa) AS points_against,
+       SUM(r.pf) - SUM(r.pa) AS diff
+FROM results r JOIN teams t ON t.id = r.team_id
+GROUP BY r.competition_season_id, r.team_id;
+`
   }
 ]
