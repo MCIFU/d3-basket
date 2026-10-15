@@ -335,7 +335,7 @@ export interface TrajectoryRow extends StatBlock {
   /** Club del que es filial el equipo (si lo es). */
   parent_name: string | null
   parent_ref: string | null
-  section: 'liga' | 'filial' | 'copa' | 'europa' | 'seleccion'
+  section: 'liga' | 'filial' | 'copa' | 'europa' | 'seleccion' | 'formacion'
   source: 'boxscores' | 'acb'
 }
 

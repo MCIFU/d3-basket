@@ -186,7 +186,17 @@ async function main() {
     'segunda-feb': 'LEB_PLATA',
     'leb-plata': 'LEB_PLATA',
     'tercera-feb': 'TERCERA_FEB',
-    'copa-espana': 'COPA_ESPANA'
+    'copa-espana': 'COPA_ESPANA',
+    'cesa-inf-m': 'CESA_INF_M',
+    'cesa-inf-f': 'CESA_INF_F',
+    'cesa-cad-m': 'CESA_CAD_M',
+    'cesa-cad-f': 'CESA_CAD_F',
+    'ce-jun-m': 'CE_JUN_M',
+    'ce-jun-f': 'CE_JUN_F',
+    'ce-cad-m': 'CE_CAD_M',
+    'ce-cad-f': 'CE_CAD_F',
+    'ce-inf-m': 'CE_INF_M',
+    'ce-inf-f': 'CE_INF_F'
   }
   const febCompetition = league ? FEB_ALIASES[league.toLowerCase()] : undefined
   const EURO_ALIASES: Record<string, EuroCompetition> = { euroleague: 'EUROLEAGUE', euroliga: 'EUROLEAGUE', eurocup: 'EUROCUP' }

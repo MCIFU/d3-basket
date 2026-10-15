@@ -740,7 +740,8 @@ const SECTIONS: [TrajectoryRow['section'], string, string][] = [
   ['filial', 'Filial y equipos vinculados', 'Minutos en el filial o el equipo vinculado'],
   ['copa', 'Copa', 'Copa España (FEB)'],
   ['europa', 'Competiciones europeas', 'EuroLeague, EuroCup, Basketball Champions League…'],
-  ['seleccion', 'Selección', 'Partidos con su selección']
+  ['formacion', 'Formación', 'Campeonatos de España de clubes (junior, cadete, infantil)'],
+  ['seleccion', 'Selección', 'Selección autonómica (CESA) y nacional']
 ]
 
 /** Apartados que todavía no tienen datos en D3 Basket (Europa y selección). */

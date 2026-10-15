@@ -629,5 +629,23 @@ INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, cou
   ('PROA', 'ProA', 'ProA', '2. Basketball-Bundesliga', 2, 'DE'),
   ('GBL', 'Greek Basketball League', 'GBL', 'ESAKE', 1, 'GR');
 `
+  },
+  {
+    version: 15,
+    name: 'campeonatos_espana',
+    sql: /* sql */ `
+-- Campeonatos de España de formación: selecciones autonómicas (CESA) y clubes.
+INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, country) VALUES
+  ('CESA_INF_M', 'CESA Infantil masculino', 'CESA Infantil masculino', 'FEB', NULL, 'ES'),
+  ('CESA_INF_F', 'CESA Infantil femenino', 'CESA Infantil femenino', 'FEB', NULL, 'ES'),
+  ('CESA_CAD_M', 'CESA Cadete masculino', 'CESA Cadete masculino', 'FEB', NULL, 'ES'),
+  ('CESA_CAD_F', 'CESA Cadete femenino', 'CESA Cadete femenino', 'FEB', NULL, 'ES'),
+  ('CE_JUN_M', 'Cto. España Junior masculino', 'Junior masculino', 'FEB', NULL, 'ES'),
+  ('CE_JUN_F', 'Cto. España Junior femenino', 'Junior femenino', 'FEB', NULL, 'ES'),
+  ('CE_CAD_M', 'Cto. España Cadete masculino', 'Cadete masculino', 'FEB', NULL, 'ES'),
+  ('CE_CAD_F', 'Cto. España Cadete femenino', 'Cadete femenino', 'FEB', NULL, 'ES'),
+  ('CE_INF_M', 'Cto. España Infantil masculino', 'Infantil masculino', 'FEB', NULL, 'ES'),
+  ('CE_INF_F', 'Cto. España Infantil femenino', 'Infantil femenino', 'FEB', NULL, 'ES');
+`
   }
 ]

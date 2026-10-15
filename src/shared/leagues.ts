@@ -80,6 +80,97 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     logo: 'media/leagues/tercera_feb.png',
     zones: []
   },
+  // Campeonatos de España de formación (FEB): azul marino y naranja de sus logos oficiales.
+  CESA_INF_M: {
+    name: 'CESA Infantil M',
+    division: 'Campeonato · Selecciones autonómicas',
+    color: '#1b2d4f',
+    color2: '#f26b1d',
+    ink: '#ffffff',
+    logo: 'media/leagues/cesa_inf_m.png',
+    zones: []
+  },
+  CESA_INF_F: {
+    name: 'CESA Infantil F',
+    division: 'Campeonato · Selecciones autonómicas',
+    color: '#1b2d4f',
+    color2: '#f26b1d',
+    ink: '#ffffff',
+    logo: 'media/leagues/cesa_inf_f.png',
+    zones: []
+  },
+  CESA_CAD_M: {
+    name: 'CESA Cadete M',
+    division: 'Campeonato · Selecciones autonómicas',
+    color: '#1b2d4f',
+    color2: '#f26b1d',
+    ink: '#ffffff',
+    logo: 'media/leagues/cesa_cad_m.png',
+    zones: []
+  },
+  CESA_CAD_F: {
+    name: 'CESA Cadete F',
+    division: 'Campeonato · Selecciones autonómicas',
+    color: '#1b2d4f',
+    color2: '#f26b1d',
+    ink: '#ffffff',
+    logo: 'media/leagues/cesa_cad_f.png',
+    zones: []
+  },
+  CE_JUN_M: {
+    name: 'Junior M',
+    division: 'Campeonato · Clubes',
+    color: '#1b2d4f',
+    color2: '#f26b1d',
+    ink: '#ffffff',
+    logo: 'media/leagues/ce_jun_m.png',
+    zones: []
+  },
+  CE_JUN_F: {
+    name: 'Junior F',
+    division: 'Campeonato · Clubes',
+    color: '#1b2d4f',
+    color2: '#f26b1d',
+    ink: '#ffffff',
+    logo: 'media/leagues/ce_jun_f.png',
+    zones: []
+  },
+  CE_CAD_M: {
+    name: 'Cadete M',
+    division: 'Campeonato · Clubes',
+    color: '#1b2d4f',
+    color2: '#f26b1d',
+    ink: '#ffffff',
+    logo: 'media/leagues/ce_cad_m.png',
+    zones: []
+  },
+  CE_CAD_F: {
+    name: 'Cadete F',
+    division: 'Campeonato · Clubes',
+    color: '#1b2d4f',
+    color2: '#f26b1d',
+    ink: '#ffffff',
+    logo: 'media/leagues/ce_cad_f.png',
+    zones: []
+  },
+  CE_INF_M: {
+    name: 'Infantil M',
+    division: 'Campeonato · Clubes',
+    color: '#1b2d4f',
+    color2: '#f26b1d',
+    ink: '#ffffff',
+    logo: 'media/leagues/ce_inf_m.png',
+    zones: []
+  },
+  CE_INF_F: {
+    name: 'Infantil F',
+    division: 'Campeonato · Clubes',
+    color: '#1b2d4f',
+    color2: '#f26b1d',
+    ink: '#ffffff',
+    logo: 'media/leagues/ce_inf_f.png',
+    zones: []
+  },
   // Europa: colores de las marcas de Euroleague Basketball (naranja EuroLeague, azul EuroCup).
   EUROLEAGUE: {
     name: 'EuroLeague',

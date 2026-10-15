@@ -80,7 +80,8 @@ export function Layout({ route, children }: { route: Route; children: ReactNode 
           ))}
         </nav>
         {[
-          ['España', Object.entries(LEAGUES).filter(([, l]) => !l.division.startsWith('Europa'))],
+          ['España', Object.entries(LEAGUES).filter(([, l]) => !/^(Europa|Campeonato)/.test(l.division))],
+          ['Campeonatos de España', Object.entries(LEAGUES).filter(([, l]) => l.division.startsWith('Campeonato'))],
           ['Europa', Object.entries(LEAGUES).filter(([, l]) => l.division.startsWith('Europa'))]
         ].map(([title, list]) => (
           <div key={title as string} className="side-leagues">

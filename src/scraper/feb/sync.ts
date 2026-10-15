@@ -30,6 +30,9 @@ export class FebScraper {
     const startYear = opts.season ?? currentSeasonStart()
     // La Copa España se juega desde 2024-25: antes no existía.
     if (competition === 'COPA_ESPANA' && startYear < 2024) throw new Error('La Copa España empezó en la temporada 2024-25')
+    // Los campeonatos de formación se juegan en primavera: la FEB devuelve la edición anterior si se
+    // pide una que aún no existe.
+    if (/^CES?A?_/.test(competition) && startYear >= currentSeasonStart()) throw new Error(`${name} ${startYear}: aún no se ha disputado`)
     const label = `${name} ${startYear}-${String(startYear + 1).slice(-2)}`
     const runId = this.w.startRun('feb', `${competition}:${startYear}`)
     const summary: SyncSummary = {

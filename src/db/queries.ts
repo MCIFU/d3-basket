@@ -177,10 +177,11 @@ export function leagueRanks(all: StatBlock[], me: StatBlock): Record<string, { r
  * Apartado de la carrera al que pertenece un partido o una temporada: liga con el primer
  * equipo, con un filial, copa, competiciones europeas o selección (estas dos, para el futuro).
  */
-export type CareerSection = 'liga' | 'filial' | 'copa' | 'europa' | 'seleccion'
+export type CareerSection = 'liga' | 'filial' | 'copa' | 'europa' | 'seleccion' | 'formacion'
 const EUROPE = /^(EUROLEAGUE|EUROCUP|BCL|FIBA_EUROPE_CUP|CHAMPIONS)/
 export function sectionOf(code: string, parentName: string | null | undefined): CareerSection {
-  if (/^(SELECCION|NATIONAL)/.test(code)) return 'seleccion'
+  if (/^(SELECCION|NATIONAL|CESA_)/.test(code)) return 'seleccion'
+  if (/^CE_/.test(code)) return 'formacion'
   if (EUROPE.test(code)) return 'europa'
   if (/COPA/.test(code)) return 'copa'
   return parentName ? 'filial' : 'liga'
