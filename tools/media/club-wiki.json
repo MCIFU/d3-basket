@@ -3047,5 +3047,352 @@
    "shared": []
   },
   "ok": true
+ },
+ "i1710": {
+  "name": "Windrose Giants Antwerp",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q723874",
+   "basket": true,
+   "spain": false,
+   "founded": 1910,
+   "title": "Antwerp Giants",
+   "extract": "El Antwerp Giants, conocido por motivos de patrocinio como Telenet Giants Antwerp, es un club de baloncesto profesional de la ciudad de Amberes, que milita en la BNXT League, la nueva liga fruto de la fusión de la Dutch Basketball League neerlandesa y la Pro Basketball League belga. Disputa sus partidos en el Lotto Arena, con capacidad para 5218 espectadores. El club fue creado a partir de la fusión de Sobabee y Racing Mechelen BC. Entonces llamado Racing Basket Antwerpen, fue rebautizado a Antwerp Giants en 2005",
+   "url": "https://es.wikipedia.org/wiki/Antwerp_Giants",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1671": {
+  "name": "Aris Thessaloniki",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q8383824",
+   "basket": true,
+   "spain": false,
+   "founded": 1922,
+   "title": "Aris Salónica BC",
+   "extract": "El Aris de Tesalónica BC, o también Aris de Salónica BC, es la sección de baloncesto de la sociedad polideportiva Aris Tesalónica creada en 1922. Es el primer club de baloncesto de Salónica, anterior al PAOK Salónica BC, y el tercer club de baloncesto de Grecia en número de títulos, tras el Panathinaikos B. C. de Atenas y el Olympiakos B. C. de El Pireo.",
+   "url": "https://es.wikipedia.org/wiki/Aris_Sal%C3%B3nica_BC",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1675": {
+  "name": "BOSNA BH Telecom Sarajevo",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1672": {
+  "name": "Baglietto Derthona Tortona",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1673": {
+  "name": "Bahcesehir College Istanbul",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1674": {
+  "name": "Balkan Botevgrad",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q1983809",
+   "basket": true,
+   "spain": false,
+   "founded": 1947,
+   "title": "BC Balkan Botevgrad",
+   "extract": "El BC Balkan Botevgrad es un equipo de baloncesto búlgaro que compite en la NBL, la primera división del país y en la Balkan League. Tiene su sede en la ciudad de Botevgrad. Disputa sus partidos en el Arena Botevgrad, con capacidad para 4500 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/BC_Balkan_Botevgrad",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1676": {
+  "name": "Buducnost VOLI Podgorica",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1677": {
+  "name": "Cedevita Olimpija Ljubljana",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1678": {
+  "name": "Cosea JL Bourg-en-Bresse",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1679": {
+  "name": "Dolomiti Energia Trento",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q51167",
+   "basket": true,
+   "spain": false,
+   "founded": 1995,
+   "title": "Aquila Basket Trento",
+   "extract": "El Aquila Basket Trento, conocido también por motivos de patrocinio como Dolomiti Energia Trento es un equipo de baloncesto italiano con sede en la ciudad de Trento, que compite en la Serie A, la máxima división del baloncesto italiano y en la segunda competición europea, la Eurocup. Disputa sus partidos en el PalaTrento, con capacidad para 4000 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Aquila_Basket_Trento",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1680": {
+  "name": "Hapoel Midtown Jerusalem",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1681": {
+  "name": "Le Mans Sarthe Basket",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q40063",
+   "basket": true,
+   "spain": false,
+   "founded": 1939,
+   "title": "Le Mans Sarthe Basket",
+   "extract": "Le Mans Sarthe Basket, conocido a menudo como MSB. es un club de baloncesto francés, de la ciudad de Le Mans. Aunque la sección de baloncesto fue creada en 1939.",
+   "url": "https://es.wikipedia.org/wiki/Le_Mans_Sarthe_Basket",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1682": {
+  "name": "Lietkabelis Panevezys",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q47101",
+   "basket": true,
+   "spain": false,
+   "founded": 1964,
+   "title": "Krepšinio klubas Lietkabelis",
+   "extract": "El Krepšinio klubas Lietkabelis es un club profesional de baloncesto basado en Panevėžys, Lituania fundado en 1964 y que participa en la LKL y en la BBL. Disputa sus encuentros como local en el Cido Arena, con capacidad para 5.656 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Krep%C5%A1inio_klubas_Lietkabelis",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1683": {
+  "name": "London Lions",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q106624188",
+   "basket": true,
+   "spain": false,
+   "founded": null,
+   "title": "London Lions (women)",
+   "extract": null,
+   "url": "https://en.wikipedia.org/wiki/London_Lions_(women)",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1684": {
+  "name": "Maxima Roma",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q140465833",
+   "basket": true,
+   "spain": false,
+   "founded": 2026,
+   "title": "Maxima Roma",
+   "extract": "El Maxima Roma es un equipo de baloncesto italiano con sede en la ciudad de Roma, Lacio. Compite en la Serie A, la máxima división del baloncesto en Italia, y en la EuroCup. Disputa sus partidos en el PalaEUR, con capacidad para 11.200 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Maxima_Roma",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1687": {
+  "name": "NINERS Chemnitz",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q797164",
+   "basket": true,
+   "spain": false,
+   "founded": 1999,
+   "title": "Niners Chemnitz",
+   "extract": "El Niners Chemnitz es un equipo de baloncesto alemán con sede en la ciudad de Chemnitz, que compite en la Basketball Bundesliga, la primera división de su país, tras ascender en 2020. Disputa sus partidos en el Chemnitz Arena, con capacidad para 5400 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Niners_Chemnitz",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1685": {
+  "name": "Napoli Basketball",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1686": {
+  "name": "Neptunas Klaipeda",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q928945",
+   "basket": true,
+   "spain": false,
+   "founded": 1964,
+   "title": "BC Neptūnas Klaipėda",
+   "extract": "BC Neptūnas es un club de baloncesto lituano, con sede en la ciudad de Klaipėda. Fundado en 1964, y compite en la Lietuvos Krepšinio Lyga, la primera competición de su país, la ULEB Eurocup, la segunda competición europea y la liga VTB. Disputan sus partidos como local en el Švyturio Arena, con capacidad para 6.200 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/BC_Nept%C5%ABnas_Klaip%C4%97da",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1688": {
+  "name": "PAOK Thessaloniki",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1690": {
+  "name": "Riga Zelli",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1691": {
+  "name": "Roma Basketball",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1692": {
+  "name": "Rostock Seawolves",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q18009233",
+   "basket": true,
+   "spain": false,
+   "founded": 1994,
+   "title": "Rostock Seawolves",
+   "extract": "El Rostock Seawolves es un equipo de baloncesto alemán con sede en la ciudad de Rostock, Mecklemburgo-Pomerania Occidental, que compite en la Basketball Bundesliga, la primera categoría del baloncesto alemán. Disputa sus partidos en el Stadthalle Rostock, con capacidad para 4.550 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Rostock_Seawolves",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1693": {
+  "name": "Siauliai Basketball",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1694": {
+  "name": "Skyliners Frankfurt",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q836109",
+   "basket": true,
+   "spain": false,
+   "founded": 1999,
+   "title": "Skyliners Fráncfort",
+   "extract": "El Skyliners Fráncfort, también conocido por motivos de patrocinio como Fraport Skyliners Frankfurt, es un equipo de baloncesto alemán con sede en la ciudad de Fráncfort, Hesse, que compite en la BBL y en la tercera competición europea, la FIBA European Cup. Disputa sus partidos en el Ballsporthalle, con capacidad para 5000 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Skyliners_Fr%C3%A1ncfort",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1695": {
+  "name": "Slask Wroclaw",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q2638139",
+   "basket": true,
+   "spain": false,
+   "founded": 1947,
+   "title": "Śląsk Wrocław (baloncesto)",
+   "extract": "El WKS Śląsk Wrocław es un equipo de baloncesto polaco que compite en la TBL, la primera división del país y en la tercera competición europea, la FIBA European Cup. Tiene su sede en la ciudad de Breslavia. Disputa sus partidos en el Hala Orbita, con capacidad para 3000 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/%C5%9Al%C4%85sk_Wroc%C5%82aw_(baloncesto)",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1696": {
+  "name": "Tofas Bursa",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q2278800",
+   "basket": true,
+   "spain": false,
+   "founded": 1974,
+   "title": "Tofaş Spor Kulübü",
+   "extract": "El Tofaş Spor Kulübü, más conocido como Tofaş Bursa, es un equipo de baloncesto turco con sede en la ciudad de Bursa, que compite en la BSL, la máxima división de su país. Disputa sus partidos en el Bursa Atatürk Spor Salonu, con capacidad para 3,500 espectadores. El equipo está patrocinado por TOFAŞ, que es un fabricante turco de automóviles.",
+   "url": "https://es.wikipedia.org/wiki/Tofa%C5%9F_Spor_Kul%C3%BCb%C3%BC",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1697": {
+  "name": "Turk Telekom Ankara",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q1781239",
+   "basket": true,
+   "spain": false,
+   "founded": 1954,
+   "title": "Türk Telekom Basketbol Kulubü",
+   "extract": "El Türk Telekom Basketbol Kulubü es un equipo de baloncesto turco que compite en la BSL, la primera división de su país. Tiene su sede en Ankara y pertenece a la sociedad deportiva Türk Telekom Gençlik Spor Kulübü. Disputa sus partidos en el Ankara Arena, con capacidad para 10,400 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/T%C3%BCrk_Telekom_Basketbol_Kulub%C3%BC",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1698": {
+  "name": "U-BT Cluj-Napoca",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": {
+   "qid": "Q2894335",
+   "basket": true,
+   "spain": false,
+   "founded": 1947,
+   "title": "U-BT Cluj-Napoca",
+   "extract": "El U-BT Cluj-Napoca es un equipo de baloncesto rumano con sede en la ciudad de Cluj-Napoca, que compite en la Liga Națională, la máxima competición de su país y en la Basketball Champions League, la tercera competición europea. Disputa sus partidos en la Sala Polivalentă, con capacidad para 10,000 espectadores y en la Sala Sporturilor Horia Demian, con capacidad para 2,525 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/U-BT_Cluj-Napoca",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1699": {
+  "name": "Umana Reyer Venice",
+  "league": "EUROCUP",
+  "arena": null,
+  "match": null,
+  "ok": false
  }
 }
