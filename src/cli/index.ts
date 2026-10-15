@@ -133,6 +133,8 @@ async function main() {
         if (x.socials) setSocials.run(JSON.stringify({ ...x.socials, ...(club.socials ? JSON.parse(club.socials) : {}) }), id)
         // El aforo de Wikidata solo si es el mismo pabellón en el que juega ahora.
         if (x.arena_capacity && x.arena && club.arena && [...words(x.arena)].some((w) => words(club.arena!).has(w))) setCapacity.run(x.arena_capacity, id)
+        // Sin pabellón conocido (clubes europeos): el de Wikidata con su aforo.
+        if (!club.arena && x.arena) db.prepare('UPDATE clubs SET arena = ?, arena_capacity = COALESCE(arena_capacity, ?) WHERE id = ?').run(x.arena, x.arena_capacity ?? null, id)
       }
     })()
     console.log(`✔ ${n} clubes completados con Wikipedia/Wikidata (fundación, historia, ciudad, web, redes y aforo)`)

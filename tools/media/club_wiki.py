@@ -118,6 +118,49 @@ def candidates(db: str, leagues: list[str]):
         OUT.write_text(json.dumps(out, indent=1, ensure_ascii=False) + '\n')
 
 
+def candidates_eu(db: str):
+    """Clubes de las competiciones europeas: búsqueda directa en Wikidata (sin filtro de país)."""
+    con = sqlite3.connect(db)
+    clubs = con.execute(
+        """SELECT cr.ref, t.name, c.arena, co.code FROM teams t JOIN clubs c ON c.id = t.club_id
+           JOIN v_club_ref cr ON cr.club_id = c.id
+           JOIN competition_seasons cs ON cs.id = t.competition_season_id AND cs.is_current = 1
+           JOIN competitions co ON co.id = cs.competition_id
+           WHERE co.country != 'ES' AND c.history IS NULL GROUP BY c.id ORDER BY co.code, t.name""").fetchall()
+    con.close()
+    out = json.loads(OUT.read_text()) if OUT.exists() else {}
+    for ref, name, arena, code in clubs:
+        if ref in out:
+            continue
+        found = None
+        r = get('https://www.wikidata.org/w/api.php?' + urllib.parse.urlencode(
+            {'action': 'wbsearchentities', 'search': name, 'language': 'en', 'type': 'item', 'limit': 5, 'format': 'json'}))
+        for hit in r.get('search', []):
+            e = get(f"https://www.wikidata.org/wiki/Special:EntityData/{hit['id']}.json")['entities'][hit['id']]
+            claims = e.get('claims', {})
+            ids = lambda p: {c['mainsnak'].get('datavalue', {}).get('value', {}).get('id') for c in claims.get(p, [])}
+            if not (ids('P31') & BASKET) or (ids('P641') and 'Q5372' not in ids('P641')):
+                continue
+            founded = None
+            for c in claims.get('P571', []):
+                t = c['mainsnak'].get('datavalue', {}).get('value', {}).get('time')
+                if t:
+                    founded = int(t[1:5])
+                    break
+            links = e.get('sitelinks', {})
+            wiki, title = next(((w, links[f'{w}wiki']['title']) for w in ('es', 'en') if f'{w}wiki' in links), (None, None))
+            extract = url = None
+            if title:
+                j = get(f'https://{wiki}.wikipedia.org/api/rest_v1/page/summary/' + urllib.parse.quote(title.replace(' ', '_')))
+                extract, url = j.get('extract'), j.get('content_urls', {}).get('desktop', {}).get('page')
+            found = {'qid': hit['id'], 'basket': True, 'spain': False, 'founded': founded, 'title': title or hit.get('label'),
+                     'extract': extract if wiki == 'es' else None, 'url': url, 'shared': []}
+            break
+        out[ref] = {'name': name, 'league': code, 'arena': arena, 'match': found, 'ok': bool(found)}
+        print(f"{'✓' if found else '·'} {name} → {found['title'] if found else '-'} ({found and found['founded']})", flush=True)
+        OUT.write_text(json.dumps(out, indent=1, ensure_ascii=False) + '\n')
+
+
 def label(qid: str):
     e = get(f'https://www.wikidata.org/wiki/Special:EntityData/{qid}.json')['entities'][qid]
     return e, (e.get('labels', {}).get('es') or e.get('labels', {}).get('en') or {}).get('value')
@@ -163,12 +206,14 @@ def enrich():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('command', choices=['candidates', 'enrich'])
+    ap.add_argument('command', choices=['candidates', 'candidates-eu', 'enrich'])
     ap.add_argument('--db', default=str(ROOT / 'data' / 'd3basket.db'))
     ap.add_argument('--leagues', default='LEB_ORO,LEB_PLATA')
     args = ap.parse_args()
     if args.command == 'enrich':
         return enrich()
+    if args.command == 'candidates-eu':
+        return candidates_eu(args.db)
     candidates(args.db, args.leagues.split(','))
 
 

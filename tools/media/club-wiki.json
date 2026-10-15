@@ -2426,5 +2426,99 @@
    }
   },
   "ok": true
+ },
+ "i1846": {
+  "name": "ALBA BERLIN",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q643795",
+   "basket": true,
+   "spain": false,
+   "founded": 1991,
+   "title": "ALBA Berlín",
+   "extract": "El ALBA Berlin es un club de baloncesto que juega en la BBL y en la Basketball Champions League. El equipo, con sede en Berlín, es también conocido como los Berlin Albatrosses. Disputa sus partidos en el Uber Arena, con capacidad para 16 000 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/ALBA_Berl%C3%ADn",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1849": {
+  "name": "BMA365 Bamberg Baskets",
+  "league": "BBL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1839": {
+  "name": "Basketball Löwen Braunschweig",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q532269",
+   "basket": true,
+   "spain": false,
+   "founded": 2000,
+   "title": "Basketball Löwen Braunschweig",
+   "extract": "El Basketball Löwen Braunschweig es un equipo de baloncesto profesional de la ciudad de Braunschweig (Alemania) que milita en la máxima categoría del baloncesto teutón: la BBL. Disputa sus partidos en el Volkswagen-Halle, con capacidad para 6.600 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Basketball_L%C3%B6wen_Braunschweig",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1843": {
+  "name": "EWE Baskets Oldenburg",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q707861",
+   "basket": true,
+   "spain": false,
+   "founded": 2001,
+   "title": "EWE Baskets Oldemburgo",
+   "extract": "El EWE Baskets Oldenburg también conocido anteriormente como Oldenburger TB es un equipo de baloncesto alemán con sede en la ciudad de Oldenburg, Baja Sajonia, que compite en la BBL y en la segunda competición europea, la Eurocup. Disputa sus partidos en el Large EWE Arena, con capacidad para 6.069 espectadores. El club es patrocinado por EWE AG, una compañía eléctrica.",
+   "url": "https://es.wikipedia.org/wiki/EWE_Baskets_Oldemburgo",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1852": {
+  "name": "FC Bayern München Basketball",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q600149",
+   "basket": true,
+   "spain": false,
+   "founded": 1946,
+   "title": "Bayern de Múnich (baloncesto)",
+   "extract": "El FC Bayern de Múnich es una sección deportiva de baloncesto profesional del club de fútbol Bayern de Múnich. Tiene sede en la ciudad de Múnich, Alemania, y milita en la BBL, máxima categoría del baloncesto alemán y en la Euroliga, máxima categoría continental. Disputa sus partidos en el BMW Park, con capacidad para 6500 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Bayern_de_M%C3%BAnich_(baloncesto)",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1848": {
+  "name": "Fitness First Würzburg Baskets",
+  "league": "BBL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1840": {
+  "name": "MHP RIESEN Ludwigsburg",
+  "league": "BBL",
+  "arena": null,
+  "match": {
+   "qid": "Q553293",
+   "basket": true,
+   "spain": false,
+   "founded": 1960,
+   "title": "MHP Riesen Ludwigsburg",
+   "extract": "El MHP RIESEN Ludwigsburg es un equipo de baloncesto alemán con sede en la ciudad de Ludwigsburg, Baden-Wurtemberg, que compite en la BBL y en la segunda competición europea, la Eurocup. Disputa sus partidos en el Arena Ludwigsburg, con capacidad para 5.325 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/MHP_Riesen_Ludwigsburg",
+   "shared": []
+  },
+  "ok": true
  }
 }
