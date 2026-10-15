@@ -4103,5 +4103,241 @@
    "shared": []
   },
   "ok": true
+ },
+ "i1862": {
+  "name": "Le Mans",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": {
+   "qid": "Q40063",
+   "basket": true,
+   "spain": false,
+   "founded": 1939,
+   "title": "Le Mans Sarthe Basket",
+   "extract": "Le Mans Sarthe Basket, conocido a menudo como MSB. es un club de baloncesto francés, de la ciudad de Le Mans. Aunque la sección de baloncesto fue creada en 1939.",
+   "url": "https://es.wikipedia.org/wiki/Le_Mans_Sarthe_Basket",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1860": {
+  "name": "Limoges",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": {
+   "qid": "Q1419876",
+   "basket": true,
+   "spain": false,
+   "founded": 1929,
+   "title": "CSP Limoges",
+   "extract": "El Cercle Saint-Pierre de Limoges es el nombre de un club de baloncesto francés con sede en la ciudad de Limoges. Fundado en 1929, vivió sus mejores momentos en los años 1980 y 90, cuando conquistó los más importantes títulos de Francia en diversas ocasiones, así como diversos títulos europeos, incluida la Euroliga conquistada en 1993. En la temporada 1981-1982 y 1982-83 ganó la Copa Korac contra el Sibenka Sibenik. La primera fue en Pádova y la segunda en Berlín. En la temporada 1987-1988 ganó la Recopa en Grenoble contra el Joventut de Badalona (96-89). Actualmente compite en la Pro A.",
+   "url": "https://es.wikipedia.org/wiki/CSP_Limoges",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1870": {
+  "name": "Lyon-Villeurbanne",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1867": {
+  "name": "Nancy",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1865": {
+  "name": "Nanterre",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": {
+   "qid": "Q1630671",
+   "basket": true,
+   "spain": false,
+   "founded": 1927,
+   "title": "Nanterre 92",
+   "extract": "El Nanterre 92, conocido hasta 2016 como Jeunesse Sportive des Fontenelles de Nanterre o JSF Nanterre es una asociación deportiva francesa de baloncesto situado en la ciudad de Nanterre, que juega en la LNB, la máxima categoría del baloncesto francés y en la Eurocup, la segunda competición europea más importante.",
+   "url": "https://es.wikipedia.org/wiki/Nanterre_92",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1868": {
+  "name": "Paris",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1866": {
+  "name": "Pau-Lacq-Orthez",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": {
+   "qid": "Q274566",
+   "basket": true,
+   "spain": false,
+   "founded": 1931,
+   "title": "ÉB Pau-Orthez",
+   "extract": "El Élan Béarnais Pau-Lacq-Orthez (ÉBPLO) es un club profesional de baloncesto francés con sede en Pau, capital del Bearne en el suroeste de Francia. El equipo ha tenido un impacto significativo en la escena del baloncesto francés, destacando por sus logros y rivalidades a lo largo de las décadas. El club bearnes milita en la LNB Élite, primera categoría del país galo.",
+   "url": "https://es.wikipedia.org/wiki/%C3%89B_Pau-Orthez",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1858": {
+  "name": "Roanne",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1863": {
+  "name": "Saint-Quentin",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1856": {
+  "name": "Strasbourg",
+  "league": "LNB_ELITE",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1880": {
+  "name": "Aix-Maurienne",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": {
+   "qid": "Q2828828",
+   "basket": true,
+   "spain": false,
+   "founded": 2005,
+   "title": "Aix Maurienne Savoie Basket",
+   "extract": "El Aix Maurienne Savoie Basket (AMSB) es un equipo de baloncesto francés con sede en la ciudad de Aix-les-Bains, que compite en la Pro B, la segunda competición de su país. Disputa sus partidos en la Halle Marlioz, con capacidad para 1.900 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Aix_Maurienne_Savoie_Basket",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1887": {
+  "name": "Antibes",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1882": {
+  "name": "Blois",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1879": {
+  "name": "Caen",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1890": {
+  "name": "Châlons-Reims",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1881": {
+  "name": "Denain",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1876": {
+  "name": "Evreux",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1885": {
+  "name": "Fos-sur-Mer",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1872": {
+  "name": "Gries-Souffel",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1886": {
+  "name": "Hyères-Toulon",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": {
+   "qid": "Q1630116",
+   "basket": true,
+   "spain": false,
+   "founded": 1990,
+   "title": "Hyères-Toulon Var Basket",
+   "extract": "Hyères-Toulon Var Basket, más conocido como Hyères-Toulon o, simplemente HTV, es un club de baloncesto francés, con sede en la ciudad de Toulon. Compite en la NM1, la tercera división del país. Disputa sus partidos en el Palais des sports Jauréguiberry, con capacidad para 4.217 personas,y en el Espace 3000, con capacidad para 2200 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Hy%C3%A8res-Toulon_Var_Basket",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1871": {
+  "name": "La Rochelle",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1873": {
+  "name": "Le Havre",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1884": {
+  "name": "Levallois",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1888": {
+  "name": "Nantes",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1889": {
+  "name": "Orléans",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1875": {
+  "name": "Poitiers",
+  "league": "LNB_ELITE2",
+  "arena": null,
+  "match": null,
+  "ok": false
  }
 }
