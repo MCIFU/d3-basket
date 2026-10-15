@@ -30,6 +30,7 @@ export function applyMedia(db: DB, mediaDir: string): { players: number; logos: 
   db.transaction(() => {
     fillClubInfo(db)
     fixBirthDates(db)
+    fillValuation(db)
     const filialesFile = path.join(mediaDir, 'filiales.json')
     if (fs.existsSync(filialesFile)) {
       const byRef = db.prepare(
@@ -131,6 +132,15 @@ function hideMinorsPhotos(db: DB) {
        AND id NOT IN (SELECT r.player_id FROM roster_entries r JOIN teams t ON t.id = r.team_id
                   JOIN competition_seasons cs ON cs.id = t.competition_season_id JOIN competitions c ON c.id = cs.competition_id
                   WHERE c.code NOT LIKE 'CE\\_%' ESCAPE '\\' AND c.code NOT LIKE 'CESA\\_%' ESCAPE '\\')`
+  ).run()
+}
+
+/** Valoración (PIR) cuando la fuente no la publica (Sofascore, ProA): fórmula estándar. */
+function fillValuation(db: DB) {
+  db.prepare(
+    `UPDATE player_game_stats SET pir = points + reb + ast + stl + blk + fouls_drawn
+       - (fg2a - fg2m) - (fg3a - fg3m) - (fta - ftm) - tov - pf - blk_against
+     WHERE pir IS NULL`
   ).run()
 }
 
