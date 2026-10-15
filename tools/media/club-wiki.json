@@ -2960,5 +2960,92 @@
    "shared": []
   },
   "ok": true
+ },
+ "i1723": {
+  "name": "SK Slavia Praha ERA NBK",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q56155073",
+   "basket": true,
+   "spain": false,
+   "founded": null,
+   "title": "SK Slavia Prague ERA NBK",
+   "extract": null,
+   "url": "https://en.wikipedia.org/wiki/SK_Slavia_Prague_ERA_NBK",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1701": {
+  "name": "Sabah BC",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q121878738",
+   "basket": true,
+   "spain": false,
+   "founded": 2022,
+   "title": "Sabah BC",
+   "extract": null,
+   "url": "https://en.wikipedia.org/wiki/Sabah_BC",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1709": {
+  "name": "Salon Vilpas",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q14325622",
+   "basket": true,
+   "spain": false,
+   "founded": 1908,
+   "title": "Salon Vilpas",
+   "extract": null,
+   "url": null,
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1720": {
+  "name": "Spartak Office Shoes",
+  "league": "BCL",
+  "arena": null,
+  "match": null,
+  "ok": false
+ },
+ "i1726": {
+  "name": "Telekom Baskets Bonn",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q704072",
+   "basket": true,
+   "spain": false,
+   "founded": 1995,
+   "title": "Telekom Baskets Bonn",
+   "extract": "El Telekom Baskets Bonn, comúnmente conocido como Baskets Bonn, es un equipo de baloncesto profesional de la ciudad de Bonn (Alemania) que militá en la máxima categoría del baloncesto teutón: la BBL y en la tercera competición europea, la BCL. El patrocinador del club es la compañía alemana Deutsche Telekom, una gran empresa de telefonía e internet, que también vende móviles (T-Mobile) en Estados Unidos. Disputa sus encuentros como local en el Telekom-Dome, pabellón con capacidad para 6000 espectadores.",
+   "url": "https://es.wikipedia.org/wiki/Telekom_Baskets_Bonn",
+   "shared": []
+  },
+  "ok": true
+ },
+ "i1702": {
+  "name": "Trabzonspor",
+  "league": "BCL",
+  "arena": null,
+  "match": {
+   "qid": "Q2128426",
+   "basket": true,
+   "spain": false,
+   "founded": 2008,
+   "title": "Trabzonspor Basketbol Kulübü",
+   "extract": "El Trabzonspor Basketbol Kulübü, también conocido como Trabzonspor Medical Park Basketbol Kulübü por razones de patrocinio, es un club de baloncesto profesional de la ciudad de Trebisonda, que milita en la BSL, la máxima categoría del baloncesto turco. Disputa sus partidos en el Hayri Gür Arena, con capacidad para 7,500 espectadores. Es la sección de baloncesto del Trabzonspor.",
+   "url": "https://es.wikipedia.org/wiki/Trabzonspor_Basketbol_Kul%C3%BCb%C3%BC",
+   "shared": []
+  },
+  "ok": true
  }
 }
