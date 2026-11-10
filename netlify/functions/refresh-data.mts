@@ -1,7 +1,7 @@
 import type { Config } from '@netlify/functions'
 
 /**
- * Actualización de los datos (viernes, sábado y domingo a las 08:00 en España): lanza un nuevo build (que ejecuta el
+ * Actualización de los datos (todos los días a las 08:00 en España): lanza un nuevo build (que ejecuta el
  * scraper). Requiere la variable de entorno BUILD_HOOK_URL con la URL de un
  * Build hook del proyecto (Project configuration → Build & deploy → Build hooks).
  */
@@ -19,7 +19,7 @@ export default async () => {
   console.log(`Build hook → HTTP ${res.status}`)
 }
 
-// Viernes, sábado y domingo a las 06:00 y 07:00 UTC (una de las dos son las 08:00 en España).
+// Todos los días a las 06:00 y 07:00 UTC (una de las dos son las 08:00 en España).
 export const config: Config = {
-  schedule: '0 6,7 * * 5,6,0'
+  schedule: '0 6,7 * * *'
 }

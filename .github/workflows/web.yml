@@ -1,5 +1,6 @@
 # Web pública en Cloudflare Pages (gratis, sin límite de tráfico), sin depender de Netlify.
-# Viernes, sábado y domingo a las 08:00 (hora española) descarga los datos nuevos, exporta la base de datos para el navegador y publica.
+# Todos los días a las 08:00 (hora española) descarga los datos nuevos, exporta la base de datos para el navegador y publica.
+# La base de datos del día también se sube a la versión «datos» de GitHub, de donde la descarga iniciar.bat.
 #
 # Configuración (una sola vez), en GitHub → Settings → Secrets and variables → Actions:
 #   CLOUDFLARE_API_TOKEN   token con permiso "Cloudflare Pages: Edit"
@@ -9,13 +10,16 @@ name: Web (Cloudflare Pages)
 
 on:
   schedule:
-    # Viernes, sábado y domingo a las 08:00 en España. El cron va en UTC, así que se
+    # Todos los días a las 08:00 en España. El cron va en UTC, así que se
     # programan las dos horas posibles y el primer paso descarta la que no toca.
-    - cron: '0 6 * * 5,6,0' # 08:00 en horario de verano (CEST)
-    - cron: '0 7 * * 5,6,0' # 08:00 en horario de invierno (CET)
+    - cron: '0 6 * * *' # 08:00 en horario de verano (CEST)
+    - cron: '0 7 * * *' # 08:00 en horario de invierno (CET)
   workflow_dispatch:
   push:
     branches: [main]
+
+permissions:
+  contents: write
 
 concurrency:
   group: web
@@ -34,8 +38,8 @@ jobs:
             echo "seguir=true" >> "$GITHUB_OUTPUT"; exit 0
           fi
           offset=$(TZ=Europe/Madrid date +%z)
-          if { [ "$offset" = "+0200" ] && [ "${{ github.event.schedule }}" = "0 6 * * 5,6,0" ]; } ||
-             { [ "$offset" = "+0100" ] && [ "${{ github.event.schedule }}" = "0 7 * * 5,6,0" ]; }; then
+          if { [ "$offset" = "+0200" ] && [ "${{ github.event.schedule }}" = "0 6 * * *" ]; } ||
+             { [ "$offset" = "+0100" ] && [ "${{ github.event.schedule }}" = "0 7 * * *" ]; }; then
             echo "seguir=true" >> "$GITHUB_OUTPUT"
           else
             echo "No son las 08:00 en España con este horario: se omite."
@@ -76,6 +80,15 @@ jobs:
         with:
           path: data/d3basket.db
           key: d3db-${{ github.run_id }}
+
+      # Para verla en local (iniciar.bat): la base de datos del día como archivo de la versión «datos».
+      - name: Subir los datos del día a GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view datos >/dev/null 2>&1 || gh release create datos --title "Datos" --notes "Base de datos de D3 Basket, actualizada cada día a las 08:00."
+          gh release upload datos public/data/d3basket.db.gz --clobber
+          gh release edit datos --notes "Base de datos de D3 Basket, actualizada cada día a las 08:00. Última actualización: $(TZ=Europe/Madrid date '+%d/%m/%Y %H:%M')."
 
       - name: Publicar en Cloudflare Pages
         env:
