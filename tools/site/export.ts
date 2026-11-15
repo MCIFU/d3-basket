@@ -13,7 +13,7 @@
  * Uso: tsx tools/site/export.ts --db data/d3basket.db [--out public/d]
  */
 import Database from 'better-sqlite3'
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { Queries } from '../../src/db/queries'
 import { LEAGUES } from '../../src/shared/leagues'
@@ -32,7 +32,7 @@ const db = new Database(dbPath, { readonly: true })
 const q = new Queries(db as never)
 const all = <T = any>(sql: string, ...p: unknown[]) => db.prepare(sql).all(...p) as T[]
 
-rmSync(out, { recursive: true, force: true })
+// Se sobrescriben los ficheros (los nombres son estables); borrar la carpeta confundiría al servidor de desarrollo.
 for (const d of ['ed', 'p', 'c', 'g']) mkdirSync(join(out, d), { recursive: true })
 const write = (rel: string, data: unknown) => writeFileSync(join(out, rel), JSON.stringify(data))
 
@@ -76,6 +76,16 @@ log(`meta: ${comps.length} competiciones, ${eds.length} ediciones`)
 
 // ───────────────────────── Clubes y equipos ─────────────────────────
 const clubs = all(`SELECT * FROM clubs`)
+// Colores oficiales donde los sacados del escudo no representan al club.
+const COLOR_FIX: [RegExp, string, string][] = [
+  [/^Real Madrid$/, '#febe10', '#1f1d5a'],
+  [/^Fenerbah/i, '#f3e63c', '#0b1e3f'],
+  [/^Surne Bilbao/, '#b8bcc2', '#141414']
+]
+for (const c of clubs as any[]) {
+  const fix = COLOR_FIX.find(([re]) => re.test(c.name))
+  if (fix) (c.primary_color = fix[1]), (c.secondary_color = fix[2])
+}
 const clubById = new Map(clubs.map((c: any) => [c.id, c]))
 interface TeamOut { id: number; ed: number; club: string; name: string; short: string | null; abbr: string | null; logo: string | null; c1: string | null; c2: string | null; g: string | null; parent: string | null }
 const teams = new Map<number, TeamOut>(

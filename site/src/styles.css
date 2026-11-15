@@ -28,8 +28,8 @@
   --cond: 'Barlow Condensed', 'Arial Narrow', sans-serif;
   --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --radius: 16px;
-  --wrap: 1240px;
-  --gutter: 32px;
+  --wrap: 1720px;
+  --gutter: clamp(16px, 2.2vw, 36px);
   --header: 68px;
   color-scheme: light;
 }
@@ -663,6 +663,7 @@ main.page {
 }
 .grid {
   display: grid;
+  align-items: start;
   gap: 20px;
   margin-top: 22px;
 }

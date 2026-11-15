@@ -211,7 +211,6 @@ const METRICS = [
 
 function Summary({ p, games, pc, cur, pal, compName, meta }: { p: PlayerRec; games: LogRow[]; pc: Pc; cur?: Season; pal: { dk: string; lt: string }; compName?: string; meta: Meta }) {
   const [metric, setMetric] = useState<(typeof METRICS)[number][0]>('pts')
-  const wide = typeof window !== 'undefined' && window.innerWidth > 760
   const chart = games.map((r) => {
     const s = line(r)
     const opp = p.tm[r[4]]
@@ -279,7 +278,7 @@ function Summary({ p, games, pc, cur, pal, compName, meta }: { p: PlayerRec; gam
               </button>
             ))}
           </div>
-          <BarChart data={chart} color={pal.dk} w={wide ? 760 : 520} h={wide ? 250 : 280} />
+          <BarChart data={chart} color={pal.dk} h={250} />
           {cur && (
             <div className="shots">
               {shots.map(([k, m, at]) => (
@@ -376,7 +375,8 @@ function Summary({ p, games, pc, cur, pal, compName, meta }: { p: PlayerRec; gam
 function CareerTable({ p, compact, meta }: { p: PlayerRec; compact?: boolean; meta?: Meta }) {
   const rows = p.seasons
   if (!rows.length) return null
-  const secs = [...new Set(rows.map((s) => s.sec))]
+  const ORDER: Season['sec'][] = ['liga', 'filial', 'copa', 'europa', 'seleccion', 'formacion']
+  const secs = ORDER.filter((x) => rows.some((s) => s.sec === x))
   return (
     <section className="card" style={{ marginTop: 20 }}>
       <Sec aside="medias por temporada" more={compact ? { to: `${href.player(p.ref)}?v=trayectoria`, label: 'Detalle' } : undefined}>

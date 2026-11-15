@@ -1,5 +1,5 @@
 /** Piezas visuales compartidas por todas las páginas. */
-import { useMemo, useState, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { palette } from '../lib/color'
 import { dateShort, n1, time } from '../lib/fmt'
 import { href } from '../lib/router'
@@ -103,8 +103,22 @@ export function Strip({ items, note }: { items: { k: string; v: string; bar?: nu
 }
 
 /** Barras de un valor por partido con su media. */
-export function BarChart({ data, color, avgLabel = 'Media', h = 250, w = 760 }: { data: { v: number; lab: string; sub: string; title: string; color?: string; href?: string }[]; color: string; avgLabel?: string; h?: number; w?: number }) {
+export function BarChart({ data, color, avgLabel = 'Media', h = 250 }: { data: { v: number; lab: string; sub: string; title: string; color?: string; href?: string }[]; color: string; avgLabel?: string; h?: number; w?: number }) {
+  // El dibujo usa el ancho real en píxeles: el texto mantiene su tamaño en cualquier pantalla.
+  const box = useRef<HTMLDivElement>(null)
+  const [w, setW] = useState(760)
+  useEffect(() => {
+    const el = box.current
+    if (!el) return
+    const ro = new ResizeObserver(([e]) => setW(Math.max(280, Math.round(e.contentRect.width))))
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
   if (!data.length) return <div className="empty">Sin partidos</div>
+  return <div ref={box}>{chartSvg(data, color, avgLabel, h, w)}</div>
+}
+
+function chartSvg(data: { v: number; lab: string; sub: string; title: string; color?: string; href?: string }[], color: string, avgLabel: string, h: number, w: number) {
   const padL = 26
   const padB = 36
   const padT = 22

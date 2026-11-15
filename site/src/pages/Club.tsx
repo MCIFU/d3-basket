@@ -136,12 +136,64 @@ function ClubPage({ meta, c, y, main, other, ed }: { meta: Meta; c: ClubRec; y?:
   )
 }
 
+interface CardData {
+  ref: string
+  num: string | null
+  name: string
+  photo: string | null
+  cut: string | null
+  posc: string | null
+  nat: string | null
+  birth: string | null
+  h: number | null
+  a?: PAgg
+  active: number
+}
+
+function Card({ x }: { x: CardData }) {
+  const [bad, setBad] = useState(false)
+  const img = !bad ? (x.cut ?? x.photo) : null
+  const parts = x.name.split(' ')
+  return (
+    <a className="pc" href={href.player(x.ref)}>
+      <div className="ph">
+        {img ? <img className={x.cut ? 'cut' : ''} src={src(img)} alt="" loading="lazy" onError={() => setBad(true)} /> : <span className="ini">{parts.slice(0, 2).map((w) => w[0]).join('')}</span>}
+        {x.num && <span className="n">{x.num}</span>}
+      </div>
+      <div className="in">
+        <div className="nm">
+          <small>{parts.slice(0, -1).join(' ')}</small>
+          {parts.at(-1)}
+        </div>
+        <div className="sub">
+          <span>
+            {[x.posc ? POS[x.posc] : null, age(x.birth) ? `${age(x.birth)} años` : null, height(x.h)].filter(Boolean).join(' · ')} {flag(x.nat)}
+          </span>
+        </div>
+        {x.a && x.a.gp > 0 && (
+          <div className="sub" style={{ marginTop: 6 }}>
+            <span>
+              <b>{n1(per(x.a.s, x.a.gp).pts)}</b> pts
+            </span>
+            <span>
+              <b>{n1(per(x.a.s, x.a.gp).reb)}</b> reb
+            </span>
+            <span>
+              <b>{n1(per(x.a.s, x.a.gp).val)}</b> val
+            </span>
+          </div>
+        )}
+      </div>
+    </a>
+  )
+}
+
 function Roster({ c, t, ed }: { c: ClubRec; t: number; ed?: EdFile }) {
   const rows = c.rosters[t] ?? []
   const stats = useMemo(() => new Map((ed ? players(ed, t) : []).map((a) => [a.p, a])), [ed, t])
   // Jugadores con partidos pero sin ficha de plantilla (fuentes sin plantilla oficial).
   const extra = [...stats.values()].filter((a) => !rows.some((r) => r[0] === a.p))
-  const cards: { ref: string; num: string | null; name: string; photo: string | null; cut: string | null; posc: string | null; nat: string | null; birth: string | null; h: number | null; a?: PAgg; active: number }[] = [
+  const cards: CardData[] = [
     ...rows.map((r: RosterRow) => ({ ref: r[0], num: r[1], name: r[5], photo: r[6], cut: r[7], posc: r[2] ?? r[8], nat: r[9], birth: r[10], h: r[11], a: stats.get(r[0]), active: r[3] })),
     ...extra.map((a) => {
       const pl = ed!.pl[a.p]
@@ -151,43 +203,6 @@ function Roster({ c, t, ed }: { c: ClubRec; t: number; ed?: EdFile }) {
   const active = cards.filter((x) => x.active)
   const gone = cards.filter((x) => !x.active)
   const staff = c.staff[t] ?? []
-  const Card = ({ x }: { x: (typeof cards)[number] }) => {
-    const [bad, setBad] = useState(false)
-    const img = !bad ? (x.cut ?? x.photo) : null
-    const parts = x.name.split(' ')
-    return (
-      <a className="pc" href={href.player(x.ref)}>
-        <div className="ph">
-          {img ? <img className={x.cut ? 'cut' : ''} src={src(img)} alt="" loading="lazy" onError={() => setBad(true)} /> : <span className="ini">{parts.slice(0, 2).map((w) => w[0]).join('')}</span>}
-          {x.num && <span className="n">{x.num}</span>}
-        </div>
-        <div className="in">
-          <div className="nm">
-            <small>{parts.slice(0, -1).join(' ')}</small>
-            {parts.at(-1)}
-          </div>
-          <div className="sub">
-            <span>
-              {[x.posc ? POS[x.posc] : null, age(x.birth) ? `${age(x.birth)} años` : null, height(x.h)].filter(Boolean).join(' · ')} {flag(x.nat)}
-            </span>
-          </div>
-          {x.a && x.a.gp > 0 && (
-            <div className="sub" style={{ marginTop: 6 }}>
-              <span>
-                <b>{n1(per(x.a.s, x.a.gp).pts)}</b> pts
-              </span>
-              <span>
-                <b>{n1(per(x.a.s, x.a.gp).reb)}</b> reb
-              </span>
-              <span>
-                <b>{n1(per(x.a.s, x.a.gp).val)}</b> val
-              </span>
-            </div>
-          )}
-        </div>
-      </a>
-    )
-  }
   return (
     <>
       <section className="card" style={{ marginTop: 22 }}>
