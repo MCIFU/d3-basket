@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A · Editorial</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<style>
+:root {
+  --bg: #f6f4ef; --paper: #fffdf9; --ink: #1a1814; --ink2: #5d5850; --ink3: #8f897e; --rule: #e2ddd2; --rule2: #ece8df;
+  --win: #2f7d4f; --loss: #b4442f;
+  --r-top: #2459c7; --r-good: #2f8a56; --r-ok: #8aa33b; --r-mid: #c99a2e; --r-low: #d9772f; --r-bad: #c8462e;
+  --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif;
+}
+:root[data-theme="dark"] {
+  --bg: #14130f; --paper: #1c1b17; --ink: #f1ede4; --ink2: #b9b3a6; --ink3: #847e72; --rule: #2f2d27; --rule2: #26241f;
+  --win: #62b784; --loss: #e0775f;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #14130f; --paper: #1c1b17; --ink: #f1ede4; --ink2: #b9b3a6; --ink3: #847e72; --rule: #2f2d27; --rule2: #26241f; --win: #62b784; --loss: #e0775f; }
+}
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); font-feature-settings: 'tnum' 1, 'cv11' 1; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+/* Cabecera */
+.top { border-bottom: 1px solid var(--rule); background: var(--paper); }
+.top .wrap { display: flex; align-items: center; gap: 32px; height: 64px; }
+.brand { font: 600 25px/1 var(--serif); letter-spacing: -.02em; }
+.brand i { color: var(--club); font-style: italic; }
+nav.main { display: flex; gap: 22px; font-size: 14px; color: var(--ink2); }
+nav.main a { color: inherit; text-decoration: none; padding: 21px 0; border-bottom: 2px solid transparent; }
+nav.main a.on { color: var(--ink); border-color: var(--ink); font-weight: 600; }
+.search { margin-left: auto; display: flex; align-items: center; gap: 10px; border: 1px solid var(--rule); border-radius: 999px; padding: 7px 14px; width: 300px; color: var(--ink3); font-size: 13.5px; background: var(--bg); }
+.search kbd { margin-left: auto; font: 11px var(--sans); border: 1px solid var(--rule); border-radius: 5px; padding: 1px 6px; }
+.icon-btn { border: 1px solid var(--rule); background: none; color: var(--ink2); width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; }
+.burger { display: none; }
+/* Hero */
+.crumbs { font-size: 12.5px; color: var(--ink3); padding: 22px 0 0; display: flex; gap: 8px; align-items: center; }
+.crumbs img { width: 22px; height: 18px; object-fit: contain; }
+.hero { display: grid; grid-template-columns: 1fr 380px; gap: 48px; align-items: end; padding: 18px 0 0; }
+.kicker { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink2); font-weight: 600; display: flex; gap: 10px; align-items: center; }
+.kicker .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--ink3); }
+h1 { font: 500 84px/.95 var(--serif); letter-spacing: -.035em; margin: 18px 0 22px; }
+h1 span { display: block; }
+.dek { font: 400 21px/1.45 var(--serif); color: var(--ink2); max-width: 600px; }
+.dek b { color: var(--ink); font-weight: 600; }
+.facts { display: grid; grid-template-columns: repeat(4, auto); gap: 0; margin: 30px 0 34px; border-top: 1px solid var(--rule); width: fit-content; }
+.facts div { padding: 12px 28px 0 0; margin-right: 28px; border-right: 1px solid var(--rule2); }
+.facts div:last-child { border: 0; }
+.facts dt { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); }
+.facts dd { font-size: 15px; font-weight: 500; margin-top: 2px; }
+.portrait { position: relative; height: 420px; display: flex; align-items: flex-end; justify-content: center; }
+.portrait::before { content: ''; position: absolute; inset: 40px 10px 0; border-radius: 200px 200px 0 0; background: color-mix(in oklab, var(--club) 26%, var(--paper)); }
+.portrait img.ph { position: relative; height: 100%; max-width: 100%; object-fit: contain; object-position: bottom; }
+.portrait img.crest { position: absolute; top: 30px; right: 4px; width: 72px; height: 72px; object-fit: contain; background: var(--paper); border-radius: 50%; padding: 12px; box-shadow: 0 1px 0 var(--rule), 0 6px 20px rgb(0 0 0 / .08); }
+/* Banda de medias */
+.band { border-top: 2px solid var(--ink); border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: repeat(5, 1fr) 1.3fr; }
+.band > div { padding: 20px 0 18px; border-right: 1px solid var(--rule2); padding-left: 22px; }
+.band > div:first-child { padding-left: 0; }
+.band > div:last-child { border: 0; }
+.band .k { font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); font-weight: 600; }
+.band .v { font: 500 52px/1.05 var(--serif); letter-spacing: -.02em; margin-top: 4px; }
+.band .note { font: 400 15px/1.45 var(--serif); color: var(--ink2); align-self: center; }
+.band .note b { color: var(--ink); font-weight: 600; }
+/* Secciones */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; padding: 44px 0 0; }
+h2 { font: 500 30px/1.15 var(--serif); letter-spacing: -.015em; }
+.sec-sub { color: var(--ink3); font-size: 13px; margin: 6px 0 20px; }
+.pct { display: grid; grid-template-columns: 148px 1fr 54px; align-items: center; gap: 14px; padding: 9px 0; border-bottom: 1px solid var(--rule2); }
+.pct .l { font-size: 14px; }
+.pct .l small { display: block; color: var(--ink3); font-size: 12px; }
+.pct .bar { height: 8px; background: var(--rule2); border-radius: 4px; overflow: hidden; position: relative; }
+.pct .bar i { position: absolute; inset: 0 auto 0 0; border-radius: 4px; background: var(--ink); }
+.pct .bar i.hi { background: var(--club-ink); }
+.pct .bar::after { content: ''; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--ink3); opacity: .5; }
+.pct .n { font: 500 22px/1 var(--serif); text-align: right; }
+.legend { font-size: 12px; color: var(--ink3); margin-top: 12px; }
+.chart { width: 100%; height: auto; display: block; color: var(--ink); }
+.chart .grid { stroke: var(--rule2); } .chart .tick, .chart .sub { fill: var(--ink3); font: 11px var(--sans); }
+.chart .lab { fill: var(--ink2); font: 600 11px var(--sans); } .chart .val { fill: var(--ink); font: 600 12px var(--sans); }
+.chart .avg { stroke-dasharray: 4 4; stroke-width: 1.5; } .chart .avgt { fill: var(--ink2); font: italic 13px var(--serif); }
+.shots { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 26px; border-top: 1px solid var(--rule); }
+.shots div { padding: 14px 0 0; }
+.shots .k { font-size: 11.5px; letter-spacing: .1em; color: var(--ink3); font-weight: 600; }
+.shots .v { font: 500 32px/1.1 var(--serif); }
+.shots .m { font-size: 12.5px; color: var(--ink2); }
+/* Tablas */
+.tbl-sec { padding: 52px 0 0; }
+table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 14px; }
+th { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); font-weight: 600; text-align: right; padding: 0 10px 10px; border-bottom: 1px solid var(--ink); }
+td { text-align: right; padding: 11px 10px; border-bottom: 1px solid var(--rule2); }
+th:first-child, td:first-child, th.l, td.l { text-align: left; padding-left: 0; }
+td.opp { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+td.opp img { width: 22px; height: 22px; object-fit: contain; }
+td.opp small { color: var(--ink3); font-weight: 400; }
+.res { font-weight: 600; } .res.win { color: var(--win); } .res.loss { color: var(--loss); }
+td.big { font-weight: 600; }
+tr.cur td { background: color-mix(in oklab, var(--club) 9%, transparent); font-weight: 600; }
+.scroll { overflow-x: auto; }
+footer { color: var(--ink3); font-size: 12.5px; padding: 48px 0 60px; border-top: 1px solid var(--rule); margin-top: 56px; }
+.theme-note { position: fixed; right: 18px; bottom: 18px; }
+/* Móvil */
+@media (max-width: 760px) {
+  .wrap { padding: 0 16px; }
+  .top .wrap { height: 56px; gap: 12px; }
+  nav.main, .search kbd, .search span { display: none; }
+  .search { width: 36px; height: 36px; padding: 0; justify-content: center; margin-left: auto; }
+  .burger { display: grid; }
+  .brand { font-size: 22px; }
+  .crumbs { display: none; }
+  .hero { grid-template-columns: 1fr; gap: 0; }
+  .portrait { order: -1; height: 300px; margin-top: 8px; }
+  .portrait::before { inset: 30px 30px 0; }
+  .portrait img.crest { width: 56px; height: 56px; right: 24px; top: 20px; }
+  h1 { font-size: 54px; margin: 14px 0 14px; }
+  .dek { font-size: 18px; }
+  .facts { grid-template-columns: 1fr 1fr; width: 100%; margin: 22px 0 26px; }
+  .facts div { border: 0; margin: 0; padding-right: 0; }
+  .band { grid-template-columns: repeat(3, 1fr); }
+  .band > div { padding-left: 14px; }
+  .band > div:nth-child(3n+1) { padding-left: 0; }
+  .band > div:nth-child(3) { border-right: 0; }
+  .band > div:nth-child(n+4) { border-top: 1px solid var(--rule2); }
+  .band .v { font-size: 38px; }
+  .band .note { grid-column: 1 / -1; padding: 14px 0 16px; }
+  .grid2 { grid-template-columns: 1fr; gap: 40px; padding-top: 34px; }
+  .pct { grid-template-columns: 112px 1fr 40px; gap: 10px; }
+  table { font-size: 13px; }
+  th, td { padding-left: 6px; padding-right: 6px; }
+  .hide-m { display: none; }
+  .scroll td:first-child, .scroll th:first-child { position: sticky; left: 0; background: var(--bg); }
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <button class="icon-btn burger" aria-label="Menú"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.6"/></svg></button>
+  <div class="brand">d3 <i>basket</i></div>
+  <nav class="main"><a>Hoy</a><a>Competiciones</a><a>Equipos</a><a class="on">Jugadores</a><a>Explorar</a><a>Españoles por el mundo</a></nav>
+  <div class="search"><svg width="15" height="15" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5" stroke="currentColor" fill="none" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6"/></svg><span>Jugador, equipo o liga</span><kbd>Ctrl K</kbd></div>
+  <button class="icon-btn" onclick="toggleTheme()" aria-label="Tema"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1.5a6.5 6.5 0 1 0 0 13z" fill="currentColor"/><circle cx="8" cy="8" r="6.5" stroke="currentColor" fill="none" stroke-width="1.3"/></svg></button>
+</div></header>
+<main class="wrap" id="app"></main>
+<script src="assets/data.js"></script>
+<script src="assets/common.js"></script>
+<script>
+const T = P.team
+const [dk, lt] = clubColors(T)
+document.documentElement.style.setProperty('--club', lt)
+document.documentElement.style.setProperty('--club-ink', `color-mix(in oklab, ${dk} 85%, var(--ink))`)
+const a = P.avg, hasVal = a.val != null
+const stats = [['Puntos', a.pts], ['Rebotes', a.reb], ['Asistencias', a.ast], hasVal ? [P.valCalc ? 'Valoración*' : 'Valoración', a.val] : ['Robos', a.stl], ['Minutos', a.min]]
+const best = P.pcts.filter((x) => x.pct >= 80).map((x) => x.label.toLowerCase())
+const dek = P.league === 'NBA'
+  ? `Quinta temporada en la NBA y primera con los <b>${T.name}</b>. Sale desde el banquillo: ${n1(a.min)} minutos por partido, la mitad que el curso pasado en Memphis.`
+  : `<b>${P.rankNote}</b> en su segunda temporada en Lugo. Está en el 5 % mejor de la liga en ${best.slice(0, 2).join(' y ')}.`
+app.innerHTML = `
+<div class="crumbs"><img src="${P.leagueLogo}" alt=""> ${P.league} · ${P.season} <span>›</span> ${T.name} <span>›</span> ${P.name}</div>
+<section class="hero">
+  <div>
+    <div class="kicker">${P.pos}${P.number ? ` <span class="dot"></span> #${P.number}` : ''} <span class="dot"></span> ${T.name} <span class="dot"></span> ${P.flag} ${P.nat}</div>
+    <h1><span>${P.name.split(' ')[0]}</span><span>${P.name.split(' ').slice(1).join(' ')}</span></h1>
+    <p class="dek">${dek}</p>
+    <dl class="facts">
+      <div><dt>Edad</dt><dd>${P.age} años</dd></div>
+      <div><dt>Nacimiento</dt><dd>${P.born} · ${P.birthPlace}</dd></div>
+      <div><dt>Altura</dt><dd>${P.height} <span style="color:var(--ink3)">(${P.heightAlt})</span></dd></div>
+      <div><dt>${P.draft ? 'Draft' : 'Pabellón'}</dt><dd>${P.draft || T.arena}</dd></div>
+    </dl>
+  </div>
+  <div class="portrait"><img class="ph" src="${P.photo}" alt=""><img class="crest" src="${T.logo}" alt=""></div>
+</section>
+<section class="band">
+  ${stats.map(([k, v]) => `<div><div class="k">${k}</div><div class="v">${n1(v)}</div></div>`).join('')}
+  <div class="note"><b>${a.gp} partidos</b> esta temporada; su equipo ganó ${P.record.split("-")[0]} y perdió ${P.record.split("-")[1]}. Medias por partido.</div>
+</section>
+<div class="grid2">
+  <section>
+    <h2>Frente al resto de la liga</h2>
+    <p class="sec-sub">Percentil entre ${P.poolN} ${P.poolLabel}. La línea marca la mitad.</p>
+    ${P.pcts.map((it) => `<div class="pct"><div class="l">${it.label.replace(' (menos es mejor)', '')}<small>${fmtPct(it)}${it.k === 'tov' ? ' · menos es mejor' : ''}</small></div><div class="bar"><i class="${it.pct >= 80 ? 'hi' : ''}" style="width:${it.pct}%"></i></div><div class="n">${it.pct}</div></div>`).join('')}
+  </section>
+  <section>
+    <h2>Partido a partido</h2>
+    <p class="sec-sub">Puntos en cada partido de la temporada. V/D: resultado de su equipo.</p>
+    ${gameChart(P.games, { bar: (g) => (g.win ? 'var(--club-ink)' : 'var(--ink3)'), avgColor: 'var(--ink)', h: 230 })}
+    <div class="shots">${P.shooting.map(([k, m, at]) => `<div><div class="k">${k === 'T2' ? 'TIROS DE 2' : k === 'T3' ? 'TRIPLES' : 'TIROS LIBRES'}</div><div class="v">${pctShot(m, at)} %</div><div class="m">${m} de ${at}</div></div>`).join('')}</div>
+  </section>
+</div>
+<section class="tbl-sec">
+  <h2>Últimos partidos</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Rival</th><th class="l hide-m">Fecha</th><th class="l">Res.</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th class="hide-m">T3</th><th class="hide-m">TL</th><th>${valLabel()}</th></tr></thead>
+    <tbody>${P.games.map((g) => `<tr><td class="opp"><img src="${g.oppLogo}" alt=""><span>${g.home ? '' : '<small>en </small>'}${g.opp}</span></td><td class="l hide-m">${fecha(g.date)}</td><td class="l res ${g.win ? 'win' : 'loss'}">${g.win ? 'V' : 'D'} ${g.score}</td><td>${g.min}</td><td class="big">${g.pts}</td><td>${g.reb}</td><td>${g.ast}</td><td class="hide-m">${g.t3}</td><td class="hide-m">${g.tl}</td><td class="big">${g.val ?? '–'}</td></tr>`).join('')}</tbody>
+  </table></div>
+</section>
+<section class="tbl-sec">
+  <h2>Trayectoria</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Temporada</th><th class="l">Equipo</th><th class="l hide-m">Liga</th><th>PJ</th><th>Pts</th><th>Reb</th><th>Ast</th><th>${P.career[0].val != null ? 'Val' : 'Min'}</th></tr></thead>
+    <tbody>${P.career.map((c) => `<tr class="${c.current ? 'cur' : ''}"><td>${c.season}</td><td class="l">${c.team}</td><td class="l hide-m">${c.league}</td><td>${c.gp}</td><td>${n1(c.pts)}</td><td>${n1(c.reb)}</td><td>${n1(c.ast)}</td><td>${n1(c.val ?? c.min)}</td></tr>`).join('')}</tbody>
+  </table></div>
+</section>
+<footer>${P.valCalc ? 'VAL*: valoración calculada con la fórmula europea; la NBA no la publica. ' : ''}Datos: ${P.league === 'NBA' ? 'ESPN' : 'acb.com'} · actualizado el 15 nov 2026.</footer>`
+</script>
+</body>
+</html>
