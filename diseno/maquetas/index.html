@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>d3 basket · maquetas</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<style>
+:root { --bg: #f1f3f6; --card: #fff; --line: #e4e7ec; --tx: #14171c; --tx2: #5b6370; }
+@media (prefers-color-scheme: dark) { :root { --bg: #0c0e12; --card: #15181e; --line: #242932; --tx: #eef0f3; --tx2: #a3abb7; } }
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--bg); color: var(--tx); font: 15px/1.5 Inter, system-ui, sans-serif; padding: 48px 16px; }
+main { max-width: 980px; margin: 0 auto; }
+h1 { font-size: 30px; letter-spacing: -.02em; }
+p.s { color: var(--tx2); margin: 6px 0 28px; }
+.g { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.c { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+.c h2 { font-size: 19px; }
+.c p { color: var(--tx2); font-size: 13.5px; margin: 6px 0 14px; }
+.c a { display: block; padding: 9px 12px; border-radius: 9px; border: 1px solid var(--line); color: inherit; text-decoration: none; font-weight: 600; font-size: 14px; margin-top: 8px; }
+.c a:hover { border-color: #2f6fed; color: #2f6fed; }
+.c a span { float: right; color: var(--tx2); font-weight: 500; }
+</style>
+</head>
+<body>
+<main>
+  <h1>d3 basket · ficha de jugador</h1>
+  <p class="s">Tres estilos para elegir. Datos reales a 15/11/2026. El botón de arriba a la derecha de cada página cambia entre tema claro y oscuro.</p>
+  <div class="g">
+    <div class="c"><h2>A · Editorial</h2><p>Estilo The Athletic: titulares con remate, mucho blanco, tablas finas.</p>
+      <a href="a-editorial.html?p=alonso">Francis Alonso <span>ACB</span></a><a href="a-editorial.html?p=aldama">Santi Aldama <span>NBA</span></a></div>
+    <div class="c"><h2>B · Datos</h2><p>Estilo Sofascore: tarjetas, colores por rendimiento, menú lateral.</p>
+      <a href="b-datos.html?p=alonso">Francis Alonso <span>ACB</span></a><a href="b-datos.html?p=aldama">Santi Aldama <span>NBA</span></a></div>
+    <div class="c"><h2>C · Club</h2><p>Estilo ACB: portada con los colores del club y foto de cuerpo entero.</p>
+      <a href="c-club.html?p=alonso">Francis Alonso <span>ACB</span></a><a href="c-club.html?p=aldama">Santi Aldama <span>NBA</span></a></div>
+  </div>
+</main>
+</body>
+</html>
