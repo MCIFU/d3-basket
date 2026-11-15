@@ -2,6 +2,7 @@
 rem d3 basket en tu PC: descarga la ultima version y los datos del dia, monta la web y la abre.
 rem Requisitos (una vez): Node.js LTS (https://nodejs.org) y Git (https://git-scm.com). Doble clic para ejecutar.
 chcp 65001 >nul
+setlocal EnableDelayedExpansion
 cd /d "%~dp0"
 title d3 basket
 
@@ -12,11 +13,20 @@ if errorlevel 1 (
   exit /b 1
 )
 
+rem Si se descarga una version nueva de este archivo, se vuelve a lanzar ya actualizado.
+if "%~1"=="actualizado" goto :seguir
 where git >nul 2>nul
 if not errorlevel 1 (
   echo == Descargando la ultima version del proyecto...
+  for /f %%i in ('git rev-parse HEAD') do set ANTES=%%i
   git pull --ff-only
+  for /f %%i in ('git rev-parse HEAD') do set DESPUES=%%i
+  if not "!ANTES!"=="!DESPUES!" (
+    call "%~f0" actualizado
+    exit /b
+  )
 )
+:seguir
 
 echo == Comprobando dependencias...
 call npm install --no-audit --no-fund --loglevel=error || goto :error
@@ -39,7 +49,8 @@ call npx vite build --config vite.site.config.ts --logLevel warn || goto :error
 
 echo.
 echo == d3 basket abierto en http://localhost:4173  ^(cierra esta ventana para pararlo^)
-call npx vite preview --config vite.site.config.ts --port 4173 --open
+echo    Si dice que el puerto 4173 esta ocupado, cierra las otras ventanas negras de d3 basket y vuelve a abrir este archivo.
+call npx vite preview --config vite.site.config.ts --port 4173 --strictPort --open
 goto :eof
 
 :error
