@@ -17,3 +17,5 @@ public/data/
 __pycache__/
 dist-artifact/
 capturas/
+public/d/
+dist-site/

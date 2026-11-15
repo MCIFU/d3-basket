@@ -100,4 +100,4 @@ jobs:
             exit 0
           fi
           npx --yes wrangler@4 pages project create d3-basket --production-branch main 2>/dev/null || true
-          npx --yes wrangler@4 pages deploy dist-web --project-name d3-basket --branch main --commit-dirty=true
+          npx --yes wrangler@4 pages deploy dist-site --project-name d3-basket --branch main --commit-dirty=true
