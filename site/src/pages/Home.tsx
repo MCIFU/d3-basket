@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { countryName } from '../components/Header'
 import { Avatar, Crest, Foot, Loading, Score, Sec, src } from '../components/ui'
 import { cssVars, valColor } from '../lib/color'
-import { compOf, loadDays, useLoad, type Days, type Meta } from '../lib/data'
-import { dateLong, dateShort, dayKey, dayLabel } from '../lib/fmt'
+import { compOf, loadDays, useLoad, type Comp, type Days, type Meta } from '../lib/data'
+import { dateLong, dateShort, dayKey, dayLabel, flag } from '../lib/fmt'
 import { href } from '../lib/router'
 
 const BRAND = { dk: '#0a2a5c', lt: '#2f7be0' }
@@ -71,6 +71,7 @@ function HomePage({ meta, days }: { meta: Meta; days: Days }) {
       </section>
       <main className="wrap page">
         <div className="grid g-21" style={{ marginTop: -50, position: 'relative', zIndex: 2 }}>
+          <div style={{ display: 'grid', gap: 20, minWidth: 0 }}>
           <section className="card">
             <Sec aside={`${list.length} ${list.length === 1 ? 'partido' : 'partidos'}`}>Partidos</Sec>
             {!list.length && <div className="empty">No hay partidos este día</div>}
@@ -103,6 +104,36 @@ function HomePage({ meta, days }: { meta: Meta; days: Days }) {
               )
             })}
           </section>
+        <section className="card">
+          <Sec more={{ to: '#/ligas', label: 'Todas' }}>Competiciones</Sec>
+          {(
+            [
+              ['España', (c: Comp) => c.country === 'ES'],
+              ['Europa', (c: Comp) => c.country === 'EU'],
+              ['Ligas nacionales', (c: Comp) => c.country !== 'ES' && c.country !== 'EU']
+            ] as const
+          ).map(([label, f]) => (
+            <div key={label} className="comp-block">
+              <div className="comp-head">
+                <b style={{ fontSize: 16, color: 'var(--tx3)' }}>{label}</b>
+              </div>
+              <div className="comps">
+                {main
+                  .filter(f)
+                  .map((c) => (
+                    <a key={c.code} className="cc" href={href.comp(c.code)} style={{ ['--lc' as string]: c.color ?? 'var(--accent)' }}>
+                      {c.logo ? <img src={src(c.logo)} alt="" /> : <Crest name={c.name} c1={c.color} size={44} />}
+                      <div>
+                        <b>{c.name}</b>
+                        <span>{c.country === 'ES' || c.country === 'EU' ? c.division : `${flag(countryName(c.country))} ${countryName(c.country)} · ${c.tier === 1 ? '1.ª' : '2.ª'} división`}</span>
+                      </div>
+                    </a>
+                  ))}
+              </div>
+            </div>
+          ))}
+        </section>
+          </div>
           <section className="card">
             <Sec aside="últimos 8 días · por valoración">Mejores actuaciones</Sec>
             <div className="best" style={{ gridTemplateColumns: '1fr' }}>
@@ -132,29 +163,6 @@ function HomePage({ meta, days }: { meta: Meta; days: Days }) {
             </div>
           </section>
         </div>
-        <section className="card" style={{ marginTop: 20 }}>
-          <Sec more={{ to: '#/ligas', label: 'Todas' }}>Competiciones</Sec>
-          {[...new Set(main.map((c) => c.country))].map((cn) => (
-            <div key={cn} className="comp-block">
-              <div className="comp-head">
-                <b style={{ fontSize: 16, color: 'var(--tx3)' }}>{countryName(cn)}</b>
-              </div>
-              <div className="comps">
-                {main
-                  .filter((c) => c.country === cn)
-                  .map((c) => (
-                    <a key={c.code} className="cc" href={href.comp(c.code)} style={{ ['--lc' as string]: c.color ?? 'var(--accent)' }}>
-                      {c.logo ? <img src={src(c.logo)} alt="" /> : <Crest name={c.name} c1={c.color} size={44} />}
-                      <div>
-                        <b>{c.name}</b>
-                        <span>{c.division ?? (c.eds[0] ? `Temporada ${c.eds[0].label}` : '')}</span>
-                      </div>
-                    </a>
-                  ))}
-              </div>
-            </div>
-          ))}
-        </section>
       </main>
       <Foot updated={meta.updated} />
     </div>
