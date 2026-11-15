@@ -2036,3 +2036,218 @@ footer.foot .wrap {
     transition: none !important;
   }
 }
+
+/* ───────────────────────── Palmarés ───────────────────────── */
+.ph3 {
+  font: 700 15px var(--cond);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tx2);
+  margin: 6px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.ph3 + * {
+  margin-bottom: 22px;
+}
+.ph3 .tally {
+  display: inline-flex;
+  gap: 12px;
+  color: var(--tx);
+}
+.ph3 .tally span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.trophies {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+}
+.trophy {
+  --gold1: #f7d774;
+  --gold2: #c8961e;
+  background: linear-gradient(160deg, color-mix(in oklab, var(--gold1) 16%, var(--card2)), var(--card2) 60%);
+  border: 1px solid color-mix(in oklab, var(--gold2) 30%, var(--line));
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.trophy.silver {
+  --gold1: #e3e7ec;
+  --gold2: #8b95a1;
+}
+.trophy .ttop {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.trophy .cup {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: radial-gradient(circle at 35% 30%, var(--gold1), var(--gold2));
+  box-shadow: inset 0 -3px 6px rgb(0 0 0 / 0.18), 0 4px 12px color-mix(in oklab, var(--gold2) 40%, transparent);
+  flex: none;
+}
+.trophy .n {
+  font: 800 36px/1 var(--cond);
+}
+.trophy .cn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 700 14px var(--cond);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tx2);
+}
+.trophy .cn img {
+  height: 16px;
+  width: auto;
+  max-width: 40px;
+  object-fit: contain;
+}
+.trophy .yrs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 12px;
+}
+.trophy .yrs a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font: 700 13px var(--cond);
+  letter-spacing: 0.04em;
+  padding: 3px 8px 3px 4px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  transition: border-color 0.15s;
+}
+.trophy .yrs a:hover {
+  border-color: var(--gold2);
+}
+.trophy .lost {
+  font-size: 12px;
+  color: var(--tx3);
+  margin-top: 8px;
+}
+.medal {
+  position: relative;
+  display: inline-grid;
+  place-items: end center;
+  flex: none;
+}
+.medal .rib {
+  position: absolute;
+  top: -8%;
+  width: 46%;
+  height: 46%;
+  background: linear-gradient(90deg, #c60b1e 0 33%, #ffc400 33% 66%, #c60b1e 66%);
+  clip-path: polygon(0 0, 100% 0, 80% 100%, 20% 100%);
+}
+.medal .disc {
+  position: relative;
+  width: 78%;
+  height: 78%;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font: 800 calc(1em) var(--cond);
+  color: rgb(0 0 0 / 0.35);
+  box-shadow: inset 0 -2px 4px rgb(0 0 0 / 0.25), inset 0 2px 3px rgb(255 255 255 / 0.5);
+}
+.medal.oro .disc {
+  background: radial-gradient(circle at 35% 30%, #fff1a8, #e9b824 45%, #a87a0c);
+}
+.medal.plata .disc {
+  background: radial-gradient(circle at 35% 30%, #ffffff, #c4cbd3 45%, #7d8792);
+}
+.medal.bronce .disc {
+  background: radial-gradient(circle at 35% 30%, #ffd2a8, #cd7f32 45%, #7f4a17);
+}
+.events {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+.event {
+  background: var(--card2);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.event .en {
+  font: 700 16px var(--cond);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.event .ms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 16px;
+}
+.event .m {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  font-size: 13px;
+}
+.event .m b {
+  font: 700 15px var(--cond);
+}
+.event .m .disc {
+  font-size: 17px;
+}
+.event .mvp {
+  font: 800 10px var(--cond);
+  letter-spacing: 0.1em;
+  background: var(--tx);
+  color: var(--card);
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-top: -2px;
+}
+.msum {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+.msum .it {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgb(0 0 0 / 0.22);
+  border-radius: 999px;
+  padding: 5px 13px 5px 9px;
+  font: 600 14px var(--cond);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #ffe08a;
+  transition: background 0.15s;
+}
+.msum .it b {
+  font-size: 17px;
+  color: #fff;
+}
+.msum .it:last-child {
+  color: rgb(255 255 255 / 0.85);
+}
+.msum:hover .it {
+  background: rgb(0 0 0 / 0.32);
+}
+.msum .mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.msum .mini .disc {
+  font-size: 0;
+}

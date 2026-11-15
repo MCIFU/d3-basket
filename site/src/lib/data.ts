@@ -121,7 +121,28 @@ export interface Season {
 }
 /** [partido, edición, fecha, equipo, rival, local, puntos equipo, puntos rival, titular, ...línea] */
 export type LogRow = [string, number, string | null, number, number, number, number, number, number, ...Line]
+/** Título (won 1) o final perdida (won 0) con un club. */
+export interface Title {
+  k: 'liga' | 'copa' | 'supercopa' | 'euroleague' | 'bcl' | 'eurocup'
+  y: number
+  label: string
+  won: number
+  club: string
+  name: string
+  logo: string | null
+  vs: string | null
+  res: string | null
+}
+/** Medalla con la selección española. */
+export interface Medal {
+  kind: 'JJOO' | 'Mundial' | 'EuroBasket'
+  y: number
+  medal: 'oro' | 'plata' | 'bronce'
+  mvp: boolean
+}
 export interface PlayerRec {
+  titles: Title[]
+  medals: Medal[]
   ref: string
   name: string
   first: string | null

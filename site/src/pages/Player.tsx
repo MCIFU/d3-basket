@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { MedalSummary, Medals } from '../components/Medals'
 import { BarChart, Crest, Foot, Loading, NotFound, Radar, Sec, SortTable, Strip, Tabs, src, type Col } from '../components/ui'
 import { cssVars, palette, pctColor, valColor } from '../lib/color'
 import { LOG0, S, compOf, loadEd, loadPlayer, useLoad, type EdFile, type LogRow, type Meta, type PlayerRec, type Season } from '../lib/data'
@@ -137,6 +138,9 @@ function PlayerPage({ p, meta }: { p: PlayerRec; meta: Meta }) {
                 <span>{team.n}</span>
               </a>
             )}
+            <div>
+              <MedalSummary titles={p.titles ?? []} medals={p.medals ?? []} />
+            </div>
           </div>
           <div className="pic">
             {p.cur?.num && <div className="num">#{p.cur.num}</div>}
@@ -297,6 +301,7 @@ function Summary({ p, games, pc, cur, pal, compName, meta }: { p: PlayerRec; gam
           )}
         </section>
       </div>
+      <Medals titles={p.titles ?? []} medals={p.medals ?? []} />
       {last4.length > 0 && (
         <section className="card" style={{ marginTop: 20 }}>
           <Sec more={{ to: `${href.player(p.ref)}?v=partidos`, label: 'Todos' }}>Últimos partidos</Sec>

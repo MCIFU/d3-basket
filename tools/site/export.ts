@@ -13,7 +13,7 @@
  * Uso: tsx tools/site/export.ts --db data/d3basket.db [--out public/d]
  */
 import Database from 'better-sqlite3'
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { Queries } from '../../src/db/queries'
 import { LEAGUES } from '../../src/shared/leagues'
@@ -196,6 +196,62 @@ for (const r of all(`SELECT * FROM player_stints ORDER BY season_start_year`)) {
   if (!stints.has(r.player_id)) stints.set(r.player_id, [])
   stints.get(r.player_id)!.push([r.season_start_year, r.competition, r.club_name, r.team_name, r.license])
 }
+// ───────────────────────── Títulos ─────────────────────────
+const honours = all(`SELECT * FROM honours`)
+/** Campeón y finalista de cada edición europea, desde su final (último partido de la Final Four o de la final). */
+const euroFinals = new Map<number, { code: string; y: number; win: number; lose: number }>()
+for (const e of eds.filter((x) => ['EUROLEAGUE', 'BCL', 'EUROCUP'].includes(x.code))) {
+  const fin = (games as any[])
+    .filter((g) => g.competition_season_id === e.id && g.status === 'finished' && ['final_four', 'final'].includes((rounds.get(g.round_id) as any)?.phase))
+    .sort((a, b) => (a.scheduled_at ?? '').localeCompare(b.scheduled_at ?? ''))
+  const last = fin.at(-1)
+  // Una Final Four tiene dos semifinales, tercer puesto y final (la última); con menos partidos no se sabe cuál es la final.
+  if (last && fin.length >= 4) euroFinals.set(e.id, { code: e.code, y: e.y, win: last.home_score > last.away_score ? last.home_team_id : last.away_team_id, lose: last.home_score > last.away_score ? last.away_team_id : last.home_team_id })
+}
+/** Medallas de la selección (tools/site/selecciones.mjs) por nombre normalizado. */
+const normName = (x: string) => x.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim()
+const nt = new Map<string, { kind: string; y: number; medal: string; mvp: boolean }[]>()
+for (const ev of JSON.parse(readFileSync(new URL('./selecciones.json', import.meta.url), 'utf8')) as any[])
+  for (const pl of ev.players) {
+    const k = normName(pl.name)
+    if (!nt.has(k)) nt.set(k, [])
+    nt.get(k)!.push({ kind: ev.kind, y: ev.year, medal: ev.medal, mvp: pl.mvp })
+  }
+/** Nombres posibles de un jugador para cruzarlo con la selección. */
+const namesOf = (p: any) => {
+  const out = new Set<string>()
+  for (const n of [p.known_as, p.full_name, `${p.first_name ?? ''} ${p.last_name ?? ''}`]) if (n) out.add(normName(n))
+  const f = normName(p.full_name ?? '').split(' ')
+  if (f.length > 2) (out.add(`${f[0]} ${f[1]}`), out.add(`${f[0]} ${f.at(-2)}`))
+  return [...out]
+}
+// Cada nombre de la selección se asigna a un único jugador español: si hay varios con ese nombre,
+// al que tiene temporadas en la ACB o la EuroLeague y edad compatible con el torneo.
+const topLevel = (id: number) => (psl.get(id)?.length ?? 0) > 0 || (pLog.get(id) ?? []).some((l) => ['ACB', 'EUROLEAGUE'].includes(edById.get(l[1])!.code))
+const medalsOf = new Map<number, { kind: string; y: number; medal: string; mvp: boolean }[]>()
+{
+  const cands = new Map<string, any[]>()
+  for (const p of players as any[]) {
+    if (p.nationality !== 'España') continue
+    for (const n of namesOf(p)) if (nt.has(n)) (cands.get(n) ?? cands.set(n, []).get(n)!).push(p)
+  }
+  for (const [n, ps] of cands) {
+    const evs = nt.get(n)!
+    const fits = (p: any) => !p.birth_date || evs.every((e) => e.y - Number(p.birth_date.slice(0, 4)) >= 16 && e.y - Number(p.birth_date.slice(0, 4)) <= 42)
+    const uniq = [...new Map(ps.map((p) => [p.id, p])).values()].filter(fits)
+    const top = uniq.filter((p) => topLevel(p.id))
+    const pick = top.length === 1 ? top[0] : uniq.length === 1 ? uniq[0] : undefined
+    if (pick && !medalsOf.has(pick.id)) medalsOf.set(pick.id, evs)
+  }
+}
+/** EuroLeague de clubes españoles anteriores a las temporadas cargadas (año de inicio de temporada). */
+const OLD_EL: [number, string][] = [
+  [2002, 'Barça'],
+  [2009, 'Barça'],
+  [2014, 'Real Madrid'],
+  [2017, 'Real Madrid']
+]
+
 const pBuckets: Record<string, any>[] = Array.from({ length: BUCKETS.p }, () => ({}))
 const search: { p: unknown[]; c: unknown[] } = { p: [], c: [] }
 for (const p of players as any[]) {
@@ -242,7 +298,42 @@ for (const p of players as any[]) {
   try {
     records = p.career ? JSON.parse(p.career).records ?? null : null
   } catch {}
+  // Títulos de club: estaba en el equipo campeón (o finalista) esa temporada.
+  const titles: unknown[] = []
+  const acbClubs = new Map<number, Set<string>>()
+  for (const s of seasons) {
+    if (s.code !== 'ACB') continue
+    const club = s.t != null ? teams.get(s.t)!.club : s.club
+    if (!club) continue
+    if (!acbClubs.has(s.y)) acbClubs.set(s.y, new Set())
+    acbClubs.get(s.y)!.add(club)
+  }
+  for (const h of honours as any[]) {
+    const set = acbClubs.get(h.season_start_year)
+    if (!set) continue
+    for (const [won, cid] of [[1, h.champion_club_id], [0, h.runner_up_club_id]] as const) {
+      const cr = cid ? clubRef.get(cid) : undefined
+      if (cr && set.has(cr)) {
+        const cl: any = clubById.get(cid)
+        titles.push({ k: h.competition, y: h.season_start_year, label: h.label, won, club: cr, name: cl?.name, logo: cl?.logo_url ?? null, vs: won ? h.runner_up_name : h.champion_name, res: h.result })
+      }
+    }
+  }
+  for (const s of seasons) {
+    const f = s.ed != null ? euroFinals.get(s.ed) : undefined
+    if (!f || s.gp === 0 || (s.t !== f.win && s.t !== f.lose)) continue
+    const t = teams.get(s.t)!
+    const o = teams.get(s.t === f.win ? f.lose : f.win)!
+    titles.push({ k: f.code.toLowerCase(), y: f.y, label: `${f.y}-${String(f.y + 1).slice(2)}`, won: s.t === f.win ? 1 : 0, club: t.club, name: t.name, logo: t.logo, vs: o.name, res: null })
+  }
+  for (const [y, cname] of OLD_EL) {
+    const cl: any = (clubs as any[]).find((c) => c.name === cname && acbClubs.get(y)?.has(clubRef.get(c.id)!))
+    if (cl) titles.push({ k: 'euroleague', y, label: `${y}-${String(y + 1).slice(2)}`, won: 1, club: clubRef.get(cl.id), name: cl.name, logo: cl.logo_url, vs: null, res: null })
+  }
+  const medals = medalsOf.get(p.id) ?? []
   pBuckets[bucketOf(ref, BUCKETS.p)][ref] = {
+    titles,
+    medals,
     ref, name: displayName(p), first: p.first_name, last: p.last_name, full: p.full_name, birth: p.birth_date, place: p.birth_place, nat: p.nationality,
     h: p.height_cm, w: p.weight_kg, pos: p.position, posc: p.position_code, photo: p.photo_url, cut: p.photo_nobg_url, body: p.body_photo_url, socials,
     cur, seasons, log: logs, tm, stints: stints.get(p.id) ?? [], records
@@ -265,7 +356,6 @@ for (const r of all(`SELECT ts.team_id, ts.role, COALESCE(c.full_name, TRIM(COAL
   if (!staffByTeam.has(r.team_id)) staffByTeam.set(r.team_id, [])
   staffByTeam.get(r.team_id)!.push([r.name, r.role, r.photo_url])
 }
-const honours = all(`SELECT * FROM honours`)
 const cBuckets: Record<string, any>[] = Array.from({ length: BUCKETS.c }, () => ({}))
 for (const c of clubs as any[]) {
   const ref = clubRef.get(c.id)!

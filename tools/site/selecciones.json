@@ -1,0 +1,1274 @@
+[
+ {
+  "kind": "JJOO",
+  "year": 1984,
+  "medal": "plata",
+  "players": [
+   {
+    "num": "4",
+    "name": "José Manuel Beirán",
+    "mvp": false
+   },
+   {
+    "num": "5",
+    "name": "José Luis Llorente",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Fernando Arcega",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Josep Maria Margall",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "Andrés Jiménez",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Fernando Romay",
+    "mvp": false
+   },
+   {
+    "num": "10",
+    "name": "Fernando Martín",
+    "mvp": false
+   },
+   {
+    "num": "11",
+    "name": "Juan Antonio Corbalán",
+    "mvp": false
+   },
+   {
+    "num": "12",
+    "name": "Ignacio Solozábal",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Juan de la Cruz",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Juan Manuel López Iturriaga",
+    "mvp": false
+   },
+   {
+    "num": "15",
+    "name": "Juan Antonio San Epifanio",
+    "mvp": false
+   }
+  ],
+  "coach": "Antonio Díaz-Miguel"
+ },
+ {
+  "kind": "JJOO",
+  "year": 2008,
+  "medal": "plata",
+  "players": [
+   {
+    "num": "4",
+    "name": "Pau Gasol",
+    "mvp": false
+   },
+   {
+    "num": "5",
+    "name": "Rudy Fernández",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Ricky Rubio",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Juan Carlos Navarro",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "José Calderón",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Felipe Reyes",
+    "mvp": false
+   },
+   {
+    "num": "10",
+    "name": "Carlos Jiménez",
+    "mvp": false
+   },
+   {
+    "num": "11",
+    "name": "Raül López",
+    "mvp": false
+   },
+   {
+    "num": "12",
+    "name": "Berni Rodríguez",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Marc Gasol",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Álex Mumbrú",
+    "mvp": false
+   },
+   {
+    "num": "15",
+    "name": "Jorge Garbajosa",
+    "mvp": false
+   }
+  ],
+  "coach": "Aíto García Reneses"
+ },
+ {
+  "kind": "JJOO",
+  "year": 2012,
+  "medal": "plata",
+  "players": [
+   {
+    "num": "4",
+    "name": "Pau Gasol",
+    "mvp": false
+   },
+   {
+    "num": "5",
+    "name": "Rudy Fernández",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Sergio Rodríguez",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Juan Carlos Navarro",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "José Calderón",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Felipe Reyes",
+    "mvp": false
+   },
+   {
+    "num": "10",
+    "name": "Víctor Claver",
+    "mvp": false
+   },
+   {
+    "num": "11",
+    "name": "Fernando San Emeterio",
+    "mvp": false
+   },
+   {
+    "num": "12",
+    "name": "Sergio Llull",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Marc Gasol",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Serge Ibaka",
+    "mvp": false
+   },
+   {
+    "num": "15",
+    "name": "Víctor Sada",
+    "mvp": false
+   }
+  ],
+  "coach": "Sergio Scariolo"
+ },
+ {
+  "kind": "JJOO",
+  "year": 2016,
+  "medal": "bronce",
+  "players": [
+   {
+    "num": "4",
+    "name": "Pau Gasol",
+    "mvp": false
+   },
+   {
+    "num": "5",
+    "name": "Rudy Fernández",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Sergio Rodríguez",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Juan Carlos Navarro",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "José Calderón",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Felipe Reyes",
+    "mvp": false
+   },
+   {
+    "num": "10",
+    "name": "Víctor Claver",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Willy Hernangómez",
+    "mvp": false
+   },
+   {
+    "num": "21",
+    "name": "Álex Abrines",
+    "mvp": false
+   },
+   {
+    "num": "23",
+    "name": "Sergio Llull",
+    "mvp": false
+   },
+   {
+    "num": "44",
+    "name": "Nikola Mirotić",
+    "mvp": false
+   },
+   {
+    "num": "79",
+    "name": "Ricky Rubio",
+    "mvp": false
+   }
+  ],
+  "coach": "Sergio Scariolo"
+ },
+ {
+  "kind": "Mundial",
+  "year": 2006,
+  "medal": "oro",
+  "players": [
+   {
+    "num": "4",
+    "name": "Pau Gasol",
+    "mvp": true
+   },
+   {
+    "num": "5",
+    "name": "Rudy Fernández",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Carlos Cabezas",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Juan Carlos Navarro",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "José Calderón",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Felipe Reyes",
+    "mvp": false
+   },
+   {
+    "num": "10",
+    "name": "Carlos Jiménez",
+    "mvp": false
+   },
+   {
+    "num": "11",
+    "name": "Sergio Rodríguez",
+    "mvp": false
+   },
+   {
+    "num": "12",
+    "name": "Berni Rodríguez",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Marc Gasol",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Álex Mumbrú",
+    "mvp": false
+   },
+   {
+    "num": "15",
+    "name": "Jorge Garbajosa",
+    "mvp": false
+   }
+  ],
+  "coach": "Pepu Hernández"
+ },
+ {
+  "kind": "Mundial",
+  "year": 2019,
+  "medal": "oro",
+  "players": [
+   {
+    "num": "1",
+    "name": "Quino Colom",
+    "mvp": false
+   },
+   {
+    "num": "5",
+    "name": "Rudy Fernández",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "Pau Ribas",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Ricky Rubio",
+    "mvp": true
+   },
+   {
+    "num": "10",
+    "name": "Víctor Claver",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Marc Gasol",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Willy Hernangómez",
+    "mvp": false
+   },
+   {
+    "num": "18",
+    "name": "Pierre Oriola",
+    "mvp": false
+   },
+   {
+    "num": "22",
+    "name": "Xavi Rabaseda",
+    "mvp": false
+   },
+   {
+    "num": "23",
+    "name": "Sergio Llull",
+    "mvp": false
+   },
+   {
+    "num": "33",
+    "name": "Javier Beirán",
+    "mvp": false
+   },
+   {
+    "num": "41",
+    "name": "Juancho Hernangómez",
+    "mvp": false
+   }
+  ],
+  "coach": "Sergio Scariolo"
+ },
+ {
+  "kind": "EuroBasket",
+  "year": 1935,
+  "medal": "plata",
+  "players": [
+   {
+    "num": "2",
+    "name": "Juan Carbonell",
+    "mvp": false
+   },
+   {
+    "num": "3",
+    "name": "Pedro Alonso",
+    "mvp": false
+   },
+   {
+    "num": "4",
+    "name": "Emilio Alonso",
+    "mvp": false
+   },
+   {
+    "num": "5",
+    "name": "Cayetano Ortega",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Rafael Ruano",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Rafael Martín",
+    "mvp": true
+   },
+   {
+    "num": "8",
+    "name": "Armando Maunier",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Fernando Muscat",
+    "mvp": false
+   }
+  ],
+  "coach": "Mariano Manent"
+ },
+ {
+  "kind": "EuroBasket",
+  "year": 1973,
+  "medal": "plata",
+  "players": [
+   {
+    "num": "4",
+    "name": "Wayne Brabender",
+    "mvp": true
+   },
+   {
+    "num": "5",
+    "name": "Vicente Ramos Cecilio",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Carmelo Cabrera",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Enrique Margall",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "Luis Miguel Santillana",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Rafael Rullán",
+    "mvp": false
+   },
+   {
+    "num": "10",
+    "name": "Francisco Buscato",
+    "mvp": false
+   },
+   {
+    "num": "11",
+    "name": "Manuel Flores",
+    "mvp": false
+   },
+   {
+    "num": "12",
+    "name": "Jose Luis Sagi-Vela",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Clifford Luyk",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Miguel Angel Estrada",
+    "mvp": false
+   },
+   {
+    "num": "15",
+    "name": "Gonzalo Sagi-Vela",
+    "mvp": false
+   }
+  ],
+  "coach": "Antonio Díaz-Miguel"
+ },
+ {
+  "kind": "EuroBasket",
+  "year": 1983,
+  "medal": "plata",
+  "players": [
+   {
+    "num": "4",
+    "name": "Fernando Arcega",
+    "mvp": false
+   },
+   {
+    "num": "5",
+    "name": "Joan Creus",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Cándido Sibilio",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Josep Maria Margall",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "Andrés Jiménez",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Fernando Romay",
+    "mvp": false
+   },
+   {
+    "num": "10",
+    "name": "Fernando Martín",
+    "mvp": false
+   },
+   {
+    "num": "11",
+    "name": "Juan Antonio Corbalán",
+    "mvp": true
+   },
+   {
+    "num": "12",
+    "name": "Ignacio Solozábal",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Juan de la Cruz",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Juan Manuel López Iturriaga",
+    "mvp": false
+   },
+   {
+    "num": "15",
+    "name": "Juan Antonio San Epifanio",
+    "mvp": false
+   }
+  ],
+  "coach": "Antonio Díaz-Miguel"
+ },
+ {
+  "kind": "EuroBasket",
+  "year": 1999,
+  "medal": "plata",
+  "players": [
+   {
+    "num": "4",
+    "name": "Alberto Angulo",
+    "mvp": false
+   },
+   {
+    "num": "5",
+    "name": "Nacho Rodilla",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Iván Corrales",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Ignacio Romero",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "Ignacio Rodríguez",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Carlos Jiménez",
+    "mvp": false
+   },
+   {
+    "num": "10",
+    "name": "Rodrigo de la Fuente",
+    "mvp": false
+   },
+   {
+    "num": "11",
+    "name": "Alberto Herreros",
+    "mvp": false
+   },
+   {
+    "num": "12",
+    "name": "Roger Esteller",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Iñaki De Miguel",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Alfonso Reyes",
+    "mvp": false
+   },
+   {
+    "num": "15",
+    "name": "Roberto Dueñas",
+    "mvp": false
+   }
+  ],
+  "coach": "Lolo Sainz"
+ },
+ {
+  "kind": "EuroBasket",
+  "year": 2001,
+  "medal": "bronce",
+  "players": [
+   {
+    "num": "4",
+    "name": "Pau Gasol",
+    "mvp": false
+   },
+   {
+    "num": "5",
+    "name": "Chuck Kornegay",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Paco Vázquez",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Juan Carlos Navarro",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "Ignacio Rodríguez",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Felipe Reyes",
+    "mvp": false
+   },
+   {
+    "num": "10",
+    "name": "Carlos Jiménez",
+    "mvp": false
+   },
+   {
+    "num": "11",
+    "name": "Lucio Angulo",
+    "mvp": false
+   },
+   {
+    "num": "12",
+    "name": "José Antonio Paraíso",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Raül López",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Alfonso Reyes",
+    "mvp": false
+   },
+   {
+    "num": "15",
+    "name": "Jorge Garbajosa",
+    "mvp": false
+   }
+  ],
+  "coach": "Javier Imbroda"
+ },
+ {
+  "kind": "EuroBasket",
+  "year": 2003,
+  "medal": "plata",
+  "players": [
+   {
+    "num": "4",
+    "name": "Pau Gasol",
+    "mvp": false
+   },
+   {
+    "num": "5",
+    "name": "Roger Grimau",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Carles Marco",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Juan Carlos Navarro",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "José Calderón",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Felipe Reyes",
+    "mvp": false
+   },
+   {
+    "num": "10",
+    "name": "Carlos Jiménez",
+    "mvp": false
+   },
+   {
+    "num": "11",
+    "name": "Alberto Herreros",
+    "mvp": false
+   },
+   {
+    "num": "12",
+    "name": "Rodrigo de la Fuente",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Antonio Bueno",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Alfonso Reyes",
+    "mvp": false
+   },
+   {
+    "num": "15",
+    "name": "Jorge Garbajosa",
+    "mvp": false
+   }
+  ],
+  "coach": "Moncho López"
+ },
+ {
+  "kind": "EuroBasket",
+  "year": 2007,
+  "medal": "plata",
+  "players": [
+   {
+    "num": "4",
+    "name": "Pau Gasol",
+    "mvp": false
+   },
+   {
+    "num": "5",
+    "name": "Rudy Fernández",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Carlos Cabezas",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Juan Carlos Navarro",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "José Calderón",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Felipe Reyes",
+    "mvp": false
+   },
+   {
+    "num": "10",
+    "name": "Carlos Jiménez",
+    "mvp": false
+   },
+   {
+    "num": "11",
+    "name": "Sergio Rodríguez",
+    "mvp": false
+   },
+   {
+    "num": "12",
+    "name": "Berni Rodríguez",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Marc Gasol",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Álex Mumbrú",
+    "mvp": false
+   },
+   {
+    "num": "15",
+    "name": "Jorge Garbajosa",
+    "mvp": false
+   }
+  ],
+  "coach": "Pepu Hernández"
+ },
+ {
+  "kind": "EuroBasket",
+  "year": 2009,
+  "medal": "oro",
+  "players": [
+   {
+    "num": "4",
+    "name": "Pau Gasol",
+    "mvp": true
+   },
+   {
+    "num": "5",
+    "name": "Rudy Fernández",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Ricky Rubio",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Juan Carlos Navarro",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "Víctor Claver",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Felipe Reyes",
+    "mvp": false
+   },
+   {
+    "num": "10",
+    "name": "Carlos Cabezas",
+    "mvp": false
+   },
+   {
+    "num": "11",
+    "name": "Raül López",
+    "mvp": false
+   },
+   {
+    "num": "12",
+    "name": "Sergio Llull",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Marc Gasol",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Álex Mumbrú",
+    "mvp": false
+   },
+   {
+    "num": "15",
+    "name": "Jorge Garbajosa",
+    "mvp": false
+   }
+  ],
+  "coach": "Sergio Scariolo"
+ },
+ {
+  "kind": "EuroBasket",
+  "year": 2011,
+  "medal": "oro",
+  "players": [
+   {
+    "num": "4",
+    "name": "Pau Gasol",
+    "mvp": false
+   },
+   {
+    "num": "5",
+    "name": "Rudy Fernández",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Ricky Rubio",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Juan Carlos Navarro",
+    "mvp": true
+   },
+   {
+    "num": "8",
+    "name": "José Calderón",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Felipe Reyes",
+    "mvp": false
+   },
+   {
+    "num": "10",
+    "name": "Víctor Claver",
+    "mvp": false
+   },
+   {
+    "num": "11",
+    "name": "Fernando San Emeterio",
+    "mvp": false
+   },
+   {
+    "num": "12",
+    "name": "Sergio Llull",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Marc Gasol",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Serge Ibaka",
+    "mvp": false
+   },
+   {
+    "num": "15",
+    "name": "Víctor Sada",
+    "mvp": false
+   }
+  ],
+  "coach": "Sergio Scariolo"
+ },
+ {
+  "kind": "EuroBasket",
+  "year": 2013,
+  "medal": "bronce",
+  "players": [
+   {
+    "num": "4",
+    "name": "Pablo Aguilar",
+    "mvp": false
+   },
+   {
+    "num": "5",
+    "name": "Rudy Fernández",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Sergio Rodríguez",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Xavi Rey",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "José Calderón",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Ricky Rubio",
+    "mvp": false
+   },
+   {
+    "num": "10",
+    "name": "Víctor Claver",
+    "mvp": false
+   },
+   {
+    "num": "11",
+    "name": "Fernando San Emeterio",
+    "mvp": false
+   },
+   {
+    "num": "12",
+    "name": "Sergio Llull",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Marc Gasol",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Germán Gabriel",
+    "mvp": false
+   },
+   {
+    "num": "15",
+    "name": "Álex Mumbrú",
+    "mvp": false
+   }
+  ],
+  "coach": "Juan Antonio Orenga"
+ },
+ {
+  "kind": "EuroBasket",
+  "year": 2015,
+  "medal": "oro",
+  "players": [
+   {
+    "num": "4",
+    "name": "Pau Gasol",
+    "mvp": true
+   },
+   {
+    "num": "5",
+    "name": "Rudy Fernández",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Sergio Rodríguez",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Willy Hernangómez",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "Pau Ribas",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Felipe Reyes",
+    "mvp": false
+   },
+   {
+    "num": "10",
+    "name": "Víctor Claver",
+    "mvp": false
+   },
+   {
+    "num": "11",
+    "name": "Fernando San Emeterio",
+    "mvp": false
+   },
+   {
+    "num": "12",
+    "name": "Sergio Llull",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Pablo Aguilar",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Nikola Mirotić",
+    "mvp": false
+   },
+   {
+    "num": "15",
+    "name": "Guillem Vives",
+    "mvp": false
+   }
+  ],
+  "coach": "Sergio Scariolo"
+ },
+ {
+  "kind": "EuroBasket",
+  "year": 2017,
+  "medal": "bronce",
+  "players": [
+   {
+    "num": "4",
+    "name": "Pau Gasol",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Sergio Rodríguez",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Juan Carlos Navarro",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Ricky Rubio",
+    "mvp": false
+   },
+   {
+    "num": "13",
+    "name": "Marc Gasol",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Willy Hernangómez",
+    "mvp": false
+   },
+   {
+    "num": "15",
+    "name": "Joan Sastre",
+    "mvp": false
+   },
+   {
+    "num": "16",
+    "name": "Guillem Vives",
+    "mvp": false
+   },
+   {
+    "num": "18",
+    "name": "Pierre Oriola",
+    "mvp": false
+   },
+   {
+    "num": "19",
+    "name": "Fernando San Emeterio",
+    "mvp": false
+   },
+   {
+    "num": "21",
+    "name": "Álex Abrines",
+    "mvp": false
+   },
+   {
+    "num": "41",
+    "name": "Juancho Hernangómez",
+    "mvp": false
+   }
+  ],
+  "coach": "Sergio Scariolo"
+ },
+ {
+  "kind": "EuroBasket",
+  "year": 2022,
+  "medal": "oro",
+  "players": [
+   {
+    "num": "2",
+    "name": "Lorenzo Brown",
+    "mvp": false
+   },
+   {
+    "num": "4",
+    "name": "Jaime Pradilla",
+    "mvp": false
+   },
+   {
+    "num": "5",
+    "name": "Rudy Fernández",
+    "mvp": false
+   },
+   {
+    "num": "6",
+    "name": "Xabier López-Arostegui",
+    "mvp": false
+   },
+   {
+    "num": "7",
+    "name": "Jaime Fernández",
+    "mvp": false
+   },
+   {
+    "num": "8",
+    "name": "Darío Brizuela",
+    "mvp": false
+   },
+   {
+    "num": "9",
+    "name": "Alberto Díaz",
+    "mvp": false
+   },
+   {
+    "num": "11",
+    "name": "Sebas Saiz",
+    "mvp": false
+   },
+   {
+    "num": "14",
+    "name": "Willy Hernangómez",
+    "mvp": true
+   },
+   {
+    "num": "16",
+    "name": "Usman Garuba",
+    "mvp": false
+   },
+   {
+    "num": "41",
+    "name": "Juancho Hernangómez",
+    "mvp": false
+   },
+   {
+    "num": "44",
+    "name": "Joel Parra",
+    "mvp": false
+   }
+  ],
+  "coach": "Sergio Scariolo"
+ }
+]
