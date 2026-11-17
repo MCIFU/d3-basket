@@ -1,82 +1,35 @@
 {
   "name": "d3-basket",
   "version": "0.1.0",
-  "description": "D3 Basket — scouting y estadísticas de baloncesto español (Liga Endesa, Primera, Segunda y Tercera FEB)",
+  "description": "d3 basket: resultados, estadísticas y trayectorias del baloncesto español y europeo (web estática)",
   "author": "MCIFU",
   "license": "UNLICENSED",
   "private": true,
-  "main": "./out/main/index.js",
   "scripts": {
-    "dev": "electron-vite dev",
-    "build": "electron-vite build",
-    "start": "electron-vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.site.json",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.site.json",
     "test": "vitest run",
     "scrape": "tsx src/cli/index.ts",
     "scrape:acb": "tsx src/cli/index.ts sync acb",
-    "dist": "electron-vite build && electron-builder --win --publish never",
-    "dev:web": "vite --config vite.web.config.ts",
-    "build:web": "vite build --config vite.web.config.ts",
-    "build:artifact": "node tools/artifact/build.mjs",
     "export:web": "tsx src/cli/index.ts export-web",
-    "build:site": "npm run build:netlify",
-    "build:netlify": "tsx src/cli/index.ts restore-db --db data/d3basket.db && (tsx src/cli/index.ts sync acb --db data/d3basket.db --delay 700 || echo \"AVISO: fallo al sincronizar la ACB; se publican los últimos datos\") && (tsx src/cli/index.ts sync primera-feb --db data/d3basket.db --delay 400 --max-bios 150 || echo \"AVISO: fallo al sincronizar la Primera FEB; se publican los últimos datos\") && (tsx src/cli/index.ts sync segunda-feb --db data/d3basket.db --delay 400 --max-bios 150 || echo \"AVISO: fallo al sincronizar la Segunda FEB; se publican los últimos datos\") && (tsx src/cli/index.ts sync tercera-feb --db data/d3basket.db --delay 400 --max-bios 150 || echo \"AVISO: fallo al sincronizar la Tercera FEB; se publican los últimos datos\") && (tsx src/cli/index.ts sync copa-espana --db data/d3basket.db --delay 400 || echo \"AVISO: fallo al sincronizar la Copa España; se publican los últimos datos\") && (for l in euroleague eurocup bcl lba serie-a2 bbl proa elite elite-2 gbl bsl; do tsx src/cli/index.ts sync $l --db data/d3basket.db --delay 300 || echo \"AVISO: fallo al sincronizar $l; se publican los últimos datos\"; done) && (tsx src/cli/index.ts check --db data/d3basket.db || echo \"AVISO: la auditoría ha encontrado errores (ver arriba)\") && tsx src/cli/index.ts export-web --db data/d3basket.db && tsx tools/site/export.ts --db data/d3basket.db --out public/d && vite build --config vite.site.config.ts",
+    "build:site": "tsx src/cli/index.ts restore-db --db data/d3basket.db && (tsx src/cli/index.ts sync acb --db data/d3basket.db --delay 700 || echo \"AVISO: fallo al sincronizar la ACB; se publican los últimos datos\") && (tsx src/cli/index.ts sync primera-feb --db data/d3basket.db --delay 400 --max-bios 150 || echo \"AVISO: fallo al sincronizar la Primera FEB; se publican los últimos datos\") && (tsx src/cli/index.ts sync segunda-feb --db data/d3basket.db --delay 400 --max-bios 150 || echo \"AVISO: fallo al sincronizar la Segunda FEB; se publican los últimos datos\") && (tsx src/cli/index.ts sync tercera-feb --db data/d3basket.db --delay 400 --max-bios 150 || echo \"AVISO: fallo al sincronizar la Tercera FEB; se publican los últimos datos\") && (tsx src/cli/index.ts sync copa-espana --db data/d3basket.db --delay 400 || echo \"AVISO: fallo al sincronizar la Copa España; se publican los últimos datos\") && (for l in euroleague eurocup bcl lba serie-a2 bbl proa elite elite-2 gbl bsl; do tsx src/cli/index.ts sync $l --db data/d3basket.db --delay 300 || echo \"AVISO: fallo al sincronizar $l; se publican los últimos datos\"; done) && (tsx src/cli/index.ts check --db data/d3basket.db || echo \"AVISO: la auditoría ha encontrado errores (ver arriba)\") && tsx src/cli/index.ts export-web --db data/d3basket.db && tsx tools/site/export.ts --db data/d3basket.db --out public/d && vite build --config vite.site.config.ts",
     "seed": "tsx src/cli/index.ts export-web seed/d3basket.db.gz",
-    "build:vercel": "tsx src/cli/index.ts restore-db --db data/d3basket.db && tsx src/cli/index.ts export-web --db data/d3basket.db && vite build --config vite.web.config.ts",
     "site:data": "tsx tools/site/export.ts --db data/d3basket.db --out public/d",
     "site:dev": "vite --config vite.site.config.ts",
-    "site:build": "vite build --config vite.site.config.ts"
-  },
-  "build": {
-    "appId": "com.mcifu.d3basket",
-    "productName": "D3 Basket",
-    "files": [
-      "out/**/*"
-    ],
-    "extraResources": [
-      {
-        "from": "seed/d3basket.db.gz",
-        "to": "seed/d3basket.db.gz"
-      }
-    ],
-    "directories": {
-      "output": "release"
-    },
-    "asarUnpack": [
-      "node_modules/better-sqlite3/**"
-    ],
-    "win": {
-      "target": "nsis",
-      "artifactName": "D3-Basket-${version}-setup.${ext}"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "shortcutName": "D3 Basket"
-    }
+    "site:build": "vite build --config vite.site.config.ts",
+    "site:smoke": "node tools/site/smoke.mjs"
   },
   "dependencies": {
-    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
-    "@fontsource-variable/figtree": "^5.3.0",
-    "@fontsource/permanent-marker": "^5.3.0",
     "better-sqlite3": "^13.0.3",
     "cheerio": "^1.2.0",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "sql.js": "^1.14.2"
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
-    "@netlify/functions": "^6.0.0",
     "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^24.19.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@types/sql.js": "^1.4.11",
     "@vitejs/plugin-react": "^5.2.0",
-    "electron": "^44.4.5",
-    "electron-builder": "^26.15.3",
-    "electron-vite": "^5.0.0",
     "tsx": "^4.23.15",
     "typescript": "5.9",
     "vite": "^7.3.6",
