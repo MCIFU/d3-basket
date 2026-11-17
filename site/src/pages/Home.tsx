@@ -3,7 +3,7 @@ import { countryName } from '../components/Header'
 import { Avatar, Crest, Foot, Loading, Score, Sec, src, Court } from '../components/ui'
 import { cssVars, valColor } from '../lib/color'
 import { compOf, loadDays, useLoad, type Comp, type Days, type Meta } from '../lib/data'
-import { dateLong, dateShort, dayKey, dayLabel, flag } from '../lib/fmt'
+import { dateLong, dateShort, dayKey, dayLabel, flag, time } from '../lib/fmt'
 import { href } from '../lib/router'
 import { useFavs } from '../lib/favs'
 
@@ -42,6 +42,9 @@ function HomePage({ meta, days }: { meta: Meta; days: Days }) {
   const list = byDay.get(day) ?? []
   const order = meta.comps.map((c) => c.code)
   const groups = [...new Set(list.map((g) => g.code))].sort((a, b) => order.indexOf(a) - order.indexOf(b))
+  // Partido destacado: el de la competición de más nivel del día (EuroLeague y ACB primero).
+  const rank = (c: string) => (c === 'EUROLEAGUE' ? 0 : c === 'ACB' ? 1 : 2 + order.indexOf(c))
+  const feat = [...list].sort((a, b) => rank(a.code) - rank(b.code) || (a.d < b.d ? 1 : -1))[0]
   const main = meta.comps.filter((c) => c.tier != null)
   const tm = (id: number) => days.teams[id]
   return (
@@ -56,6 +59,7 @@ function HomePage({ meta, days }: { meta: Meta; days: Days }) {
           <h1>
             <small>Baloncesto</small>Hoy
           </h1>
+          {feat && <Featured g={feat} days={days} meta={meta} />}
           <div className="days">
             {keys.map((k) => {
               const l = dayLabel(k, today)
@@ -109,7 +113,7 @@ function HomePage({ meta, days }: { meta: Meta; days: Days }) {
                     {(open.includes(code) ? gs : gs.slice(0, 6)).map((g) => {
                       const h = tm(g.h)
                       const a = tm(g.a)
-                      return <Score key={g.id} id={g.id} d={g.d} st={g.st} h={g.h} a={g.a} hs={g.hs} as={g.as} hn={h?.s ?? h?.n ?? '?'} an={a?.s ?? a?.n ?? '?'} hl={h?.l ?? null} al={a?.l ?? null} hc1={h?.c1} ac1={a?.c1} />
+                      return <Score key={g.id} id={g.id} d={g.d} st={g.st} h={g.h} a={g.a} hs={g.hs} as={g.as} hn={h?.s ?? h?.n ?? '?'} an={a?.s ?? a?.n ?? '?'} hl={h?.l ?? null} al={a?.l ?? null} hc1={h?.c1} ac1={a?.c1} noDate />
                     })}
                   </div>
                   {gs.length > 6 && !open.includes(code) && (
@@ -185,5 +189,43 @@ function HomePage({ meta, days }: { meta: Meta; days: Days }) {
       </main>
       <Foot updated={meta.updated} />
     </div>
+  )
+}
+
+function Featured({ g, days, meta }: { g: Days['games'][number]; days: Days; meta: Meta }) {
+  const h = days.teams[g.h]
+  const a = days.teams[g.a]
+  const c = compOf(meta, g.code)
+  const fin = g.st === 'f' && g.hs != null && g.as != null
+  return (
+    <a className="feat" href={href.game(g.id)} aria-label={`Partido destacado: ${h?.n} contra ${a?.n}`}>
+      <div className="feat-k">
+        {c?.logo && <img src={src(c.logo)} alt="" />}
+        <span>{c?.name}</span>
+        <i>{g.rn}</i>
+      </div>
+      <div className="feat-m">
+        <div className="feat-t">
+          <Crest url={h?.l} name={h?.n ?? ''} c1={h?.c1} size={72} />
+          <b>{h?.s ?? h?.n}</b>
+        </div>
+        <div className="feat-s">
+          {fin ? (
+            <>
+              <span className={g.hs! > g.as! ? '' : 'dim'}>{g.hs}</span>
+              <em>–</em>
+              <span className={g.as! > g.hs! ? '' : 'dim'}>{g.as}</span>
+            </>
+          ) : (
+            <span className="tm">{time(g.d) || 'vs'}</span>
+          )}
+          <small>{fin ? 'Final' : g.st === 'p' ? 'Aplazado' : 'Hoy'}</small>
+        </div>
+        <div className="feat-t">
+          <Crest url={a?.l} name={a?.n ?? ''} c1={a?.c1} size={72} />
+          <b>{a?.s ?? a?.n}</b>
+        </div>
+      </div>
+    </a>
   )
 }

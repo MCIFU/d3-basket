@@ -291,7 +291,7 @@ export function Radar({ items, color, size = 320 }: { items: { short: string; pc
 }
 
 /** Marcador de un partido (jornada, día). */
-export function Score({ id, d, st, h, a, hs, as, hn, an, hl, al, hc1, ac1, extra }: { id: string; d: string | null; st: string; h: unknown; a: unknown; hs: number | null; as: number | null; hn: string; an: string; hl: string | null; al: string | null; hc1?: string | null; ac1?: string | null; extra?: ReactNode }) {
+export function Score({ id, d, st, h, a, hs, as, hn, an, hl, al, hc1, ac1, extra, noDate }: { id: string; d: string | null; st: string; h: unknown; a: unknown; hs: number | null; as: number | null; hn: string; an: string; hl: string | null; al: string | null; hc1?: string | null; ac1?: string | null; extra?: ReactNode; noDate?: boolean }) {
   void h
   void a
   const fin = st === 'f' && hs != null && as != null
@@ -309,10 +309,10 @@ export function Score({ id, d, st, h, a, hs, as, hn, an, hl, al, hc1, ac1, extra
         <span>{an}</span>
       </div>
       {fin && <div className={`pts ${!aw ? 'lose' : ''}`}>{as}</div>}
-      <div className="when">
-        <span>{extra ?? dateShort(d)}</span>
+      {(!noDate || fin || st === 'p') && <div className="when">
+        <span>{extra ?? (noDate ? '' : dateShort(d))}</span>
         {fin ? <span className="fin">Final</span> : st === 'p' ? <span className="fin">Aplazado</span> : null}
-      </div>
+      </div>}
     </a>
   )
 }
