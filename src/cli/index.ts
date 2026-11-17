@@ -66,6 +66,7 @@ function usage(code = 0): never {
                              [--no-history] [--no-careers] [--career-budget N]
   npm run scrape -- sync primera-feb [--season 2026]   (LEB Oro; también segunda-feb, tercera-feb y copa-espana)
   npm run scrape -- editions acb
+  npm run scrape -- careers-acb [--career-budget N]   trayectoria acb.com de todos los jugadores (también retirados)
   npm run scrape -- info
   npm run scrape -- restore-db [seed/d3basket.db.gz]   (build: semilla → caché → web)
   npm run scrape -- export-web [public/data/d3basket.db.gz]
@@ -221,6 +222,15 @@ async function main() {
     'elite-2': (h) => new LnbAdapter(h, 2, 'LNB_ELITE2'),
     'pro-b': (h) => new LnbAdapter(h, 2, 'LNB_ELITE2')
   }
+  if (command === 'careers-acb') {
+    // Trayectoria en acb.com de todos los jugadores con ficha (también retirados): una página por temporada.
+    const http = new HttpClient({ minDelayMs: Number(values.delay), log })
+    const summary = { careerSeasons: 0, errors: [] as { url: string; error: string }[] }
+    await new AcbScraper(db, http).syncCareers(null, null, { careerBudget: Number(values['career-budget']), log, summary: summary as never })
+    console.log(`✔ ${summary.careerSeasons} temporadas de trayectoria descargadas · ${summary.errors.length} errores`)
+    return
+  }
+
   const national = league ? NATIONAL[league.toLowerCase()] : undefined
   if (league !== 'acb' && !febCompetition && !euroCompetition && !isBcl && !national) {
     console.error(`Liga no soportada: ${league ?? '(ninguna)'} — usa "acb", "primera-feb", "segunda-feb", "tercera-feb" o "copa-espana".`)

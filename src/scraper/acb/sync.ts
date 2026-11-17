@@ -188,20 +188,33 @@ export class AcbScraper {
    * (una página por temporada) y guarda una línea agregada por club. Lo ya
    * descargado no se vuelve a pedir: las temporadas cerradas no cambian.
    */
-  async syncCareers(csId: number, current: NEdition, opts: AcbSyncOptions & { summary?: SyncSummary } = {}) {
+  async syncCareers(csId: number | null, current: NEdition | null, opts: AcbSyncOptions & { summary?: SyncSummary } = {}) {
     const log = opts.log ?? (() => {})
     const editions = this.editionYears()
     if (editions.size === 0) return
-    const players = this.db
-      .prepare(
-        `SELECT DISTINCT p.id, x.external_id AS acb_id, p.source_editions
-         FROM players p
-         JOIN roster_entries r ON r.player_id = p.id AND r.is_active = 1
-         JOIN teams t ON t.id = r.team_id AND t.competition_season_id = ?
-         JOIN external_ids x ON x.entity_type = 'player' AND x.entity_id = p.id AND x.source = 'acb'
-         WHERE p.source_editions IS NOT NULL`
-      )
-      .all(csId) as { id: number; acb_id: string; source_editions: string }[]
+    // Con csId: los jugadores en activo de esa edición. Sin él: todos los que tienen ficha en acb.com
+    // (retirados incluidos), para completar trayectorias y palmarés históricos.
+    const players = (
+      csId != null
+        ? this.db
+            .prepare(
+              `SELECT DISTINCT p.id, x.external_id AS acb_id, p.source_editions
+               FROM players p
+               JOIN roster_entries r ON r.player_id = p.id AND r.is_active = 1
+               JOIN teams t ON t.id = r.team_id AND t.competition_season_id = ?
+               JOIN external_ids x ON x.entity_type = 'player' AND x.entity_id = p.id AND x.source = 'acb'
+               WHERE p.source_editions IS NOT NULL`
+            )
+            .all(csId)
+        : this.db
+            .prepare(
+              `SELECT DISTINCT p.id, x.external_id AS acb_id, p.source_editions
+               FROM players p
+               JOIN external_ids x ON x.entity_type = 'player' AND x.entity_id = p.id AND x.source = 'acb'
+               WHERE p.source_editions IS NOT NULL`
+            )
+            .all()
+    ) as { id: number; acb_id: string; source_editions: string }[]
     const fetched = new Set(
       (this.db.prepare('SELECT player_id || \':\' || edition_source_id AS k FROM player_season_fetches').all() as { k: string }[]).map(
         (r) => r.k
@@ -211,7 +224,7 @@ export class AcbScraper {
     const queue = players
       .flatMap((p) =>
         (JSON.parse(p.source_editions) as string[])
-          .filter((e) => e !== current.ref.id && editions.has(e) && !fetched.has(`${p.id}:${e}`))
+          .filter((e) => e !== current?.ref.id && editions.has(e) && !fetched.has(`${p.id}:${e}`))
           .map((e) => ({ player: p, edition: e, year: editions.get(e)! }))
       )
       .sort((a, b) => b.year - a.year)
