@@ -2936,6 +2936,7 @@ h2.sec > a.more {
 }
 @media (min-width: 761px) {
   .g-21 > section h2.sec > small,
+  .g-21 > div:last-child > section h2.sec > small,
   .g-12 > section:first-child h2.sec > small {
     flex-basis: 100%;
     order: 3;
@@ -3311,4 +3312,93 @@ img.flag {
     width: 44px !important;
     height: 44px !important;
   }
+}
+
+/* ───────────────────────── Españoles de anoche ───────────────────────── */
+.esl {
+  display: grid;
+  gap: 8px;
+}
+.esl-r {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) repeat(3, 40px) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--card2);
+  transition: background 0.15s;
+}
+.esl-r:hover {
+  background: var(--card3);
+}
+.esl-m {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.esl-m b {
+  font: 700 17px/1.1 var(--cond);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.esl-m span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--tx2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.esl-m .esl-c {
+  color: var(--tx3);
+  font-size: 12px;
+}
+.esl-c img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+.esl-n {
+  text-align: center;
+}
+.esl-n b {
+  display: block;
+  font: 700 21px/1 var(--cond);
+}
+.esl-n span {
+  font: 600 10.5px var(--cond);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tx3);
+}
+.g-21 .esl-r {
+  grid-template-columns: 46px minmax(0, 1fr) 40px auto;
+}
+.g-21 .esl-r .esl-n.hide-m {
+  display: none;
+}
+@media (max-width: 760px) {
+  .esl-r {
+    grid-template-columns: 46px minmax(0, 1fr) 40px auto;
+    gap: 10px;
+  }
+}
+.esl-m em {
+  font-style: normal;
+  font-weight: 700;
+}
+.esl-m em.w {
+  color: var(--win);
+}
+.esl-m em.l {
+  color: var(--loss);
+}
+.esl-m i {
+  font-style: normal;
+  color: var(--tx3);
 }

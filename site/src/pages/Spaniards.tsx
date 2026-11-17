@@ -1,7 +1,8 @@
 import { useEffect, useMemo } from 'react'
 import { Avatar, Court, Crest, Foot, Loading, Sec, SortTable, Strip, src, type Col } from '../components/ui'
 import { cssVars, valColor } from '../lib/color'
-import { LOG0, S, compOf, load, useLoad, type LogRow, type Meta, type PlLite, type TL } from '../lib/data'
+import { EspLast } from '../components/EspLast'
+import { LOG0, S, compOf, load, loadDays, useLoad, type LogRow, type Meta, type PlLite, type TL } from '../lib/data'
 import { age, dateShort, n1, per, POS, seasonLabel, val } from '../lib/fmt'
 import { href } from '../lib/router'
 
@@ -35,6 +36,8 @@ export default function Spaniards({ meta }: { meta: Meta }) {
 }
 
 function Page({ meta, d }: { meta: Meta; d: Esp }) {
+  const days = useLoad(loadDays, [])
+  const dd = days && !(days instanceof Error) ? days : undefined
   // Una tarjeta por jugador: su liga como fila principal y el resto de competiciones debajo.
   const abroad = useMemo(() => {
     const by = new Map<string, Row[]>()
@@ -75,8 +78,14 @@ function Page({ meta, d }: { meta: Meta; d: Esp }) {
           ]}
           note={<span>Jugadores españoles con partidos esta temporada fuera de las ligas españolas: en clubes de otros países y en las competiciones europeas.</span>}
         />
-        {abroad.length > 0 && (
+        {dd && (dd.esp?.length ?? 0) > 0 && (
           <section className="card" style={{ marginTop: 26 }}>
+            <Sec aside="partidos de los últimos días fuera de las ligas españolas">Últimos partidos</Sec>
+            <EspLast days={dd} meta={meta} />
+          </section>
+        )}
+        {abroad.length > 0 && (
+          <section className="card" style={{ marginTop: 20 }}>
             <Sec aside="ordenados por valoración media">Fuera de España</Sec>
             <div className="abroad">
               {abroad.map(({ main, also }) => (

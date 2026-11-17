@@ -6,6 +6,7 @@ import { compOf, loadDays, useLoad, type Comp, type Days, type Meta } from '../l
 import { dateLong, dateShort, dayKey, dayLabel, time } from '../lib/fmt'
 import { href } from '../lib/router'
 import { useFavs } from '../lib/favs'
+import { EspLast } from '../components/EspLast'
 
 const BRAND = { dk: '#0a2a5c', lt: '#2f7be0' }
 
@@ -157,6 +158,15 @@ function HomePage({ meta, days }: { meta: Meta; days: Days }) {
           ))}
         </section>
           </div>
+          <div style={{ display: 'grid', gap: 20, minWidth: 0 }}>
+          {(days.esp?.length ?? 0) > 0 && (
+            <section className="card">
+              <Sec aside="NBA, NCAA y Europa · últimos días" more={{ to: '#/espanoles', label: 'Todos' }}>
+                Españoles fuera
+              </Sec>
+              <EspLast days={days} meta={meta} limit={6} />
+            </section>
+          )}
           <section className="card">
             <Sec aside="últimos 8 días · por valoración">Mejores actuaciones</Sec>
             <div className="best" style={{ gridTemplateColumns: '1fr' }}>
@@ -185,6 +195,7 @@ function HomePage({ meta, days }: { meta: Meta; days: Days }) {
               })}
             </div>
           </section>
+          </div>
         </div>
       </main>
       <Foot updated={meta.updated} />

@@ -479,7 +479,27 @@ top.sort((a, b) => b.val - a.val)
 const best = top.slice(0, 12)
 const bestPl: Record<string, unknown> = {}
 for (const b of best) (bestPl[b.p] = plLite(refToId.get(b.p)!)), (dTeams[b.t] ??= teamLite(b.t)), (dTeams[b.opp] ??= teamLite(b.opp))
-write('days.json', { at: new Date(now).toISOString(), games: dGames, teams: dTeams, best, pl: bestPl })
+// Españoles fuera de las ligas españolas en los partidos de los últimos 3 días («anoche»).
+const espLast: any[] = []
+{
+  const cc = new Map((all(`SELECT code, country FROM competitions`) as any[]).map((c) => [c.code, c.country]))
+  for (const g of near as any[]) {
+    if (g.status !== 'finished' || now - Date.parse(g.scheduled_at) > 3.5 * 86400_000) continue
+    const code = edById.get(g.competition_season_id)!.code
+    if (cc.get(code) === 'ES') continue
+    for (const [tid, ls] of gBox.get(g.id) ?? []) for (const l of ls) {
+      const p: any = pById.get(refToId.get(l[0])!)
+      if (p?.nationality !== 'España' || !((l[3] ?? 0) > 0 || (l[4] ?? 0) > 0)) continue
+      const home = g.home_team_id === tid
+      espLast.push({ p: l[0], g: gameRef.get(g.id), code, t: tid, opp: home ? g.away_team_id : g.home_team_id, d: g.scheduled_at, won: home === g.home_score > g.away_score, sc: home ? `${g.home_score}-${g.away_score}` : `${g.away_score}-${g.home_score}`, min: Math.round((l[3] ?? 0) / 60), pts: l[4], reb: l[13], ast: l[14], val: l[21] })
+      bestPl[l[0]] ??= plLite(p.id)
+      dTeams[tid] ??= teamLite(tid)
+      dTeams[home ? g.away_team_id : g.home_team_id] ??= teamLite(home ? g.away_team_id : g.home_team_id)
+    }
+  }
+  espLast.sort((a, b) => b.d.localeCompare(a.d) || b.val - a.val)
+}
+write('days.json', { at: new Date(now).toISOString(), games: dGames, teams: dTeams, best, pl: bestPl, esp: espLast })
 log(`portada: ${dGames.length} partidos cercanos, ${best.length} actuaciones destacadas`)
 
 // ───────────────────────── Españoles por el mundo ─────────────────────────

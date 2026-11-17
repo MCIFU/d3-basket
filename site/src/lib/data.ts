@@ -226,6 +226,23 @@ export interface Days {
   teams: Record<number, TL>
   best: { p: string; g: string; code: string; t: number; opp: number; d: string; won: boolean; pts: number; reb: number; ast: number; val: number }[]
   pl: Record<string, PlLite>
+  /** Españoles fuera de las ligas españolas en los últimos días. */
+  esp?: EspLine[]
+}
+export interface EspLine {
+  p: string
+  g: string
+  code: string
+  t: number
+  opp: number
+  d: string
+  won: boolean
+  sc: string
+  min: number
+  pts: number
+  reb: number
+  ast: number
+  val: number
 }
 export interface SearchIdx {
   p: [string, string, string | null, string | null, number | null, string | null][]
