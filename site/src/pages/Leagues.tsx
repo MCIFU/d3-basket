@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { countryName } from '../components/Header'
-import { Crest, Foot, Sec, src } from '../components/ui'
+import { Crest, Foot, Sec, src, Court } from '../components/ui'
 import { cssVars } from '../lib/color'
 import type { Meta } from '../lib/data'
 import { href } from '../lib/router'
@@ -16,6 +16,7 @@ export default function Leagues({ meta }: { meta: Meta }) {
   return (
     <div style={cssVars({ dk: '#0a2a5c', lt: '#2f7be0' })}>
       <section className="hero short">
+        <Court />
         <div className="ghost">Ligas</div>
         <div className="wrap">
           <span className="kicker" style={{ paddingLeft: 14 }}>

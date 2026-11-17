@@ -1,48 +1,14 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { MedalSummary, Medals } from '../components/Medals'
-import { BarChart, Crest, Foot, Loading, NotFound, Radar, Sec, SortTable, Strip, Tabs, src, type Col } from '../components/ui'
+import { BarChart, Crest, Foot, Loading, NotFound, Radar, Sec, SortTable, Strip, Tabs, src, type Col, Court, FavButton } from '../components/ui'
 import { cssVars, palette, pctColor, valColor } from '../lib/color'
-import { LOG0, S, compOf, loadEd, loadPlayer, useLoad, type EdFile, type LogRow, type Meta, type PlayerRec, type Season } from '../lib/data'
-import { age, dateShort, dateYear, dob, feet, flag, fga, height, n0, n1, pct, per, POS, seasonLabel, ts, val } from '../lib/fmt'
+import { LOG0, S, compOf, loadEd, loadPlayer, useLoad, type LogRow, type Meta, type PlayerRec, type Season } from '../lib/data'
+import { age, dateShort, dateYear, dob, feet, flag, fga, height, n0, n1, pct, per, POS, seasonLabel, val } from '../lib/fmt'
 import { href, useQuery } from '../lib/router'
+import { percentiles } from '../lib/stats'
 
 const line = (r: LogRow) => r.slice(LOG0) as (number | null)[]
 const SECTION_NAME: Record<Season['sec'], string> = { liga: 'Liga', filial: 'Filial', copa: 'Copa', europa: 'Europa', seleccion: 'Selección autonómica', formacion: 'Formación' }
-
-/** Percentiles del jugador frente a su liga (misma edición). */
-function percentiles(ed: EdFile, ref: string) {
-  const byP = new Map<string, { gp: number; s: number[] }>()
-  for (const st of ed.stats) {
-    const a = byP.get(st.p) ?? { gp: 0, s: new Array(19).fill(0) }
-    a.gp += st.gp
-    st.s.forEach((v, i) => (a.s[i] += v ?? 0))
-    byP.set(st.p, a)
-  }
-  const me = byP.get(ref)
-  if (!me || !me.gp) return null
-  const maxGp = Math.max(...[...byP.values()].map((a) => a.gp))
-  const pool = [...byP.entries()].filter(([p, a]) => p === ref || (a.gp >= Math.max(3, Math.floor(maxGp * 0.3)) && a.s[S.sec] / a.gp >= 8 * 60))
-  const metrics: { k: string; short: string; label: string; f: (a: { gp: number; s: number[] }) => number | null; fmt: (v: number) => string; lower?: boolean }[] = [
-    { k: 'pts', short: 'Puntos', label: 'Puntos', f: (a) => a.s[S.pts] / a.gp, fmt: n1 },
-    { k: 'val', short: 'Valor.', label: 'Valoración', f: (a) => val(a.s) / a.gp, fmt: n1 },
-    { k: 'ts', short: 'TS%', label: '% tiro verdadero', f: (a) => ts(a.s), fmt: (v) => `${n1(v * 100)} %` },
-    { k: 'p3', short: 'Triples', label: '% triples', f: (a) => (a.s[S.f3a] >= 10 ? a.s[S.f3m] / a.s[S.f3a] : null), fmt: (v) => `${n1(v * 100)} %` },
-    { k: 'ast', short: 'Asist.', label: 'Asistencias', f: (a) => a.s[S.ast] / a.gp, fmt: n1 },
-    { k: 'reb', short: 'Rebotes', label: 'Rebotes', f: (a) => a.s[S.reb] / a.gp, fmt: n1 },
-    { k: 'stl', short: 'Robos', label: 'Robos', f: (a) => a.s[S.stl] / a.gp, fmt: n1 },
-    { k: 'blk', short: 'Tapones', label: 'Tapones', f: (a) => a.s[S.blk] / a.gp, fmt: n1 },
-    { k: 'tov', short: 'Pérdidas', label: 'Pérdidas', f: (a) => a.s[S.tov] / a.gp, fmt: n1, lower: true }
-  ]
-  const out = metrics.map((m) => {
-    const v = m.f(me)
-    if (v == null) return null
-    const vals = pool.map(([, a]) => m.f(a)).filter((x): x is number => x != null)
-    const below = vals.filter((x) => (m.lower ? x > v : x < v)).length
-    const better = vals.filter((x) => (m.lower ? x < v : x > v)).length
-    return { ...m, v, pct: Math.round((100 * below) / Math.max(1, vals.length - 1)), rank: better + 1, of: vals.length }
-  })
-  return { items: out.filter((x): x is NonNullable<typeof x> => x != null), pool: pool.length, me }
-}
 
 export default function Player({ refId, meta }: { refId: string; meta: Meta }) {
   const p = useLoad(() => loadPlayer(refId), [refId])
@@ -91,6 +57,7 @@ function PlayerPage({ p, meta }: { p: PlayerRec; meta: Meta }) {
   return (
     <div style={cssVars(pal)}>
       <section className="hero">
+        <Court />
         <div className="ghost">{last.split(' ').slice(-1)[0]}</div>
         <div className="wrap hp">
           <div className="txt">
@@ -140,6 +107,15 @@ function PlayerPage({ p, meta }: { p: PlayerRec; meta: Meta }) {
             )}
             <div>
               <MedalSummary titles={p.titles ?? []} medals={p.medals ?? []} />
+            </div>
+            <div className="hero-actions">
+              <FavButton fav={{ kind: 'p', ref: p.ref, name: p.name, img: p.photo ?? p.cut }} />
+              <a className="fav" href={`#/comparar/${encodeURIComponent(p.ref)}`}>
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+                  <path d="M4 16V8M10 16V4M16 16v-6" />
+                </svg>
+                Comparar
+              </a>
             </div>
           </div>
           <div className="pic">
@@ -414,6 +390,7 @@ function CareerTable({ p, compact, meta }: { p: PlayerRec; compact?: boolean; me
               )}
               {rows
                 .filter((s) => s.sec === sec)
+                .slice(0, compact ? 8 : undefined)
                 .map((s, i) => {
                   const t = s.t != null ? p.tm[s.t] : undefined
                   const a = per(s.s, s.gp)

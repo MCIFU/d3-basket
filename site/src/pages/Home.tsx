@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { countryName } from '../components/Header'
-import { Avatar, Crest, Foot, Loading, Score, Sec, src } from '../components/ui'
+import { Avatar, Crest, Foot, Loading, Score, Sec, src, Court } from '../components/ui'
 import { cssVars, valColor } from '../lib/color'
 import { compOf, loadDays, useLoad, type Comp, type Days, type Meta } from '../lib/data'
 import { dateLong, dateShort, dayKey, dayLabel, flag } from '../lib/fmt'
 import { href } from '../lib/router'
+import { useFavs } from '../lib/favs'
 
 const BRAND = { dk: '#0a2a5c', lt: '#2f7be0' }
 
@@ -37,6 +38,7 @@ function HomePage({ meta, days }: { meta: Meta; days: Days }) {
   const [day, setDay] = useState(initial)
   useEffect(() => setDay(initial), [initial])
   const [open, setOpen] = useState<string[]>([])
+  const favs = useFavs()
   const list = byDay.get(day) ?? []
   const order = meta.comps.map((c) => c.code)
   const groups = [...new Set(list.map((g) => g.code))].sort((a, b) => order.indexOf(a) - order.indexOf(b))
@@ -45,6 +47,7 @@ function HomePage({ meta, days }: { meta: Meta; days: Days }) {
   return (
     <div style={cssVars(BRAND)}>
       <section className="hero short">
+        <Court />
         <div className="ghost">Hoy</div>
         <div className="wrap">
           <span className="kicker" style={{ paddingLeft: 14 }}>
@@ -72,6 +75,22 @@ function HomePage({ meta, days }: { meta: Meta; days: Days }) {
       <main className="wrap page">
         <div className="grid g-21" style={{ marginTop: -50, position: 'relative', zIndex: 2 }}>
           <div style={{ display: 'grid', gap: 20, minWidth: 0 }}>
+          {favs.length > 0 && (
+            <section className="card">
+              <Sec aside="guardados en este navegador">Siguiendo</Sec>
+              <div className="favs">
+                {favs.map((f) => (
+                  <a key={f.kind + f.ref} className="fv" href={f.kind === 'p' ? href.player(f.ref) : href.club(f.ref)}>
+                    {f.kind === 'p' ? <Avatar url={f.img} name={f.name} size={40} /> : <Crest url={f.img} name={f.name} size={40} />}
+                    <span>
+                      <b>{f.name}</b>
+                      <small>{f.kind === 'p' ? 'Jugador' : 'Club'}</small>
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
           <section className="card">
             <Sec aside={`${list.length} ${list.length === 1 ? 'partido' : 'partidos'}`}>Partidos</Sec>
             {!list.length && <div className="empty">No hay partidos este día</div>}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import { Avatar, Crest, Foot, Loading, NotFound, Score, Sec, SortTable, Strip, Tabs, src, type Col } from '../components/ui'
+import { Avatar, Crest, Foot, Loading, NotFound, Score, Sec, SortTable, Strip, Tabs, src, type Col, Court, FavButton } from '../components/ui'
 import { cssVars, palette } from '../lib/color'
 import { S, compOf, loadClub, loadEd, useLoad, type ClubRec, type EdFile, type Meta, type RosterRow } from '../lib/data'
 import { age, flag, height, n1, per, POS, seasonLabel, ts } from '../lib/fmt'
@@ -41,6 +41,7 @@ function ClubPage({ meta, c, y, main, other, ed }: { meta: Meta; c: ClubRec; y?:
   return (
     <div style={cssVars(pal)}>
       <section className="hero">
+        <Court />
         <div className="ghost">{(c.short ?? c.name).split(' ')[0]}</div>
         <div className="wrap hc">
           <Crest url={c.logo ?? main?.logo} name={name} c1={c.c1} size={168} className="bigcrest" />
@@ -89,6 +90,9 @@ function ClubPage({ meta, c, y, main, other, ed }: { meta: Meta; c: ClubRec; y?:
                 </div>
               )}
             </dl>
+            <div className="hero-actions">
+              <FavButton fav={{ kind: 'c', ref: c.ref, name: c.name, img: c.logo ?? main?.logo ?? null }} />
+            </div>
           </div>
         </div>
       </section>

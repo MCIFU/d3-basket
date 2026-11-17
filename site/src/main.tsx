@@ -12,12 +12,15 @@ const League = lazy(() => import('./pages/League'))
 const Club = lazy(() => import('./pages/Club'))
 const Player = lazy(() => import('./pages/Player'))
 const Game = lazy(() => import('./pages/Game'))
+const Players = lazy(() => import('./pages/Players'))
+const Spaniards = lazy(() => import('./pages/Spaniards'))
+const Compare = lazy(() => import('./pages/Compare'))
 
 function App() {
   const meta = useLoad(loadMeta, [])
   const { path } = useRoute()
   const [page, a, b] = path
-  const section = !page ? 'hoy' : page === 'ligas' || page === 'liga' ? 'ligas' : page
+  const section = !page ? 'hoy' : page === 'ligas' || page === 'liga' ? 'ligas' : page === 'jugador' ? 'jugadores' : page
   useEffect(() => {
     if (!page) document.title = 'd3 basket'
   }, [page])
@@ -31,11 +34,16 @@ function App() {
   else if (page === 'club' && a) body = <Club meta={m} refId={a} year={b ? Number(b) : undefined} />
   else if (page === 'jugador' && a) body = <Player meta={m} refId={a} />
   else if (page === 'partido' && a) body = <Game meta={m} refId={a} />
+  else if (page === 'jugadores') body = <Players meta={m} />
+  else if (page === 'espanoles') body = <Spaniards meta={m} />
+  else if (page === 'comparar') body = <Compare meta={m} a={a} b={b} />
   else body = <NotFound what="Página" />
   return (
     <>
       <Header meta={m} section={section} />
-      <Suspense fallback={<Loading />}>{body}</Suspense>
+      <div id="contenido" tabIndex={-1} style={{ outline: 'none' }}>
+        <Suspense fallback={<Loading />}>{body}</Suspense>
+      </div>
     </>
   )
 }

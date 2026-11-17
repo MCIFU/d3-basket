@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { palette } from '../lib/color'
 import { dateShort, n1, time } from '../lib/fmt'
+import { toggleFav, useFavs, type Fav } from '../lib/favs'
 import { href } from '../lib/router'
 
 /** Ruta de imagen: las locales (media/...) son relativas a la web. */
@@ -51,7 +52,75 @@ export function Sec({ children, aside, more }: { children: ReactNode; aside?: Re
   )
 }
 
-export const Loading = ({ label = 'Cargando' }: { label?: string }) => <div className="loading">{label}</div>
+/** Esqueleto de la página mientras llegan los datos. */
+export const Loading = ({ label = 'Cargando' }: { label?: string }) => (
+  <div aria-busy="true" aria-label={label}>
+    <div className="skel-hero">
+      <Court />
+      <div className="wrap" style={{ paddingTop: 'calc(var(--header) + 40px)' }}>
+        <div className="skel" style={{ width: 190, height: 30, borderRadius: 999 }} />
+        <div className="skel" style={{ width: 'min(520px, 80%)', height: 86, marginTop: 22 }} />
+        <div className="skel" style={{ width: 'min(380px, 60%)', height: 40, marginTop: 18 }} />
+      </div>
+    </div>
+    <div className="wrap" style={{ marginTop: -56, position: 'relative' }}>
+      <div className="skel" style={{ height: 120, borderRadius: 16 }} />
+      <div className="grid g-12">
+        <div className="skel" style={{ height: 340, borderRadius: 16 }} />
+        <div className="skel" style={{ height: 340, borderRadius: 16 }} />
+      </div>
+    </div>
+  </div>
+)
+
+/** Media pista de baloncesto (medidas FIBA) en líneas: el motivo gráfico de las portadas. */
+export const Court = ({ className = 'court' }: { className?: string }) => (
+  <svg className={className} viewBox="-4 -4 508 475" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden>
+    <rect x="0" y="0" width="500" height="467" />
+    <path d="M190 0a60 60 0 0 0 120 0" />
+    <rect x="168.5" y="274" width="163" height="193" />
+    <circle cx="250" cy="274" r="60" />
+    <path d="M30 467V368A225 225 0 0 1 470 368V467" />
+    <path d="M208.3 415a41.7 41.7 0 0 1 83.4 0" />
+    <path d="M220 427h60" />
+    <circle cx="250" cy="415" r="7.5" />
+  </svg>
+)
+
+/** Marca de d3 basket: un balón con sus costuras. */
+export const BallMark = ({ size = 30 }: { size?: number }) => (
+  <svg className="ball" width={size} height={size} viewBox="0 0 32 32" aria-hidden>
+    <circle cx="16" cy="16" r="15" fill="#ff6b1a" />
+    <g fill="none" stroke="#14110f" strokeWidth="1.6" strokeLinecap="round">
+      <circle cx="16" cy="16" r="15" />
+      <path d="M1 16h30M16 1v30" />
+      <path d="M5.2 5.6c4.3 3.6 4.3 17.2 0 20.8M26.8 5.6c-4.3 3.6-4.3 17.2 0 20.8" />
+    </g>
+  </svg>
+)
+
+/** Cifra que cuenta hasta su valor al aparecer (formato español con un decimal o entero). */
+export function CountUp({ value, decimals = 1, suffix = '' }: { value: number; decimals?: 0 | 1; suffix?: string }) {
+  const [v, setV] = useState(() => (matchMedia('(prefers-reduced-motion: reduce)').matches ? value : 0))
+  useEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return setV(value)
+    let raf = 0
+    const t0 = performance.now()
+    const step = (t: number) => {
+      const k = Math.min(1, (t - t0) / 750)
+      setV(value * (1 - Math.pow(1 - k, 3)))
+      if (k < 1) raf = requestAnimationFrame(step)
+    }
+    raf = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(raf)
+  }, [value])
+  return (
+    <>
+      {v.toLocaleString('es-ES', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}
+      {suffix}
+    </>
+  )
+}
 
 export function NotFound({ what }: { what: string }) {
   return (
@@ -145,7 +214,7 @@ function chartSvg(data: { v: number; lab: string; sub: string; title: string; co
         const top = Math.min(y(d.v), y(0))
         const bar = (
           <g key={i}>
-            <rect className="bar" x={x} y={top} width={bw} height={Math.max(1, Math.abs(y(0) - y(d.v)))} rx={Math.min(5, bw / 4)} fill={d.color ?? color}>
+            <rect className={`bar ${d.v < 0 ? 'neg' : ''}`} style={{ ['--i' as string]: i } as CSSProperties} x={x} y={top} width={bw} height={Math.max(1, Math.abs(y(0) - y(d.v)))} rx={Math.min(5, bw / 4)} fill={d.color ?? color}>
               <title>{d.title}</title>
             </rect>
             {showLab && (
@@ -197,13 +266,17 @@ export function Radar({ items, color, size = 320 }: { items: { short: string; pc
       {items.map((_, i) => (
         <line key={i} x1={c} y1={c} x2={pt(i, R)[0]} y2={pt(i, R)[1]} className="spoke" />
       ))}
-      <polygon points={poly} fill={color} fillOpacity={0.28} stroke={color} strokeWidth={2.5} strokeLinejoin="round" />
+      <g className="shape">
+        <polygon points={poly} fill={color} fillOpacity={0.28} stroke={color} strokeWidth={2.5} strokeLinejoin="round" />
+        {items.map((it, i) => {
+          const [x, yy] = pt(i, (R * Math.max(it.pct, 4)) / 100)
+          return <circle key={i} cx={x} cy={yy} r={3.5} fill={color} />
+        })}
+      </g>
       {items.map((it, i) => {
-        const [x, yy] = pt(i, (R * Math.max(it.pct, 4)) / 100)
         const [lx, ly] = pt(i, R + 26)
         return (
           <g key={i}>
-            <circle cx={x} cy={yy} r={3.5} fill={color} />
             <text x={lx} y={ly} textAnchor="middle" className="rl">
               {it.short}
             </text>
@@ -289,7 +362,13 @@ export function SortTable<T>({ rows, cols, initial, onRow, rowClass, limit }: { 
             {shown.map((r, i) => {
               const to = onRow?.(r)
               return (
-                <tr key={i} className={`${to ? 'link' : ''} ${rowClass?.(r) ?? ''}`} onClick={to ? () => (location.hash = to.replace(/^#/, '')) : undefined}>
+                <tr
+                  key={i}
+                  className={`${to ? 'link' : ''} ${rowClass?.(r) ?? ''}`}
+                  tabIndex={to ? 0 : undefined}
+                  onClick={to ? () => (location.hash = to.replace(/^#/, '')) : undefined}
+                  onKeyDown={to ? (e) => e.key === 'Enter' && (location.hash = to.replace(/^#/, '')) : undefined}
+                >
                   {cols.map((c) => (
                     <td key={c.k} className={`${c.l ? 'l' : ''} ${c.b ? 'b' : ''} ${c.k === key && !c.l ? 'hi' : ''} ${c.hideM ? 'hide-m' : ''}`}>
                       {c.fmt ? c.fmt(r) : (c.get(r) ?? '–')}
@@ -312,14 +391,68 @@ export function SortTable<T>({ rows, cols, initial, onRow, rowClass, limit }: { 
   )
 }
 
-/** Pie de página. */
+/** Pie de página: marca, navegación, fuentes y atajos. */
 export function Foot({ updated }: { updated?: string | null }) {
   return (
     <footer className="foot">
       <div className="wrap">
-        <span>d3 basket · datos de acb.com, FEB, EuroLeague, FIBA y ligas nacionales</span>
-        {updated && <span>Actualizado el {new Date(updated).toLocaleString('es-ES', { timeZone: 'Europe/Madrid', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</span>}
+        <div className="cols">
+          <div>
+            <a className="brand" href={href.home()}>
+              <BallMark />
+              <span>
+                d3 <i>basket</i>
+              </span>
+            </a>
+            <p>Resultados, estadísticas y trayectorias del baloncesto español y europeo, de la Liga Endesa a la Tercera FEB y las grandes ligas de Europa.</p>
+          </div>
+          <div>
+            <h4>Explorar</h4>
+            <ul>
+              <li><a href={href.home()}>Hoy</a></li>
+              <li><a href="#/ligas">Competiciones</a></li>
+              <li><a href="#/jugadores">Jugadores</a></li>
+              <li><a href="#/espanoles">Españoles por el mundo</a></li>
+              <li><a href="#/comparar">Comparar jugadores</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Fuentes</h4>
+            <ul>
+              <li>acb.com y FEB</li>
+              <li>EuroLeague y FIBA</li>
+              <li>Ligas de Italia, Alemania, Francia, Grecia y Turquía</li>
+              <li>Wikipedia (palmarés)</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Atajos</h4>
+            <ul>
+              <li><kbd>Ctrl</kbd> <kbd>K</kbd> o <kbd>/</kbd> buscar</li>
+              <li><kbd>Esc</kbd> cerrar</li>
+              <li><kbd>↑</kbd> <kbd>↓</kbd> <kbd>Intro</kbd> elegir resultado</li>
+            </ul>
+          </div>
+        </div>
+        <div className="base">
+          <span>d3 basket · proyecto personal</span>
+          {updated && <span>Datos actualizados el {new Date(updated).toLocaleString('es-ES', { timeZone: 'Europe/Madrid', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</span>}
+        </div>
       </div>
     </footer>
+  )
+}
+
+/** Botón de favorito para la portada de un jugador o club. */
+export function FavButton({ fav }: { fav: Fav }) {
+  const favs = useFavs()
+  const on = favs.some((f) => f.kind === fav.kind && f.ref === fav.ref)
+  return (
+    <button className="fav" aria-pressed={on} onClick={() => toggleFav(fav)} title={on ? 'Quitar de favoritos' : 'Añadir a favoritos'}>
+      <svg viewBox="0 0 20 20" fill={on ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" aria-hidden>
+        <path d="M10 2.6l2.3 4.7 5.1.7-3.7 3.6.9 5.1L10 14.3l-4.6 2.4.9-5.1-3.7-3.6 5.1-.7z" />
+      </svg>
+      {on ? 'Siguiendo' : 'Seguir'}
+    </button>
   )
 }

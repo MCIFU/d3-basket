@@ -18,6 +18,7 @@ import { join } from 'node:path'
 import { Queries } from '../../src/db/queries'
 import { LEAGUES } from '../../src/shared/leagues'
 import { BUCKETS, bucketOf } from '../../site/src/lib/bucket'
+import { country } from '../../site/src/lib/countries'
 
 const arg = (k: string, d?: string) => {
   const i = process.argv.indexOf(k)
@@ -102,6 +103,8 @@ const teamLite = (id: number) => {
 
 // ───────────────────────── Jugadores ─────────────────────────
 const players = all(`SELECT * FROM players`)
+// Nacionalidad unificada en español (cada fuente la escribe a su manera: USA, EE.UU., United States…).
+for (const p of players as any[]) p.nationality = country(p.nationality)?.name ?? p.nationality
 const pById = new Map(players.map((p: any) => [p.id, p]))
 const displayName = (p: any) => p.known_as || p.full_name || `${p.first_name ?? ''} ${p.last_name ?? ''}`.trim()
 
@@ -430,6 +433,45 @@ const bestPl: Record<string, unknown> = {}
 for (const b of best) (bestPl[b.p] = plLite(refToId.get(b.p)!)), (dTeams[b.t] ??= teamLite(b.t)), (dTeams[b.opp] ??= teamLite(b.opp))
 write('days.json', { at: new Date(now).toISOString(), games: dGames, teams: dTeams, best, pl: bestPl })
 log(`portada: ${dGames.length} partidos cercanos, ${best.length} actuaciones destacadas`)
+
+// ───────────────────────── Españoles por el mundo ─────────────────────────
+// Esta temporada, fuera de las ligas españolas: ligas de otros países y competiciones europeas con clubes extranjeros.
+const curY = Math.max(...eds.filter((e) => e.fin > 0).map((e) => e.y))
+const compCountry = new Map((all(`SELECT code, country FROM competitions`) as any[]).map((c) => [c.code, c.country]))
+const spanishClubs = new Set([...teams.values()].filter((t) => compCountry.get(edById.get(t.ed)!.code) === 'ES').map((t) => t.club))
+const abroad = (ed: number, team: number) => {
+  const cc = compCountry.get(edById.get(ed)!.code)
+  return cc !== 'ES' && (cc !== 'EU' || !spanishClubs.has(teams.get(team)!.club))
+}
+const esp: any[] = []
+const espTeams: Record<number, unknown> = {}
+const espPl: Record<string, unknown> = {}
+for (const p of players as any[]) {
+  if (p.nationality !== 'España') continue
+  const logs = (pLog.get(p.id) ?? []).filter((l) => edById.get(l[1])!.y === curY && compCountry.get(edById.get(l[1])!.code) !== 'ES')
+  if (!logs.length) continue
+  const byEd = new Map<string, any[]>()
+  for (const l of logs) (byEd.get(`${l[1]}:${l[3]}`) ?? byEd.set(`${l[1]}:${l[3]}`, []).get(`${l[1]}:${l[3]}`)!).push(l)
+  const ref = playerRef.get(p.id)!
+  espPl[ref] = plLite(p.id)
+  for (const ls of byEd.values()) {
+    ls.sort((a, b) => (a[2] ?? '').localeCompare(b[2] ?? ''))
+    const s = new Array(N).fill(0)
+    let gp = 0
+    let w = 0
+    for (const l of ls) {
+      if (l[9] > 0 || l[10] > 0) gp++
+      if (l[6] > l[7]) w++
+      for (let i = 0; i < N; i++) s[i] += l[9 + i] ?? 0
+    }
+    const last = ls.at(-1)
+    espTeams[last[3]] ??= teamLite(last[3])
+    espTeams[last[4]] ??= teamLite(last[4])
+    esp.push({ p: ref, ed: last[1], code: edById.get(last[1])!.code, t: last[3], ab: abroad(last[1], last[3]) ? 1 : 0, gp, w, s, last })
+  }
+}
+write('espanoles.json', { y: curY, rows: esp, teams: espTeams, pl: espPl })
+log(`españoles por el mundo: ${new Set(esp.map((e) => e.p)).size} jugadores en ${esp.length} equipos`)
 
 write('search.json', search)
 log(`buscador: ${search.p.length} jugadores, ${search.c.length} clubes · fin`)

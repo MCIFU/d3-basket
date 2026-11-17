@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { loadSearch, type Meta, type SearchIdx } from '../lib/data'
 import { href } from '../lib/router'
-import { Crest, src } from './ui'
+import { BallMark, Crest, src } from './ui'
 
 const COUNTRY: Record<string, string> = { ES: 'España', EU: 'Europa', DE: 'Alemania', FR: 'Francia', GR: 'Grecia', IT: 'Italia', TR: 'Turquía', US: 'Estados Unidos' }
 export const countryName = (c: string) => COUNTRY[c] ?? c
@@ -35,6 +35,14 @@ const Icon = {
   )
 }
 
+const NAV: [string, string, string][] = [
+  ['#/', 'Hoy', 'hoy'],
+  ['#/ligas', 'Competiciones', 'ligas'],
+  ['#/jugadores', 'Jugadores', 'jugadores'],
+  ['#/espanoles', 'Españoles', 'espanoles'],
+  ['#/comparar', 'Comparar', 'comparar']
+]
+
 export function Header({ meta, section }: { meta?: Meta; section: string }) {
   const [solid, setSolid] = useState(false)
   const [search, setSearch] = useState(false)
@@ -65,26 +73,26 @@ export function Header({ meta, section }: { meta?: Meta; section: string }) {
   }, [])
   return (
     <>
+      <a className="skip" href="#contenido" onClick={(e) => (e.preventDefault(), document.getElementById('contenido')?.focus())}>
+        Saltar al contenido
+      </a>
       <header className={`top ${solid ? 'solid' : ''}`}>
         <div className="wrap">
           <button className="ib burger" aria-label="Menú" onClick={() => setMenu(true)}>
             {Icon.menu}
           </button>
           <a className="brand" href={href.home()} aria-label="d3 basket, inicio">
-            <span className="mark">
-              <b>D3</b>
-            </span>
+            <BallMark />
             <span>
               d3 <i>basket</i>
             </span>
           </a>
           <nav className="main">
-            <a href={href.home()} className={section === 'hoy' ? 'on' : ''}>
-              Hoy
-            </a>
-            <a href="#/ligas" className={section === 'ligas' ? 'on' : ''}>
-              Competiciones
-            </a>
+            {NAV.map(([to, label, key]) => (
+              <a key={key} href={to} className={section === key ? 'on' : ''} aria-current={section === key ? 'page' : undefined}>
+                {label}
+              </a>
+            ))}
           </nav>
           <div className="tools">
             <button className="ib" onClick={() => setSearch(true)} aria-label="Buscar">
@@ -103,15 +111,16 @@ export function Header({ meta, section }: { meta?: Meta; section: string }) {
         <div className="drawer" onClick={() => setMenu(false)}>
           <div className="panel" onClick={(e) => e.stopPropagation()}>
             <a className="brand" href={href.home()} style={{ marginBottom: 10, color: 'var(--tx)' }}>
-              <span className="mark">
-                <b style={{ color: 'var(--card)' }}>D3</b>
-              </span>
+              <BallMark />
               <span>
                 d3 <i>basket</i>
               </span>
             </a>
-            <a href={href.home()}>Hoy</a>
-            <a href="#/ligas">Todas las competiciones</a>
+            {NAV.map(([to, label, key]) => (
+              <a key={key} href={to}>
+                {label}
+              </a>
+            ))}
             {[...new Set(meta.comps.map((c) => c.country))].map((cn) => (
               <div key={cn}>
                 <h4>{countryName(cn)}</h4>

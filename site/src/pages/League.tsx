@@ -1,5 +1,5 @@
 import { useEffect, useMemo, type CSSProperties } from 'react'
-import { Avatar, Crest, Foot, Loading, NotFound, Score, Sec, SortTable, Strip, Tabs, src, type Col } from '../components/ui'
+import { Avatar, Crest, Foot, Loading, NotFound, Score, Sec, SortTable, Strip, Tabs, src, type Col, Court } from '../components/ui'
 import { cssVars, palette } from '../lib/color'
 import { S, compOf, loadEd, useLoad, type Comp, type EdFile, type Meta, type Stand, type TeamE, type Zone } from '../lib/data'
 import { n1, per, POS_SHORT, ts, val } from '../lib/fmt'
@@ -38,6 +38,7 @@ function LeaguePage({ meta, comp, ed }: { meta: Meta; comp: Comp; ed: EdFile }) 
   return (
     <div style={cssVars(pal2)}>
       <section className="hero">
+        <Court />
         <div className="ghost">{(comp.short ?? comp.name).split(' ')[0]}</div>
         <div className="wrap hc">
           {comp.logo ? <img className="bigcrest" src={src(comp.logo)} alt="" /> : <div className="bigcrest ph">{comp.name.slice(0, 3)}</div>}
@@ -157,7 +158,8 @@ function Standings({ comp, ed, tm }: { comp: Comp; ed: EdFile; tm: Map<number, T
                         <td className="l">
                           <span className="who">
                             <Crest url={t?.logo} name={t?.name ?? '?'} c1={t?.c1} size={26} />
-                            {t?.name}
+                            <span className="hide-m">{t?.name}</span>
+                            <span className="show-m nm-cut">{t?.short ?? t?.name}</span>
                           </span>
                         </td>
                         <td>{s.pj}</td>

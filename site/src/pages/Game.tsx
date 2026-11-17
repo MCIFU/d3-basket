@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { Avatar, Crest, Foot, Loading, NotFound, Sec, SortTable, src, type Col } from '../components/ui'
+import { Avatar, Crest, Foot, Loading, NotFound, Sec, SortTable, src, type Col, Court } from '../components/ui'
 import { lum, mix, palette, valColor } from '../lib/color'
 import { BOX0, S, compOf, loadEd, loadGame, useLoad, type BoxRow, type EdFile, type GameRec, type Meta, type TeamE } from '../lib/data'
 import { dateLong, minutes, pct, time, val } from '../lib/fmt'
@@ -28,7 +28,9 @@ function GamePage({ meta, g, ed, refId }: { meta: Meta; g: GameRec; ed: EdFile; 
   }, [h, a])
   if (!row || !h || !a) return <NotFound what="Partido" />
   const ph = palette(h.c1, h.c2)
-  const pa = palette(a.c1, a.c2)
+  const pa0 = palette(a.c1, a.c2)
+  const away = awayColor(ph.dk, pa0)
+  const pa = away === pa0.dk ? pa0 : { dk: away === 'var(--tx3)' ? '#2a2f38' : away, lt: pa0.lt }
   const fin = row.st === 'f' && row.hs != null && row.as != null
   const hw = fin && row.hs! > row.as!
   const box = (t: number) => g.teams[t]?.lines ?? []
@@ -43,6 +45,7 @@ function GamePage({ meta, g, ed, refId }: { meta: Meta; g: GameRec; ed: EdFile; 
   return (
     <div style={{ ['--c-dk' as string]: ph.dk, ['--c-lt' as string]: ph.lt }}>
       <section className="hero" style={{ background: `linear-gradient(100deg, ${ph.dk} 0%, ${ph.dk} 30%, color-mix(in oklab, ${ph.dk} 50%, ${pa.dk}) 50%, ${pa.dk} 70%, ${pa.dk} 100%)` }}>
+        <Court />
         <div className="wrap">
           <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 22 }}>
             {comp && (
@@ -124,7 +127,7 @@ function GamePage({ meta, g, ed, refId }: { meta: Meta; g: GameRec; ed: EdFile; 
           </section>
           <section className="card">
             <Sec>Comparativa</Sec>
-            {hasBox ? <Compare h={totals.h} a={totals.a} ch={ph.dk} ca={awayColor(ph.dk, pa)} hn={h.abbr ?? h.short ?? h.name} an={a.abbr ?? a.short ?? a.name} /> : <div className="empty">Sin estadística del partido</div>}
+            {hasBox ? <Compare h={totals.h} a={totals.a} ch={ph.dk} ca={pa.dk} hn={h.abbr ?? h.short ?? h.name} an={a.abbr ?? a.short ?? a.name} /> : <div className="empty">Sin estadística del partido</div>}
           </section>
         </div>
         {hasBox && <Best g={g} h={h} a={a} hid={row.h} aid={row.a} />}

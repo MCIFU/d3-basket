@@ -1,4 +1,5 @@
 /** Formato en español de España: números, fechas, edades y estadísticas. */
+import { country, flagOf } from './countries'
 import { S, type Line } from './data'
 
 export const n1 = (v: number | null | undefined) => (v == null || !isFinite(v) ? '–' : v.toLocaleString('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 }))
@@ -78,19 +79,8 @@ export const seasonLabel = (y: number) => `${y}-${String(y + 1).slice(2)}`
 export const POS: Record<string, string> = { PG: 'Base', SG: 'Escolta', SF: 'Alero', PF: 'Ala-pívot', C: 'Pívot', G: 'Base', F: 'Alero' }
 export const POS_SHORT: Record<string, string> = { PG: 'B', SG: 'E', SF: 'A', PF: 'AP', C: 'P', G: 'B', F: 'A' }
 
-/** Bandera a partir del nombre del país (los más habituales). */
-const FLAGS: Record<string, string> = {
-  España: 'ES', 'EE.UU.': 'US', 'Estados Unidos': 'US', USA: 'US', Francia: 'FR', Italia: 'IT', Alemania: 'DE', Grecia: 'GR', Turquía: 'TR', Serbia: 'RS', Croacia: 'HR', Eslovenia: 'SI', Lituania: 'LT', Letonia: 'LV',
-  Montenegro: 'ME', 'Bosnia y Herzegovina': 'BA', 'Macedonia del Norte': 'MK', Argentina: 'AR', Brasil: 'BR', Uruguay: 'UY', Canadá: 'CA', Australia: 'AU', 'Reino Unido': 'GB', Bélgica: 'BE', 'Países Bajos': 'NL', Portugal: 'PT',
-  Polonia: 'PL', 'República Checa': 'CZ', Chequia: 'CZ', Finlandia: 'FI', Suecia: 'SE', Dinamarca: 'DK', Noruega: 'NO', Islandia: 'IS', Georgia: 'GE', Ucrania: 'UA', Rusia: 'RU', Israel: 'IL', Nigeria: 'NG', Senegal: 'SN',
-  Camerún: 'CM', Mali: 'ML', Angola: 'AO', 'Costa de Marfil': 'CI', 'República Dominicana': 'DO', 'Puerto Rico': 'PR', Venezuela: 'VE', México: 'MX', Cuba: 'CU', Japón: 'JP', China: 'CN', Austria: 'AT', Suiza: 'CH', Hungría: 'HU',
-  Rumanía: 'RO', Bulgaria: 'BG', Eslovaquia: 'SK', Estonia: 'EE', Irlanda: 'IE', Guinea: 'GN', 'Guinea Ecuatorial': 'GQ', 'Cabo Verde': 'CV', Chile: 'CL', Colombia: 'CO', Panamá: 'PA', Bahamas: 'BS', Jamaica: 'JM', Haití: 'HT',
-  France: 'FR', Italy: 'IT', Germany: 'DE', Greece: 'GR', Turkey: 'TR', Türkiye: 'TR', Spain: 'ES', 'United States': 'US', Lithuania: 'LT', Latvia: 'LV', Croatia: 'HR', Slovenia: 'SI', Belgium: 'BE', Netherlands: 'NL', Canada: 'CA'
-}
-export const flag = (nat: string | null) => {
-  const cc = nat ? FLAGS[nat] ?? (nat.length === 2 ? nat.toUpperCase() : null) : null
-  return cc ? String.fromCodePoint(...[...cc].map((c) => 0x1f1a5 + c.charCodeAt(0))) : ''
-}
+/** Bandera a partir de la nacionalidad (cualquier grafía: España, ESP, Spain…). */
+export const flag = (nat: string | null) => flagOf(country(nat)?.cc)
 
 // ───────────────────────── Estadística ─────────────────────────
 /** Valoración: la oficial si existe; si no, la fórmula europea con lo disponible. */
