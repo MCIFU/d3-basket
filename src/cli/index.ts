@@ -225,6 +225,42 @@ async function main() {
     'elite-2': (h) => new LnbAdapter(h, 2, 'LNB_ELITE2'),
     'pro-b': (h) => new LnbAdapter(h, 2, 'LNB_ELITE2')
   }
+  if (command === 'merge-clubs') {
+    // Une fichas de club duplicadas (la de la FEB dentro de la de acb.com) según una lista revisada a mano.
+    const { pares } = JSON.parse(fs.readFileSync(path.resolve(positionals[1] ?? 'tools/site/club-aliases.json'), 'utf8')) as { pares: { feb: string; acb: string; club: string }[] }
+    const idOf = (ref: string) => (db.prepare('SELECT club_id FROM v_club_ref WHERE ref = ?').get(ref) as { club_id: number } | undefined)?.club_id
+    let n = 0
+    for (const p of pares) {
+      const from = idOf(p.feb)
+      const to = idOf(p.acb)
+      if (!from || !to || from === to) {
+        console.log(`  · ${p.club}: ${!from ? `no existe ${p.feb} (quizá ya unido)` : !to ? `no existe ${p.acb}` : 'ya unidos'}`)
+        continue
+      }
+      const clash = db.prepare('SELECT COUNT(*) AS n FROM teams a JOIN teams b ON a.competition_season_id = b.competition_season_id WHERE a.club_id = ? AND b.club_id = ?').get(from, to) as { n: number }
+      if (clash.n) {
+        console.log(`  ✗ ${p.club}: los dos tienen equipo en la misma temporada; no se unen`)
+        continue
+      }
+      db.transaction(() => {
+        db.prepare('UPDATE teams SET club_id = ? WHERE club_id = ?').run(to, from)
+        db.prepare("UPDATE external_ids SET entity_id = ? WHERE entity_type = 'club' AND entity_id = ?").run(to, from)
+        db.prepare('UPDATE player_season_lines SET club_id = ? WHERE club_id = ?').run(to, from)
+        db.prepare('UPDATE honours SET champion_club_id = ? WHERE champion_club_id = ?').run(to, from)
+        db.prepare('UPDATE honours SET runner_up_club_id = ? WHERE runner_up_club_id = ?').run(to, from)
+        db.prepare('UPDATE clubs SET parent_club_id = ? WHERE parent_club_id = ?').run(to, from)
+        db.prepare('DELETE FROM club_records WHERE club_id = ?').run(from)
+        for (const col of ['city', 'arena', 'arena_address', 'arena_capacity', 'arena_photo_url', 'website', 'founded_year', 'president', 'history', 'history_url', 'logo_url', 'primary_color', 'secondary_color', 'socials'])
+          db.prepare(`UPDATE clubs SET ${col} = COALESCE(${col}, (SELECT ${col} FROM clubs WHERE id = ?)) WHERE id = ?`).run(from, to)
+        db.prepare('DELETE FROM clubs WHERE id = ?').run(from)
+      })()
+      n++
+      console.log(`  ✔ ${p.club}: ${p.feb} → ${p.acb}`)
+    }
+    console.log(`✔ ${n} clubes unidos`)
+    return
+  }
+
   if (command === 'careers-acb') {
     // Trayectoria en acb.com de todos los jugadores con ficha (también retirados): una página por temporada.
     const http = new HttpClient({ minDelayMs: Number(values.delay), log })

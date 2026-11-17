@@ -192,6 +192,8 @@ const refToId = new Map([...playerRef].map(([id, r]) => [r, id]))
 for (const e of eds) {
   const eTeams = [...teams.values()].filter((t) => t.ed === e.id)
   const stand = q.standings(e.id).map((s) => ({ t: s.team_id, g: s.group, pos: s.position, pj: s.played, w: s.won, l: s.lost, pf: s.points_for, pa: s.points_against, form: s.form.join('') }))
+    // NCAA: solo los equipos de División I (con conferencia); los rivales de otras divisiones no clasifican.
+    .filter((s) => e.code !== 'NCAA' || s.g)
   const eg = games.filter((g: any) => g.competition_season_id === e.id).map((g: any) => {
     const rd: any = rounds.get(g.round_id)
     return { id: gameRef.get(g.id), ph: rd?.phase ?? 'regular', r: rd?.number ?? null, rn: rd?.name ?? null, d: g.scheduled_at, h: g.home_team_id, a: g.away_team_id, hs: g.home_score, as: g.away_score, st: g.status === 'finished' ? 'f' : g.status === 'postponed' ? 'p' : 's', box: gBox.has(g.id) ? 1 : 0, ar: g.arena ?? null }

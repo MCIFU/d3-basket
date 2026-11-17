@@ -52,10 +52,9 @@ export class EspnAdapter implements LeagueAdapter {
     // Equipos y conferencias
     const tj = await this.json(`${this.api}/teams?limit=500${this.league === 'nba' ? '' : '&groups=50'}`)
     for (const { team } of tj.sports?.[0]?.leagues?.[0]?.teams ?? []) this.teams.set(team.id, team)
-    if (this.league === 'nba') {
-      const st = await this.json(`https://site.api.espn.com/apis/v2/sports/basketball/nba/standings?season=${startYear + 1}`).catch(() => undefined)
-      for (const conf of st?.children ?? []) for (const e of conf.standings?.entries ?? []) this.group.set(e.team.id, CONF[conf.name] ?? conf.name)
-    }
+    // Grupos de la clasificación: conferencias Este y Oeste (NBA) o las ~32 conferencias universitarias (NCAA).
+    const st = await this.json(`https://site.api.espn.com/apis/v2/sports/basketball/${this.league}/standings?season=${startYear + 1}`).catch(() => undefined)
+    for (const conf of st?.children ?? []) for (const e of conf.standings?.entries ?? []) this.group.set(e.team.id, CONF[conf.name] ?? conf.shortName ?? conf.name)
     // Calendario, día a día (ESPN no admite rangos largos): de octubre a junio.
     const from = new Date(Date.UTC(startYear, 9, 1))
     const to = new Date(Date.UTC(startYear + 1, this.league === 'nba' ? 5 : 3, 30))
@@ -98,7 +97,10 @@ export class EspnAdapter implements LeagueAdapter {
       }
     }
     if (!games.length) throw new Error(`ESPN no tiene partidos de ${this.name} ${startYear}`)
-    return { editionRef: `${this.league}:${startYear + 1}`, teams: [...teams.values()], games }
+    // Equipos de la competición: en la NCAA solo los de División I (los rivales de otras divisiones
+    // quedan como equipos de sus partidos, sin plantilla).
+    const own = [...teams.values()].filter((t) => this.league === 'nba' || this.teams.has(t.clubRef.id))
+    return { editionRef: `${this.league}:${startYear + 1}`, teams: own, games }
   }
 
   private player(a: any): NPlayer {

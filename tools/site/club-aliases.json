@@ -1,0 +1,14 @@
+{
+  "_nota": "Fichas FEB que son el mismo club que su ficha de acb.com (primer equipo en sus años en la FEB). Revisadas a mano: no incluir filiales ni clubes refundados. Se aplica con: npm run scrape -- merge-clubs tools/site/club-aliases.json",
+  "pares": [
+    { "feb": "f817781", "acb": "25", "club": "Río Breogán" },
+    { "feb": "f922483", "acb": "6", "club": "Movistar Estudiantes" },
+    { "feb": "f888252", "acb": "6", "club": "Movistar Estudiantes" },
+    { "feb": "f1010493", "acb": "6", "club": "Movistar Estudiantes" },
+    { "feb": "f922863", "acb": "17", "club": "Baloncesto Fuenlabrada" },
+    { "feb": "f848510", "acb": "55", "club": "Real Canoe" },
+    { "feb": "f816690", "acb": "7", "club": "Gipuzkoa Basket" },
+    { "feb": "f1008687", "acb": "21", "club": "Lucentum Alicante" },
+    { "feb": "f1010207", "acb": "624", "club": "Palencia Baloncesto" }
+  ]
+}
