@@ -6,6 +6,7 @@ import { LOG0, S, compOf, loadEd, loadPlayer, useLoad, type LogRow, type Meta, t
 import { age, dateShort, dateYear, dob, feet, fga, height, n0, n1, pct, per, POS, seasonLabel, val } from '../lib/fmt'
 import { href, useQuery } from '../lib/router'
 import { percentiles } from '../lib/stats'
+import { playerCard, shareOrDownload, type CardData } from '../lib/shareImage'
 
 const line = (r: LogRow) => r.slice(LOG0) as (number | null)[]
 const SECTION_NAME: Record<Season['sec'], string> = { liga: 'Liga', filial: 'Filial', copa: 'Copa', europa: 'Europa', seleccion: 'Selección autonómica', formacion: 'Formación' }
@@ -117,6 +118,29 @@ function PlayerPage({ p, meta }: { p: PlayerRec; meta: Meta }) {
                 Comparar
               </a>
               <ShareButton />
+              {avg && cur && (
+                <ImageButton
+                  data={{
+                    name: p.name,
+                    first: first || '',
+                    last,
+                    team: team?.n ?? '',
+                    season: seasonLabel(cur.y),
+                    comp: comp?.name ?? '',
+                    dk: pal.dk,
+                    lt: pal.lt,
+                    photo: p.cut ?? p.photo,
+                    crest: team?.l,
+                    stats: [
+                      ['Puntos', n1(avg.pts)],
+                      ['Rebotes', n1(avg.reb)],
+                      ['Asist.', n1(avg.ast)],
+                      ['Valor.', n1(avg.val)]
+                    ],
+                    extra: [p.titles?.filter((t) => t.won).length ? `${p.titles.filter((t) => t.won).length} títulos` : null, p.medals?.length ? `${p.medals.length} medallas con España` : null].filter(Boolean).join(' · ') || undefined
+                  }}
+                />
+              )}
             </div>
           </div>
           <div className="pic">
@@ -619,3 +643,28 @@ const FragmentRow = ({ k, v }: { k: string; v: ReactNode }) => (
     <dd>{v}</dd>
   </>
 )
+
+function ImageButton({ data }: { data: CardData }) {
+  const [busy, setBusy] = useState(false)
+  return (
+    <button
+      className="fav"
+      disabled={busy}
+      onClick={async () => {
+        setBusy(true)
+        try {
+          await shareOrDownload(await playerCard(data), `d3basket-${data.name.toLowerCase().replace(/[^a-z0-9]+/gi, '-')}`)
+        } finally {
+          setBusy(false)
+        }
+      }}
+    >
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" aria-hidden>
+        <rect x="3" y="4" width="14" height="12" rx="2" />
+        <circle cx="8" cy="9" r="1.6" />
+        <path d="M4 15l4-4 3 3 2-2 3 3" />
+      </svg>
+      {busy ? 'Creando…' : 'Imagen'}
+    </button>
+  )
+}
