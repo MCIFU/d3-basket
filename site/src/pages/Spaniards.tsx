@@ -35,11 +35,22 @@ export default function Spaniards({ meta }: { meta: Meta }) {
 }
 
 function Page({ meta, d }: { meta: Meta; d: Esp }) {
-  const abroad = useMemo(() => d.rows.filter((r) => r.ab && r.gp > 0).sort((a, b) => val(b.s) / b.gp - val(a.s) / a.gp), [d])
+  // Una tarjeta por jugador: su liga como fila principal y el resto de competiciones debajo.
+  const abroad = useMemo(() => {
+    const by = new Map<string, Row[]>()
+    for (const r of d.rows) if (r.gp > 0) by.set(r.p, [...(by.get(r.p) ?? []), r])
+    return [...by.values()]
+      .filter((rs) => rs.some((r) => r.ab))
+      .map((rs) => {
+        const sorted = [...rs].sort((a, b) => Number(compOf(meta, a.code)?.country === 'EU') - Number(compOf(meta, b.code)?.country === 'EU') || b.gp - a.gp)
+        return { main: sorted[0], also: sorted.slice(1) }
+      })
+      .sort((a, b) => val(b.main.s) / b.main.gp - val(a.main.s) / a.main.gp)
+  }, [d, meta])
   const euro = useMemo(() => d.rows.filter((r) => !r.ab && r.gp > 0), [d])
   const people = new Set(d.rows.map((r) => r.p)).size
   const comps = [...new Set(d.rows.map((r) => r.code))]
-  const countries = new Set(abroad.map((r) => compOf(meta, r.code)?.country).filter((c) => c && c !== 'EU'))
+  const countries = new Set(abroad.map((x) => compOf(meta, x.main.code)?.country).filter((c) => c && c !== 'EU'))
   return (
     <div style={cssVars(SPAIN)}>
       <section className="hero short">
@@ -58,7 +69,7 @@ function Page({ meta, d }: { meta: Meta; d: Esp }) {
         <Strip
           items={[
             { k: 'Jugadores', v: String(people) },
-            { k: 'En clubes extranjeros', v: String(new Set(abroad.map((r) => r.p)).size) },
+            { k: 'En clubes extranjeros', v: String(abroad.length) },
             { k: 'Competiciones', v: String(comps.length) },
             { k: 'Países', v: String(countries.size) }
           ]}
@@ -68,8 +79,8 @@ function Page({ meta, d }: { meta: Meta; d: Esp }) {
           <section className="card" style={{ marginTop: 26 }}>
             <Sec aside="ordenados por valoración media">Fuera de España</Sec>
             <div className="abroad">
-              {abroad.map((r) => (
-                <AbroadCard key={r.p + r.t} r={r} d={d} meta={meta} />
+              {abroad.map(({ main, also }) => (
+                <AbroadCard key={main.p} r={main} also={also} d={d} meta={meta} />
               ))}
             </div>
           </section>
@@ -83,7 +94,7 @@ function Page({ meta, d }: { meta: Meta; d: Esp }) {
   )
 }
 
-function AbroadCard({ r, d, meta }: { r: Row; d: Esp; meta: Meta }) {
+function AbroadCard({ r, also, d, meta }: { r: Row; also: Row[]; d: Esp; meta: Meta }) {
   const pl = d.pl[r.p]
   const t = d.teams[r.t]
   const c = compOf(meta, r.code)
@@ -124,6 +135,20 @@ function AbroadCard({ r, d, meta }: { r: Row; d: Esp; meta: Meta }) {
           </div>
         ))}
       </div>
+      {also.length > 0 && (
+        <div className="ab-also">
+          {also.map((o) => {
+            const oc = compOf(meta, o.code)
+            const x = per(o.s, o.gp)
+            return (
+              <span key={o.code}>
+                {oc?.logo && <img src={src(oc.logo)} alt="" />}
+                {oc?.name}: {o.gp} PJ · {n1(x.pts)} pts · {n1(x.val)} val
+              </span>
+            )
+          })}
+        </div>
+      )}
       <div className="ab-last">
         <span>
           Último: {r.last[5] ? 'vs' : 'en'} {opp?.s ?? opp?.n} · {dateShort(r.last[2])}
