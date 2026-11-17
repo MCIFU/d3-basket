@@ -174,7 +174,26 @@ for (const e of eds) {
   const stats = [...(edStats.get(e.id)?.values() ?? [])].filter((a) => a.gp > 0).map((a) => ({ p: a.p, t: a.t, gp: a.gp, gs: a.gs, s: a.s }))
   const pl: Record<string, unknown[]> = {}
   for (const s of stats) pl[s.p] = plLite(refToId.get(s.p)!)
-  write(`ed/${e.id}.json`, { id: e.id, code: e.code, y: e.y, label: e.label, last: e.last, teams: eTeams.map(({ ed, ...t }) => t), stand, games: eg, stats, pl })
+  // Mejores actuaciones individuales de la temporada en un partido (récords de la edición).
+  const perf: { p: string; g: string; t: number; opp: number; d: string; s: (number | null)[] }[] = []
+  for (const g of games as any[]) {
+    if (g.competition_season_id !== e.id || g.status !== 'finished') continue
+    for (const [tid, ls] of gBox.get(g.id) ?? []) for (const l of ls) perf.push({ p: l[0], g: gameRef.get(g.id)!, t: tid, opp: g.home_team_id === tid ? g.away_team_id : g.home_team_id, d: g.scheduled_at, s: l.slice(3) })
+  }
+  const valOf = (x: (number | null)[]) => x[18] ?? (x[1] ?? 0) + (x[10] ?? 0) + (x[11] ?? 0) + (x[12] ?? 0) + (x[13] ?? 0) - ((x[3] ?? 0) - (x[2] ?? 0)) - ((x[5] ?? 0) - (x[4] ?? 0)) - ((x[7] ?? 0) - (x[6] ?? 0)) - (x[14] ?? 0) - (x[15] ?? 0)
+  const top: Record<string, unknown[]> = {}
+  for (const [k, f] of [['pts', (x: any) => x[1]], ['val', valOf], ['reb', (x: any) => x[10]], ['ast', (x: any) => x[11]], ['f3m', (x: any) => x[4]], ['stl', (x: any) => x[12]]] as const) {
+    top[k] = perf
+      .map((x) => ({ ...x, v: (f as (x: any) => number)(x.s) ?? 0 }))
+      .filter((x) => x.v > 0)
+      .sort((a, b) => b.v - a.v)
+      .slice(0, 8)
+      .map(({ p, g, t, opp, d, v }) => {
+        pl[p] ??= plLite(refToId.get(p)!)
+        return { p, g, t, opp, d, v }
+      })
+  }
+  write(`ed/${e.id}.json`, { id: e.id, code: e.code, y: e.y, label: e.label, last: e.last, teams: eTeams.map(({ ed, ...t }) => t), stand, games: eg, stats, pl, top })
 }
 log(`ediciones: ${eds.length} ficheros`)
 

@@ -93,6 +93,8 @@ export interface EdFile {
   games: GameE[]
   stats: StatE[]
   pl: Record<string, PlLite>
+  /** Mejores actuaciones en un partido por estadística. */
+  top?: Record<string, { p: string; g: string; t: number; opp: number; d: string; v: number }[]>
 }
 /** Equipo resumido: nombre, corto, siglas, escudo, club, colores. */
 export interface TL {

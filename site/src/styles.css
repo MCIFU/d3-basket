@@ -3126,3 +3126,189 @@ img.flag {
   box-shadow: 0 0 0 1px rgb(0 0 0 / 0.12);
   object-fit: cover;
 }
+
+/* ───────────────────────── Eliminatorias ───────────────────────── */
+.bracket {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(230px, 1fr);
+  gap: 18px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+.bcol {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 12px;
+}
+.bcol h3 {
+  font: 700 14px var(--cond);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tx2);
+  border-bottom: 1px solid var(--line2);
+  padding-bottom: 8px;
+}
+.bs {
+  background: var(--card2);
+  border-radius: 12px;
+  padding: 6px;
+  position: relative;
+}
+.bt {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: var(--tx2);
+  font-weight: 500;
+}
+.bt span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bt b {
+  font: 700 19px var(--cond);
+}
+.bt.won {
+  color: var(--tx);
+  font-weight: 700;
+  background: var(--card);
+  box-shadow: inset 3px 0 var(--c-dk, var(--accent));
+}
+.bg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 6px 8px 2px;
+}
+.bg a {
+  font: 600 11.5px var(--sans);
+  color: var(--tx3);
+  padding: 1px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+}
+.bg a:hover {
+  color: var(--tx);
+  border-color: var(--tx3);
+}
+
+/* ───────────────────────── Evolución ───────────────────────── */
+.evo {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.evo .tick {
+  fill: var(--tx3);
+  font: 600 11px var(--cond);
+}
+.evo-l {
+  fill: var(--tx);
+  font: 700 12.5px var(--cond);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* ───────────────────────── Récords de la temporada ───────────────────────── */
+.recs4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+.rc {
+  background: var(--card2);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: grid;
+  gap: 6px;
+  border-left: 3px solid var(--c-dk, var(--accent));
+}
+.rc .k {
+  font: 700 13px var(--cond);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tx2);
+}
+.rc > b {
+  font: 800 34px/1 var(--cond);
+}
+.rec-g {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 13px;
+}
+.rec-g .who {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rc > .who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+.rec-g b {
+  font: 700 17px var(--cond);
+}
+.five {
+  background: var(--card2);
+  border-radius: 14px;
+  padding: 14px;
+  border-top: 3px solid var(--fc);
+}
+.five-h {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 700 16px var(--cond);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.five-p {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+.five-p a {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 600;
+  min-width: 0;
+}
+.five-p a b {
+  font: 800 15px var(--cond);
+  color: var(--fc);
+}
+.five-p a span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.five-p a:hover span {
+  text-decoration: underline;
+}
+@media (max-width: 760px) {
+  .five-p .av {
+    width: 44px !important;
+    height: 44px !important;
+  }
+}

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { MedalSummary, Medals } from '../components/Medals'
-import { BarChart, Crest, Foot, Loading, NotFound, Radar, Sec, SortTable, Strip, Tabs, src, type Col, Court, FavButton, Flag } from '../components/ui'
+import { BarChart, Crest, Foot, Loading, NotFound, Radar, Sec, SortTable, Strip, Tabs, src, type Col, Court, FavButton, Flag, ShareButton } from '../components/ui'
 import { cssVars, palette, pctColor, valColor } from '../lib/color'
 import { LOG0, S, compOf, loadEd, loadPlayer, useLoad, type LogRow, type Meta, type PlayerRec, type Season } from '../lib/data'
 import { age, dateShort, dateYear, dob, feet, fga, height, n0, n1, pct, per, POS, seasonLabel, val } from '../lib/fmt'
@@ -116,6 +116,7 @@ function PlayerPage({ p, meta }: { p: PlayerRec; meta: Meta }) {
                 </svg>
                 Comparar
               </a>
+              <ShareButton />
             </div>
           </div>
           <div className="pic">

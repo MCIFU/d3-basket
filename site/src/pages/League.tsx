@@ -4,6 +4,7 @@ import { cssVars, palette } from '../lib/color'
 import { S, compOf, loadEd, useLoad, type Comp, type EdFile, type Meta, type Stand, type TeamE, type Zone } from '../lib/data'
 import { n1, per, POS_SHORT, ts, val } from '../lib/fmt'
 import { href, useQuery } from '../lib/router'
+import { Bracket, Evolution, Records, hasEvolution, hasKnockout } from './LeagueExtra'
 import { currentRound, minGames, players, roundKey, roundName, teams as teamAggs, type PAgg } from '../lib/stats'
 
 export default function League({ meta, code, year }: { meta: Meta; code: string; year?: number }) {
@@ -99,17 +100,25 @@ function LeaguePage({ meta, comp, ed }: { meta: Meta; comp: Comp; ed: EdFile }) 
         <Tabs
           value={tab as 'clasificacion'}
           set={setTab}
-          items={[
-            ['clasificacion', 'Clasificación'],
-            ['partidos', 'Partidos'],
-            ['estadisticas', 'Estadísticas'],
-            ['equipos', 'Equipos']
-          ]}
+          items={
+            [
+              ['clasificacion', 'Clasificación'],
+              ...(hasEvolution(ed) ? [['evolucion', 'Evolución']] : []),
+              ...(hasKnockout(ed) ? [['eliminatorias', 'Eliminatorias']] : []),
+              ['partidos', 'Partidos'],
+              ['estadisticas', 'Estadísticas'],
+              ['records', 'Récords'],
+              ['equipos', 'Equipos']
+            ] as ['clasificacion', string][]
+          }
         />
         {tab === 'clasificacion' && <Standings comp={comp} ed={ed} tm={tm} />}
         {tab === 'partidos' && <Rounds ed={ed} tm={tm} />}
         {tab === 'estadisticas' && <Stats ed={ed} tm={tm} />}
         {tab === 'equipos' && <Teams ed={ed} />}
+        {tab === 'evolucion' && <Evolution ed={ed} tm={tm} />}
+        {tab === 'eliminatorias' && <Bracket ed={ed} tm={tm} />}
+        {tab === 'records' && <Records ed={ed} tm={tm} />}
       </main>
       <Foot updated={ed.last ?? meta.updated} />
     </div>

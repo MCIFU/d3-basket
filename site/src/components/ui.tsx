@@ -464,3 +464,27 @@ export function Flag({ nat, title }: { nat: string | null | undefined; title?: b
   if (!c) return null
   return <img className="flag" src={`./media/flags/${c.cc.toLowerCase()}.svg`} alt={title ? c.name : ''} title={c.name} width={16} height={12} loading="lazy" />
 }
+
+/** Compartir la página: menú del sistema en el móvil o copiar el enlace en el ordenador. */
+export function ShareButton() {
+  const [done, setDone] = useState(false)
+  const share = async () => {
+    const url = location.href
+    try {
+      if (navigator.share) await navigator.share({ title: document.title, url })
+      else {
+        await navigator.clipboard.writeText(url)
+        setDone(true)
+        setTimeout(() => setDone(false), 2000)
+      }
+    } catch {}
+  }
+  return (
+    <button className="fav" onClick={share} aria-live="polite">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        <path d="M10 13V3M6 7l4-4 4 4M4 11v5h12v-5" />
+      </svg>
+      {done ? 'Enlace copiado' : 'Compartir'}
+    </button>
+  )
+}

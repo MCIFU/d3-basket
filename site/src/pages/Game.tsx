@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { Avatar, Crest, Foot, Loading, NotFound, Sec, SortTable, src, type Col, Court } from '../components/ui'
+import { Avatar, Crest, Foot, Loading, NotFound, Sec, SortTable, src, type Col, Court, ShareButton } from '../components/ui'
 import { lum, mix, palette, valColor } from '../lib/color'
 import { BOX0, S, compOf, loadEd, loadGame, useLoad, type BoxRow, type EdFile, type GameRec, type Meta, type TeamE } from '../lib/data'
 import { dateLong, minutes, pct, time, val } from '../lib/fmt'
@@ -75,6 +75,9 @@ function GamePage({ meta, g, ed, refId }: { meta: Meta; g: GameRec; ed: EdFile; 
             </div>
             <Side t={a} />
           </div>
+          <div className="hero-actions" style={{ justifyContent: 'center', marginTop: -86, paddingBottom: 70, position: 'relative' }}>
+            <ShareButton />
+          </div>
         </div>
       </section>
       <main className="wrap page">
@@ -130,6 +133,8 @@ function GamePage({ meta, g, ed, refId }: { meta: Meta; g: GameRec; ed: EdFile; 
             {hasBox ? <Compare h={totals.h} a={totals.a} ch={ph.dk} ca={pa.dk} hn={h.abbr ?? h.short ?? h.name} an={a.abbr ?? a.short ?? a.name} /> : <div className="empty">Sin estadística del partido</div>}
           </section>
         </div>
+        {g.per.length > 1 && fin && <Progress per={g.per} ch={ph.dk} ca={pa.dk} hn={h.short ?? h.name} an={a.short ?? a.name} />}
+        {hasBox && <Starters g={g} h={h} a={a} hid={row.h} aid={row.a} ch={ph.dk} ca={pa.dk} />}
         {hasBox && <Best g={g} h={h} a={a} hid={row.h} aid={row.a} />}
         {hasBox &&
           [
@@ -278,6 +283,105 @@ function Box({ g, t, id }: { g: GameRec; t: TeamE; id: number }) {
         </span>
       </Sec>
       <SortTable rows={rows} cols={cols} initial="num" onRow={(r) => href.player(r[0])} />
+    </section>
+  )
+}
+
+/** Marcador acumulado al final de cada cuarto (y prórrogas) y la ventaja en cada momento. */
+function Progress({ per, ch, ca, hn, an }: { per: [number, number][]; ch: string; ca: string; hn: string; an: string }) {
+  const cum: [number, number][] = [[0, 0]]
+  for (const [x, y] of per) cum.push([cum.at(-1)![0] + x, cum.at(-1)![1] + y])
+  const W = 760
+  const H = 230
+  const max = Math.max(...cum.map(([x, y]) => Math.max(x, y))) * 1.08
+  const X = (i: number) => 44 + (i * (W - 220)) / (cum.length - 1)
+  const Y = (v: number) => 16 + (H - 50) * (1 - v / max)
+  const path = (k: 0 | 1) => cum.map((c, i) => `${i ? 'L' : 'M'}${X(i)},${Y(c[k])}`).join(' ')
+  const label = (i: number) => (i === 0 ? 'Inicio' : i <= 4 ? `${i}.º` : `P${i - 4}`)
+  return (
+    <section className="card" style={{ marginTop: 20 }}>
+      <Sec aside="marcador acumulado al final de cada cuarto">Evolución del marcador</Sec>
+      <svg viewBox={`0 0 ${W} ${H}`} className="chart" role="img" aria-label="Evolución del marcador por cuartos">
+        {cum.map((c, i) => (
+          <g key={i}>
+            <line x1={X(i)} x2={X(i)} y1={12} y2={H - 34} className="grid" />
+            <text x={X(i)} y={H - 16} className="lab" textAnchor="middle">
+              {label(i)}
+            </text>
+            {i > 0 && (
+              <text x={X(i)} y={H - 2} className="sub" textAnchor="middle">
+                {c[0] - c[1] > 0 ? '+' : ''}
+                {c[0] - c[1]}
+              </text>
+            )}
+          </g>
+        ))}
+        <path d={path(0)} fill="none" stroke={ch} strokeWidth={3.5} strokeLinejoin="round" />
+        <path d={path(1)} fill="none" stroke={ca} strokeWidth={3.5} strokeLinejoin="round" />
+        {cum.slice(1).map((c, i) => (
+          <g key={i}>
+            <circle cx={X(i + 1)} cy={Y(c[0])} r={4.5} fill={ch} />
+            <circle cx={X(i + 1)} cy={Y(c[1])} r={4.5} fill={ca} />
+          </g>
+        ))}
+        {(() => {
+          // Etiquetas finales a la derecha, separadas si los marcadores están muy cerca.
+          let yh = Y(cum.at(-1)![0])
+          let ya = Y(cum.at(-1)![1])
+          if (Math.abs(yh - ya) < 22) {
+            const mid = (yh + ya) / 2
+            const up = yh <= ya
+            yh = mid + (up ? -11 : 11)
+            ya = mid + (up ? 11 : -11)
+          }
+          return (
+            <>
+              <text x={X(cum.length - 1) + 14} y={yh + 5} className="val" fill={ch}>
+                {hn} {cum.at(-1)![0]}
+              </text>
+              <text x={X(cum.length - 1) + 14} y={ya + 5} className="val" fill={ca}>
+                {an} {cum.at(-1)![1]}
+              </text>
+            </>
+          )
+        })()}
+      </svg>
+    </section>
+  )
+}
+
+/** Quintetos iniciales de los dos equipos. */
+function Starters({ g, h, a, hid, aid, ch, ca }: { g: GameRec; h: TeamE; a: TeamE; hid: number; aid: number; ch: string; ca: string }) {
+  const five = (id: number) => (g.teams[id]?.lines ?? []).filter((r) => r[2])
+  if (five(hid).length < 5 && five(aid).length < 5) return null
+  return (
+    <section className="card" style={{ marginTop: 20 }}>
+      <Sec>Quintetos iniciales</Sec>
+      <div className="g-2 grid" style={{ marginTop: 0 }}>
+        {[
+          [h, hid, ch],
+          [a, aid, ca]
+        ].map(([t, id, c]) => (
+          <div key={id as number} className="five" style={{ ['--fc' as string]: c as string }}>
+            <div className="five-h">
+              <Crest url={(t as TeamE).logo} name={(t as TeamE).name} c1={(t as TeamE).c1} size={24} />
+              {(t as TeamE).short ?? (t as TeamE).name}
+            </div>
+            <div className="five-p">
+              {five(id as number).map((r) => {
+                const nm = g.names[r[0]]
+                return (
+                  <a key={r[0]} href={href.player(r[0])}>
+                    <Avatar url={nm?.[1]} name={nm?.[0] ?? '?'} size={58} />
+                    <b>{r[1]}</b>
+                    <span>{nm?.[0]?.split(' ').slice(-1)[0]}</span>
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
     </section>
   )
 }
