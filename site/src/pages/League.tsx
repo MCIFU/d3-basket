@@ -136,7 +136,7 @@ function Standings({ comp, ed, tm }: { comp: Comp; ed: EdFile; tm: Map<number, T
         const rows = ed.stand.filter((s) => (s.g ?? '') === g).sort((a, b) => a.pos - b.pos)
         return (
           <section className="card" key={g}>
-            <Sec aside={single ? `${rows[0]?.pj ? `tras ${Math.max(...rows.map((r) => r.pj))} jornadas` : ''}` : undefined}>{g ? `${comp.code === 'NBA' ? 'Conferencia' : 'Grupo'} ${g}` : 'Clasificación'}</Sec>
+            <Sec aside={single ? `${rows[0]?.pj ? `tras ${Math.max(...rows.map((r) => r.pj))} jornadas` : ''}` : undefined}>{g ? `${comp.code === 'NBA' || comp.code === 'NCAA' ? 'Conferencia' : 'Grupo'} ${g}` : 'Clasificación'}</Sec>
             <div className="tw">
               <table className="t">
                 <thead>

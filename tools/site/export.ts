@@ -160,7 +160,9 @@ for (const r of db.prepare(`SELECT game_id, player_id, team_id, jersey_number, i
   const g: any = gById.get(r.game_id)
   if (!g) continue
   const ref = playerRef.get(r.player_id)!
-  const s = [r.seconds ?? 0, r.points ?? 0, r.fg2m ?? 0, r.fg2a ?? 0, r.fg3m ?? 0, r.fg3a ?? 0, r.ftm ?? 0, r.fta ?? 0, r.oreb ?? 0, r.dreb ?? 0, r.reb ?? 0, r.ast ?? 0, r.stl ?? 0, r.blk ?? 0, r.tov ?? 0, r.pf ?? 0, r.fouls_drawn ?? 0, r.plus_minus ?? null, r.pir ?? null]
+  const s = [r.seconds ?? 0, r.points ?? 0, r.fg2m ?? 0, r.fg2a ?? 0, r.fg3m ?? 0, r.fg3a ?? 0, r.ftm ?? 0, r.fta ?? 0, r.oreb ?? 0, r.dreb ?? 0, r.reb ?? 0, r.ast ?? 0, r.stl ?? 0, r.blk ?? 0, r.tov ?? 0, r.pf ?? 0, r.fouls_drawn ?? 0, r.plus_minus ?? null,
+    // Sin valoración en la fuente (ESPN, algunas ligas): la fórmula europea con lo que publica.
+    r.pir ?? (r.points ?? 0) + (r.reb ?? 0) + (r.ast ?? 0) + (r.stl ?? 0) + (r.blk ?? 0) - ((r.fg2a ?? 0) - (r.fg2m ?? 0)) - ((r.fg3a ?? 0) - (r.fg3m ?? 0)) - ((r.fta ?? 0) - (r.ftm ?? 0)) - (r.tov ?? 0) - (r.pf ?? 0) + (r.fouls_drawn ?? 0)]
   // Boxscore
   if (!gBox.has(r.game_id)) gBox.set(r.game_id, new Map())
   const box = gBox.get(r.game_id)!
