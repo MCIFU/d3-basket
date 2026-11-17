@@ -40,6 +40,8 @@ if errorlevel 1 (
 ) else (
   node tools/site/unzip-db.mjs data\d3basket.db.gz data\d3basket.db || goto :error
 )
+rem Si la semilla del proyecto es mas nueva que los datos publicados (p. ej. justo tras cargar ligas nuevas), se usa la semilla.
+call npx tsx src/cli/index.ts restore-db --db data/d3basket.db || goto :error
 
 echo == Preparando los datos de la web ^(unos 30 segundos^)...
 call npx tsx tools/site/export.ts --db data/d3basket.db --out public/d || goto :error
