@@ -22,6 +22,7 @@ import { applyMedia } from '../db/media'
 import { Writer } from '../db/writer'
 import { HttpClient } from '../scraper/core/http'
 import { AcbScraper } from '../scraper/acb/sync'
+import { EspnAdapter } from '../scraper/espn/espn'
 import { FebScraper } from '../scraper/feb/sync'
 import { EuroleagueScraper, type EuroCompetition } from '../scraper/euroleague/sync'
 import { FibaScraper } from '../scraper/fiba/sync'
@@ -214,6 +215,8 @@ async function main() {
     gbl: (h) => new EsakeAdapter(h),
     proa: (h) => new ProaAdapter(h),
     bsl: (h) => new SofascoreAdapter(h, 519, 'BSL', 'Basketbol Süper Ligi'),
+    nba: (h) => new EspnAdapter(h, 'nba', 'NBA', 'NBA'),
+    ncaa: (h) => new EspnAdapter(h, 'mens-college-basketball', 'NCAA', 'NCAA División I'),
     turquia: (h) => new SofascoreAdapter(h, 519, 'BSL', 'Basketbol Süper Ligi'),
     grecia: (h) => new EsakeAdapter(h),
     a2: (h) => new LnpAdapter(h),

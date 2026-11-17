@@ -686,5 +686,14 @@ SELECT r.competition_season_id, r.team_id, t.name AS team_name, t.logo_url,
 FROM results r JOIN teams t ON t.id = r.team_id
 GROUP BY r.competition_season_id, r.team_id;
 `
+  },
+  {
+    version: 18,
+    name: 'nba_ncaa',
+    sql: /* sql */ `
+INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, country) VALUES
+  ('NBA', 'NBA', 'NBA', 'NBA', 1, 'US'),
+  ('NCAA', 'NCAA División I', 'NCAA', 'NCAA', 2, 'US');
+`
   }
 ]

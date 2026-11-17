@@ -269,6 +269,28 @@ export const LEAGUES: Record<string, LeagueTheme> = {
       { from: -2, to: -1, kind: 'down', label: 'Descenso' }
     ]
   },
+  // Azul y rojo de la marca NBA; azul marino de la NCAA.
+  NBA: {
+    name: 'NBA',
+    division: 'Estados Unidos · 1.ª división',
+    color: '#1d428a',
+    color2: '#c8102e',
+    ink: '#ffffff',
+    logo: 'media/leagues/nba.png',
+    zones: [
+      { from: 1, to: 6, kind: 'playoff', label: 'Playoffs' },
+      { from: 7, to: 10, kind: 'up', label: 'Play-in' }
+    ]
+  },
+  NCAA: {
+    name: 'NCAA',
+    division: 'Estados Unidos · Universidad',
+    color: '#0c2340',
+    color2: '#009cde',
+    ink: '#ffffff',
+    logo: 'media/leagues/ncaa.png',
+    zones: []
+  },
   // Azul marino y amarillo de la marca Basketball Champions League (FIBA).
   BCL: {
     name: 'Champions League',

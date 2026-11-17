@@ -105,6 +105,31 @@ const teamLite = (id: number) => {
 const players = all(`SELECT * FROM players`)
 // Nacionalidad unificada en español (cada fuente la escribe a su manera: USA, EE.UU., United States…).
 for (const p of players as any[]) p.nationality = country(p.nationality)?.name ?? p.nationality
+// Sin nacionalidad en su fuente (ligas extranjeras): la de otra ficha de la misma persona
+// (mismo nombre y misma fecha de nacimiento), p. ej. un español con pasado en la ACB o la FEB.
+{
+  const key = (p: any) => (p.birth_date ? `${(p.full_name ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z]/g, '')}|${p.birth_date.slice(0, 10)}` : null)
+  const known = new Map<string, string>()
+  for (const p of players as any[]) if (p.nationality && key(p)) known.set(key(p)!, p.nationality)
+  let filled = 0
+  for (const p of players as any[]) if (!p.nationality && key(p) && known.has(key(p)!)) (p.nationality = known.get(key(p)!)), filled++
+  // Sin fecha en una de las dos fichas: mismo nombre completo (dos palabras o más), que solo tenga una
+  // persona con nacionalidad, y mismo año de nacimiento si las dos lo tienen.
+  const nm = (p: any) => (p.full_name ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z ]/g, '').replace(/\s+/g, ' ').trim()
+  const byName = new Map<string, any[]>()
+  for (const p of players as any[]) if (p.nationality && nm(p).split(' ').length >= 2) byName.set(nm(p), [...(byName.get(nm(p)) ?? []), p])
+  for (const p of players as any[]) {
+    if (p.nationality) continue
+    const c = byName.get(nm(p))
+    if (c?.length !== 1) continue
+    const y1 = p.birth_date?.slice(0, 4)
+    const y2 = c[0].birth_date?.slice(0, 4)
+    if (y1 && y2 && y1 !== y2) continue
+    p.nationality = c[0].nationality
+    filled++
+  }
+  log(`nacionalidad completada desde otra ficha: ${filled} jugadores`)
+}
 const pById = new Map(players.map((p: any) => [p.id, p]))
 const displayName = (p: any) => p.known_as || p.full_name || `${p.first_name ?? ''} ${p.last_name ?? ''}`.trim()
 
