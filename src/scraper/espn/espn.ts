@@ -72,6 +72,8 @@ export class EspnAdapter implements LeagueAdapter {
         const a = c?.competitors?.find((x: any) => x.homeAway === 'away')
         // Huecos de eliminatorias sin rival decidido (Copa NBA, playoffs): «TBD».
         if (!h || !a || [h, a].some((x: any) => !x.team?.id || /^tbd$/i.test(x.team.abbreviation ?? x.team.displayName ?? ''))) continue
+        // NBA: solo partidos entre sus 30 equipos (fuera el All-Star y sus combinados).
+        if (this.league === 'nba' && this.teams.size && ![h, a].every((x: any) => this.teams.has(x.team.id))) continue
         const home = this.team(h.team.id, startYear, h.team)
         const away = this.team(a.team.id, startYear, a.team)
         teams.set(home.ref.id, home)
