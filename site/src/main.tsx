@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './styles.css'
 import { Header } from './components/Header'
 import { Loading, NotFound } from './components/ui'
-import { loadMeta, useLoad } from './lib/data'
+import { loadClub, loadEd, loadGame, loadMeta, loadPlayer, useLoad } from './lib/data'
 import { useRoute } from './lib/router'
 
 const Home = lazy(() => import('./pages/Home'))
@@ -46,6 +46,35 @@ function App() {
       </div>
     </>
   )
+}
+
+// Precarga: al pasar el ratón (o el foco) por un enlace se piden ya sus datos; el clic abre al instante.
+const prefetched = new Set<string>()
+const prefetch = (e: Event) => {
+  const a = (e.target as HTMLElement | null)?.closest?.('a[href^="#/"]') as HTMLAnchorElement | null
+  const h = a?.getAttribute('href')
+  if (!h || prefetched.has(h)) return
+  prefetched.add(h)
+  const [kind, ref, y] = h.slice(2).split(/[/?]/).map(decodeURIComponent)
+  const quiet = (p: Promise<unknown>) => p.catch(() => undefined)
+  if (kind === 'jugador' && ref) quiet(loadPlayer(ref))
+  else if (kind === 'club' && ref) quiet(loadClub(ref))
+  else if (kind === 'partido' && ref) quiet(loadGame(ref).then((g) => g && loadEd(g.ed)))
+  else if (kind === 'liga' && ref)
+    quiet(
+      loadMeta().then((m) => {
+        const c = m.comps.find((x) => x.code === ref)
+        const e2 = c && (y ? c.eds.find((x) => x.y === Number(y)) : c.eds[0])
+        return e2 && loadEd(e2.id)
+      })
+    )
+}
+document.addEventListener('pointerover', prefetch, { passive: true })
+document.addEventListener('focusin', prefetch)
+
+// Funcionamiento sin conexión e instalación como aplicación (solo en la web construida).
+if (import.meta.env.PROD && 'serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => undefined))
 }
 
 createRoot(document.getElementById('root')!).render(

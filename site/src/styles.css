@@ -3116,3 +3116,13 @@ h2.sec > a.more {
   height: 15px;
   object-fit: contain;
 }
+img.flag {
+  display: inline-block;
+  height: 0.78em;
+  width: auto;
+  aspect-ratio: 4 / 3;
+  border-radius: 2px;
+  vertical-align: -0.04em;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.12);
+  object-fit: cover;
+}

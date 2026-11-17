@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNod
 import { palette } from '../lib/color'
 import { dateShort, n1, time } from '../lib/fmt'
 import { toggleFav, useFavs, type Fav } from '../lib/favs'
+import { country } from '../lib/countries'
 import { href } from '../lib/router'
 
 /** Ruta de imagen: las locales (media/...) son relativas a la web. */
@@ -455,4 +456,11 @@ export function FavButton({ fav }: { fav: Fav }) {
       {on ? 'Siguiendo' : 'Seguir'}
     </button>
   )
+}
+
+/** Bandera en imagen (los emojis de bandera no se ven en Windows). */
+export function Flag({ nat, title }: { nat: string | null | undefined; title?: boolean }) {
+  const c = country(nat)
+  if (!c) return null
+  return <img className="flag" src={`./media/flags/${c.cc.toLowerCase()}.svg`} alt={title ? c.name : ''} title={c.name} width={16} height={12} loading="lazy" />
 }

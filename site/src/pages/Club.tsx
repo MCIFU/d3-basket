@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import { Avatar, Crest, Foot, Loading, NotFound, Score, Sec, SortTable, Strip, Tabs, src, type Col, Court, FavButton } from '../components/ui'
+import { Avatar, Crest, Foot, Loading, NotFound, Score, Sec, SortTable, Strip, Tabs, src, type Col, Court, FavButton, Flag } from '../components/ui'
 import { cssVars, palette } from '../lib/color'
 import { S, compOf, loadClub, loadEd, useLoad, type ClubRec, type EdFile, type Meta, type RosterRow } from '../lib/data'
-import { age, flag, height, n1, per, POS, seasonLabel, ts } from '../lib/fmt'
+import { age, height, n1, per, POS, seasonLabel, ts } from '../lib/fmt'
 import { href, useQuery } from '../lib/router'
 import { players, teams as teamAggs, type PAgg } from '../lib/stats'
 
@@ -171,7 +171,7 @@ function Card({ x }: { x: CardData }) {
         </div>
         <div className="sub">
           <span>
-            {[x.posc ? POS[x.posc] : null, age(x.birth) ? `${age(x.birth)} años` : null, height(x.h)].filter(Boolean).join(' · ')} {flag(x.nat)}
+            {[x.posc ? POS[x.posc] : null, age(x.birth) ? `${age(x.birth)} años` : null, height(x.h)].filter(Boolean).join(' · ')} <Flag nat={x.nat} />
           </span>
         </div>
         {x.a && x.a.gp > 0 && (

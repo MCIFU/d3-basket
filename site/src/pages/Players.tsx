@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Avatar, Court, Crest, Foot, Loading, Sec, SortTable, type Col } from '../components/ui'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { Avatar, Court, Crest, Foot, Loading, Sec, SortTable, type Col, Flag } from '../components/ui'
 import { cssVars } from '../lib/color'
 import { countryName } from '../components/Header'
 import { S, compOf, loadEd, useLoad, type EdFile, type Meta } from '../lib/data'
-import { age, flag, n1, per, POS_SHORT, seasonLabel, ts } from '../lib/fmt'
+import { age, n1, per, POS_SHORT, seasonLabel, ts } from '../lib/fmt'
 import { href, useQuery } from '../lib/router'
 import { minGames, players, type PAgg } from '../lib/stats'
 
@@ -100,7 +100,7 @@ function Explorer({ ed, compName }: { ed: EdFile; compName: string }) {
           <span className="who">
             <Avatar url={pl(r)?.[1]} name={pl(r)?.[0] ?? '?'} size={34} />
             <span>
-              {pl(r)?.[0]} {flag(pl(r)?.[4] ?? null)}
+              {pl(r)?.[0]} <Flag nat={pl(r)?.[4]} />
               <small style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <Crest url={t?.logo} name={t?.name ?? ''} c1={t?.c1} size={14} />
                 {t?.short ?? t?.name}
@@ -123,7 +123,7 @@ function Explorer({ ed, compName }: { ed: EdFile; compName: string }) {
     { k: 'ts', label: 'TS %', hideM: true, get: (r) => ts(r.s), fmt: (r) => n1((ts(r.s) ?? 0) * 100) },
     { k: 'val', label: 'Val', b: true, get: (r) => m(r, 'val'), fmt: (r) => n1(m(r, 'val')) }
   ]
-  const Group = ({ label, value, set, items }: { label: string; value: string; set: (v: string) => void; items: [string, string][] }) => (
+  const Group = ({ label, value, set, items }: { label: string; value: string; set: (v: string) => void; items: [string, ReactNode][] }) => (
     <div className="fgroup" role="group" aria-label={label}>
       <span className="flabel">{label}</span>
       <div className="chips">
@@ -152,7 +152,7 @@ function Explorer({ ed, compName }: { ed: EdFile; compName: string }) {
           set={setNat}
           items={[
             ['', 'Todos'],
-            ['es', `${flag('España')} Españoles`],
+            ['es', <><Flag nat="España" /> Españoles</>],
             ['ex', 'Extranjeros']
           ]}
         />

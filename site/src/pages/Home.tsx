@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { countryName } from '../components/Header'
-import { Avatar, Crest, Foot, Loading, Score, Sec, src, Court } from '../components/ui'
+import { Avatar, Crest, Foot, Loading, Score, Sec, src, Court, Flag } from '../components/ui'
 import { cssVars, valColor } from '../lib/color'
 import { compOf, loadDays, useLoad, type Comp, type Days, type Meta } from '../lib/data'
-import { dateLong, dateShort, dayKey, dayLabel, flag, time } from '../lib/fmt'
+import { dateLong, dateShort, dayKey, dayLabel, time } from '../lib/fmt'
 import { href } from '../lib/router'
 import { useFavs } from '../lib/favs'
 
@@ -148,7 +148,7 @@ function HomePage({ meta, days }: { meta: Meta; days: Days }) {
                       {c.logo ? <img src={src(c.logo)} alt="" /> : <Crest name={c.name} c1={c.color} size={44} />}
                       <div>
                         <b>{c.name}</b>
-                        <span>{c.country === 'ES' || c.country === 'EU' ? c.division : `${flag(countryName(c.country))} ${countryName(c.country)} · ${c.tier === 1 ? '1.ª' : '2.ª'} división`}</span>
+                        <span>{c.country === 'ES' || c.country === 'EU' ? c.division : <><Flag nat={countryName(c.country)} /> {countryName(c.country)} · {c.tier === 1 ? '1.ª' : '2.ª'} división</>}</span>
                       </div>
                     </a>
                   ))}

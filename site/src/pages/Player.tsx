@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { MedalSummary, Medals } from '../components/Medals'
-import { BarChart, Crest, Foot, Loading, NotFound, Radar, Sec, SortTable, Strip, Tabs, src, type Col, Court, FavButton } from '../components/ui'
+import { BarChart, Crest, Foot, Loading, NotFound, Radar, Sec, SortTable, Strip, Tabs, src, type Col, Court, FavButton, Flag } from '../components/ui'
 import { cssVars, palette, pctColor, valColor } from '../lib/color'
 import { LOG0, S, compOf, loadEd, loadPlayer, useLoad, type LogRow, type Meta, type PlayerRec, type Season } from '../lib/data'
-import { age, dateShort, dateYear, dob, feet, flag, fga, height, n0, n1, pct, per, POS, seasonLabel, val } from '../lib/fmt'
+import { age, dateShort, dateYear, dob, feet, fga, height, n0, n1, pct, per, POS, seasonLabel, val } from '../lib/fmt'
 import { href, useQuery } from '../lib/router'
 import { percentiles } from '../lib/stats'
 
@@ -94,7 +94,7 @@ function PlayerPage({ p, meta }: { p: PlayerRec; meta: Meta }) {
                 <div>
                   <dt>Nacionalidad</dt>
                   <dd>
-                    {flag(p.nat)} {p.nat}
+                    <Flag nat={p.nat} /> {p.nat}
                   </dd>
                 </div>
               )}
@@ -576,11 +576,11 @@ function AllGames({ p, meta }: { p: PlayerRec; meta: Meta }) {
 }
 
 function Bio({ p }: { p: PlayerRec }) {
-  const rows: [string, string | null][] = [
+  const rows: [string, ReactNode][] = [
     ['Nombre completo', p.full ?? p.name],
     ['Fecha de nacimiento', dob(p.birth)],
     ['Lugar de nacimiento', p.place],
-    ['Nacionalidad', p.nat ? `${flag(p.nat)} ${p.nat}` : null],
+    ['Nacionalidad', p.nat ? <><Flag nat={p.nat} /> {p.nat}</> : null],
     ['Altura', p.h ? `${height(p.h)} · ${feet(p.h)}` : null],
     ['Peso', p.w ? `${p.w} kg` : null],
     ['Posición', p.posc ? POS[p.posc] ?? p.pos : p.pos],

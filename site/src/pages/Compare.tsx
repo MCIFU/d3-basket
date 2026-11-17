@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Court, Crest, Foot, Loading, Sec, src } from '../components/ui'
+import { Court, Crest, Foot, Loading, Sec, src, Flag } from '../components/ui'
 import { palette } from '../lib/color'
 import { S, compOf, loadEd, loadPlayer, loadSearch, useLoad, type EdFile, type Meta, type PlayerRec, type SearchIdx } from '../lib/data'
-import { age, flag, height, n1, per, POS, seasonLabel, ts, val } from '../lib/fmt'
+import { age, height, n1, per, POS, seasonLabel, ts, val } from '../lib/fmt'
 import { href } from '../lib/router'
 import { percentiles } from '../lib/stats'
 
@@ -103,7 +103,15 @@ function Side({ p, other, side }: { p?: PlayerRec; other?: string; side: 'a' | '
         {t && <Crest url={t.l} name={t.n} c1={t.c1} size={22} />}
         {t?.n}
       </div>
-      <div className="vs-sub muted2">{[p.posc ? POS[p.posc] : p.pos, age(p.birth) ? `${age(p.birth)} años` : null, height(p.h), p.nat ? `${flag(p.nat)} ${p.nat}` : null].filter(Boolean).join(' · ')}</div>
+      <div className="vs-sub muted2">
+        {[p.posc ? POS[p.posc] : p.pos, age(p.birth) ? `${age(p.birth)} años` : null, height(p.h)].filter(Boolean).join(' · ')}
+        {p.nat && (
+          <>
+            {' · '}
+            <Flag nat={p.nat} /> {p.nat}
+          </>
+        )}
+      </div>
       <button className="fav" style={{ marginTop: 12 }} onClick={() => (side === 'a' ? go(undefined, other) : go(other))}>
         Cambiar
       </button>
