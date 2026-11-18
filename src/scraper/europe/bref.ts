@@ -54,7 +54,8 @@ export const syncBslStats = (db: DB, http: HttpClient, startYear: number, log: (
 /** Torneos de selecciones: Mundial (desde 2010) y Juegos Olímpicos. year = año del torneo. */
 export const BREF_TOURNAMENTS: Record<string, { page: (y: number) => string; table: string }> = {
   MUNDIAL: { page: (y) => `/international/fiba-world-cup/${y}.html`, table: 'FIB' },
-  JJOO: { page: (y) => `/international/mens-olympics/${y}.html`, table: 'OLY' }
+  // Tokio 2020 se jugó en 2021: FIBA lo fecha en 2021 y Basketball-Reference en 2020.
+  JJOO: { page: (y) => `/international/mens-olympics/${y === 2021 ? 2020 : y}.html`, table: 'OLY' }
 }
 export const syncBrefTournament = (db: DB, http: HttpClient, code: 'MUNDIAL' | 'JJOO', year: number, log: (m: string) => void = () => {}) =>
   syncBrefTotals(db, http, { code, startYear: year, page: BREF_TOURNAMENTS[code].page(year), table: BREF_TOURNAMENTS[code].table, key: 'nt', byCountry: true }, log)
