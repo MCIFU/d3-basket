@@ -30,7 +30,7 @@ export function openDatabase(file: string = defaultDbPath()): DB {
   const db = new Database(file)
   db.pragma('journal_mode = WAL')
   db.pragma('foreign_keys = ON')
-  db.pragma('busy_timeout = 5000')
+  db.pragma('busy_timeout = 120000')
   migrate(db)
   return db
 }
