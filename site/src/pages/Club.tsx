@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Avatar, Crest, Foot, Loading, NotFound, Score, Sec, SortTable, Strip, Tabs, src, type Col, Court, FavButton, Flag, ShareButton } from '../components/ui'
 import { cssVars, palette } from '../lib/color'
-import { S, compOf, loadClub, loadEd, useLoad, type ClubRec, type EdFile, type Meta, type RosterRow } from '../lib/data'
+import { S, compOf, loadClub, loadEd, useLoad, type ClubRec, type EdFile, type Meta, type RosterRow, type Title } from '../lib/data'
 import { age, height, n1, per, POS, seasonLabel, ts } from '../lib/fmt'
 import { href, useQuery } from '../lib/router'
 import { players, teams as teamAggs, type PAgg } from '../lib/stats'
+import { Medals, Trophy } from '../components/Medals'
 
 const ROLE: Record<string, string> = { head_coach: 'Primer entrenador', assistant_coach: 'Entrenador ayudante', coach: 'Entrenador', delegate: 'Delegado', physio: 'Fisioterapeuta', doctor: 'Médico' }
+const TNAME: Record<string, string> = { liga: 'Ligas', copa: 'Copas', supercopa: 'Supercopas', euroleague: 'EuroLeague', eurocup: 'EuroCup', bcl: 'Champions', nba: 'NBA', lba: 'Scudetti', bbl: 'BBL', lnb_elite: 'Ligas francesas', gbl: 'Ligas griegas', bsl: 'Ligas turcas' }
 const SECONDARY = ['EUROLEAGUE', 'EUROCUP', 'BCL', 'COPA_ESPANA']
 
 export default function Club({ meta, refId, year }: { meta: Meta; refId: string; year?: number }) {
@@ -28,6 +30,9 @@ function ClubLoader({ meta, c, year }: { meta: Meta; c: ClubRec; year?: number }
   if (main && ed === undefined) return <Loading />
   return <ClubPage meta={meta} c={c} y={y} main={main} other={sameYear.filter((t) => t !== main)} ed={ed && !(ed instanceof Error) ? ed : undefined} />
 }
+
+/** Palmarés del club en el formato de la vitrina de trofeos. */
+const clubTitles = (c: ClubRec): Title[] => c.honours.map((h) => ({ k: h[0], y: h[1], label: h[2], won: h[3], club: c.ref, name: c.name, logo: c.logo, vs: h[4], res: h[5] }))
 
 function ClubPage({ meta, c, y, main, other, ed }: { meta: Meta; c: ClubRec; y?: number; main?: ClubRec['teams'][number]; other: ClubRec['teams']; ed?: EdFile }) {
   const [tab, setTab] = useQuery('v', 'plantilla')
@@ -90,6 +95,20 @@ function ClubPage({ meta, c, y, main, other, ed }: { meta: Meta; c: ClubRec; y?:
                 </div>
               )}
             </dl>
+            {c.honours.some((h) => h[3]) && (
+              <a className="msum" href={`${href.club(c.ref, y)}?v=club`}>
+                <span className="it">
+                  <Trophy size={20} />
+                  <b>{c.honours.filter((h) => h[3]).length}</b> títulos
+                </span>
+                <span className="it">
+                  {[...new Set(c.honours.filter((h) => h[3]).map((h) => h[0]))]
+                    .slice(0, 4)
+                    .map((k) => `${c.honours.filter((h) => h[3] && h[0] === k).length} ${TNAME[k] ?? k}`)
+                    .join(' · ')}
+                </span>
+              </a>
+            )}
             <div className="hero-actions">
               <FavButton fav={{ kind: 'c', ref: c.ref, name: c.name, img: c.logo ?? main?.logo ?? null }} />
               <ShareButton />
@@ -357,7 +376,6 @@ function Info({ c, meta }: { c: ClubRec; meta: Meta }) {
     ['Presidente', c.president],
     ['Web', c.web ? <a href={c.web} target="_blank" rel="noreferrer" style={{ color: 'var(--c-dk)' }}>{c.web.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</a> : null]
   ].filter(([, v]) => v != null && v !== '') as [string, ReactNode][]
-  const titles = c.honours.filter((h) => h[3] === 1)
   const seasons = [...c.teams].sort((a, b) => b.y - a.y)
   return (
     <>
@@ -392,32 +410,8 @@ function Info({ c, meta }: { c: ClubRec; meta: Meta }) {
             </>
           )}
         </section>
-        <section className="card">
-          <Sec aside={`${titles.length} títulos`}>Palmarés</Sec>
-          {c.honours.length ? (
-            <div className="tw">
-              <table className="t">
-                <tbody>
-                  {c.honours.map((h, i) => (
-                    <tr key={i}>
-                      <td className="l">{h[2]}</td>
-                      <td className="l b" style={{ color: h[3] ? 'var(--c-dk)' : 'var(--tx2)' }}>
-                        {h[3] ? 'Campeón' : 'Finalista'}
-                      </td>
-                      <td className="l hide-m muted">{h[4] ? `${h[3] ? 'ante' : 'perdió ante'} ${h[4]}` : ''}</td>
-                      <td>{h[5] ?? ''}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="empty">Sin títulos registrados</div>
-          )}
-        </section>
-      </div>
-      {c.history && (
-        <section className="card" style={{ marginTop: 20 }}>
+        {c.history && (
+          <section className="card">
           <Sec>Historia</Sec>
           <div className="prose">
             {c.history
@@ -429,25 +423,36 @@ function Info({ c, meta }: { c: ClubRec; meta: Meta }) {
           </div>
         </section>
       )}
+      </div>
+      <Medals titles={clubTitles(c)} medals={[]} club />
       <section className="card" style={{ marginTop: 20 }}>
-        <Sec aside={`${seasons.length} temporadas en la base de datos`}>Temporadas</Sec>
+        <Sec aside={`${new Set(seasons.map((x) => x.y)).size} temporadas en la base de datos`}>Temporadas</Sec>
         <div className="tw">
           <table className="t">
             <tbody>
-              {seasons.map((s) => (
-                <tr key={s.t} className="link" onClick={() => (location.hash = href.club(c.ref, s.y).slice(1))}>
-                  <td className="l">{seasonLabel(s.y)}</td>
-                  <td className="l b">
-                    <span className="who">
-                      <Crest url={s.logo ?? c.logo} name={s.name} c1={c.c1} size={22} />
-                      {s.name}
-                    </span>
-                  </td>
-                  <td className="l">
-                    <span className="lgp">{compOf(meta, s.code)?.name ?? s.code}</span>
-                  </td>
-                </tr>
-              ))}
+              {[...new Set(seasons.map((x) => x.y))].map((yy) => {
+                const ts = seasons.filter((x) => x.y === yy)
+                return (
+                  <tr key={yy} className="link" tabIndex={0} onClick={() => (location.hash = href.club(c.ref, yy).slice(1))} onKeyDown={(e) => e.key === 'Enter' && (location.hash = href.club(c.ref, yy).slice(1))}>
+                    <td className="l">{seasonLabel(yy)}</td>
+                    <td className="l b">
+                      <span className="who">
+                        <Crest url={ts[0].logo ?? c.logo} name={ts[0].name} c1={c.c1} size={22} />
+                        {ts[0].name}
+                      </span>
+                    </td>
+                    <td className="l">
+                      <span style={{ display: 'inline-flex', gap: 6, flexWrap: 'wrap' }}>
+                        {ts.map((x) => (
+                          <span key={x.t} className="lgp">
+                            {compOf(meta, x.code)?.name ?? x.code}
+                          </span>
+                        ))}
+                      </span>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>

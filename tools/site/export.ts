@@ -259,6 +259,17 @@ for (const e of eds.filter((x) => ['EUROLEAGUE', 'BCL', 'EUROCUP'].includes(x.co
   // Una Final Four tiene dos semifinales, tercer puesto y final (la última); con menos partidos no se sabe cuál es la final.
   if (last && fin.length >= 4) euroFinals.set(e.id, { code: e.code, y: e.y, win: last.home_score > last.away_score ? last.home_team_id : last.away_team_id, lose: last.home_score > last.away_score ? last.away_team_id : last.home_team_id })
 }
+// Ligas con playoff (NBA y ligas nacionales extranjeras): el campeón es el ganador del último partido de
+// las eliminatorias, si la temporada llegó a la final (último partido entre abril y julio).
+const KO_LEAGUES = ['NBA', 'LBA', 'BBL', 'LNB_ELITE', 'GBL', 'BSL']
+for (const e of eds.filter((x) => KO_LEAGUES.includes(x.code))) {
+  const ko = (games as any[])
+    .filter((g) => g.competition_season_id === e.id && g.status === 'finished' && ['playoff', 'final', 'final_four'].includes((rounds.get(g.round_id) as any)?.phase))
+    .sort((a, b) => (a.scheduled_at ?? '').localeCompare(b.scheduled_at ?? ''))
+  const last = ko.at(-1)
+  const m = last ? Number(last.scheduled_at?.slice(5, 7)) : 0
+  if (last && ko.length >= 3 && m >= 4 && m <= 7) euroFinals.set(e.id, { code: e.code, y: e.y, win: last.home_score > last.away_score ? last.home_team_id : last.away_team_id, lose: last.home_score > last.away_score ? last.away_team_id : last.home_team_id })
+}
 /** Medallas de la selección (tools/site/selecciones.mjs) por nombre normalizado. */
 const normName = (x: string) => x.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim()
 const nt = new Map<string, { kind: string; y: number; medal: string; mvp: boolean }[]>()
@@ -295,13 +306,24 @@ const medalsOf = new Map<number, { kind: string; y: number; medal: string; mvp: 
     if (pick && !medalsOf.has(pick.id)) medalsOf.set(pick.id, evs)
   }
 }
-/** EuroLeague de clubes españoles anteriores a las temporadas cargadas (año de inicio de temporada). */
-const OLD_EL: [number, string][] = [
-  [2002, 'Barça'],
-  [2009, 'Barça'],
-  [2014, 'Real Madrid'],
-  [2017, 'Real Madrid']
-]
+/** Copas de Europa / EuroLeague de clubes españoles anteriores a las temporadas cargadas (año de inicio de temporada). */
+const OLD_EL: [number, RegExp][] = (
+  [
+    [1963, /^Real Madrid$/],
+    [1964, /^Real Madrid$/],
+    [1966, /^Real Madrid$/],
+    [1967, /^Real Madrid$/],
+    [1973, /^Real Madrid$/],
+    [1977, /^Real Madrid$/],
+    [1979, /^Real Madrid$/],
+    [1993, /Joventut/],
+    [1994, /^Real Madrid$/],
+    [2002, /^Barça$/],
+    [2009, /^Barça$/],
+    [2014, /^Real Madrid$/],
+    [2017, /^Real Madrid$/]
+  ] as [number, RegExp][]
+).filter(([y]) => ![...euroFinals.values()].some((f) => f.code === 'EUROLEAGUE' && f.y === y)) // solo los años sin final en los datos
 
 const pBuckets: Record<string, any>[] = Array.from({ length: BUCKETS.p }, () => ({}))
 const search: { p: unknown[]; c: unknown[] } = { p: [], c: [] }
@@ -377,8 +399,8 @@ for (const p of players as any[]) {
     const o = teams.get(s.t === f.win ? f.lose : f.win)!
     titles.push({ k: f.code.toLowerCase(), y: f.y, label: `${f.y}-${String(f.y + 1).slice(2)}`, won: s.t === f.win ? 1 : 0, club: t.club, name: t.name, logo: t.logo, vs: o.name, res: null })
   }
-  for (const [y, cname] of OLD_EL) {
-    const cl: any = (clubs as any[]).find((c) => c.name === cname && acbClubs.get(y)?.has(clubRef.get(c.id)!))
+  for (const [y, re] of OLD_EL) {
+    const cl: any = (clubs as any[]).find((c) => re.test(c.name) && acbClubs.get(y)?.has(clubRef.get(c.id)!))
     if (cl) titles.push({ k: 'euroleague', y, label: `${y}-${String(y + 1).slice(2)}`, won: 1, club: clubRef.get(cl.id), name: cl.name, logo: cl.logo_url, vs: null, res: null })
   }
   const medals = medalsOf.get(p.id) ?? []
@@ -423,7 +445,17 @@ for (const c of clubs as any[]) {
     web: c.website, president: c.president, socials: c.socials ? JSON.parse(c.socials) : {}, history: c.history, logo: c.logo_url, c1: c.primary_color, c2: c.secondary_color,
     parent: c.parent_club_id ? [clubRef.get(c.parent_club_id), clubById.get(c.parent_club_id)?.name] : null, filiales,
     teams: cTeams, rosters, staff,
-    honours: honours.filter((h: any) => h.champion_club_id === c.id || h.runner_up_club_id === c.id).map((h: any) => [h.competition, h.season_start_year, h.label, h.champion_club_id === c.id ? 1 : 0, h.champion_club_id === c.id ? h.runner_up_name : h.champion_name, h.result])
+    honours: [
+      ...honours.filter((h: any) => h.champion_club_id === c.id || h.runner_up_club_id === c.id).map((h: any) => [h.competition, h.season_start_year, h.label, h.champion_club_id === c.id ? 1 : 0, h.champion_club_id === c.id ? h.runner_up_name : h.champion_name, h.result]),
+      // Finales de competiciones europeas y ligas con playoff cargadas (campeón o finalista).
+      ...cTeams.flatMap((t) => {
+        const f = euroFinals.get(t.ed)
+        if (!f || (t.t !== f.win && t.t !== f.lose)) return []
+        const won = t.t === f.win
+        return [[f.code.toLowerCase(), f.y, `${f.y}-${String(f.y + 1).slice(2)}`, won ? 1 : 0, teams.get(won ? f.lose : f.win)?.name ?? null, null]]
+      }),
+      ...OLD_EL.filter(([, re]) => re.test(c.name) && cTeams.some((t) => t.code === 'ACB')).map(([y]) => ['euroleague', y, `${y}-${String(y + 1).slice(2)}`, 1, null, null])
+    ].sort((a: any, b: any) => b[1] - a[1])
   }
   if (cTeams.length) search.c.push([ref, c.name, c.logo_url, cTeams[0].code, cTeams[0].y])
 }

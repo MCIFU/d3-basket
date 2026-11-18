@@ -3402,3 +3402,31 @@ img.flag {
   font-style: normal;
   color: var(--tx3);
 }
+
+/* ───────────────────────── Eficiencia ───────────────────────── */
+.effs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+.eff {
+  background: var(--card2);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 2px;
+}
+.eff b {
+  font: 700 30px/1 var(--cond);
+}
+.eff span {
+  font: 700 13px var(--cond);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tx2);
+}
+.eff small {
+  font-size: 11.5px;
+  color: var(--tx3);
+  line-height: 1.3;
+}

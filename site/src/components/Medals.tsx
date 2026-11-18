@@ -3,8 +3,14 @@ import type { Medal, Title } from '../lib/data'
 import { href } from '../lib/router'
 import { Crest, Sec, src } from './ui'
 
-const COMP: Record<Title['k'], { name: string; logo?: string; order: number }> = {
+const COMP: Record<string, { name: string; logo?: string; order: number }> = {
   euroleague: { name: 'EuroLeague', logo: 'media/leagues/euroleague.png', order: 0 },
+  nba: { name: 'NBA', logo: 'media/leagues/nba.png', order: 0.5 },
+  lba: { name: 'Lega Basket Serie A', logo: 'media/leagues/lba.png', order: 1.1 },
+  bbl: { name: 'BBL', logo: 'media/leagues/bbl.svg', order: 1.2 },
+  lnb_elite: { name: 'Betclic Élite', logo: 'media/leagues/lnb_elite.png', order: 1.3 },
+  gbl: { name: 'Greek Basketball League', logo: 'media/leagues/gbl.png', order: 1.4 },
+  bsl: { name: 'Süper Lig', logo: 'media/leagues/bsl.png', order: 1.5 },
   liga: { name: 'Liga ACB', logo: 'media/leagues/acb.svg', order: 1 },
   copa: { name: 'Copa del Rey', order: 2 },
   supercopa: { name: 'Supercopa', order: 3 },
@@ -53,18 +59,20 @@ export function MedalSummary({ titles, medals }: { titles: Title[]; medals: Meda
   )
 }
 
-export function Medals({ titles, medals }: { titles: Title[]; medals: Medal[] }) {
+export function Medals({ titles, medals, club }: { titles: Title[]; medals: Medal[]; club?: boolean }) {
   const won = titles.filter((t) => t.won)
   if (!won.length && !medals.length && !titles.length) return null
-  const comps = [...new Set(titles.map((t) => t.k))].sort((a, b) => COMP[a].order - COMP[b].order)
+  const comps = [...new Set(titles.map((t) => t.k))].filter((k) => COMP[k]).sort((a, b) => COMP[a].order - COMP[b].order)
   const kinds = (['JJOO', 'Mundial', 'EuroBasket'] as const).filter((k) => medals.some((m) => m.kind === k))
   const count = (k: Medal['medal']) => medals.filter((m) => m.medal === k).length
   return (
     <section className="card palmares" id="palmares" style={{ marginTop: 20 }}>
-      <Sec aside={[won.length ? `${won.length} ${won.length === 1 ? 'título' : 'títulos'} con sus clubes` : null, medals.length ? `${medals.length} medallas con España` : null].filter(Boolean).join(' · ')}>Palmarés</Sec>
+      <Sec aside={club ? `${won.length} ${won.length === 1 ? 'título' : 'títulos'} · ${titles.length - won.length} finales perdidas` : [won.length ? `${won.length} ${won.length === 1 ? 'título' : 'títulos'} con sus clubes` : null, medals.length ? `${medals.length} medallas con España` : null].filter(Boolean).join(' · ')}>
+        Palmarés
+      </Sec>
       {comps.length > 0 && (
         <>
-          <h3 className="ph3">Con sus clubes</h3>
+          {!club && <h3 className="ph3">Con sus clubes</h3>}
           <div className="trophies">
             {comps.map((k) => {
               const ts = titles.filter((t) => t.k === k).sort((a, b) => a.y - b.y)
@@ -88,7 +96,7 @@ export function Medals({ titles, medals }: { titles: Title[]; medals: Medal[] })
                     <div className="yrs">
                       {w.map((t) => (
                         <a key={t.y + t.club} href={href.club(t.club, t.y)} title={`${t.name}${t.vs ? ` · ante ${t.vs}` : ''}${t.res ? ` (${t.res})` : ''}`}>
-                          <Crest url={t.logo} name={t.name} size={16} />
+                          {!club && <Crest url={t.logo} name={t.name} size={16} />}
                           {t.label}
                         </a>
                       ))}

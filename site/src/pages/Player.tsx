@@ -3,7 +3,7 @@ import { MedalSummary, Medals } from '../components/Medals'
 import { BarChart, Crest, Foot, Loading, NotFound, Radar, Sec, SortTable, Strip, Tabs, src, type Col, Court, FavButton, Flag, ShareButton } from '../components/ui'
 import { cssVars, palette, pctColor, valColor } from '../lib/color'
 import { LOG0, S, compOf, loadEd, loadPlayer, useLoad, type LogRow, type Meta, type PlayerRec, type Season } from '../lib/data'
-import { age, dateShort, dateYear, dob, feet, fga, height, n0, n1, pct, per, POS, seasonLabel, val } from '../lib/fmt'
+import { age, dateShort, dateYear, dob, feet, fga, height, n0, n1, pct, per, POS, seasonLabel, ts, val } from '../lib/fmt'
 import { href, useQuery } from '../lib/router'
 import { percentiles } from '../lib/stats'
 import { playerCard, shareOrDownload, type CardData } from '../lib/shareImage'
@@ -302,6 +302,7 @@ function Summary({ p, games, pc, cur, pal, compName, meta }: { p: PlayerRec; gam
           )}
         </section>
       </div>
+      {cur && <Efficiency s={cur.s} gp={cur.gp} gs={cur.gs} />}
       <Medals titles={p.titles ?? []} medals={p.medals ?? []} />
       {last4.length > 0 && (
         <section className="card" style={{ marginTop: 20 }}>
@@ -465,6 +466,7 @@ function Career({ p, meta }: { p: PlayerRec; meta: Meta }) {
   return (
     <>
       <CareerTable p={p} meta={meta} />
+      <AdvancedTable p={p} meta={meta} />
       <div className="grid g-2">
         <section className="card">
           <Sec aside="suma de todas sus temporadas">Por competición</Sec>
@@ -666,5 +668,105 @@ function ImageButton({ data }: { data: CardData }) {
       </svg>
       {busy ? 'Creando…' : 'Imagen'}
     </button>
+  )
+}
+
+/** Métricas de eficiencia a partir de la línea acumulada. */
+function adv(s: (number | null)[], gp: number, gs = 0) {
+  const v = (i: number) => s[i] ?? 0
+  const fga = v(S.f2a) + v(S.f3a)
+  const min = v(S.sec) / 60
+  return {
+    ts: ts(s),
+    efg: fga ? (v(S.f2m) + 1.5 * v(S.f3m)) / fga : null,
+    astTov: v(S.tov) ? v(S.ast) / v(S.tov) : null,
+    p36: min ? (36 * v(S.pts)) / min : null,
+    r36: min ? (36 * v(S.reb)) / min : null,
+    a36: min ? (36 * v(S.ast)) / min : null,
+    tpr: fga ? v(S.f3a) / fga : null,
+    ftr: fga ? v(S.fta) / fga : null,
+    pm: gp ? v(S.pm) / gp : null,
+    start: gp ? gs / gp : null
+  }
+}
+const pctF = (x: number | null) => (x == null ? '–' : `${n1(x * 100)} %`)
+
+function Efficiency({ s, gp, gs }: { s: (number | null)[]; gp: number; gs: number }) {
+  const a = adv(s, gp, gs)
+  const tiles: [string, string, string][] = [
+    ['% tiro verdadero', pctF(a.ts), 'TS%: puntos por intento, contando libres y triples'],
+    ['% tiro efectivo', pctF(a.efg), 'eFG%: el triple vale 1,5 tiros'],
+    ['Asist. / pérdida', a.astTov == null ? '–' : n1(a.astTov), 'asistencias por cada pérdida'],
+    ['Puntos por 36 min', a.p36 == null ? '–' : n1(a.p36), 'proyección a 36 minutos'],
+    ['Triples / tiros', pctF(a.tpr), 'parte de sus tiros que son triples'],
+    ['+/− por partido', a.pm == null ? '–' : `${a.pm > 0 ? '+' : ''}${n1(a.pm)}`, 'diferencia del marcador con él en pista'],
+    ['Titular', pctF(a.start), 'partidos en el quinteto inicial']
+  ]
+  return (
+    <section className="card" style={{ marginTop: 20 }}>
+      <Sec aside="esta temporada">Eficiencia</Sec>
+      <div className="effs">
+        {tiles.map(([k, v, h]) => (
+          <div key={k} className="eff" title={h}>
+            <b>{v}</b>
+            <span>{k}</span>
+            <small>{h}</small>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function AdvancedTable({ p, meta }: { p: PlayerRec; meta: Meta }) {
+  const rows = p.seasons.filter((x) => x.gp > 0)
+  if (!rows.length) return null
+  return (
+    <section className="card" style={{ marginTop: 20 }}>
+      <Sec aside="eficiencia por temporada">Estadística avanzada</Sec>
+      <div className="tw">
+        <table className="t">
+          <thead>
+            <tr>
+              <th className="l">Temporada</th>
+              <th className="l">Competición</th>
+              <th>PJ</th>
+              <th>TS %</th>
+              <th>eFG %</th>
+              <th className="hide-m">T3 / tiros</th>
+              <th className="hide-m">TL / tiros</th>
+              <th>Ast/Pér</th>
+              <th>Pts/36</th>
+              <th className="hide-m">Reb/36</th>
+              <th className="hide-m">Ast/36</th>
+              <th>+/−</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((x, i) => {
+              const a = adv(x.s, x.gp, x.gs)
+              return (
+                <tr key={i} className={x.ed != null && x.ed === p.cur?.ed ? 'cur' : ''}>
+                  <td className="l">{seasonLabel(x.y)}</td>
+                  <td className="l">
+                    <span className="lgp">{compOf(meta, x.code)?.name ?? x.code}</span>
+                  </td>
+                  <td>{x.gp}</td>
+                  <td className="b">{a.ts == null ? '–' : n1(a.ts * 100)}</td>
+                  <td>{a.efg == null ? '–' : n1(a.efg * 100)}</td>
+                  <td className="hide-m">{a.tpr == null ? '–' : n1(a.tpr * 100)}</td>
+                  <td className="hide-m">{a.ftr == null ? '–' : n1(a.ftr * 100)}</td>
+                  <td>{a.astTov == null ? '–' : n1(a.astTov)}</td>
+                  <td className="b">{a.p36 == null ? '–' : n1(a.p36)}</td>
+                  <td className="hide-m">{a.r36 == null ? '–' : n1(a.r36)}</td>
+                  <td className="hide-m">{a.a36 == null ? '–' : n1(a.a36)}</td>
+                  <td>{a.pm == null || x.src === 'acb' ? '–' : `${a.pm > 0 ? '+' : ''}${n1(a.pm)}`}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
   )
 }

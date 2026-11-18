@@ -125,7 +125,7 @@ export interface Season {
 export type LogRow = [string, number, string | null, number, number, number, number, number, number, ...Line]
 /** Título (won 1) o final perdida (won 0) con un club. */
 export interface Title {
-  k: 'liga' | 'copa' | 'supercopa' | 'euroleague' | 'bcl' | 'eurocup'
+  k: string
   y: number
   label: string
   won: number
