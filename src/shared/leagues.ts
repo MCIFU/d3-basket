@@ -62,6 +62,24 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     logo: 'media/leagues/leb_plata.png',
     zones: []
   },
+  COPA_REY: {
+    name: 'Copa del Rey',
+    division: 'Copa · ACB',
+    color: '#da3b00',
+    color2: '#1a1a1a',
+    ink: '#ffffff',
+    logo: 'media/leagues/copa_rey.svg',
+    zones: []
+  },
+  SUPERCOPA: {
+    name: 'Supercopa Endesa',
+    division: 'Copa · ACB',
+    color: '#1a1a1a',
+    color2: '#da3b00',
+    ink: '#ffffff',
+    logo: 'media/leagues/supercopa.svg',
+    zones: []
+  },
   COPA_ESPANA: {
     name: 'Copa España',
     division: 'Copa · FEB',

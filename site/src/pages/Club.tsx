@@ -9,7 +9,7 @@ import { Medals, Trophy } from '../components/Medals'
 
 const ROLE: Record<string, string> = { head_coach: 'Primer entrenador', assistant_coach: 'Entrenador ayudante', coach: 'Entrenador', delegate: 'Delegado', physio: 'Fisioterapeuta', doctor: 'Médico' }
 const TNAME: Record<string, string> = { liga: 'Ligas', copa: 'Copas', supercopa: 'Supercopas', euroleague: 'EuroLeague', eurocup: 'EuroCup', bcl: 'Champions', nba: 'NBA', lba: 'Scudetti', bbl: 'BBL', lnb_elite: 'Ligas francesas', gbl: 'Ligas griegas', bsl: 'Ligas turcas' }
-const SECONDARY = ['EUROLEAGUE', 'EUROCUP', 'BCL', 'COPA_ESPANA']
+const SECONDARY = ['EUROLEAGUE', 'EUROCUP', 'BCL', 'COPA_ESPANA', 'COPA_REY', 'SUPERCOPA']
 
 export default function Club({ meta, refId, year }: { meta: Meta; refId: string; year?: number }) {
   const c = useLoad(() => loadClub(refId), [refId])

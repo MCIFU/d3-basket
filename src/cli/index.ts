@@ -271,7 +271,8 @@ async function main() {
   }
 
   const national = league ? NATIONAL[league.toLowerCase()] : undefined
-  if (league !== 'acb' && !febCompetition && !euroCompetition && !isBcl && !national) {
+  const cup = league === 'copa-rey' ? 'copa-del-rey' : league === 'supercopa' ? 'supercopa' : undefined
+  if (league !== 'acb' && !cup && !febCompetition && !euroCompetition && !isBcl && !national) {
     console.error(`Liga no soportada: ${league ?? '(ninguna)'} — usa "acb", "primera-feb", "segunda-feb", "tercera-feb" o "copa-espana".`)
     usage(1)
   }
@@ -305,7 +306,9 @@ async function main() {
       log
     }
     const t0 = Date.now()
-    const summary = national
+    const summary = cup
+      ? await acb.syncCup(cup, opts)
+      : national
       ? await syncLeague(db, http, national(http), { ...opts, season: values.season ? Number(values.season) : undefined })
       : isBcl
       ? await new FibaScraper(db, http).sync({ ...opts, season: values.season ? Number(values.season) : undefined })

@@ -12,8 +12,8 @@ const COMP: Record<string, { name: string; logo?: string; order: number }> = {
   gbl: { name: 'Greek Basketball League', logo: 'media/leagues/gbl.png', order: 1.4 },
   bsl: { name: 'Süper Lig', logo: 'media/leagues/bsl.png', order: 1.5 },
   liga: { name: 'Liga ACB', logo: 'media/leagues/acb.svg', order: 1 },
-  copa: { name: 'Copa del Rey', order: 2 },
-  supercopa: { name: 'Supercopa', order: 3 },
+  copa: { name: 'Copa del Rey', logo: 'media/leagues/copa_rey.svg', order: 2 },
+  supercopa: { name: 'Supercopa', logo: 'media/leagues/supercopa.svg', order: 3 },
   eurocup: { name: 'EuroCup', logo: 'media/leagues/eurocup.png', order: 4 },
   bcl: { name: 'Champions League', logo: 'media/leagues/bcl.png', order: 5 }
 }

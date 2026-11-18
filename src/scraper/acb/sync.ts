@@ -26,7 +26,7 @@ import {
   parseTeamSchedule
 } from './parsers'
 import { RscDocument } from '../core/rsc'
-import { acbHistoryUrls, acbUrls, slugFromTeamUrl } from './urls'
+import { ACB_BASE, acbHistoryUrls, acbUrls, slugFromTeamUrl } from './urls'
 import {
   ACB_CLUB_TO_WIKI,
   WIKI_CLUB_TO_ACB,
@@ -123,6 +123,50 @@ export class AcbScraper {
       await this.syncEditionDetails(csId, cal.edition, cal.teams, opts, summary)
       if (opts.history !== false) await this.syncHistory({ ...opts, summary })
       if (opts.careers !== false) await this.syncCareers(csId, cal.edition, { ...opts, summary })
+      this.finish(runId, csId, summary)
+      return summary
+    } catch (err) {
+      this.fail(runId, summary, err)
+      throw err
+    }
+  }
+
+  // ───────────────────────── Copa del Rey y Supercopa ─────────────────────────
+  /**
+   * Edición vigente de la Copa del Rey o la Supercopa: acb.com solo publica la última de cada una
+   * (con los mismos ids de partido y boxscore que la liga). Las rondas se nombran por el número de partidos.
+   */
+  async syncCup(kind: 'copa-del-rey' | 'supercopa', opts: AcbSyncOptions = {}): Promise<SyncSummary> {
+    const log = opts.log ?? (() => {})
+    const code = kind === 'supercopa' ? 'SUPERCOPA' : 'COPA_REY'
+    const runId = this.w.startRun('acb', `${code}`)
+    const summary = this.emptySummary()
+    try {
+      const cal = parseCalendar((await this.http.get(`${ACB_BASE}/es/${kind}/calendario`)).body)
+      const name = kind === 'supercopa' ? 'Supercopa Endesa' : 'Copa del Rey'
+      const edition: NEdition = { ref: { source: 'acb', id: `${code}-${cal.edition.ref.id}` }, competition: code, startYear: cal.edition.startYear, name: `${name} ${cal.edition.startYear + (kind === 'supercopa' ? 0 : 1)}`, isCurrent: true }
+      const per = new Map<string, number>()
+      for (const g of cal.games) per.set(g.round?.ref?.id ?? '', (per.get(g.round?.ref?.id ?? '') ?? 0) + 1)
+      const games = cal.games.map((g) => {
+        const n = per.get(g.round?.ref?.id ?? '') ?? 0
+        const rn = n >= 4 ? 'Cuartos de final' : n >= 2 ? 'Semifinales' : 'Final'
+        const round: NRound = { ref: g.round?.ref, number: n >= 4 ? 1 : n >= 2 ? 2 : 3, phase: n === 1 ? 'final' : 'playoff', name: rn }
+        return { ...g, round }
+      })
+      summary.edition = edition.name!
+      const csId = this.w.transaction(() => {
+        const csId = this.w.upsertEdition(edition)
+        const teamIds = new Map<string, number>()
+        for (const t of cal.teams) teamIds.set(t.ref.id, this.w.upsertTeam(csId, t))
+        for (const g of games) this.w.upsertGame(csId, g, teamIds.get(g.homeTeam.ref.id)!, teamIds.get(g.awayTeam.ref.id)!)
+        this.w.refreshRoundDates(csId)
+        return csId
+      })
+      summary.competitionSeasonId = csId
+      summary.teams = cal.teams.length
+      summary.games = games.length
+      log(`  ${edition.name}: ${cal.teams.length} equipos, ${games.length} partidos`)
+      await this.syncEditionDetails(csId, edition, cal.teams, { ...opts, rosters: false, players: false }, summary)
       this.finish(runId, csId, summary)
       return summary
     } catch (err) {

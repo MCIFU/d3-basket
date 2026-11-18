@@ -235,7 +235,7 @@ for (const r of all(
   `SELECT r.player_id, r.team_id, r.jersey_number, r.position, r.is_active, s.start_year
    FROM roster_entries r JOIN teams t ON t.id = r.team_id JOIN competition_seasons cs ON cs.id = t.competition_season_id
    JOIN seasons s ON s.id = cs.season_id JOIN competitions co ON co.id = cs.competition_id
-   ORDER BY s.start_year, r.is_active, co.code IN ('EUROLEAGUE', 'EUROCUP', 'BCL', 'COPA_ESPANA') DESC, co.tier IS NULL DESC`
+   ORDER BY s.start_year, r.is_active, co.code IN ('EUROLEAGUE', 'EUROCUP', 'BCL', 'COPA_ESPANA', 'COPA_REY', 'SUPERCOPA') DESC, co.tier IS NULL DESC`
 )) lastRoster.set(r.player_id, r)
 const psl = new Map<number, any[]>()
 for (const r of all(`SELECT * FROM player_season_lines`)) {

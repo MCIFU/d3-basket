@@ -695,5 +695,15 @@ INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, cou
   ('NBA', 'NBA', 'NBA', 'NBA', 1, 'US'),
   ('NCAA', 'NCAA División I', 'NCAA', 'NCAA', 2, 'US');
 `
+  },
+  {
+    version: 19,
+    name: 'copa_rey_supercopa',
+    sql: /* sql */ `
+-- Copa del Rey y Supercopa Endesa (ACB): copas, sin categoría.
+INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, country) VALUES
+  ('COPA_REY', 'Copa del Rey', 'Copa del Rey', 'ACB', NULL, 'ES'),
+  ('SUPERCOPA', 'Supercopa Endesa', 'Supercopa', 'ACB', NULL, 'ES');
+`
   }
 ]
