@@ -33,6 +33,7 @@ import { LnbAdapter } from '../scraper/europe/lnb'
 import { LnpAdapter } from '../scraper/europe/lnp'
 import { EsakeAdapter } from '../scraper/europe/esake'
 import { ProaAdapter } from '../scraper/europe/proa'
+import { TheSportsDbBslAdapter } from '../scraper/europe/thesportsdb'
 import { SofascoreAdapter } from '../scraper/europe/sofascore'
 import type { FebCompetition } from '../scraper/feb/urls'
 
@@ -217,6 +218,7 @@ async function main() {
     bsl: (h) => new SofascoreAdapter(h, 519, 'BSL', 'Basketbol Süper Ligi'),
     nba: (h) => new EspnAdapter(h, 'nba', 'NBA', 'NBA'),
     ncaa: (h) => new EspnAdapter(h, 'mens-college-basketball', 'NCAA', 'NCAA División I'),
+    'bsl-historia': (h) => new TheSportsDbBslAdapter(h),
     turquia: (h) => new SofascoreAdapter(h, 519, 'BSL', 'Basketbol Süper Ligi'),
     grecia: (h) => new EsakeAdapter(h),
     a2: (h) => new LnpAdapter(h),
