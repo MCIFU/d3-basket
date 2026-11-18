@@ -63,7 +63,9 @@ export class Writer {
   }
 
   transaction<T>(fn: () => T): T {
-    return this.db.transaction(fn)()
+    // IMMEDIATE: reserva la escritura al empezar; con varias cargas en paralelo, una transacción que empieza leyendo
+    // y luego escribe chocaría con otra («database is locked») sin esperar.
+    return this.db.transaction(fn).immediate()
   }
 
   // ───────── temporadas / ediciones ─────────

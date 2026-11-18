@@ -142,7 +142,7 @@ async function main() {
         // Sin pabellón conocido (clubes europeos): el de Wikidata con su aforo.
         if (!club.arena && x.arena) db.prepare('UPDATE clubs SET arena = ?, arena_capacity = COALESCE(arena_capacity, ?) WHERE id = ?').run(x.arena, x.arena_capacity ?? null, id)
       }
-    })()
+    }).immediate()
     console.log(`✔ ${n} clubes completados con Wikipedia/Wikidata (fundación, historia, ciudad, web, redes y aforo)`)
     return
   }
@@ -248,7 +248,7 @@ async function main() {
       for (const col of ['city', 'arena', 'arena_address', 'arena_capacity', 'arena_photo_url', 'website', 'founded_year', 'president', 'history', 'history_url', 'logo_url', 'primary_color', 'secondary_color', 'socials'])
         db.prepare(`UPDATE clubs SET ${col} = COALESCE(${col}, (SELECT ${col} FROM clubs WHERE id = ?)) WHERE id = ?`).run(from, to)
       db.prepare('DELETE FROM clubs WHERE id = ?').run(from)
-    })()
+    }).immediate()
   const clubIdOf = (ref: string) => (db.prepare('SELECT club_id FROM v_club_ref WHERE ref = ?').get(ref) as { club_id: number } | undefined)?.club_id
   const clash = (a: number, b: number) =>
     (db.prepare('SELECT COUNT(*) AS n FROM teams a JOIN teams b ON a.competition_season_id = b.competition_season_id WHERE a.club_id = ? AND b.club_id = ?').get(a, b) as { n: number }).n > 0

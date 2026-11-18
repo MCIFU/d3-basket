@@ -169,7 +169,7 @@ export async function syncBrefTotals(db: DB, http: HttpClient, o: BrefOpts, log:
         ins.run(pid, o.code, startYear, t.slug, clubId, t.name, n(r, 'g'), Math.round(n(r, 'mp') * 60), pts, f2m, f2a, f3m, f3a, ftm, fta, n(r, 'orb'), n(r, 'drb'), reb, n(r, 'ast'), n(r, 'stl'), n(r, 'tov'), n(r, 'blk'), n(r, 'pf'), pir)
         sum.lines++
       }
-    })()
+    }).immediate()
     sum.teams++
     log(`  ${t.name}: ${rows.length} jugadores${clubId ? '' : ' (sin club enlazado)'}`)
   }
