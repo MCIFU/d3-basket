@@ -6,6 +6,10 @@ export const FEB_COMPETITIONS = {
   LEB_ORO: { g: 1, name: 'Primera FEB' },
   LEB_PLATA: { g: 2, name: 'Segunda FEB' },
   TERCERA_FEB: { g: 3, name: 'Tercera FEB' },
+  /** Ligas femeninas: Liga Femenina Endesa, Liga Femenina Challenge y Liga Femenina 2. */
+  LF_ENDESA: { g: 4, name: 'Liga Femenina Endesa' },
+  LF_CHALLENGE: { g: 67, name: 'Liga Femenina Challenge' },
+  LF2: { g: 9, name: 'Liga Femenina 2' },
   /** Copa España de la FEB: fase de grupos (Segunda FEB) y eliminatorias (también con equipos de Primera). */
   COPA_ESPANA: { g: 73, name: 'Copa España' },
   /** Campeonatos de España de selecciones autonómicas (CESA) y de clubes, categorías de formación. */

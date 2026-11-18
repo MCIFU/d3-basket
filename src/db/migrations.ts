@@ -705,5 +705,16 @@ INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, cou
   ('COPA_REY', 'Copa del Rey', 'Copa del Rey', 'ACB', NULL, 'ES'),
   ('SUPERCOPA', 'Supercopa Endesa', 'Supercopa', 'ACB', NULL, 'ES');
 `
+  },
+  {
+    version: 20,
+    name: 'ligas_femeninas',
+    sql: /* sql */ `
+-- Ligas femeninas de la FEB.
+INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, country) VALUES
+  ('LF_ENDESA', 'Liga Femenina Endesa', 'LF Endesa', 'FEB', 1, 'ES'),
+  ('LF_CHALLENGE', 'Liga Femenina Challenge', 'LF Challenge', 'FEB', 2, 'ES'),
+  ('LF2', 'Liga Femenina 2', 'LF2', 'FEB', 3, 'ES');
+`
   }
 ]

@@ -80,6 +80,33 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     logo: 'media/leagues/supercopa.svg',
     zones: []
   },
+  LF_ENDESA: {
+    name: 'Liga Femenina Endesa',
+    division: 'Primera división femenina · FEB',
+    color: '#7a2c8f',
+    color2: '#f28c00',
+    ink: '#ffffff',
+    logo: 'media/leagues/lf_endesa.svg',
+    zones: []
+  },
+  LF_CHALLENGE: {
+    name: 'Liga Femenina Challenge',
+    division: 'Segunda división femenina · FEB',
+    color: '#c2185b',
+    color2: '#76777b',
+    ink: '#ffffff',
+    logo: 'media/leagues/lf_challenge.svg',
+    zones: []
+  },
+  LF2: {
+    name: 'Liga Femenina 2',
+    division: 'Tercera división femenina · FEB',
+    color: '#00897b',
+    color2: '#76777b',
+    ink: '#ffffff',
+    logo: 'media/leagues/lf2.svg',
+    zones: []
+  },
   COPA_ESPANA: {
     name: 'Copa España',
     division: 'Copa · FEB',
