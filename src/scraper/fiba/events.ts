@@ -75,7 +75,7 @@ export class FibaEventAdapter implements LeagueAdapter {
     }
     const games: NGame[] = []
     for (const g of all) {
-      if (!g.teamA || !g.teamB || !['VALID', 'INIT'].includes(g.statusCode)) continue
+      if (!g.teamA || !g.teamB || !['VALID', 'INIT', 'CLOS'].includes(g.statusCode)) continue
       const [phase, rname, num] = ROUND[g.round?.roundCode] ?? ['playoff', g.round?.roundName ?? 'Eliminatoria', 5]
       const done = g.teamAScore != null && g.teamBScore != null && g.teamAScore + g.teamBScore > 0
       games.push({
