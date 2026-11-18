@@ -1,9 +1,9 @@
 /**
- * Historia de la Basketbol Süper Ligi turca desde TheSportsDB (API pública gratuita): resultados de
+ * Basketbol Süper Ligi turca (temporada actual e historia) desde TheSportsDB (API pública gratuita): resultados de
  * cada jornada y de los playoffs desde 2015-16, sin estadística por jugador. tbf.org.tr está tras
  * Cloudflare y Sofascore limita las descargas, así que es la única fuente abierta de temporadas pasadas.
  * Rondas de TheSportsDB: 1..34 liga regular, 125 cuartos, 150 semifinales, 200 final.
- * Límite del plan gratuito: unas 30 peticiones por minuto (usar --delay 2500).
+ * Límite del plan gratuito: unas 30 peticiones por minuto (el adaptador espacia las peticiones).
  */
 import type { HttpClient } from '../core/http'
 import type { NGame, NTeam } from '../types'
@@ -25,7 +25,12 @@ export class TheSportsDbBslAdapter implements LeagueAdapter {
   name = 'Basketbol Süper Ligi'
   constructor(private readonly http: HttpClient) {}
 
+  private last = 0
   private async round(r: number, season: string): Promise<any[]> {
+    // Plan gratuito: unas 30 peticiones por minuto. Se espacian aquí, sea cual sea el --delay.
+    const wait = this.last + 2500 - Date.now()
+    if (wait > 0) await new Promise((ok) => setTimeout(ok, wait))
+    this.last = Date.now()
     const d = JSON.parse((await this.http.get(`${API}/eventsround.php?id=${LEAGUE}&r=${r}&s=${season}`, { Accept: 'application/json' })).body)
     return d?.events ?? []
   }
