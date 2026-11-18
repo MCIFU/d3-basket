@@ -485,6 +485,23 @@ for (const g of games as any[]) {
   const b = gBuckets[bucketOf(ref, BUCKETS.g)]
   b[ref] ??= { ed: g.competition_season_id, per: periods.get(g.id) ?? [], att: g.attendance, ar: g.arena, refs: [], teams: {}, names: {} }
 }
+// Cara a cara: los 6 enfrentamientos anteriores entre los dos clubes, en cualquier competición.
+{
+  const pairs = new Map<string, any[]>()
+  const fin = (games as any[]).filter((g) => g.status === 'finished' && g.home_score != null && g.scheduled_at).sort((a, b) => a.scheduled_at.localeCompare(b.scheduled_at))
+  const club = (tid: number) => teams.get(tid)?.club
+  for (const g of fin) {
+    const k = [club(g.home_team_id), club(g.away_team_id)].sort().join('|')
+    ;(pairs.get(k) ?? pairs.set(k, []).get(k)!).push(g)
+  }
+  for (const g of games as any[]) {
+    const ref = gameRef.get(g.id)!
+    const rec = gBuckets[bucketOf(ref, BUCKETS.g)][ref]
+    const list = pairs.get([club(g.home_team_id), club(g.away_team_id)].sort().join('|')) ?? []
+    const prev = list.filter((x) => x.id !== g.id && (!g.scheduled_at || x.scheduled_at < g.scheduled_at)).slice(-6).reverse()
+    if (prev.length) rec.h2h = prev.map((x) => [gameRef.get(x.id), x.scheduled_at, edById.get(x.competition_season_id)!.code, club(x.home_team_id), x.home_score, x.away_score])
+  }
+}
 gBuckets.forEach((b, i) => write(`g/${i}.json`, b))
 log(`boxscores: ${gBox.size} en ${BUCKETS.g} cubos`)
 

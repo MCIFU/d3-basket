@@ -206,6 +206,8 @@ export interface GameRec {
   refs: string[]
   teams: Record<number, { coach: string | null; lines: BoxRow[] }>
   names: Record<string, [string, string | null, string | null]>
+  /** Enfrentamientos anteriores: [partido, fecha, competición, club local, puntos local, puntos visitante] */
+  h2h?: [string, string, string, string, number, number][]
 }
 export interface DayGame {
   id: string
