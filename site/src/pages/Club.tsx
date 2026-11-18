@@ -151,6 +151,7 @@ function ClubPage({ meta, c, y, main, other, ed }: { meta: Meta; c: ClubRec; y?:
           ]}
         />
         {tab === 'plantilla' && main && <Roster c={c} t={main.t} ed={ed} />}
+        {tab === 'plantilla' && y != null && c.moves?.[y] && <Moves c={c} y={y} />}
         {tab === 'partidos' && main && ed && <Games ed={ed} t={main.t} other={other} meta={meta} />}
         {tab === 'estadisticas' && main && ed && <TeamStats ed={ed} t={main.t} />}
         {tab === 'club' && <Info c={c} meta={meta} />}
@@ -458,5 +459,43 @@ function Info({ c, meta }: { c: ClubRec; meta: Meta }) {
         </div>
       </section>
     </>
+  )
+}
+
+/** Altas y bajas respecto a la temporada anterior, con el club de procedencia o de destino. */
+function Moves({ c, y }: { c: ClubRec; y: number }) {
+  const m = c.moves![y]
+  const row = ([p, cl]: [string, string | null], dir: 'in' | 'out') => {
+    const pl = c.mpl?.[p]
+    const other = cl ? c.mclubs?.[cl] : undefined
+    return (
+      <div className="mv" key={p}>
+        <a href={href.player(p)} className="mv-p">
+          <Avatar url={pl?.[1]} name={pl?.[0] ?? '?'} size={36} />
+          <b>{pl?.[0] ?? '?'}</b>
+        </a>
+        {other ? (
+          <a className="mv-c" href={href.club(cl!)}>
+            <span className="muted">{dir === 'in' ? 'de' : 'a'}</span>
+            <Crest url={other[1]} name={other[0]} size={20} />
+            {other[0]}
+          </a>
+        ) : (
+          <span className="mv-c muted">{dir === 'in' ? 'debut o sin datos' : 'sin equipo en la base'}</span>
+        )}
+      </div>
+    )
+  }
+  return (
+    <div className="grid g-2">
+      <section className="card">
+        <Sec aside={`${m.in.length} respecto a ${seasonLabel(y - 1)}`}>Altas</Sec>
+        {m.in.length ? m.in.map((x) => row(x, 'in')) : <div className="empty">Sin altas</div>}
+      </section>
+      <section className="card">
+        <Sec aside={`${m.out.length} jugadores`}>Bajas del curso anterior</Sec>
+        {m.out.length ? m.out.map((x) => row(x, 'out')) : <div className="empty">Sin bajas</div>}
+      </section>
+    </div>
   )
 }

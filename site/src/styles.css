@@ -3641,3 +3641,32 @@ img.flag {
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
+
+/* ───────────────────────── Altas y bajas ───────────────────────── */
+.mv {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+}
+.mv-p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.mv-p b {
+  font-weight: 600;
+}
+.mv-c {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+a.mv-c:hover {
+  text-decoration: underline;
+}

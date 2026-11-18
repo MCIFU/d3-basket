@@ -192,6 +192,11 @@ export interface ClubRec {
   filiales: [string, string, string | null][]
   teams: { t: number; ed: number; y: number; code: string; name: string; logo: string | null }[]
   rosters: Record<number, RosterRow[]>
+  /** Altas y bajas por temporada: [jugador, club de procedencia o destino]. */
+  moves?: Record<number, { in: [string, string | null][]; out: [string, string | null][] }>
+  mpl?: Record<string, PlLite>
+  /** Clubes de procedencia o destino: [nombre corto, escudo]. */
+  mclubs?: Record<string, [string, string | null]>
   staff: Record<number, [string, string, string | null][]>
   /** [competición, año, etiqueta, campeón (1) o finalista (0), rival, resultado] */
   honours: [string, number, string, number, string | null, string | null][]
