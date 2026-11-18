@@ -15,6 +15,7 @@ const Game = lazy(() => import('./pages/Game'))
 const Players = lazy(() => import('./pages/Players'))
 const Spaniards = lazy(() => import('./pages/Spaniards'))
 const Compare = lazy(() => import('./pages/Compare'))
+const H2H = lazy(() => import('./pages/H2H'))
 
 function App() {
   const meta = useLoad(loadMeta, [])
@@ -37,6 +38,7 @@ function App() {
   else if (page === 'jugadores') body = <Players meta={m} />
   else if (page === 'espanoles') body = <Spaniards meta={m} />
   else if (page === 'comparar') body = <Compare meta={m} a={a} b={b} />
+  else if (page === 'vs' && a && b) body = <H2H meta={m} a={a} b={b} />
   else body = <NotFound what="Página" />
   return (
     <>

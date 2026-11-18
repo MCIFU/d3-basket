@@ -40,6 +40,7 @@ const routes = [
   `#/liga/${acb.code}?v=evolucion`,
   `#/liga/${acb.code}?v=records`,
   `#/liga/${acb.code}?v=historico`,
+  `#/vs/9/2`,
   acb.eds[1] && `#/liga/${acb.code}/${acb.eds[1].y}?v=eliminatorias`,
   `#/club/${club[0]}`,
   `#/jugador/${player[0]}`,

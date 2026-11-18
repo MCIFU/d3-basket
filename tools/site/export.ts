@@ -34,7 +34,7 @@ const q = new Queries(db as never)
 const all = <T = any>(sql: string, ...p: unknown[]) => db.prepare(sql).all(...p) as T[]
 
 // Se sobrescriben los ficheros (los nombres son estables); borrar la carpeta confundiría al servidor de desarrollo.
-for (const d of ['ed', 'p', 'c', 'g', 'hist']) mkdirSync(join(out, d), { recursive: true })
+for (const d of ['ed', 'p', 'c', 'g', 'hist', 'h2h']) mkdirSync(join(out, d), { recursive: true })
 const write = (rel: string, data: unknown) => writeFileSync(join(out, rel), JSON.stringify(data))
 
 // ───────────────────────── Referencias estables ─────────────────────────
@@ -85,9 +85,17 @@ const COLOR_FIX: [RegExp, string, string][] = [
   [/^Fenerbah/i, '#f3e63c', '#0b1e3f'],
   [/^Surne Bilbao/, '#b8bcc2', '#141414']
 ]
+// Escudo del club: el de su equipo más reciente (la ficha puede conservar uno antiguo de otra fuente).
+const latestLogo = new Map(
+  all<{ club_id: number; logo: string }>(
+    `SELECT t.club_id, t.logo_url AS logo FROM teams t JOIN competition_seasons cs ON cs.id = t.competition_season_id JOIN seasons s ON s.id = cs.season_id
+     WHERE t.logo_url IS NOT NULL ORDER BY s.start_year ASC, t.id ASC`
+  ).map((r) => [r.club_id, r.logo])
+)
 for (const c of clubs as any[]) {
   const fix = COLOR_FIX.find(([re]) => re.test(c.name))
   if (fix) (c.primary_color = fix[1]), (c.secondary_color = fix[2])
+  c.logo_url = latestLogo.get(c.id) ?? c.logo_url
 }
 const clubById = new Map(clubs.map((c: any) => [c.id, c]))
 interface TeamOut { id: number; ed: number; club: string; name: string; short: string | null; abbr: string | null; logo: string | null; c1: string | null; c2: string | null; g: string | null; parent: string | null }
@@ -524,6 +532,46 @@ for (const r of all(`SELECT ts.team_id, ts.role, COALESCE(c.full_name, TRIM(COAL
   if (!staffByTeam.has(r.team_id)) staffByTeam.set(r.team_id, [])
   staffByTeam.get(r.team_id)!.push([r.name, r.role, r.photo_url])
 }
+// ───────────────────────── Cara a cara entre clubes ─────────────────────────
+// Todos los partidos entre cada pareja de clubes (cualquier competición) y los rivales de cada club.
+const rivals = new Map<string, Map<string, [number, number]>>()
+{
+  const pairs = new Map<string, any[]>()
+  const fin = (games as any[]).filter((g) => g.status === 'finished' && g.home_score != null && g.away_score != null && g.scheduled_at).sort((a, b) => b.scheduled_at.localeCompare(a.scheduled_at))
+  for (const g of fin) {
+    const ch = teams.get(g.home_team_id)?.club
+    const ca = teams.get(g.away_team_id)?.club
+    if (!ch || !ca || ch === ca) continue
+    const k = [ch, ca].sort().join('|')
+    ;(pairs.get(k) ?? pairs.set(k, []).get(k)!).push(g)
+    for (const [me, op, won] of [[ch, ca, g.home_score > g.away_score], [ca, ch, g.away_score > g.home_score]] as const) {
+      const m = rivals.get(me) ?? rivals.set(me, new Map()).get(me)!
+      const r = m.get(op) ?? m.set(op, [0, 0]).get(op)!
+      r[won ? 0 : 1]++
+    }
+  }
+  const hBuckets: Record<string, unknown>[] = Array.from({ length: BUCKETS.h }, () => ({}))
+  const lite = (ref: string) => {
+    const c: any = clubById.get(clubIdByRef.get(ref)!)
+    return c ? [c.official_name ?? c.name, c.official_short ?? c.short_name ?? null, c.logo_url ?? null, c.primary_color ?? null] : [ref, null, null, null]
+  }
+  for (const [k, list] of pairs) {
+    const [a, b] = k.split('|')
+    hBuckets[bucketOf(k, BUCKETS.h)][k] = {
+      a: lite(a),
+      b: lite(b),
+      // [partido, fecha, competición, temporada, a juega en casa, puntos de a, puntos de b, ronda]
+      games: list.map((g) => {
+        const aHome = teams.get(g.home_team_id)!.club === a
+        const e = edById.get(g.competition_season_id)!
+        const rd: any = rounds.get(g.round_id)
+        return [gameRef.get(g.id), g.scheduled_at, e.code, e.y, aHome ? 1 : 0, aHome ? g.home_score : g.away_score, aHome ? g.away_score : g.home_score, rd?.name ?? null]
+      })
+    }
+  }
+  hBuckets.forEach((b, i) => write(`h2h/${i}.json`, b))
+  log(`cara a cara: ${pairs.size} parejas de clubes`)
+}
 const cBuckets: Record<string, any>[] = Array.from({ length: BUCKETS.c }, () => ({}))
 for (const c of clubs as any[]) {
   const ref = clubRef.get(c.id)!
@@ -568,6 +616,14 @@ for (const c of clubs as any[]) {
     web: c.website, president: c.president, socials: c.socials ? JSON.parse(c.socials) : {}, history: c.history, logo: c.logo_url, c1: c.primary_color, c2: c.secondary_color,
     parent: c.parent_club_id ? [clubRef.get(c.parent_club_id), clubById.get(c.parent_club_id)?.name] : null, filiales,
     teams: cTeams, rosters, staff, moves, mpl, mclubs,
+    // Rivales más habituales: [club, nombre, escudo, victorias, derrotas].
+    rivals: [...(rivals.get(ref) ?? new Map()).entries()]
+      .sort((x, y) => y[1][0] + y[1][1] - (x[1][0] + x[1][1]))
+      .slice(0, 40)
+      .map(([o, [w, l]]) => {
+        const oc: any = clubById.get(clubIdByRef.get(o)!)
+        return [o, oc?.official_name ?? oc?.name ?? o, oc?.logo_url ?? null, w, l]
+      }),
     honours: [
       ...honours.filter((h: any) => h.champion_club_id === c.id || h.runner_up_club_id === c.id).map((h: any) => [h.competition, h.season_start_year, h.label, h.champion_club_id === c.id ? 1 : 0, h.champion_club_id === c.id ? h.runner_up_name : h.champion_name, h.result]),
       // Finales de competiciones europeas y ligas con playoff cargadas (campeón o finalista).

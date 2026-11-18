@@ -3670,3 +3670,94 @@ img.flag {
 a.mv-c:hover {
   text-decoration: underline;
 }
+
+/* ───────────────────────── Cara a cara entre clubes ───────────────────────── */
+.vs-side b {
+  font: 800 30px/1 var(--cond);
+  text-transform: uppercase;
+  color: #fff;
+  margin-top: 10px;
+}
+.h2h-crest {
+  display: grid;
+  place-items: center;
+  width: 124px;
+  height: 124px;
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 14px 40px rgb(0 0 0 / 0.3);
+}
+@media (max-width: 760px) {
+  .h2h-crest {
+    width: 76px;
+    height: 76px;
+    border-radius: 18px;
+  }
+  .h2h-crest > * {
+    width: 56px !important;
+    height: 56px !important;
+  }
+}
+.h2h-mid {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  color: #fff;
+}
+.vs-mid .h2h-score {
+  width: auto;
+  height: auto;
+  padding: 10px 26px;
+  border-radius: 999px;
+  font: 800 54px/1 var(--cond);
+  display: flex;
+  gap: 10px;
+}
+.h2h-score i {
+  font-style: normal;
+  opacity: 0.4;
+}
+.h2h-mid small {
+  font: 600 13px var(--cond);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+@media (max-width: 760px) {
+  .vs-side b {
+    font-size: 18px;
+  }
+  .vs-mid .h2h-score {
+    font-size: 34px;
+    padding: 8px 16px;
+  }
+}
+.rivals {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 6px 14px;
+}
+.rv {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--card2);
+}
+.rv:hover {
+  background: var(--card3);
+}
+.rv b {
+  font-weight: 600;
+}
+.rv small {
+  display: block;
+  color: var(--tx3);
+  font-size: 12px;
+}
+.rv em {
+  font: 700 18px var(--cond);
+  font-style: normal;
+}

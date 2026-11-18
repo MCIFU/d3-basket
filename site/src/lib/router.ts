@@ -52,5 +52,6 @@ export const href = {
   comp: (code: string, y?: number) => `#/liga/${code}${y ? `/${y}` : ''}`,
   club: (ref: string, y?: number) => `#/club/${encodeURIComponent(ref)}${y ? `/${y}` : ''}`,
   player: (ref: string) => `#/jugador/${encodeURIComponent(ref)}`,
-  game: (ref: string) => `#/partido/${encodeURIComponent(ref)}`
+  game: (ref: string) => `#/partido/${encodeURIComponent(ref)}`,
+  h2h: (a: string, b: string) => `#/vs/${encodeURIComponent(a)}/${encodeURIComponent(b)}`
 }

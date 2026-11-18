@@ -197,6 +197,8 @@ export interface ClubRec {
   mpl?: Record<string, PlLite>
   /** Clubes de procedencia o destino: [nombre corto, escudo]. */
   mclubs?: Record<string, [string, string | null]>
+  /** Rivales más habituales: [club, nombre, escudo, victorias, derrotas]. */
+  rivals?: [string, string, string | null, number, number][]
   staff: Record<number, [string, string, string | null][]>
   /** [competición, año, etiqueta, campeón (1) o finalista (0), rival, resultado] */
   honours: [string, number, string, number, string | null, string | null][]
@@ -266,6 +268,14 @@ export interface HistFile {
   lt: Record<string, number>
   tm: Record<number, TL>
 }
+/** Cara a cara entre dos clubes (a y b en orden alfabético de referencia). */
+export interface H2HRec {
+  /** [nombre, corto, escudo, color] */
+  a: [string, string | null, string | null, string | null]
+  b: [string, string | null, string | null, string | null]
+  /** [partido, fecha, competición, temporada, a en casa, puntos a, puntos b, ronda] */
+  games: [string, string, string, number, number, number, number, string | null][]
+}
 export interface SearchIdx {
   p: [string, string, string | null, string | null, number | null, string | null][]
   c: [string, string, string | null, string | null, number | null][]
@@ -297,6 +307,8 @@ export const loadSearch = () => load<SearchIdx>('search.json')
 export const loadHist = (code: string) => load<HistFile>(`hist/${code}.json`)
 export const loadPlayer = async (ref: string) => (await load<Record<string, PlayerRec>>(`p/${bucketOf(ref, BUCKETS.p)}.json`))[ref]
 export const loadClub = async (ref: string) => (await load<Record<string, ClubRec>>(`c/${bucketOf(ref, BUCKETS.c)}.json`))[ref]
+export const h2hKey = (a: string, b: string) => [a, b].sort().join('|')
+export const loadH2H = async (a: string, b: string) => (await load<Record<string, H2HRec>>(`h2h/${bucketOf(h2hKey(a, b), BUCKETS.h)}.json`))[h2hKey(a, b)]
 export const loadGame = async (ref: string) => (await load<Record<string, GameRec>>(`g/${bucketOf(ref, BUCKETS.g)}.json`))[ref]
 
 /** Hook de carga: undefined mientras carga, null si no existe, Error si falla. */

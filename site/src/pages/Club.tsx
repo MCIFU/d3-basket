@@ -147,6 +147,7 @@ function ClubPage({ meta, c, y, main, other, ed }: { meta: Meta; c: ClubRec; y?:
             ['plantilla', 'Plantilla'],
             ['partidos', 'Partidos'],
             ['estadisticas', 'Estadísticas'],
+            ...(c.rivals?.length ? [['rivales', 'Rivales'] as [string, string]] : []),
             ['club', 'Club']
           ]}
         />
@@ -154,6 +155,7 @@ function ClubPage({ meta, c, y, main, other, ed }: { meta: Meta; c: ClubRec; y?:
         {tab === 'plantilla' && y != null && c.moves?.[y] && <Moves c={c} y={y} />}
         {tab === 'partidos' && main && ed && <Games ed={ed} t={main.t} other={other} meta={meta} />}
         {tab === 'estadisticas' && main && ed && <TeamStats ed={ed} t={main.t} />}
+        {tab === 'rivales' && <Rivals c={c} />}
         {tab === 'club' && <Info c={c} meta={meta} />}
       </main>
       <Foot updated={ed?.last ?? meta.updated} />
@@ -497,5 +499,28 @@ function Moves({ c, y }: { c: ClubRec; y: number }) {
         {m.out.length ? m.out.map((x) => row(x, 'out')) : <div className="empty">Sin bajas</div>}
       </section>
     </div>
+  )
+}
+
+/** Rivales más habituales del club, con el balance; cada uno abre el cara a cara. */
+function Rivals({ c }: { c: ClubRec }) {
+  return (
+    <section className="card" style={{ marginTop: 22 }}>
+      <Sec aside="en todas las competiciones cargadas">Rivales</Sec>
+      <div className="rivals">
+        {c.rivals!.map(([o, name, logo, w, l]) => (
+          <a key={o} className="rv" href={href.h2h(c.ref, o)}>
+            <Crest url={logo} name={name} size={32} />
+            <span>
+              <b>{name}</b>
+              <small>{w + l} partidos</small>
+            </span>
+            <em style={{ color: w > l ? 'var(--win)' : w < l ? 'var(--loss)' : undefined }}>
+              {w}-{l}
+            </em>
+          </a>
+        ))}
+      </div>
+    </section>
   )
 }
