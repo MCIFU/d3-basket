@@ -72,7 +72,8 @@ const comps = all(`SELECT code, name, short_name, country, tier, organizer FROM 
 const countryOrder = (c: string) => (c === 'ES' ? 0 : c === 'EU' ? 1 : 2)
 comps.sort((a, b) => countryOrder(a.country) - countryOrder(b.country) || a.country.localeCompare(b.country) || (a.tier ?? 9) - (b.tier ?? 9) || a.name.localeCompare(b.name))
 const updated = all<{ v: string }>(`SELECT MAX(last_synced_at) AS v FROM competition_seasons`)[0]?.v
-write('meta.json', { updated, buckets: BUCKETS, comps })
+// Competiciones sin temporadas cargadas (p. ej. las ligas femeninas, aún sin datos) no salen en la web.
+write('meta.json', { updated, buckets: BUCKETS, comps: comps.filter((c: any) => c.eds.length) })
 log(`meta: ${comps.length} competiciones, ${eds.length} ediciones`)
 
 // ───────────────────────── Clubes y equipos ─────────────────────────

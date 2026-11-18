@@ -710,7 +710,7 @@ INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, cou
     version: 20,
     name: 'ligas_femeninas',
     sql: /* sql */ `
--- Ligas femeninas de la FEB.
+-- Ligas femeninas de la FEB (de momento sin cargar: no salen en la web sin temporadas).
 INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, country) VALUES
   ('LF_ENDESA', 'Liga Femenina Endesa', 'LF Endesa', 'FEB', 1, 'ES'),
   ('LF_CHALLENGE', 'Liga Femenina Challenge', 'LF Challenge', 'FEB', 2, 'ES'),
