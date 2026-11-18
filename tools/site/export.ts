@@ -204,9 +204,14 @@ for (const e of eds) {
   }).sort((a, b) => (a.d ?? '9').localeCompare(b.d ?? '9'))
   const stats = [...(edStats.get(e.id)?.values() ?? [])].filter((a) => a.gp > 0).map((a) => ({ p: a.p, t: a.t, gp: a.gp, gs: a.gs, s: a.s }))
   // Ediciones sin boxscores pero con totales por temporada (liga turca desde Basketball-Reference).
-  if (!stats.length) {
+  // Se usan también si los boxscores cubren menos de la mitad de los partidos jugados.
+  const lines = seasonLinesFor(e.code, e.y)
+  const finN = games.filter((g: any) => g.competition_season_id === e.id && g.status === 'finished').length
+  const boxN = games.filter((g: any) => g.competition_season_id === e.id && gBox.has(g.id)).length
+  if (lines.length && (!stats.length || boxN < finN / 2)) {
+    stats.length = 0
     const byClub = new Map(eTeams.map((t) => [t.club, t.id]))
-    for (const r of seasonLinesFor(e.code, e.y)) {
+    for (const r of lines) {
       const t = r.club_id ? byClub.get(clubRef.get(r.club_id) ?? '') : undefined
       const ref = playerRef.get(r.player_id)
       if (t == null || !ref || !r.games) continue
