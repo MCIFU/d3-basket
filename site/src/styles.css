@@ -2821,29 +2821,79 @@ a.vs-name:hover {
 /* ───────────────────────── Portada: favoritos ───────────────────────── */
 .favs {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr));
   gap: 10px;
 }
 .fv {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: grid;
+  gap: 8px;
   padding: 10px 12px;
   border-radius: 12px;
   background: var(--card2);
-  transition: background 0.15s;
+  align-content: start;
 }
-.fv:hover {
-  background: var(--card3);
+.fv-h {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.fv-h:hover b {
+  color: var(--accent, var(--tx));
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 .fv b {
   font: 700 16px/1.1 var(--cond);
+}
+.fv-h b {
   text-transform: uppercase;
 }
 .fv small {
   display: block;
   color: var(--tx3);
   font-size: 12px;
+}
+.fv-x {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+a.fv-x:hover,
+.fv-g:hover {
+  color: var(--tx);
+  background: var(--card3);
+  border-radius: 8px;
+}
+.fv-g {
+  display: grid;
+  grid-template-columns: 62px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 4px;
+}
+.fv-g small {
+  font: 600 11px var(--cond);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.fv-g em {
+  font-style: normal;
+}
+.fv i.win,
+.fv i.loss {
+  font-style: normal;
+  font: 700 11px/18px var(--cond);
+  display: inline-block;
+  width: 18px;
+  text-align: center;
+  border-radius: 4px;
+  color: #fff;
+  background: var(--win, #1f9d55);
+}
+.fv i.loss {
+  background: var(--loss, #d64545);
 }
 @media (max-width: 760px) {
   .fgroup {
