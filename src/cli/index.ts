@@ -33,6 +33,7 @@ import { LnbAdapter } from '../scraper/europe/lnb'
 import { LnpAdapter } from '../scraper/europe/lnp'
 import { EsakeAdapter } from '../scraper/europe/esake'
 import { ProaAdapter } from '../scraper/europe/proa'
+import { legalName, shortName } from './club-names'
 import { syncBslStats } from '../scraper/europe/bref'
 import { TheSportsDbBslAdapter } from '../scraper/europe/thesportsdb'
 import { SofascoreAdapter } from '../scraper/europe/sofascore'
@@ -229,39 +230,105 @@ async function main() {
     'elite-2': (h) => new LnbAdapter(h, 2, 'LNB_ELITE2'),
     'pro-b': (h) => new LnbAdapter(h, 2, 'LNB_ELITE2')
   }
+  /** Une la ficha de club «from» dentro de «to» (equipos, ids externos, trayectorias, palmarés). */
+  const mergeClub = (from: number, to: number) =>
+    db.transaction(() => {
+      db.prepare('UPDATE teams SET club_id = ? WHERE club_id = ?').run(to, from)
+      db.prepare("UPDATE OR IGNORE external_ids SET entity_id = ? WHERE entity_type = 'club' AND entity_id = ?").run(to, from)
+      db.prepare("DELETE FROM external_ids WHERE entity_type = 'club' AND entity_id = ?").run(from)
+      db.prepare('UPDATE player_season_lines SET club_id = ? WHERE club_id = ?').run(to, from)
+      db.prepare('UPDATE honours SET champion_club_id = ? WHERE champion_club_id = ?').run(to, from)
+      db.prepare('UPDATE honours SET runner_up_club_id = ? WHERE runner_up_club_id = ?').run(to, from)
+      db.prepare('UPDATE clubs SET parent_club_id = ? WHERE parent_club_id = ?').run(to, from)
+      db.prepare('DELETE FROM club_records WHERE club_id = ?').run(from)
+      for (const col of ['city', 'arena', 'arena_address', 'arena_capacity', 'arena_photo_url', 'website', 'founded_year', 'president', 'history', 'history_url', 'logo_url', 'primary_color', 'secondary_color', 'socials'])
+        db.prepare(`UPDATE clubs SET ${col} = COALESCE(${col}, (SELECT ${col} FROM clubs WHERE id = ?)) WHERE id = ?`).run(from, to)
+      db.prepare('DELETE FROM clubs WHERE id = ?').run(from)
+    })()
+  const clubIdOf = (ref: string) => (db.prepare('SELECT club_id FROM v_club_ref WHERE ref = ?').get(ref) as { club_id: number } | undefined)?.club_id
+  const clash = (a: number, b: number) =>
+    (db.prepare('SELECT COUNT(*) AS n FROM teams a JOIN teams b ON a.competition_season_id = b.competition_season_id WHERE a.club_id = ? AND b.club_id = ?').get(a, b) as { n: number }).n > 0
+
   if (command === 'merge-clubs') {
     // Une fichas de club duplicadas (la de la FEB dentro de la de acb.com) según una lista revisada a mano.
     const { pares } = JSON.parse(fs.readFileSync(path.resolve(positionals[1] ?? 'tools/site/club-aliases.json'), 'utf8')) as { pares: { feb: string; acb: string; club: string }[] }
-    const idOf = (ref: string) => (db.prepare('SELECT club_id FROM v_club_ref WHERE ref = ?').get(ref) as { club_id: number } | undefined)?.club_id
     let n = 0
     for (const p of pares) {
-      const from = idOf(p.feb)
-      const to = idOf(p.acb)
+      const from = clubIdOf(p.feb)
+      const to = clubIdOf(p.acb)
       if (!from || !to || from === to) {
         console.log(`  · ${p.club}: ${!from ? `no existe ${p.feb} (quizá ya unido)` : !to ? `no existe ${p.acb}` : 'ya unidos'}`)
         continue
       }
-      const clash = db.prepare('SELECT COUNT(*) AS n FROM teams a JOIN teams b ON a.competition_season_id = b.competition_season_id WHERE a.club_id = ? AND b.club_id = ?').get(from, to) as { n: number }
-      if (clash.n) {
+      if (clash(from, to)) {
         console.log(`  ✗ ${p.club}: los dos tienen equipo en la misma temporada; no se unen`)
         continue
       }
-      db.transaction(() => {
-        db.prepare('UPDATE teams SET club_id = ? WHERE club_id = ?').run(to, from)
-        db.prepare("UPDATE external_ids SET entity_id = ? WHERE entity_type = 'club' AND entity_id = ?").run(to, from)
-        db.prepare('UPDATE player_season_lines SET club_id = ? WHERE club_id = ?').run(to, from)
-        db.prepare('UPDATE honours SET champion_club_id = ? WHERE champion_club_id = ?').run(to, from)
-        db.prepare('UPDATE honours SET runner_up_club_id = ? WHERE runner_up_club_id = ?').run(to, from)
-        db.prepare('UPDATE clubs SET parent_club_id = ? WHERE parent_club_id = ?').run(to, from)
-        db.prepare('DELETE FROM club_records WHERE club_id = ?').run(from)
-        for (const col of ['city', 'arena', 'arena_address', 'arena_capacity', 'arena_photo_url', 'website', 'founded_year', 'president', 'history', 'history_url', 'logo_url', 'primary_color', 'secondary_color', 'socials'])
-          db.prepare(`UPDATE clubs SET ${col} = COALESCE(${col}, (SELECT ${col} FROM clubs WHERE id = ?)) WHERE id = ?`).run(from, to)
-        db.prepare('DELETE FROM clubs WHERE id = ?').run(from)
-      })()
+      mergeClub(from, to)
       n++
       console.log(`  ✔ ${p.club}: ${p.feb} → ${p.acb}`)
     }
     console.log(`✔ ${n} clubes unidos`)
+    return
+  }
+
+  if (command === 'clubs-oficiales') {
+    // Nombre oficial (sin patrocinador) de cada club y unión de sus fichas duplicadas entre fuentes.
+    const { clubes } = JSON.parse(fs.readFileSync(path.resolve(positionals[1] ?? 'tools/site/clubes-oficiales.json'), 'utf8')) as { clubes: string[][] }
+    let named = 0
+    let merged = 0
+    for (const [name, short, ...refs] of clubes) {
+      // La ficha principal es la primera que exista (las demás pueden estar ya unidas).
+      const ids = [...new Set(refs.map(clubIdOf).filter((x): x is number => x != null))]
+      if (!ids.length) {
+        console.log(`  · ${name}: ninguna ficha encontrada`)
+        continue
+      }
+      const to = ids[0]
+      for (const from of ids.slice(1)) {
+        if (clash(from, to)) {
+          console.log(`  ✗ ${name}: dos fichas con equipo en la misma temporada; no se unen`)
+          continue
+        }
+        mergeClub(from, to)
+        merged++
+      }
+      db.prepare('UPDATE clubs SET official_name = ?, official_short = ? WHERE id = ?').run(name, short, to)
+      named++
+    }
+    console.log(`✔ ${named} clubes con nombre oficial · ${merged} fichas duplicadas unidas`)
+    return
+  }
+
+  if (command === 'clubs-feb-legal') {
+    // Nombre legal de los clubes FEB sin nombre oficial revisado (Tercera FEB, filiales, cantera): la ficha de
+    // equipo de la FEB lo publica sin patrocinador ("CLUB BALONCESTO X SAD" → "CB X").
+    const http = new HttpClient({ minDelayMs: Number(values.delay), log })
+    const rows = db
+      .prepare(
+        `SELECT c.id, (SELECT x.external_id FROM teams t JOIN external_ids x ON x.entity_type = 'team' AND x.entity_id = t.id AND x.source = 'feb'
+                       WHERE t.club_id = c.id ORDER BY t.competition_season_id DESC LIMIT 1) AS team
+         FROM clubs c WHERE c.official_name IS NULL AND EXISTS (
+           SELECT 1 FROM teams t JOIN competition_seasons cs ON cs.id = t.competition_season_id JOIN competitions co ON co.id = cs.competition_id
+           WHERE t.club_id = c.id AND co.organizer = 'FEB' AND co.code NOT LIKE 'CESA%')`
+      )
+      .all() as { id: number; team: string | null }[]
+    const set = db.prepare('UPDATE clubs SET official_name = ?, official_short = ? WHERE id = ?')
+    let n = 0
+    for (const r of rows) {
+      if (!r.team) continue
+      try {
+        const html = (await http.get(`https://baloncestoenvivo.feb.es/Equipo.aspx?i=${r.team}`)).body
+        const raw = /<div class="box-club">[\s\S]*?<div class="nombre">([^<]+)<\/div>/.exec(html)?.[1]
+        const name = raw ? legalName(raw) : undefined
+        if (!name) continue
+        set.run(name, shortName(name), r.id)
+        n++
+      } catch (err) {
+        log(`  ✗ club ${r.id}: ${(err as Error).message}`)
+      }
+    }
+    console.log(`✔ ${n} de ${rows.length} clubes FEB con nombre legal`)
     return
   }
 
@@ -416,3 +483,4 @@ main().catch((err) => {
   console.error(`✗ ${err instanceof Error ? err.message : err}`)
   process.exit(1)
 })
+

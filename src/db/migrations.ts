@@ -716,5 +716,14 @@ INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, cou
   ('LF_CHALLENGE', 'Liga Femenina Challenge', 'LF Challenge', 'FEB', 2, 'ES'),
   ('LF2', 'Liga Femenina 2', 'LF2', 'FEB', 3, 'ES');
 `
+  },
+  {
+    version: 21,
+    name: 'nombre_oficial_club',
+    sql: /* sql */ `
+-- Nombre oficial del club (sin patrocinador), revisado a mano: tools/site/clubes-oficiales.json.
+ALTER TABLE clubs ADD COLUMN official_name TEXT;
+ALTER TABLE clubs ADD COLUMN official_short TEXT;
+`
   }
 ]

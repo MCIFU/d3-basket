@@ -94,7 +94,8 @@ const teams = new Map<number, TeamOut>(
   all(`SELECT * FROM teams`).map((t: any) => {
     const cl: any = clubById.get(t.club_id) ?? {}
     const parent = cl.parent_club_id ? clubRef.get(cl.parent_club_id) ?? null : null
-    return [t.id, { id: t.id, ed: t.competition_season_id, club: clubRef.get(t.club_id) ?? `i${t.club_id}`, name: t.name, short: t.short_name ?? cl.short_name ?? null, abbr: t.abbreviation ?? cl.abbreviation ?? null, logo: t.logo_url ?? cl.logo_url ?? null, c1: cl.primary_color ?? t.primary_color ?? null, c2: cl.secondary_color ?? null, g: t.group_name, parent }]
+    // Un solo nombre por club en todas las temporadas: el oficial (sin patrocinador) o, si no está revisado, el de su ficha.
+    return [t.id, { id: t.id, ed: t.competition_season_id, club: clubRef.get(t.club_id) ?? `i${t.club_id}`, name: cl.official_name ?? cl.name ?? t.name, short: cl.official_short ?? cl.short_name ?? t.short_name ?? null, abbr: t.abbreviation ?? cl.abbreviation ?? null, logo: t.logo_url ?? cl.logo_url ?? null, c1: cl.primary_color ?? t.primary_color ?? null, c2: cl.secondary_color ?? null, g: t.group_name, parent }]
   })
 )
 const teamLite = (id: number) => {
@@ -459,7 +460,7 @@ for (const c of clubs as any[]) {
   }
   const filiales = clubs.filter((x: any) => x.parent_club_id === c.id).map((x: any) => [clubRef.get(x.id), x.name, x.logo_url])
   cBuckets[bucketOf(ref, BUCKETS.c)][ref] = {
-    ref, name: c.name, short: c.short_name, abbr: c.abbreviation, city: c.city, country: c.country, founded: c.founded_year, arena: c.arena, arenaCap: c.arena_capacity, arenaPhoto: c.arena_photo_url,
+    ref, name: c.official_name ?? c.name, short: c.official_short ?? c.short_name, abbr: c.abbreviation, city: c.city, country: c.country, founded: c.founded_year, arena: c.arena, arenaCap: c.arena_capacity, arenaPhoto: c.arena_photo_url,
     web: c.website, president: c.president, socials: c.socials ? JSON.parse(c.socials) : {}, history: c.history, logo: c.logo_url, c1: c.primary_color, c2: c.secondary_color,
     parent: c.parent_club_id ? [clubRef.get(c.parent_club_id), clubById.get(c.parent_club_id)?.name] : null, filiales,
     teams: cTeams, rosters, staff,
@@ -475,7 +476,7 @@ for (const c of clubs as any[]) {
       ...OLD_EL.filter(([, re]) => re.test(c.name) && cTeams.some((t) => t.code === 'ACB')).map(([y]) => ['euroleague', y, `${y}-${String(y + 1).slice(2)}`, 1, null, null])
     ].sort((a: any, b: any) => b[1] - a[1])
   }
-  if (cTeams.length) search.c.push([ref, c.name, c.logo_url, cTeams[0].code, cTeams[0].y])
+  if (cTeams.length) search.c.push([ref, c.official_name ?? c.name, c.logo_url, cTeams[0].code, cTeams[0].y])
 }
 cBuckets.forEach((b, i) => write(`c/${i}.json`, b))
 log(`clubes: ${clubs.length} en ${BUCKETS.c} cubos`)
