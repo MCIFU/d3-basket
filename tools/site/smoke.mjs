@@ -61,10 +61,10 @@ for (const width of [1440, 390]) {
     page.on('pageerror', (e) => errors.push(e.message))
     await page.goto(base + r, { waitUntil: 'networkidle' })
     // Cambiar solo el «#» no recarga la página: se espera a que la vista tenga su contenido (máx. 10 s).
-    const ready = () => !!document.querySelector('.hero h1, .vs-name, .hg .big') && !document.querySelector('[aria-busy="true"]')
+    const ready = () => !!document.querySelector('.hero h1, .vs-name, .hg .big, .h2h-score') && !document.querySelector('[aria-busy="true"]')
     await page.waitForFunction(ready, null, { timeout: 10000 }).catch(() => undefined)
     await page.waitForTimeout(300)
-    const ok = await page.evaluate(() => !!document.querySelector('.hero h1, .vs-name, .hg .big') && !document.querySelector('[aria-busy="true"]') && document.documentElement.scrollWidth <= innerWidth + 1)
+    const ok = await page.evaluate(() => !!document.querySelector('.hero h1, .vs-name, .hg .big, .h2h-score') && !document.querySelector('[aria-busy="true"]') && document.documentElement.scrollWidth <= innerWidth + 1)
     const status = errors.length ? `error: ${errors[0]}` : ok ? 'ok' : 'sin contenido o desborda el ancho'
     if (status !== 'ok') failed++
     console.log(`${status === 'ok' ? '✓' : '✗'} ${width}px ${r}${status === 'ok' ? '' : ' — ' + status}`)
