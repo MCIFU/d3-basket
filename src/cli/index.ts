@@ -338,6 +338,36 @@ async function main() {
     return
   }
 
+  if (command === 'jugadores-duplicados') {
+    // Une las fichas de un mismo jugador entre fuentes: mismo nombre (sin tildes ni mayúsculas) y misma
+    // fecha de nacimiento. Se conserva la ficha de la fuente más completa (acb.com, EuroLeague, FEB…).
+    const RANK = ['acb', 'euroleague', 'feb', 'fiba', 'lba', 'bbl', 'lnb', 'esake', 'lnp', 'proa', 'espn', 'sofascore', 'bref']
+    const norm = (x: string) => x.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim()
+    const src = new Map(
+      (db.prepare("SELECT entity_id AS id, GROUP_CONCAT(DISTINCT source) AS s FROM external_ids WHERE entity_type = 'player' GROUP BY entity_id").all() as { id: number; s: string }[]).map((r) => [r.id, r.s.split(',')])
+    )
+    const best = (id: number) => Math.min(...(src.get(id) ?? ['zz']).map((x) => (RANK.indexOf(x) < 0 ? 99 : RANK.indexOf(x))))
+    const groups = new Map<string, number[]>()
+    for (const p of db.prepare('SELECT id, full_name AS n, birth_date AS b FROM players WHERE birth_date IS NOT NULL').all() as { id: number; n: string; b: string }[]) {
+      const k = `${norm(p.n)}|${p.b}`
+      if (!k.startsWith('|')) (groups.get(k) ?? groups.set(k, []).get(k)!).push(p.id)
+    }
+    const w = new Writer(db)
+    let n = 0
+    w.transaction(() => {
+      for (const ids of groups.values()) {
+        if (ids.length < 2) continue
+        const [keep, ...rest] = [...ids].sort((x, y) => best(x) - best(y) || x - y)
+        for (const id of rest) {
+          w.mergePlayer(id, keep)
+          n++
+        }
+      }
+    })
+    console.log(`✔ ${n} fichas duplicadas unidas`)
+    return
+  }
+
   if (command === 'clubs-feb-legal') {
     // Nombre legal de los clubes FEB sin nombre oficial revisado (Tercera FEB, filiales, cantera): la ficha de
     // equipo de la FEB lo publica sin patrocinador ("CLUB BALONCESTO X SAD" → "CB X").
