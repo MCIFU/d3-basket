@@ -25,10 +25,9 @@ const loadImg = (url: string) =>
     im.src = url
   })
 
-/** Una imagen solo sirve si no «ensucia» el lienzo (servidores sin CORS): se prueba en uno aparte. */
-async function usable(url?: string | null) {
-  if (!url) return null
-  const im = await loadImg(src(url)!)
+/** Una imagen solo sirve si no «ensucia» el lienzo: se prueba en uno aparte. */
+async function clean(url: string) {
+  const im = await loadImg(url)
   if (!im) return null
   try {
     const c = document.createElement('canvas')
@@ -40,6 +39,16 @@ async function usable(url?: string | null) {
   } catch {
     return null
   }
+}
+
+/**
+ * Las fotos de acb.com, la FEB y otras ligas no llevan cabecera CORS y no se pueden pintar en el lienzo:
+ * en ese caso se piden a través de wsrv.nl, un proxy público de imágenes que sí la añade.
+ */
+async function usable(url?: string | null) {
+  if (!url) return null
+  const u = src(url)!
+  return (await clean(u)) ?? (/^https?:/.test(u) ? await clean(`https://wsrv.nl/?url=${encodeURIComponent(u)}&output=png`) : null)
 }
 
 export async function playerCard(d: CardData): Promise<Blob> {
@@ -83,7 +92,19 @@ export async function playerCard(d: CardData): Promise<Blob> {
   if (photo) {
     const h = 640
     const w = (photo.width / photo.height) * h
-    x.drawImage(photo, W - w - 30, 110, w, h)
+    // La foto se pinta en un lienzo aparte con un fundido en la parte de abajo, para que no corte en seco.
+    const pc = document.createElement('canvas')
+    pc.width = Math.round(w)
+    pc.height = h
+    const px = pc.getContext('2d')!
+    px.drawImage(photo, 0, 0, w, h)
+    px.globalCompositeOperation = 'destination-out'
+    const fade = px.createLinearGradient(0, h * 0.62, 0, h)
+    fade.addColorStop(0, 'rgba(0,0,0,0)')
+    fade.addColorStop(1, 'rgba(0,0,0,1)')
+    px.fillStyle = fade
+    px.fillRect(0, 0, w, h)
+    x.drawImage(pc, W - w - 30, 110)
   } else if (crest) {
     x.globalAlpha = 0.9
     x.drawImage(crest, W - 400, 170, 320, 320)
