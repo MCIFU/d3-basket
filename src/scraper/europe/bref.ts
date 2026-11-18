@@ -112,10 +112,16 @@ export async function syncBslStats(db: DB, http: HttpClient, startYear: number, 
     return created
   }
 
+  // Emparejamiento de equipos: por nombre y, si queda uno sin pareja a cada lado, entre ellos
+  // (TheSportsDB a veces conserva el nombre antiguo de un equipo que ha cambiado de club).
+  const clubOf = new Map(teamLinks.map((t) => [t.slug, clubFor(t.name)]))
+  const freeBr = teamLinks.filter((t) => clubOf.get(t.slug) == null)
+  const freeOur = [...new Set(ourTeams.map((t) => t.club_id))].filter((id) => ![...clubOf.values()].includes(id))
+  if (freeBr.length === 1 && freeOur.length === 1) clubOf.set(freeBr[0].slug, freeOur[0])
   for (const t of teamLinks) {
     const html = (await http.get(`${BASE}${t.url}`)).body
     const rows = table(html, 'player-stats-totals-TUR')
-    const clubId = clubFor(t.name)
+    const clubId = clubOf.get(t.slug) ?? null
     if (!clubId) sum.noClub.push(t.name)
     const n = (r: Record<string, string>, k: string) => Number(r[k]) || 0
     db.transaction(() => {
