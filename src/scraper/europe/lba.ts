@@ -77,9 +77,10 @@ export class LbaAdapter implements LeagueAdapter {
     const games: NGame[] = []
     for (const c of champs) {
       const first = await this.json<{ matches: LbaMatch[]; filters?: { days?: { code: string; event_serial: number }[] } }>(`championships/get-championships-calendar-by-id?id=${c.id}`)
+      // El número de serie identifica la jornada; en los playoffs el código se repite en cada ronda (2001 = cuartos, partido 1).
       const days = first.filters?.days ?? []
       for (const day of days) {
-        const d = await this.json<{ matches: LbaMatch[] }>(`championships/get-championships-calendar-by-id?id=${c.id}&d=${day.code}`)
+        const d = await this.json<{ matches: LbaMatch[] }>(`championships/get-championships-calendar-by-id?id=${c.id}&d=${day.event_serial}`)
         for (const m of d.matches ?? []) {
           const home = this.team(m.h_team_id, m.h_team_name, m.h_club_code ?? (await this.clubCode(m.h_team_id)), startYear, m.home_logo_key)
           const away = this.team(m.v_team_id, m.v_team_name, m.v_club_code ?? (await this.clubCode(m.v_team_id)), startYear, m.v_logo_key)
