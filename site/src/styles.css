@@ -3588,3 +3588,56 @@ img.flag {
     display: none;
   }
 }
+
+/* ───────────────────────── Histórico ───────────────────────── */
+.hist {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr));
+  gap: 4px 16px;
+}
+.hist-r {
+  display: grid;
+  grid-template-columns: 26px auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+.hist-r:hover {
+  background: var(--card2);
+}
+.hist-r > i {
+  font: 700 15px var(--cond);
+  font-style: normal;
+  color: var(--tx3);
+  text-align: right;
+}
+.hist-r.lead > i {
+  color: var(--tx);
+  font-size: 20px;
+}
+.hist-r b {
+  display: block;
+  font-weight: 600;
+}
+.hist-r small {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--tx3);
+  font-size: 12px;
+}
+.hist-r em {
+  font: 700 22px/1 var(--cond);
+  font-style: normal;
+  text-align: right;
+}
+.hist-r.lead em {
+  font-size: 28px;
+}
+.hist-r em small {
+  display: block;
+  font: 600 10px var(--cond);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}

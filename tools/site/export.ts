@@ -34,7 +34,7 @@ const q = new Queries(db as never)
 const all = <T = any>(sql: string, ...p: unknown[]) => db.prepare(sql).all(...p) as T[]
 
 // Se sobrescriben los ficheros (los nombres son estables); borrar la carpeta confundiría al servidor de desarrollo.
-for (const d of ['ed', 'p', 'c', 'g']) mkdirSync(join(out, d), { recursive: true })
+for (const d of ['ed', 'p', 'c', 'g', 'hist']) mkdirSync(join(out, d), { recursive: true })
 const write = (rel: string, data: unknown) => writeFileSync(join(out, rel), JSON.stringify(data))
 
 // ───────────────────────── Referencias estables ─────────────────────────
@@ -195,6 +195,12 @@ const plLite = (id: number) => {
 const seasonLinesStmt = db.prepare(`SELECT * FROM player_season_lines WHERE competition_code = ? AND season_start_year = ? AND competition_code <> 'ACB'`)
 const seasonLinesFor = (code: string, y: number) => seasonLinesStmt.all(code, y) as any[]
 const refToId = new Map([...playerRef].map(([id, r]) => [r, id]))
+// ───────────────────────── Histórico por competición (líderes y récords de siempre) ─────────────────────────
+interface HistAgg { gp: number; s: number[]; v: number; y0: number; y1: number; t: number | null }
+const histAgg = new Map<string, Map<string, HistAgg>>()
+const histTop = new Map<string, Record<string, { p: string; g: string; t: number; opp: number; d: string; v: number; y: number }[]>>()
+const histTeams = new Map<string, Set<number>>()
+const lineVal = (x: (number | null)[]) => x[18] ?? (x[1] ?? 0) + (x[10] ?? 0) + (x[11] ?? 0) + (x[12] ?? 0) + (x[13] ?? 0) - ((x[3] ?? 0) - (x[2] ?? 0)) - ((x[5] ?? 0) - (x[4] ?? 0)) - ((x[7] ?? 0) - (x[6] ?? 0)) - (x[14] ?? 0) - (x[15] ?? 0)
 for (const e of eds) {
   const eTeams = [...teams.values()].filter((t) => t.ed === e.id)
   const stand = q.standings(e.id).map((s) => ({ t: s.team_id, g: s.group, pos: s.position, pj: s.played, w: s.won, l: s.lost, pf: s.points_for, pa: s.points_against, form: s.form.join('') }))
@@ -240,6 +246,14 @@ for (const e of eds) {
         pl[p] ??= plLite(refToId.get(p)!)
         return { p, g, t, opp, d, v }
       })
+  }
+  {
+    const ht = histTop.get(e.code) ?? histTop.set(e.code, {}).get(e.code)!
+    const tset = histTeams.get(e.code) ?? histTeams.set(e.code, new Set()).get(e.code)!
+    for (const [k, list] of Object.entries(top) as [string, any[]][]) {
+      ht[k] = [...(ht[k] ?? []), ...list.map((x) => ({ ...x, y: e.y }))].sort((a, b) => b.v - a.v).slice(0, 10)
+      for (const x of ht[k]) tset.add(x.t), tset.add(x.opp)
+    }
   }
   write(`ed/${e.id}.json`, { id: e.id, code: e.code, y: e.y, label: e.label, last: e.last, teams: eTeams.map(({ ed, ...t }) => t), stand, games: eg, stats, pl, top })
 }
@@ -372,6 +386,17 @@ for (const p of players as any[]) {
     seasons.push({ y: r.season_start_year, code: r.competition_code, ed: null, t: null, team: r.team_name, club: r.club_id ? clubRef.get(r.club_id) : null, logo: cl?.logo_url ?? null, sec: SECTION(r.competition_code, null), gp: r.games, gs: 0, w: r.wins ?? 0, s: [r.seconds, r.points, r.fg2m, r.fg2a, r.fg3m, r.fg3a, r.ftm, r.fta, r.oreb, r.dreb, r.reb, r.ast, r.stl, r.blk, r.tov, r.pf, r.fouls_drawn, r.plus_minus, r.pir], src: 'acb' })
   }
   seasons.sort((a, b) => b.y - a.y)
+  for (const se of seasons) {
+    if (!se.gp) continue
+    const m = histAgg.get(se.code) ?? histAgg.set(se.code, new Map()).get(se.code)!
+    const a = m.get(ref) ?? m.set(ref, { gp: 0, s: new Array(N).fill(0), v: 0, y0: se.y, y1: se.y, t: null }).get(ref)!
+    a.gp += se.gp
+    for (let i = 0; i < N; i++) a.s[i] += se.s[i] ?? 0
+    a.v += lineVal(se.s)
+    a.y0 = Math.min(a.y0, se.y)
+    if (se.y >= a.y1 && se.t != null) a.t = se.t
+    a.y1 = Math.max(a.y1, se.y)
+  }
   const tm: Record<number, unknown> = {}
   for (const l of logs) (tm[l[3]] ??= teamLite(l[3])), (tm[l[4]] ??= teamLite(l[4]))
   for (const s of seasons) if (s.t != null) tm[s.t] ??= teamLite(s.t)
@@ -407,7 +432,7 @@ for (const p of players as any[]) {
       const cr = cid ? clubRef.get(cid) : undefined
       if (cr && set.has(cr)) {
         const cl: any = clubById.get(cid)
-        titles.push({ k: h.competition, y: h.season_start_year, label: h.label, won, club: cr, name: cl?.name, logo: cl?.logo_url ?? null, vs: won ? h.runner_up_name : h.champion_name, res: h.result })
+        titles.push({ k: h.competition, y: h.season_start_year, label: h.label, won, club: cr, name: cl?.official_name ?? cl?.name, logo: cl?.logo_url ?? null, vs: won ? h.runner_up_name : h.champion_name, res: h.result })
       }
     }
   }
@@ -420,7 +445,7 @@ for (const p of players as any[]) {
   }
   for (const [y, re] of OLD_EL) {
     const cl: any = (clubs as any[]).find((c) => re.test(c.name) && acbClubs.get(y)?.has(clubRef.get(c.id)!))
-    if (cl) titles.push({ k: 'euroleague', y, label: `${y}-${String(y + 1).slice(2)}`, won: 1, club: clubRef.get(cl.id), name: cl.name, logo: cl.logo_url, vs: null, res: null })
+    if (cl) titles.push({ k: 'euroleague', y, label: `${y}-${String(y + 1).slice(2)}`, won: 1, club: clubRef.get(cl.id), name: cl.official_name ?? cl.name, logo: cl.logo_url, vs: null, res: null })
   }
   const medals = medalsOf.get(p.id) ?? []
   pBuckets[bucketOf(ref, BUCKETS.p)][ref] = {
@@ -434,6 +459,43 @@ for (const p of players as any[]) {
   search.p.push([ref, displayName(p), ct?.short ?? ct?.name ?? null, cur?.code ?? null, cur?.y ?? null, ct?.logo ?? null])
 }
 pBuckets.forEach((b, i) => write(`p/${i}.json`, b))
+{
+  // Líderes de siempre: totales (pts, reb, ast, val, triples, robos, tapones, partidos, minutos) y medias con mínimo de partidos.
+  const STATS: [string, (a: HistAgg) => number][] = [
+    ['pts', (a) => a.s[1]], ['reb', (a) => a.s[10]], ['ast', (a) => a.s[11]], ['val', (a) => a.v], ['f3m', (a) => a.s[4]],
+    ['stl', (a) => a.s[12]], ['blk', (a) => a.s[13]], ['gp', (a) => a.gp], ['min', (a) => Math.round(a.s[0] / 60)]
+  ]
+  let nh = 0
+  for (const [code, m] of histAgg) {
+    const comp = comps.find((c: any) => c.code === code)
+    const minGp = comp?.tier == null ? 8 : code === 'NBA' || code === 'NCAA' ? 82 : 50
+    const all = [...m.entries()]
+    const tot: Record<string, [string, number, number, number, number][]> = {}
+    const avg: Record<string, [string, number, number, number, number][]> = {}
+    const refs = new Set<string>()
+    const teamIds = new Set<number>(histTeams.get(code) ?? [])
+    for (const [k, f] of STATS) {
+      tot[k] = all.map(([r, a]) => [r, f(a), a.gp, a.y0, a.y1] as [string, number, number, number, number]).filter((x) => x[1] > 0).sort((a, b) => b[1] - a[1]).slice(0, 50)
+      if (k !== 'gp') avg[k] = all.filter(([, a]) => a.gp >= minGp).map(([r, a]) => [r, Math.round((10 * f(a)) / a.gp) / 10, a.gp, a.y0, a.y1] as [string, number, number, number, number]).sort((a, b) => b[1] - a[1]).slice(0, 50)
+      for (const x of [...tot[k], ...(avg[k] ?? [])]) refs.add(x[0])
+    }
+    const top = histTop.get(code) ?? {}
+    for (const list of Object.values(top)) for (const x of list) refs.add(x.p)
+    const pl: Record<string, unknown> = {}
+    const lastTeam: Record<string, number> = {}
+    for (const r of refs) {
+      pl[r] = plLite(refToId.get(r)!)
+      const t = m.get(r)?.t
+      if (t != null) (lastTeam[r] = t), teamIds.add(t)
+    }
+    const tm: Record<number, unknown> = {}
+    for (const t of teamIds) tm[t] = teamLite(t)
+    const eds2 = eds.filter((e) => e.code === code)
+    write(`hist/${code}.json`, { code, minGp, from: Math.min(...all.map(([, a]) => a.y0)), to: Math.max(...eds2.map((e) => e.y)), players: m.size, tot, avg, top, pl, lt: lastTeam, tm })
+    nh++
+  }
+  log(`histórico: ${nh} competiciones`)
+}
 log(`jugadores: ${players.length} en ${BUCKETS.p} cubos`)
 
 // ───────────────────────── Clubes (cubos) ─────────────────────────
@@ -441,6 +503,8 @@ const rosterByTeam = new Map<number, any[]>()
 for (const r of all(`SELECT * FROM roster_entries ORDER BY is_active DESC, CAST(jersey_number AS INTEGER)`)) {
   if (!rosterByTeam.has(r.team_id)) rosterByTeam.set(r.team_id, [])
   const p: any = pById.get(r.player_id)
+  // Jugador creado después de leer la tabla (una sincronización en marcha): se recoge en la próxima exportación.
+  if (!p) continue
   rosterByTeam.get(r.team_id)!.push([playerRef.get(r.player_id), r.jersey_number, r.position_code ?? p.position_code, r.is_active, r.license_type, ...plLite(r.player_id)])
 }
 const staffByTeam = new Map<number, any[]>()

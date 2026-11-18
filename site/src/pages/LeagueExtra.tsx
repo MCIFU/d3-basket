@@ -1,9 +1,9 @@
 /** Pestañas extra de una liga: eliminatorias, evolución de la clasificación y récords de la temporada. */
 import { useMemo, useState } from 'react'
-import { Avatar, Crest, Sec } from '../components/ui'
+import { Avatar, Crest, Loading, Sec } from '../components/ui'
 import { palette } from '../lib/color'
-import type { EdFile, GameE, TeamE } from '../lib/data'
-import { dateShort } from '../lib/fmt'
+import { loadHist, useLoad, type EdFile, type GameE, type HistFile, type TeamE } from '../lib/data'
+import { dateShort, dateYear, n0, n1, seasonLabel } from '../lib/fmt'
 import { href } from '../lib/router'
 
 const KO = ['playin', 'playoff', 'final_four', 'final']
@@ -259,6 +259,118 @@ export function Records({ ed, tm }: { ed: EdFile; tm: Map<number, TeamE> }) {
                         <i>{i + 2}</i>
                         <Crest url={t?.logo} name={t?.name ?? ''} c1={t?.c1} size={20} />
                         <span>{ed.pl[r.p]?.[0]}</span>
+                        <b>{r.v}</b>
+                      </a>
+                    )
+                  })}
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      )}
+    </>
+  )
+}
+
+// ───────────────────────── Histórico: líderes y récords de siempre ─────────────────────────
+const HSTATS: [string, string, string][] = [
+  ['pts', 'Puntos', 'pts'],
+  ['reb', 'Rebotes', 'reb'],
+  ['ast', 'Asistencias', 'ast'],
+  ['val', 'Valoración', 'val'],
+  ['f3m', 'Triples', 'triples'],
+  ['stl', 'Robos', 'robos'],
+  ['blk', 'Tapones', 'tapones'],
+  ['gp', 'Partidos', 'partidos'],
+  ['min', 'Minutos', 'min']
+]
+export function Historic({ code }: { code: string }) {
+  const h = useLoad(() => loadHist(code), [code])
+  if (h === undefined) return <Loading />
+  if (!h || h instanceof Error) return <div className="card empty">Sin histórico para esta competición</div>
+  return <HistoricView h={h} />
+}
+function HistoricView({ h }: { h: HistFile }) {
+  const [k, setK] = useState('pts')
+  const [mode, setMode] = useState<'tot' | 'avg'>('tot')
+  const m = k === 'gp' ? 'tot' : mode
+  const rows = (m === 'tot' ? h.tot[k] : h.avg[k]) ?? []
+  const label = HSTATS.find((x) => x[0] === k)!
+  const span = (a: number, b: number) => (a === b ? seasonLabel(a) : `${a}-${String(b + 1).slice(2)}`)
+  return (
+    <>
+      <section className="card">
+        <Sec aside={`${n0(h.players)} jugadores · desde ${seasonLabel(h.from)}`}>Líderes de siempre</Sec>
+        <div className="chips" style={{ marginBottom: 10 }}>
+          {HSTATS.map(([key, l]) => (
+            <button key={key} className={`chip ${k === key ? 'on' : ''}`} onClick={() => setK(key)}>
+              {l}
+            </button>
+          ))}
+        </div>
+        {k !== 'gp' && (
+          <div className="chips" style={{ marginBottom: 14 }}>
+            <button className={`chip ${mode === 'tot' ? 'on' : ''}`} onClick={() => setMode('tot')}>
+              Totales
+            </button>
+            <button className={`chip ${mode === 'avg' ? 'on' : ''}`} onClick={() => setMode('avg')}>
+              Por partido · mín. {h.minGp} partidos
+            </button>
+          </div>
+        )}
+        <div className="hist">
+          {rows.slice(0, 25).map(([p, v, gp, y0, y1], i) => {
+            const pl = h.pl[p]
+            const t = h.tm[h.lt[p]]
+            return (
+              <a key={p} className={`hist-r ${i < 3 ? 'lead' : ''}`} href={href.player(p)}>
+                <i>{i + 1}</i>
+                <Avatar url={pl?.[1]} name={pl?.[0] ?? '?'} size={i < 3 ? 46 : 34} />
+                <span>
+                  <b>{pl?.[0]}</b>
+                  <small>
+                    {t && <Crest url={t.l} name={t.n} c1={t.c1} size={14} />} {t?.s ?? t?.n} · {span(y0, y1)} · {n0(gp)} partidos
+                  </small>
+                </span>
+                <em>
+                  {m === 'avg' ? n1(v) : n0(v)}
+                  <small>{m === 'avg' ? `${label[2]}/p` : label[2]}</small>
+                </em>
+              </a>
+            )
+          })}
+        </div>
+      </section>
+      {Object.keys(h.top).length > 0 && (
+        <section className="card" style={{ marginTop: 20 }}>
+          <Sec aside="mejores marcas en un partido, todas las temporadas">Récords de siempre</Sec>
+          <div className="leaders" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}>
+            {TOP.filter(([key]) => h.top[key]?.length).map(([key, l]) => {
+              const [first, ...rest] = h.top[key]
+              const p1 = h.pl[first.p]
+              return (
+                <div className="ldr" key={key}>
+                  <h3>{l}</h3>
+                  <a className="first" href={href.game(first.g)}>
+                    <Avatar url={p1?.[1]} name={p1?.[0] ?? '?'} size={52} />
+                    <span className="nm">
+                      {p1?.[0]}
+                      <small>
+                        vs {h.tm[first.opp]?.s ?? h.tm[first.opp]?.n} · {dateYear(first.d)}
+                      </small>
+                    </span>
+                    <span className="v">{first.v}</span>
+                  </a>
+                  {rest.slice(0, 5).map((r, i) => {
+                    const t = h.tm[r.t]
+                    return (
+                      <a className="row" key={r.p + r.g} href={href.game(r.g)}>
+                        <i>{i + 2}</i>
+                        <Crest url={t?.l} name={t?.n ?? ''} c1={t?.c1} size={20} />
+                        <span>
+                          {h.pl[r.p]?.[0]} <small className="muted">{seasonLabel(r.y)}</small>
+                        </span>
                         <b>{r.v}</b>
                       </a>
                     )

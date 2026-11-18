@@ -32,6 +32,7 @@ import { href, useQuery } from "../lib/router";
 import {
   Bracket,
   Evolution,
+  Historic,
   Records,
   hasEvolution,
   hasKnockout,
@@ -264,6 +265,7 @@ function LeaguePage({
               ["partidos", "Partidos"],
               ["estadisticas", "Estadísticas"],
               ["records", "Récords"],
+              ["historico", "Histórico"],
               ["equipos", "Equipos"],
             ] as ["clasificacion", string][]
           }
@@ -275,6 +277,7 @@ function LeaguePage({
         {tab === "evolucion" && <Evolution ed={ed} tm={tm} />}
         {tab === "eliminatorias" && <Bracket ed={ed} tm={tm} />}
         {tab === "records" && <Records ed={ed} tm={tm} />}
+        {tab === "historico" && <Historic code={comp.code} />}
       </main>
       <Foot updated={ed.last ?? meta.updated} />
     </div>

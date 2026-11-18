@@ -246,6 +246,21 @@ export interface EspLine {
   ast: number
   val: number
 }
+/** Líderes de siempre de una competición: [jugador, valor, partidos, primera temporada, última]. */
+export type HistRow = [string, number, number, number, number]
+export interface HistFile {
+  code: string
+  minGp: number
+  from: number
+  to: number
+  players: number
+  tot: Record<string, HistRow[]>
+  avg: Record<string, HistRow[]>
+  top: Record<string, { p: string; g: string; t: number; opp: number; d: string; v: number; y: number }[]>
+  pl: Record<string, PlLite>
+  lt: Record<string, number>
+  tm: Record<number, TL>
+}
 export interface SearchIdx {
   p: [string, string, string | null, string | null, number | null, string | null][]
   c: [string, string, string | null, string | null, number | null][]
@@ -274,6 +289,7 @@ export const loadMeta = () => load<Meta>('meta.json')
 export const loadEd = (id: number) => load<EdFile>(`ed/${id}.json`)
 export const loadDays = () => load<Days>('days.json')
 export const loadSearch = () => load<SearchIdx>('search.json')
+export const loadHist = (code: string) => load<HistFile>(`hist/${code}.json`)
 export const loadPlayer = async (ref: string) => (await load<Record<string, PlayerRec>>(`p/${bucketOf(ref, BUCKETS.p)}.json`))[ref]
 export const loadClub = async (ref: string) => (await load<Record<string, ClubRec>>(`c/${bucketOf(ref, BUCKETS.c)}.json`))[ref]
 export const loadGame = async (ref: string) => (await load<Record<string, GameRec>>(`g/${bucketOf(ref, BUCKETS.g)}.json`))[ref]
