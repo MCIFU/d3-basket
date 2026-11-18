@@ -34,7 +34,7 @@ const q = new Queries(db as never)
 const all = <T = any>(sql: string, ...p: unknown[]) => db.prepare(sql).all(...p) as T[]
 
 // Se sobrescriben los ficheros (los nombres son estables); borrar la carpeta confundiría al servidor de desarrollo.
-for (const d of ['ed', 'p', 'c', 'g', 'hist', 'h2h']) mkdirSync(join(out, d), { recursive: true })
+for (const d of ['ed', 'p', 'c', 'g', 'hist', 'h2h', 'ics']) mkdirSync(join(out, d), { recursive: true })
 const write = (rel: string, data: unknown) => writeFileSync(join(out, rel), JSON.stringify(data))
 
 // ───────────────────────── Referencias estables ─────────────────────────
@@ -572,6 +572,56 @@ const rivals = new Map<string, Map<string, [number, number]>>()
   hBuckets.forEach((b, i) => write(`h2h/${i}.json`, b))
   log(`cara a cara: ${pairs.size} parejas de clubes`)
 }
+// ───────────────────────── Calendario de cada club (.ics, para suscribirse desde el móvil) ─────────────────────────
+// Partidos de los últimos 30 días y los próximos 8 meses en todas sus competiciones; se regenera a diario.
+const icsClubs = new Set<string>()
+{
+  const now = Date.now()
+  const byClub = new Map<string, any[]>()
+  for (const g of games as any[]) {
+    if (!g.scheduled_at) continue
+    const t = Date.parse(g.scheduled_at)
+    if (t < now - 30 * 86400_000 || t > now + 240 * 86400_000) continue
+    for (const tid of [g.home_team_id, g.away_team_id]) {
+      const c = teams.get(tid)?.club
+      if (c) (byClub.get(c) ?? byClub.set(c, []).get(c)!).push(g)
+    }
+  }
+  const esc = (x: string) => x.replace(/\\/g, '\\\\').replace(/[,;]/g, (m) => '\\' + m).replace(/\n/g, '\\n')
+  const stamp = (iso: string) => iso.replace(/[-:]/g, '').replace(/\.\d{3}/, '').slice(0, 15) + 'Z'
+  for (const [ref, list] of byClub) {
+    const cl: any = clubById.get(clubIdByRef.get(ref)!)
+    const name = cl?.official_name ?? cl?.name ?? ref
+    const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//d3 basket//calendario//ES', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', `X-WR-CALNAME:${esc(name)} · d3 basket`, 'X-WR-TIMEZONE:Europe/Madrid', 'REFRESH-INTERVAL;VALUE=DURATION:PT12H', 'X-PUBLISHED-TTL:PT12H']
+    for (const g of list.sort((a, b) => a.scheduled_at.localeCompare(b.scheduled_at))) {
+      const h = teams.get(g.home_team_id)!
+      const a = teams.get(g.away_team_id)!
+      const e = edById.get(g.competition_season_id)!
+      const comp = comps.find((c: any) => c.code === e.code)?.name ?? e.code
+      const rd: any = rounds.get(g.round_id)
+      const fin = g.status === 'finished' && g.home_score != null
+      const start = new Date(g.scheduled_at)
+      const end = new Date(start.getTime() + 2 * 3600_000)
+      const ref2 = gameRef.get(g.id)!
+      lines.push(
+        'BEGIN:VEVENT',
+        `UID:${ref2}@d3basket`,
+        `DTSTAMP:${stamp(new Date().toISOString())}`,
+        `DTSTART:${stamp(start.toISOString())}`,
+        `DTEND:${stamp(end.toISOString())}`,
+        `SUMMARY:${esc(fin ? `${h.short ?? h.name} ${g.home_score}-${g.away_score} ${a.short ?? a.name}` : `${h.short ?? h.name} - ${a.short ?? a.name}`)}`,
+        `DESCRIPTION:${esc(`${comp}${rd?.name ? ' · ' + rd.name : ''}`)}`,
+        ...(g.arena ? [`LOCATION:${esc(g.arena)}`] : []),
+        g.status === 'postponed' ? 'STATUS:CANCELLED' : 'STATUS:CONFIRMED',
+        'END:VEVENT'
+      )
+    }
+    lines.push('END:VCALENDAR')
+    writeFileSync(join(out, 'ics', `${ref}.ics`), lines.join('\r\n') + '\r\n')
+    icsClubs.add(ref)
+  }
+  log(`calendarios: ${icsClubs.size} clubes`)
+}
 const cBuckets: Record<string, any>[] = Array.from({ length: BUCKETS.c }, () => ({}))
 for (const c of clubs as any[]) {
   const ref = clubRef.get(c.id)!
@@ -615,7 +665,7 @@ for (const c of clubs as any[]) {
     ref, name: c.official_name ?? c.name, short: c.official_short ?? c.short_name, abbr: c.abbreviation, city: c.city, country: c.country, founded: c.founded_year, arena: c.arena, arenaCap: c.arena_capacity, arenaPhoto: c.arena_photo_url,
     web: c.website, president: c.president, socials: c.socials ? JSON.parse(c.socials) : {}, history: c.history, logo: c.logo_url, c1: c.primary_color, c2: c.secondary_color,
     parent: c.parent_club_id ? [clubRef.get(c.parent_club_id), clubById.get(c.parent_club_id)?.name] : null, filiales,
-    teams: cTeams, rosters, staff, moves, mpl, mclubs,
+    teams: cTeams, rosters, staff, moves, mpl, mclubs, ics: icsClubs.has(ref),
     // Rivales más habituales: [club, nombre, escudo, victorias, derrotas].
     rivals: [...(rivals.get(ref) ?? new Map()).entries()]
       .sort((x, y) => y[1][0] + y[1][1] - (x[1][0] + x[1][1]))

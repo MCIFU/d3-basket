@@ -199,6 +199,8 @@ export interface ClubRec {
   mclubs?: Record<string, [string, string | null]>
   /** Rivales más habituales: [club, nombre, escudo, victorias, derrotas]. */
   rivals?: [string, string, string | null, number, number][]
+  /** Tiene calendario .ics (partidos de esta temporada). */
+  ics?: boolean
   staff: Record<number, [string, string, string | null][]>
   /** [competición, año, etiqueta, campeón (1) o finalista (0), rival, resultado] */
   honours: [string, number, string, number, string | null, string | null][]
