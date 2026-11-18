@@ -33,6 +33,7 @@ import { LnbAdapter } from '../scraper/europe/lnb'
 import { LnpAdapter } from '../scraper/europe/lnp'
 import { EsakeAdapter } from '../scraper/europe/esake'
 import { ProaAdapter } from '../scraper/europe/proa'
+import { syncBslStats } from '../scraper/europe/bref'
 import { TheSportsDbBslAdapter } from '../scraper/europe/thesportsdb'
 import { SofascoreAdapter } from '../scraper/europe/sofascore'
 import type { FebCompetition } from '../scraper/feb/urls'
@@ -260,6 +261,15 @@ async function main() {
       console.log(`  ✔ ${p.club}: ${p.feb} → ${p.acb}`)
     }
     console.log(`✔ ${n} clubes unidos`)
+    return
+  }
+
+  if (command === 'bsl-stats') {
+    // Totales por jugador de la liga turca (Basketball-Reference), por temporada: --season 2025 = 2025-26.
+    const http = new HttpClient({ minDelayMs: Math.max(3500, Number(values.delay)), log })
+    const y = Number(values.season)
+    const s = await syncBslStats(db, http, y, log)
+    console.log(`✔ BSL ${y}-${String(y + 1).slice(2)}: ${s.teams} equipos, ${s.lines} líneas · ${s.matched} jugadores enlazados, ${s.created} nuevos${s.noClub.length ? ` · sin club: ${s.noClub.join(', ')}` : ''}`)
     return
   }
 

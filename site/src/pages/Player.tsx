@@ -165,7 +165,27 @@ function PlayerPage({ p, meta }: { p: PlayerRec; meta: Meta }) {
             }
           />
         ) : (
-          <Strip items={[]} note={<span>Sin partidos con estadística en la base de datos.</span>} />
+          <Strip
+            items={
+              p.seasons[0]?.gp
+                ? [
+                    { k: 'Puntos', v: n1(per(p.seasons[0].s, p.seasons[0].gp).pts) },
+                    { k: 'Rebotes', v: n1(per(p.seasons[0].s, p.seasons[0].gp).reb) },
+                    { k: 'Asistencias', v: n1(per(p.seasons[0].s, p.seasons[0].gp).ast) },
+                    { k: 'Partidos', v: String(p.seasons[0].gp) }
+                  ]
+                : []
+            }
+            note={
+              p.seasons[0]?.gp ? (
+                <span>
+                  {seasonLabel(p.seasons[0].y)} · {p.seasons[0].team ?? ''} · medias por partido (totales de la temporada, sin boxscores)
+                </span>
+              ) : (
+                <span>Sin partidos con estadística en la base de datos.</span>
+              )
+            }
+          />
         )}
         <Tabs
           value={tab as 'resumen'}
@@ -254,7 +274,7 @@ function Summary({ p, games, pc, cur, pal, compName, meta }: { p: PlayerRec; gam
   const last4 = [...games].reverse().slice(0, 4)
   return (
     <>
-      <div className="grid g-12">
+      <div className="grid g-12" style={p.log.length ? undefined : { display: 'none' }}>
         <section className="card">
           <Sec aside={pc ? `percentil entre ${pc.pool} jugadores` : undefined}>Perfil</Sec>
           {pc ? (

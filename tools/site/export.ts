@@ -190,6 +190,8 @@ const plLite = (id: number) => {
   const p: any = pById.get(id)
   return [displayName(p), p.photo_url ?? null, p.photo_nobg_url ?? null, p.position_code ?? null, p.nationality ?? null, p.birth_date ?? null, p.height_cm ?? null]
 }
+const seasonLinesStmt = db.prepare(`SELECT * FROM player_season_lines WHERE competition_code = ? AND season_start_year = ? AND competition_code <> 'ACB'`)
+const seasonLinesFor = (code: string, y: number) => seasonLinesStmt.all(code, y) as any[]
 const refToId = new Map([...playerRef].map(([id, r]) => [r, id]))
 for (const e of eds) {
   const eTeams = [...teams.values()].filter((t) => t.ed === e.id)
@@ -201,6 +203,16 @@ for (const e of eds) {
     return { id: gameRef.get(g.id), ph: rd?.phase ?? 'regular', r: rd?.number ?? null, rn: rd?.name ?? null, d: g.scheduled_at, h: g.home_team_id, a: g.away_team_id, hs: g.home_score, as: g.away_score, st: g.status === 'finished' ? 'f' : g.status === 'postponed' ? 'p' : 's', box: gBox.has(g.id) ? 1 : 0, ar: g.arena ?? null }
   }).sort((a, b) => (a.d ?? '9').localeCompare(b.d ?? '9'))
   const stats = [...(edStats.get(e.id)?.values() ?? [])].filter((a) => a.gp > 0).map((a) => ({ p: a.p, t: a.t, gp: a.gp, gs: a.gs, s: a.s }))
+  // Ediciones sin boxscores pero con totales por temporada (liga turca desde Basketball-Reference).
+  if (!stats.length) {
+    const byClub = new Map(eTeams.map((t) => [t.club, t.id]))
+    for (const r of seasonLinesFor(e.code, e.y)) {
+      const t = r.club_id ? byClub.get(clubRef.get(r.club_id) ?? '') : undefined
+      const ref = playerRef.get(r.player_id)
+      if (t == null || !ref || !r.games) continue
+      stats.push({ p: ref, t, gp: r.games, gs: 0, s: [r.seconds, r.points, r.fg2m, r.fg2a, r.fg3m, r.fg3a, r.ftm, r.fta, r.oreb, r.dreb, r.reb, r.ast, r.stl, r.blk, r.tov, r.pf, r.fouls_drawn, null, r.pir] })
+    }
+  }
   const pl: Record<string, unknown[]> = {}
   for (const s of stats) pl[s.p] = plLite(refToId.get(s.p)!)
   // Mejores actuaciones individuales de la temporada en un partido (récords de la edición).
@@ -289,7 +301,7 @@ const namesOf = (p: any) => {
 }
 // Cada nombre de la selección se asigna a un único jugador español: si hay varios con ese nombre,
 // al que tiene temporadas en la ACB o la EuroLeague y edad compatible con el torneo.
-const topLevel = (id: number) => (psl.get(id)?.length ?? 0) > 0 || (pLog.get(id) ?? []).some((l) => ['ACB', 'EUROLEAGUE'].includes(edById.get(l[1])!.code))
+const topLevel = (id: number) => (psl.get(id) ?? []).some((r) => r.competition_code === 'ACB') || (pLog.get(id) ?? []).some((l) => ['ACB', 'EUROLEAGUE'].includes(edById.get(l[1])!.code))
 const medalsOf = new Map<number, { kind: string; y: number; medal: string; mvp: boolean }[]>()
 {
   const cands = new Map<string, any[]>()
