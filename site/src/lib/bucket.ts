@@ -1,5 +1,5 @@
 /** Número de cubos por tipo de fichero (jugadores, clubes, partidos, cara a cara entre clubes). Compartido con tools/site/export.ts. */
-export const BUCKETS = { p: 1024, c: 256, g: 1024, h: 512 } as const
+export const BUCKETS = { p: 4096, c: 256, g: 4096, h: 512 } as const
 
 /** Cubo de una referencia: hash FNV-1a de 32 bits. */
 export function bucketOf(ref: string, n: number): number {
