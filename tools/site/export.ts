@@ -280,7 +280,7 @@ for (const r of all(
    FROM roster_entries r JOIN teams t ON t.id = r.team_id JOIN competition_seasons cs ON cs.id = t.competition_season_id
    JOIN seasons s ON s.id = cs.season_id JOIN competitions co ON co.id = cs.competition_id
    ORDER BY s.start_year, r.is_active, co.code IN ('EUROLEAGUE', 'EUROCUP', 'BCL', 'COPA_ESPANA', 'COPA_REY', 'SUPERCOPA') DESC, co.tier IS NULL DESC`
-)) lastRoster.set(r.player_id, r)
+)) if (teams.has(r.team_id)) lastRoster.set(r.player_id, r) // (equipos creados durante la exportación se ignoran)
 const psl = new Map<number, any[]>()
 for (const r of all(`SELECT * FROM player_season_lines`)) {
   if (!psl.has(r.player_id)) psl.set(r.player_id, [])
@@ -660,7 +660,22 @@ for (const c of clubs as any[]) {
       }
     }
   }
-  const filiales = clubs.filter((x: any) => x.parent_club_id === c.id).map((x: any) => [clubRef.get(x.id), x.name, x.logo_url])
+  // Filiales y cantera: nombre, escudo y competiciones en las que juega (para distinguir las fichas).
+  const filiales = clubs
+    .filter((x: any) => x.parent_club_id === c.id)
+    .map((x: any) => {
+      const xr = clubRef.get(x.id)!
+      const codes = [...new Set([...teams.values()].filter((t) => t.club === xr).map((t) => edById.get(t.ed)!.code))]
+      return [xr, x.official_name ?? x.name, x.logo_url, codes] as [string, string, string | null, string[]]
+    })
+    // Varias fichas con el mismo nombre (cantera por categorías): una sola línea con todas sus competiciones.
+    .reduce((acc: [string, string, string | null, string[]][], f) => {
+      const same = acc.find((x) => x[1] === f[1])
+      if (same) same[3] = [...new Set([...same[3], ...f[3]])]
+      else acc.push(f)
+      return acc
+    }, [])
+    .map(([r, n, l, codes]) => [r, n, l, codes.map((k) => comps.find((cc: any) => cc.code === k)?.name ?? k).join(' · ')])
   cBuckets[bucketOf(ref, BUCKETS.c)][ref] = {
     ref, name: c.official_name ?? c.name, short: c.official_short ?? c.short_name, abbr: c.abbreviation, city: c.city, country: c.country, founded: c.founded_year, arena: c.arena, arenaCap: c.arena_capacity, arenaPhoto: c.arena_photo_url,
     web: c.website, president: c.president, socials: c.socials ? JSON.parse(c.socials) : {}, history: c.history, logo: c.logo_url, c1: c.primary_color, c2: c.secondary_color,

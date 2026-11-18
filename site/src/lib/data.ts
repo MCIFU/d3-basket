@@ -189,7 +189,8 @@ export interface ClubRec {
   c1: string | null
   c2: string | null
   parent: [string, string] | null
-  filiales: [string, string, string | null][]
+  /** [club, nombre, escudo, competiciones] */
+  filiales: [string, string, string | null, string?][]
   teams: { t: number; ed: number; y: number; code: string; name: string; logo: string | null }[]
   rosters: Record<number, RosterRow[]>
   /** Altas y bajas por temporada: [jugador, club de procedencia o destino]. */

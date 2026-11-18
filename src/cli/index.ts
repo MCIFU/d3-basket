@@ -300,6 +300,27 @@ async function main() {
     return
   }
 
+  if (command === 'canteras') {
+    // Cuelga la cantera y los filiales de cada club de su primer equipo, según una lista revisada a mano.
+    const { clubes } = JSON.parse(fs.readFileSync(path.resolve(positionals[1] ?? 'tools/site/canteras.json'), 'utf8')) as { clubes: Record<string, string[]> }
+    let n = 0
+    for (const [ref, names] of Object.entries(clubes)) {
+      const parent = clubIdOf(ref)
+      if (!parent) continue
+      const p = db.prepare('SELECT official_name, official_short, name FROM clubs WHERE id = ?').get(parent) as { official_name: string | null; official_short: string | null; name: string }
+      for (const nm of names) {
+        const r = db
+          .prepare('UPDATE clubs SET parent_club_id = ?, official_name = ?, official_short = ? WHERE id <> ? AND official_name = ? AND (parent_club_id IS NULL OR parent_club_id = ?)')
+          .run(parent, `${p.official_name ?? p.name} (cantera)`, p.official_short ?? p.official_name ?? p.name, parent, nm, parent)
+        // Las que ya colgaban del club (filiales FEB) también toman su nombre.
+        db.prepare("UPDATE clubs SET official_name = ? || ' (cantera)', official_short = ? WHERE parent_club_id = ? AND official_name = ?").run(p.official_name ?? p.name, p.official_short ?? p.official_name ?? p.name, parent, nm)
+        n += r.changes
+      }
+    }
+    console.log(`✔ ${n} fichas de cantera colgadas de su club`)
+    return
+  }
+
   if (command === 'clubs-feb-legal') {
     // Nombre legal de los clubes FEB sin nombre oficial revisado (Tercera FEB, filiales, cantera): la ficha de
     // equipo de la FEB lo publica sin patrocinador ("CLUB BALONCESTO X SAD" → "CB X").

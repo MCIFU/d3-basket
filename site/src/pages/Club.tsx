@@ -796,9 +796,9 @@ function Info({ c, meta }: { c: ClubRec; meta: Meta }) {
                   margin: "20px 0 8px",
                 }}
               >
-                Filiales y vinculados
+                Cantera y filiales
               </h3>
-              {c.filiales.map(([r, n, l]) => (
+              {c.filiales.map(([r, n, l, comps]) => (
                 <a
                   key={r}
                   href={href.club(r)}
@@ -810,7 +810,14 @@ function Info({ c, meta }: { c: ClubRec; meta: Meta }) {
                   }}
                 >
                   <Crest url={l} name={n} size={24} />
-                  {n}
+                  <span>
+                    {n}
+                    {comps && (
+                      <small className="muted" style={{ display: "block", fontSize: 12 }}>
+                        {comps}
+                      </small>
+                    )}
+                  </span>
                 </a>
               ))}
             </>

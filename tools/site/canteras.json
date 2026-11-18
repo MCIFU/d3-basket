@@ -1,0 +1,24 @@
+{
+  "_nota": "Cantera y filiales de cada club: { ficha del primer equipo: [nombres legales (FEB) de las entidades de su cantera] }. Se cuelgan del primer equipo (parent_club_id) y se muestran con su nombre. Se aplica con: npm run scrape -- canteras",
+  "clubes": {
+    "14": ["Unicaja, SD"],
+    "9": ["Real Madrid CF"],
+    "2": ["Futbol Club Barcelona"],
+    "8": ["Club Joventut Badalona"],
+    "6": ["Estudiantes"],
+    "3": ["Fundación Baskonia Alavés Fundazioa"],
+    "4": ["CD Basket Bilbao Berri"],
+    "13": ["Valencia BC", "Fundació Valencia Basquet 2000"],
+    "5": ["CB Gran Canaria Claret"],
+    "28": ["C.b.1939 Canarias", "CB 1939 Canarias"],
+    "16": ["CD Basket Zaragoza 2002"],
+    "12": ["UCAM Murcia Club Baloncesto"],
+    "17": ["Baloncesto Fuenlabrada"],
+    "10": ["CB Manresa 2015"],
+    "57": ["Obradoiro Cab"],
+    "15": ["Real Betis Baloncesto", "Fundacion Aro"],
+    "591": ["Fundacio Basquet Girona", "CB Girona 2014"],
+    "21": ["Fundación Lucentum Baloncesto Alic"],
+    "22": ["Basquet Club Andorra"]
+  }
+}
