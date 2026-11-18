@@ -725,5 +725,16 @@ INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, cou
 ALTER TABLE clubs ADD COLUMN official_name TEXT;
 ALTER TABLE clubs ADD COLUMN official_short TEXT;
 `
+  },
+  {
+    version: 22,
+    name: 'selecciones',
+    sql: /* sql */ `
+-- Torneos de selecciones (FIBA): sin categoría, como las copas.
+INSERT OR IGNORE INTO competitions (code, name, short_name, organizer, tier, country) VALUES
+  ('EUROBASKET', 'EuroBasket', 'EuroBasket', 'FIBA', NULL, 'EU'),
+  ('MUNDIAL', 'Copa del Mundo FIBA', 'Mundial', 'FIBA', NULL, 'INT'),
+  ('JJOO', 'Juegos Olímpicos', 'JJOO', 'FIBA', NULL, 'INT');
+`
   }
 ]

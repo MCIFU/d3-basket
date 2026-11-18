@@ -80,6 +80,33 @@ export const LEAGUES: Record<string, LeagueTheme> = {
     logo: 'media/leagues/supercopa.svg',
     zones: []
   },
+  EUROBASKET: {
+    name: 'EuroBasket',
+    division: 'Selecciones · FIBA Europa',
+    color: '#0b3a8c',
+    color2: '#f2b705',
+    ink: '#ffffff',
+    logo: 'media/leagues/eurobasket.svg',
+    zones: []
+  },
+  MUNDIAL: {
+    name: 'Copa del Mundo FIBA',
+    division: 'Selecciones · FIBA',
+    color: '#0d1b3e',
+    color2: '#e4002b',
+    ink: '#ffffff',
+    logo: 'media/leagues/mundial.svg',
+    zones: []
+  },
+  JJOO: {
+    name: 'Juegos Olímpicos',
+    division: 'Selecciones · Torneo olímpico',
+    color: '#0a2a5c',
+    color2: '#d4a017',
+    ink: '#ffffff',
+    logo: 'media/leagues/jjoo.svg',
+    zones: []
+  },
   COPA_ESPANA: {
     name: 'Copa España',
     division: 'Copa · FEB',

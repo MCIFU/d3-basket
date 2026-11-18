@@ -53,6 +53,9 @@ const eds = all<Ed>(
           (SELECT COUNT(*) FROM games g WHERE g.competition_season_id = cs.id AND g.status = 'finished') AS fin
    FROM competition_seasons cs JOIN competitions c ON c.id = cs.competition_id JOIN seasons s ON s.id = cs.season_id`
 )
+// Torneos de selecciones: la edición es un año («2025»), no una temporada («2025-26»).
+const TOURNAMENTS = ['EUROBASKET', 'MUNDIAL', 'JJOO']
+for (const e of eds) if (TOURNAMENTS.includes(e.code)) e.label = String(e.y)
 const edById = new Map(eds.map((e) => [e.id, e]))
 const comps = all(`SELECT code, name, short_name, country, tier, organizer FROM competitions`).map((c: any) => {
   const th = LEAGUES[c.code]
@@ -272,7 +275,7 @@ log(`ediciones: ${eds.length} ficheros`)
 
 // ───────────────────────── Jugadores (cubos) ─────────────────────────
 const SECTION = (code: string, parent: string | null) =>
-  /^CESA_/.test(code) ? 'seleccion' : /^CE_/.test(code) ? 'formacion' : ['EUROLEAGUE', 'EUROCUP', 'BCL'].includes(code) ? 'europa' : /COPA/.test(code) ? 'copa' : parent ? 'filial' : 'liga'
+  /^CESA_/.test(code) || ['EUROBASKET', 'MUNDIAL', 'JJOO'].includes(code) ? 'seleccion' : /^CE_/.test(code) ? 'formacion' : ['EUROLEAGUE', 'EUROCUP', 'BCL'].includes(code) ? 'europa' : /COPA/.test(code) ? 'copa' : parent ? 'filial' : 'liga'
 const lastRoster = new Map<number, any>()
 for (const r of all(
   // La última fila gana: temporada más reciente, activo y, a igualdad, la liga nacional sobre Europa y la Copa.

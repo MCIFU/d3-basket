@@ -148,7 +148,7 @@ function LeaguePage({
             >
               {comp.eds.map((e) => (
                 <option key={e.id} value={e.y}>
-                  Temporada {e.label}
+                  {["EUROBASKET", "MUNDIAL", "JJOO"].includes(comp.code) ? "Edición" : "Temporada"} {e.label}
                 </option>
               ))}
             </select>

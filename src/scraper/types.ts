@@ -5,7 +5,7 @@
  */
 
 export type SourceName = 'acb' | 'feb' | 'euroleague' | 'fiba' | 'lba' | 'lnp' | 'bbl' | 'proa' | 'lnb' | 'esake' | 'sofascore' | 'espn' | 'tsdb' | 'bref'
-export type CompetitionCode = 'ACB' | 'LEB_ORO' | 'LEB_PLATA' | 'TERCERA_FEB' | 'LF_ENDESA' | 'LF_CHALLENGE' | 'LF2' | 'COPA_ESPANA' | 'COPA_REY' | 'SUPERCOPA' | 'CESA_INF_M' | 'CESA_INF_F' | 'CESA_CAD_M' | 'CESA_CAD_F' | 'CE_JUN_M' | 'CE_JUN_F' | 'CE_CAD_M' | 'CE_CAD_F' | 'CE_INF_M' | 'CE_INF_F' | 'EUROLEAGUE' | 'EUROCUP' | 'BCL' | 'LBA' | 'ITA_A2' | 'BBL' | 'PROA' | 'LNB_ELITE' | 'LNB_ELITE2' | 'GBL' | 'BSL' | 'NBA' | 'NCAA'
+export type CompetitionCode = 'ACB' | 'LEB_ORO' | 'LEB_PLATA' | 'TERCERA_FEB' | 'LF_ENDESA' | 'LF_CHALLENGE' | 'LF2' | 'COPA_ESPANA' | 'COPA_REY' | 'SUPERCOPA' | 'CESA_INF_M' | 'CESA_INF_F' | 'CESA_CAD_M' | 'CESA_CAD_F' | 'CE_JUN_M' | 'CE_JUN_F' | 'CE_CAD_M' | 'CE_CAD_F' | 'CE_INF_M' | 'CE_INF_F' | 'EUROLEAGUE' | 'EUROCUP' | 'BCL' | 'LBA' | 'ITA_A2' | 'BBL' | 'PROA' | 'LNB_ELITE' | 'LNB_ELITE2' | 'GBL' | 'BSL' | 'NBA' | 'NCAA' | 'EUROBASKET' | 'MUNDIAL' | 'JJOO'
 
 export interface SourceRef {
   source: SourceName

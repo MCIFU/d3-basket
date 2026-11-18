@@ -34,7 +34,8 @@ import { LnpAdapter } from '../scraper/europe/lnp'
 import { EsakeAdapter } from '../scraper/europe/esake'
 import { ProaAdapter } from '../scraper/europe/proa'
 import { legalName, shortName } from './club-names'
-import { syncBslStats } from '../scraper/europe/bref'
+import { syncBrefTournament, syncBslStats } from '../scraper/europe/bref'
+import { FibaEventAdapter } from '../scraper/fiba/events'
 import { TheSportsDbBslAdapter } from '../scraper/europe/thesportsdb'
 import { SofascoreAdapter } from '../scraper/europe/sofascore'
 import type { FebCompetition } from '../scraper/feb/urls'
@@ -222,6 +223,9 @@ async function main() {
     nba: (h) => new EspnAdapter(h, 'nba', 'NBA', 'NBA'),
     ncaa: (h) => new EspnAdapter(h, 'mens-college-basketball', 'NCAA', 'NCAA División I'),
     'bsl-historia': (h) => new TheSportsDbBslAdapter(h),
+    eurobasket: (h) => new FibaEventAdapter(h, 'eurobasket'),
+    mundial: (h) => new FibaEventAdapter(h, 'mundial'),
+    jjoo: (h) => new FibaEventAdapter(h, 'jjoo'),
     turquia: (h) => new TheSportsDbBslAdapter(h),
     grecia: (h) => new EsakeAdapter(h),
     a2: (h) => new LnpAdapter(h),
@@ -350,6 +354,16 @@ async function main() {
       }
     }
     console.log(`✔ ${n} de ${rows.length} clubes FEB con nombre legal`)
+    return
+  }
+
+  if (command === 'bref-torneo') {
+    // Totales por jugador de un torneo de selecciones (Basketball-Reference): bref-torneo mundial|jjoo --season 2023
+    const http = new HttpClient({ minDelayMs: Math.max(3500, Number(values.delay)), log })
+    const code = (positionals[1] ?? '').toUpperCase() === 'MUNDIAL' ? 'MUNDIAL' : 'JJOO'
+    const y = Number(values.season)
+    const s = await syncBrefTournament(db, http, code, y, log)
+    console.log(`✔ ${code} ${y}: ${s.teams} selecciones, ${s.lines} líneas · ${s.matched} jugadores enlazados, ${s.created} nuevos${s.noClub.length ? ` · sin equipo: ${s.noClub.join(', ')}` : ''}`)
     return
   }
 
