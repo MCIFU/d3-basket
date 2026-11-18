@@ -40,6 +40,9 @@ import { TheSportsDbBslAdapter } from '../scraper/europe/thesportsdb'
 import { SofascoreAdapter } from '../scraper/europe/sofascore'
 import type { FebCompetition } from '../scraper/feb/urls'
 
+/** Tamaño máximo de cada trozo de la semilla (GitHub rechaza ficheros de más de 100 MB). */
+const SEED_PART = 45 * 1024 * 1024
+
 const { values, positionals } = parseArgs({
   allowPositionals: true,
   options: {
@@ -170,10 +173,20 @@ async function main() {
     copy.exec('VACUUM')
     copy.close()
     const raw = fs.readFileSync(tmp)
-    fs.writeFileSync(out, zlib.gzipSync(raw, { level: 9 }))
+    const gz = zlib.gzipSync(raw, { level: 9 })
     fs.rmSync(tmp, { force: true })
     const kb = (n: number) => `${Math.round(n / 1024)} KB`
-    console.log(`✔ Datos web exportados: ${out} (${kb(raw.length)} → ${kb(fs.statSync(out).size)} gzip)`)
+    // La semilla va en el repositorio y GitHub no admite ficheros de más de 100 MB: se guarda en trozos
+    // de 45 MB (d3basket.db.gz.000, .001…) que restore-db vuelve a unir.
+    for (const f of fs.readdirSync(path.dirname(out))) if (f.startsWith(`${path.basename(out)}.`) && /\.\d{3}$/.test(f)) fs.rmSync(path.join(path.dirname(out), f))
+    if (positionals[1] && gz.length > SEED_PART) {
+      fs.rmSync(out, { force: true })
+      for (let i = 0; i * SEED_PART < gz.length; i++) fs.writeFileSync(`${out}.${String(i).padStart(3, '0')}`, gz.subarray(i * SEED_PART, (i + 1) * SEED_PART))
+      console.log(`✔ Semilla exportada en ${Math.ceil(gz.length / SEED_PART)} trozos: ${out}.000… (${kb(raw.length)} → ${kb(gz.length)} gzip)`)
+    } else {
+      fs.writeFileSync(out, gz)
+      console.log(`✔ Datos web exportados: ${out} (${kb(raw.length)} → ${kb(gz.length)} gzip)`)
+    }
     return
   }
 
@@ -482,14 +495,19 @@ async function restoreDb(dbPath: string, seedPath: string) {
     d.close()
   }
 
-  if (fs.existsSync(seedPath)) {
+  // La semilla puede estar entera o en trozos (.000, .001…).
+  const parts = fs.existsSync(path.dirname(seedPath))
+    ? fs.readdirSync(path.dirname(seedPath)).filter((f) => f.startsWith(`${path.basename(seedPath)}.`) && /\.\d{3}$/.test(f)).sort()
+    : []
+  const seed = fs.existsSync(seedPath) ? fs.readFileSync(seedPath) : parts.length ? Buffer.concat(parts.map((f) => fs.readFileSync(path.join(path.dirname(seedPath), f)))) : undefined
+  if (seed) {
     const tmp = `${dbPath}.seed-check.db`
     fs.mkdirSync(path.dirname(dbPath), { recursive: true })
-    fs.writeFileSync(tmp, zlib.gunzipSync(fs.readFileSync(seedPath)))
+    fs.writeFileSync(tmp, zlib.gunzipSync(seed))
     const seedId = meta(tmp, 'export_id') ?? 'sin-id'
     fs.rmSync(tmp, { force: true })
     if (!fs.existsSync(dbPath) || meta(dbPath, 'seed_origin') !== seedId) {
-      install(fs.readFileSync(seedPath), seedId)
+      install(seed, seedId)
       console.log(`✔ Base de datos restaurada desde la semilla ${seedPath} (${seedId})`)
       return
     }
