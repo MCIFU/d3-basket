@@ -14,7 +14,7 @@ const FORMS: [RegExp, string][] = [
   [/^C\.\s?E\.?(?=\s)/, 'CE']
 ]
 const SMALL = new Set(['de', 'del', 'la', 'las', 'los', 'el', 'y', 'e', 'i', 'a', 'en', 'al', 'les', 'dels', 'per'])
-const KEEP = new Set(['CB', 'CD', 'CE', 'AD', 'UD', 'SD', 'UE', 'BC', 'CBC', 'ADC', 'UCAM'])
+const KEEP = new Set(['CB', 'CD', 'CE', 'AD', 'UD', 'SD', 'UE', 'BC', 'CBC', 'ADC', 'UCAM', 'CDEB', 'CDB', 'CBA', 'AE', 'CEB', 'SAD', 'UB', 'EBG', 'CP', 'CN', 'NC', 'AA', 'CF'])
 
 /** "CLUB BALONCESTO VILLA DE LOS BARRIOS SAD" → "CB Villa de los Barrios". */
 export function legalName(raw: string): string | undefined {
@@ -22,7 +22,13 @@ export function legalName(raw: string): string | undefined {
   if (s.length < 3) return undefined
   // Forma jurídica final (SAD, SL, SA) y la inicial abreviada (Club Baloncesto → CB).
   s = s.replace(/[,.]?\s*\b(S\.?\s?A\.?\s?D\.?|S\.?\s?L\.?|S\.?\s?A\.?)$/, '').trim()
+  // Siglas con puntos pegadas a la palabra siguiente ("C.B.GRAN CANARIA") y siglas con puntos ("A.D." → "AD").
+  s = s.replace(/^((?:[A-Z]\.){2,})(?=[A-Z]{2})/, '$1 ')
   for (const [re, to] of FORMS) s = s.replace(re, to)
+  s = s
+    .split(' ')
+    .map((w) => (/^(?:[A-Z]\.){2,}[A-Z]?\.?$/.test(w) ? w.replace(/\./g, '') : w))
+    .join(' ')
   return s
     .split(' ')
     .map((w, i) => {
@@ -36,7 +42,7 @@ export function legalName(raw: string): string | undefined {
 
 /** Nombre corto: sin la forma jurídica inicial y, si es largo, las primeras palabras con contenido. */
 export function shortName(name: string): string {
-  const s = name.replace(/^(CB|CD|CE|AD|UD|SD|Club|Fundaci[oó]n|Asociaci[oó]n)\s+/, '')
+  const s = name.replace(/^(CB|CD|CE|AD|UD|SD|CDEB|CDB|CBA|AE|CEB|Club|Fundaci[oó]n|Fundaci[oó]|Asociaci[oó]n)\s+/, '')
   if (s.length <= 22) return s
   const words = s.split(' ')
   let out = ''
