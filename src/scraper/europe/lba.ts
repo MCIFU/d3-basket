@@ -17,10 +17,10 @@ interface LbaMatch {
   visitor_final_score: number | null
   h_team_id: number
   h_team_name: string
-  h_club_code: string
+  h_club_code: string | null
   v_team_id: number
   v_team_name: string
-  v_club_code: string
+  v_club_code: string | null
   day_serial: number
   day_name: string
   plant_name?: string
@@ -51,6 +51,16 @@ export class LbaAdapter implements LeagueAdapter {
     }
   }
 
+  /** Temporadas antiguas: el calendario no trae el código del club; la ficha del equipo sí. */
+  private codes = new Map<number, string>()
+  private async clubCode(teamId: number): Promise<string> {
+    if (!this.codes.has(teamId)) {
+      const d = await this.json<{ team?: { club_code?: string | null; club_id?: number } }>(`teams/get-team-by-id?id=${teamId}`).catch(() => undefined)
+      this.codes.set(teamId, d?.team?.club_code ?? (d?.team?.club_id != null ? `c${d.team.club_id}` : `t${teamId}`))
+    }
+    return this.codes.get(teamId)!
+  }
+
   /** Fase regular y playoff de la temporada (ids de "championship"). */
   private async championships(startYear: number) {
     const d = await this.json<{ competitions: LbaChamp[] }>('championships/get-championships?items=1000&cs_id=1')
@@ -71,8 +81,8 @@ export class LbaAdapter implements LeagueAdapter {
       for (const day of days) {
         const d = await this.json<{ matches: LbaMatch[] }>(`championships/get-championships-calendar-by-id?id=${c.id}&d=${day.code}`)
         for (const m of d.matches ?? []) {
-          const home = this.team(m.h_team_id, m.h_team_name, m.h_club_code, startYear, m.home_logo_key)
-          const away = this.team(m.v_team_id, m.v_team_name, m.v_club_code, startYear, m.v_logo_key)
+          const home = this.team(m.h_team_id, m.h_team_name, m.h_club_code ?? (await this.clubCode(m.h_team_id)), startYear, m.home_logo_key)
+          const away = this.team(m.v_team_id, m.v_team_name, m.v_club_code ?? (await this.clubCode(m.v_team_id)), startYear, m.v_logo_key)
           if (!c.playoff) (teams.set(home.ref.id, home), teams.set(away.ref.id, away))
           const finished = m.game_status === '2' && m.home_final_score != null
           const status: GameStatus = finished ? 'finished' : 'scheduled'
