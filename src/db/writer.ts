@@ -265,7 +265,7 @@ export class Writer {
       .prepare(
         `SELECT p.id, p.full_name, p.known_as FROM players p
          WHERE p.birth_date = ? AND NOT EXISTS (
-           SELECT 1 FROM external_ids x WHERE x.entity_type = 'player' AND x.entity_id = p.id AND x.source = ?)`
+           SELECT 1 FROM external_ids x INDEXED BY ix_external_ids_entity WHERE x.entity_type = 'player' AND x.entity_id = p.id AND x.source = ?)`
       )
       .all(p.birthDate, p.ref.source) as { id: number; full_name: string; known_as: string | null }[]
     const hit = candidates.filter((c) => norm(`${c.full_name} ${c.known_as ?? ''}`).some((w) => mine.has(w)))
@@ -349,7 +349,7 @@ export class Writer {
     const rows = this.db
       .prepare(
         `SELECT p.id, p.full_name AS name, p.last_name AS last, p.birth_date AS birth,
-                (SELECT GROUP_CONCAT(DISTINCT source) FROM external_ids x WHERE x.entity_type = 'player' AND x.entity_id = p.id) AS sources
+                (SELECT GROUP_CONCAT(DISTINCT source) FROM external_ids x INDEXED BY ix_external_ids_entity WHERE x.entity_type = 'player' AND x.entity_id = p.id) AS sources
          FROM players p WHERE p.birth_date IN (SELECT birth_date FROM players WHERE birth_date IS NOT NULL GROUP BY birth_date HAVING COUNT(*) > 1)`
       )
       .all() as { id: number; name: string; last: string | null; birth: string; sources: string | null }[]

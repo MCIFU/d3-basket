@@ -1,5 +1,8 @@
 # Web pública en Cloudflare Pages (gratis, sin límite de tráfico), sin depender de Netlify.
 # Todos los días a las 08:00 (hora española) descarga los datos nuevos, exporta la base de datos para el navegador y publica.
+# Los lunes la actualización es la grande (tools/actualizar.sh semanal): además renueva fichas de jugador,
+# trayectorias, plantillas de la liga griega y nombres legales de la FEB, y audita la base de datos.
+# Todo corre en los servidores de GitHub: nada se ejecuta ni se abre en el PC.
 # La base de datos del día también se sube a la versión «datos» de GitHub, de donde la descarga iniciar.bat.
 #
 # Configuración (una sola vez), en GitHub → Settings → Secrets and variables → Actions:
@@ -15,6 +18,12 @@ on:
     - cron: '0 6 * * *' # 08:00 en horario de verano (CEST)
     - cron: '0 7 * * *' # 08:00 en horario de invierno (CET)
   workflow_dispatch:
+    inputs:
+      modo:
+        description: 'Tipo de actualización'
+        type: choice
+        options: [diaria, semanal]
+        default: diaria
   push:
     branches: [main]
 
@@ -30,10 +39,17 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       seguir: ${{ steps.hora.outputs.seguir }}
+      modo: ${{ steps.hora.outputs.modo }}
     steps:
       - name: Comprobar el horario español
         id: hora
         run: |
+          # Lunes en España (o elegido a mano): actualización semanal completa.
+          if [ "${{ inputs.modo }}" = "semanal" ] || { [ "${{ github.event_name }}" = "schedule" ] && [ "$(TZ=Europe/Madrid date +%u)" = "1" ]; }; then
+            echo "modo=semanal" >> "$GITHUB_OUTPUT"
+          else
+            echo "modo=diaria" >> "$GITHUB_OUTPUT"
+          fi
           if [ "${{ github.event_name }}" != "schedule" ]; then
             echo "seguir=true" >> "$GITHUB_OUTPUT"; exit 0
           fi
@@ -50,7 +66,7 @@ jobs:
     needs: hora
     if: needs.hora.outputs.seguir == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 300
     steps:
       - uses: actions/checkout@v4
 
@@ -69,8 +85,8 @@ jobs:
           key: d3db-${{ github.run_id }}
           restore-keys: d3db-
 
-      - name: Sincronizar datos y construir la web
-        run: npm run build:site
+      - name: Sincronizar datos y construir la web (${{ needs.hora.outputs.modo }})
+        run: bash tools/actualizar.sh ${{ needs.hora.outputs.modo }}
 
       - name: Guardar la base de datos
         if: always()

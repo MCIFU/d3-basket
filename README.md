@@ -46,7 +46,8 @@ scrapers (src/scraper) ──► SQLite (data/d3basket.db) ──► tools/site/
 | `npm run site:smoke` | Abre la web construida en un navegador y comprueba todas las páginas |
 | `npm test` | Pruebas (parsers con páginas reales guardadas, base de datos y cálculos de la web) |
 | `npm run typecheck` | Comprobación de tipos |
-| `npm run build:site` | Todo lo que hace la publicación diaria: sincronizar, exportar y construir |
+| `npm run build:site` | Actualización diaria: resultados, boxscores y plantillas de la temporada en curso, exportar y construir (`tools/actualizar.sh diaria`) |
+| `npm run build:site:semanal` | La de los lunes: lo anterior + fichas, trayectorias, plantillas griegas, nombres legales FEB y auditoría |
 | `node tools/site/selecciones.mjs` | Actualiza las medallas de la selección (Wikipedia) |
 
 ## Estructura

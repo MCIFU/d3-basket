@@ -42,7 +42,7 @@ export class LnbAdapter implements LeagueAdapter {
 
   private async headers() {
     if (!this.token || Date.now() - this.token.at > 10 * 60_000) {
-      const d = JSON.parse((await this.http.get('https://lnb.fr/api/token', { Accept: 'application/json' })).body)
+      const d = JSON.parse((await this.http.get('https://lnb.fr/api/token', { Accept: 'application/json', Referer: 'https://lnb.fr/', 'Accept-Language': 'fr-FR,fr;q=0.9' })).body)
       this.token = { value: d.token, at: Date.now() }
     }
     return { Authorization: `Bearer ${this.token.value}`, device_type: 'web', Accept: 'application/json' }
