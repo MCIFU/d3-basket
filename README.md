@@ -6,7 +6,7 @@ Web personal de **resultados, estadísticas, trayectorias y palmarés del balonc
 
 | | Cómo |
 |---|---|
-| 💻 En tu PC | Doble clic en **`iniciar.bat`** (necesita Node.js y Git). Descarga la última versión y los datos del día, monta la web y la abre en `http://localhost:4173`. |
+| 💻 En tu PC | Doble clic en **`abrir.vbs`** (necesita Node.js y Git): sin ventanas, descarga la última versión y los datos del día, monta la web y la abre en `http://localhost:4173`. Para pararla, **`cerrar.vbs`**. `iniciar.bat` hace lo mismo con la ventana visible (útil si algo falla). |
 | 🌐 En internet | `https://d3-basket.pages.dev`, publicada cada día a las 08:00 (hora española) por `.github/workflows/web.yml`. |
 
 ## Qué incluye
@@ -28,7 +28,7 @@ scrapers (src/scraper) ──► SQLite (data/d3basket.db) ──► tools/site/
 1. **Datos**: los programas de `src/scraper` descargan cada liga de su fuente oficial y la guardan en SQLite (`src/db`).
 2. **Exportación**: `tools/site/export.ts` convierte la base de datos en ficheros JSON pequeños (uno por temporada de liga, y jugadores, clubes y partidos agrupados en cubos). Cada página baja solo lo que muestra, unos 20 KB.
 3. **Web**: `site/` es una aplicación React sin servidor, con enrutado por almohadilla (`#/jugador/…`).
-4. **Publicación diaria** (`web.yml`): sincroniza las ligas, exporta, construye, pasa las pruebas y publica en Cloudflare Pages. La base de datos del día se sube a la versión «datos» de GitHub, de donde la descarga `iniciar.bat`.
+4. **Publicación diaria** (`web.yml`, en GitHub; los lunes, la semanal completa): sincroniza las ligas, exporta, construye, pasa las pruebas y publica en Cloudflare Pages. La base de datos del día se sube a la versión «datos» de GitHub, de donde la descarga `iniciar.bat`.
 
 ### Configurar Cloudflare Pages (una sola vez)
 

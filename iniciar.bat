@@ -13,7 +13,7 @@ title d3 basket
 where node >nul 2>nul
 if errorlevel 1 (
   echo Falta Node.js. Instalalo desde https://nodejs.org ^(version LTS^) y vuelve a abrir este archivo.
-  pause
+  if not "%D3_OCULTO%"=="1" pause
   exit /b 1
 )
 
@@ -74,7 +74,7 @@ if defined REHACER (
   )
   rem Si la semilla del proyecto es mas nueva que los datos publicados, se usa la semilla.
   call npx tsx src/cli/index.ts restore-db --db data/d3basket.db || goto :error
-  call npx tsx tools/site/export.ts --db data/d3basket.db --out public/d || goto :error
+  call node --max-old-space-size=6144 --import tsx tools/site/export.ts --db data/d3basket.db --out public/d || goto :error
   echo == Montando la web...
   call npx vite build --config vite.site.config.ts --logLevel warn || goto :error
   > data\.d3-version echo !VERSION!
@@ -94,5 +94,5 @@ goto :eof
 :error
 echo.
 echo Algo ha fallado. Copia el mensaje de arriba y pasamelo.
-pause
+if not "%D3_OCULTO%"=="1" pause
 exit /b 1
